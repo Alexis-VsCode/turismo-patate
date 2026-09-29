@@ -6,7 +6,8 @@ Guía para quien administra la hoja de cálculo y el sitio. No hace falta saber 
 
 1. Cada establecimiento llena **su propia pestaña** en la Google Sheet compartida.
 2. Cada 5 minutos, GitHub Actions descarga la hoja, la valida y publica el sitio con los datos nuevos.
-3. Quien visita el sitio ve siempre el aviso «Se actualiza automáticamente cada 5 minutos · Datos al …».
+3. Quien visita el sitio ve cuándo se actualizó en su navegador, cuándo se publicaron los datos y un chip de estado
+   («Publicación al día», «retrasada» o «detenida»). Ver [observabilidad.md](observabilidad.md).
 
 **Cuánto tarda un dato nuevo en aparecer:** entre 5 y 15 minutos. Google republica la hoja cada ~5 minutos y
 GitHub puede retrasar la tarea programada en horas de mucha carga.
@@ -30,7 +31,9 @@ El nombre de la pestaña es el nombre que aparece en el sitio.
 - **Edad** es un número entero de 0 a 110. El sitio la agrupa en 0-17, 18-25, 26-35, 36-45, 46-59 y 60+.
 - **Visitantes extranjeros:** Provincia y Ciudad quedan vacías.
 - **No se escriben datos personales:** ni nombres, ni cédulas, ni teléfonos.
-- **No se mueven ni se renombran las columnas.**
+- **No se mueven ni se renombran las columnas.** El sitio las reconoce por su nombre, con variantes (por
+  ejemplo «Motivo» o «Motivo de visita», «Sexo» o «Género»). **Provincia y Ciudad son opcionales**; las demás son
+  obligatorias.
 
 ## Agregar un establecimiento
 
@@ -67,7 +70,8 @@ con la pestaña y el número de fila.
 | Actions falla en «Construir datos desde la hoja» | La hoja dejó de estar publicada o cambió su URL. Ver [configuracion.md](configuracion.md#rotar-la-url) |
 | Actions falla en «Pruebas» | Un cambio de código rompió una regla. No se publica nada hasta corregirlo |
 | Un establecimiento no aparece | Que su pestaña no empiece con `_`, no contenga «plantilla» y conserve los encabezados |
-| Aparece «N filas con problemas» | Despliega el aviso: indica pestaña, fila y motivo (por ejemplo, «Mes no válido: agosoto») |
+| Aparece «N filas con problemas» | Despliega el aviso: indica pestaña, fila y motivo (por ejemplo, `Ciudad fuera del catálogo: «Ambatoo»`). Las erratas de mes como «agosoto» se corrigen solas |
+| El chip dice «Publicación detenida» | La publicación automática no corre. Revisa **Actions** y sigue [observabilidad.md](observabilidad.md#qué-hacer-si-el-chip-no-está-en-verde) |
 | Las actualizaciones se detuvieron | GitHub pausa las tareas programadas tras 60 días sin actividad en el repositorio. En **Actions → Publicar dashboard → Enable workflow** se reactivan, y con **Run workflow** se fuerza una publicación |
 
 ## Pasar a datos reales

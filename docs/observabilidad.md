@@ -21,10 +21,13 @@ Un chip junto a la barra de estado, con texto y color (nunca solo color):
 
 | Chip | Significado |
 |---|---|
-| **Datos al día** | La publicación está dentro del primer umbral |
-| **Datos con retraso** | Superó el primer umbral pero no el segundo |
-| **Datos desactualizados** | Superó el segundo umbral: la publicación probablemente se detuvo |
+| **Publicación al día** | La última publicación está dentro del primer umbral |
+| **Publicación retrasada** | Superó el primer umbral pero no el segundo |
+| **Publicación detenida** | Superó el segundo umbral: la publicación automática probablemente se detuvo |
 | **Sin verificar** | La fecha falta, es inválida o está más de 2 minutos en el futuro (reloj del visitante desajustado) |
+
+Junto a la etiqueta el chip dice «Última hace …» (en celular se oculta ese detalle por falta de espacio), y al
+pasar el cursor por encima explica qué hace *Actualizar*.
 
 Junto al chip, el texto de estado muestra dos horas distintas:
 
@@ -33,6 +36,14 @@ Junto al chip, el texto de estado muestra dos horas distintas:
 
 *Actualizar* vuelve a descargar `datos.json` sin caché, pero **no obliga a Actions a reconstruirlo desde la hoja**: un
 cambio hecho en el Excel aparece cuando corre la siguiente publicación.
+
+**¿Por qué puede decir «Actualizado hace un momento» y «Publicación detenida» a la vez?** No es una contradicción:
+son dos relojes distintos. El primero es cuándo *este navegador* consultó; el segundo, cuándo *Actions* publicó por
+última vez. Si la publicación automática está detenida, cada clic descarga otra vez el mismo archivo viejo, y el chip
+lo dice. Por eso el chip habla de «publicación» y nunca de «datos actualizados».
+
+**En local** no corre la publicación automática: el chip pasa a «detenida» poco después de generar los datos con
+`npm run datos`, y se vuelve a poner al día regenerándolos.
 
 ## Lo que ve quien opera
 

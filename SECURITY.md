@@ -17,7 +17,8 @@ Recibirás respuesta en un plazo razonable y se te reconocerá el reporte, si as
 
 El sitio es **estático y de solo lectura**:
 - No tiene inicio de sesión, formularios ni cookies.
-- No guarda datos de quien lo visita.
+- No guarda datos de quien lo visita. Lo único que se guarda, en el propio dispositivo, es la elección de tema
+  (`localStorage`), y no se envía a ningún sitio.
 - Los datos que muestra son agregados y no incluyen información personal.
 
 ## Medidas vigentes

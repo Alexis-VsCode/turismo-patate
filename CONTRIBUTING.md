@@ -23,6 +23,7 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
 |---|---|---|
 | Dominio | `src/domain/` | solo dominio |
 | Infraestructura | `src/infrastructure/` | dominio, infraestructura |
+| Shared | `src/shared/` | solo shared |
 | Fachada | `src/application/*.facade.js` | dominio, shared |
 | Presentacional | `src/application/components/presentational/` | dominio, shared |
 | Compartidos | `src/application/components/compartidos/` | dominio, shared |
@@ -34,6 +35,12 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
 - **Los presentacionales no guardan estado.**
 - **Una sola fuente de configuración:** [`src/infrastructure/config.js`](src/infrastructure/config.js).
 - **Todo texto visible sale de [`src/shared/textos.es.js`](src/shared/textos.es.js).**
+- **Un presentacional no importa a otro presentacional:** lo que comparten dos, sube a `shared` o se junta en un
+  solo archivo.
+- **`src/shared/tema-inicial.js` es un script clásico**, sin `import` ni `export`, porque se ejecuta en el `<head>`
+  antes del primer pintado. Repite la regla de `src/shared/tema.js` y una prueba comprueba que ambos dan lo mismo.
+- **Excepciones a «todo texto visible sale de `textos.es.js`»:** los textos fijos de `index.html` y los motivos de
+  rechazo de fila de `visitante.js` y `lector-libro.js`, que describen una entrada y no la interfaz.
 - `test/arquitectura.test.mjs` hace cumplir esta tabla. Si falla, se corrige el import; no se relaja la regla.
 
 ## 4. Seguridad: reglas que no se negocian
@@ -58,7 +65,8 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
    * @author Kevin Alexis Barrera Llerena 2026
    */
   ```
-- **Funciones públicas:** JSDoc con `@param` y `@returns`.
+- **Funciones exportadas que cruzan capas:** JSDoc con `@param` y `@returns`. Los ayudantes privados y las
+  opciones declarativas de los gráficos quedan exentos.
 - **Comentarios internos:** solo `// Paso N: …`, que explican el porqué. La historia de un cambio va al
   commit, nunca al código.
 - **Nombres del negocio en español**, funciones cortas, sin código muerto ni `console.log`.
@@ -80,7 +88,9 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
 2. **Si cambió un cálculo:** oráculo regenerado (`npm run oraculo`) y conciliación en verde.
 3. **Verificación en el navegador:**
    - consola sin errores ni violaciones de CSP;
-   - celular sin scroll horizontal.
+   - celular sin scroll horizontal;
+   - servido con `npm run servir` (sin caché) y con datos recién generados por `npm run datos`; si no, el chip de
+     frescura marcará «detenida».
 4. Documentación de `docs/` y `CHANGELOG.md` actualizadas en el mismo cambio.
 5. `git status --short` limpio.
 6. Tras el push, la ejecución de GitHub Actions termina en éxito y el sitio publicado funciona.

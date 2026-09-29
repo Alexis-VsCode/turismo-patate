@@ -40,6 +40,7 @@ font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
 | XSS por nombres de pestaña o celdas | Escritura solo con `textContent`/`createElement`; tooltips de ECharts en `richText`; tooltips del mapa como nodos DOM | `src/application/components/**` |
 | Reintroducir APIs peligrosas | Prueba que falla si aparece `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `eval` o `new Function` en `src/` | `test/infrastructure/seguridad.test.mjs` |
 | Contaminación de prototipos | Agrupaciones con `Map` y claves `__proto__`, `constructor` y `prototype` descartadas | `src/domain/texto.js`, `estadisticas.js` |
+| Íconos de los motivos | Trazos fijos del código, creados con `createElementNS`; el nombre del motivo solo elige cuál usar y nunca se interpreta como HTML | `src/application/components/presentational/motivos.presentational.js` |
 | Caracteres invisibles o de control | `limpiarTexto()` los elimina y acota el largo a 120 caracteres | `src/domain/texto.js` |
 | Excel malicioso | SheetJS en modo restrictivo: sin fórmulas, HTML, estilos ni macros, y con topes de pestañas y filas | `src/infrastructure/lector-libro.js` |
 | `datos.json` alterado | El navegador valida versión, tipos, índices y rangos, y rechaza el paquete entero si algo no cumple | `src/infrastructure/contrato-datos.js` |
@@ -48,6 +49,8 @@ font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
 ## Privacidad
 
 - **Sin rastreo:** el sitio no usa cookies ni analítica y no recoge datos de quien lo visita.
+- **Lo único que se guarda** es la elección de tema (claro u oscuro) en el `localStorage` del propio dispositivo, con la
+  clave `tema-patate`. No se envía a ningún sitio y el sitio funciona igual si el navegador lo bloquea.
 - **Referer:** la página usa `strict-origin-when-cross-origin`, porque la política de uso de OpenStreetMap
   prohíbe `no-referrer`. Los scripts de los CDN van con `no-referrer`.
 - **Solo agregados:** la hoja no debe contener datos personales, porque su contenido agregado es público.

@@ -2,6 +2,43 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.1.0] - 2026-09-29
+
+### Añadido
+- **Botón de modo claro y oscuro** de dos estados. El tema se aplica antes del primer pintado y se recuerda en el
+  dispositivo (`localStorage`).
+- **Chip de frescura** de la publicación («al día», «retrasada» o «detenida») y texto de estado con dos horas
+  distintas: «Actualizado el…» (este navegador) y «Datos publicados el…» (la publicación de Actions).
+- **Observabilidad básica** en la construcción de datos: una línea de log JSON por ejecución y un resumen en Actions.
+  Ver [docs/observabilidad.md](docs/observabilidad.md).
+- **Pestañas del mapa** (Provincias, Ciudades y Países) que cambian burbujas, «Top» y encuadre, y siguen al filtro
+  País / Ciudad.
+- **Panel de participación:** la dona muestra el total al centro y absorbe las tarjetas de nacionales y extranjeros,
+  con una frase que se redacta según el periodo filtrado.
+- **Motivos de visita** con ícono, barra de verdes graduados, cifra y porcentaje. La lista no se reduce al motivo
+  elegido, para poder pasar de uno a otro.
+- Botón de TikTok en el pie, con el mismo formato que LinkedIn y Facebook.
+- `npm run servir`: servidor local sin caché.
+- ADR 005 y `docs/observabilidad.md`.
+
+### Cambiado
+- **Paleta solo de verde y amarillo**, con las únicas excepciones de la bandera de Ecuador y los botones de marca.
+- Barras de panel verdes, filtros en un bloque verde y pie en tres columnas.
+- Gráficos, mapa y tooltips leen los colores del tema; cambiar de tema no reencuadra el mapa.
+- Porcentajes con un solo formato (una decimal y coma) en toda la interfaz.
+- Atribución de OpenStreetMap con enlace a su política de copyright.
+- Pasos numerados y mapa del flujo en `src/main.js`; un solo formato de comentarios en el código.
+- Node 22 como versión mínima.
+
+### Corregido
+- La evolución mensual sin año de referencia ya no muestra «null» ni «-1» en la leyenda.
+- Si un suscriptor de la fachada lanza un error, ya no se muestra «formato inesperado» con datos válidos.
+- La dona, su información emergente y la variación usan el mismo formato de porcentaje.
+
+### Eliminado
+- El rótulo «En vivo», que afirmaba algo que no se verificaba.
+- El campo `periodo`, que se calculaba y nadie leía.
+
 ## [2.0.0] - 2026-09-29
 
 ### Cambiado

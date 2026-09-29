@@ -10,8 +10,9 @@ sin control, y el GAD no tenía un tenant confirmado.
 
 ## Decisión
 
-Sitio **HTML/JavaScript estático** con ECharts y Leaflet, publicado en GitHub Pages. El análisis técnico de
-Power BI (Azure Maps, Power Query, PBIR) queda documentado como plan B.
+Sitio **HTML/JavaScript estático** con ECharts y Leaflet, publicado en GitHub Pages. Power BI se descartó por su
+licencia, no por su capacidad: si el GAD confirmara un tenant con licencia Pro o Fabric, sería una alternativa
+válida, pero exigiría rehacer el tablero y sus filtros en esa herramienta.
 
 ## Consecuencias
 
