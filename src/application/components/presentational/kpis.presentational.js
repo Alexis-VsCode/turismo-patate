@@ -5,22 +5,10 @@
  *   Sin estado de negocio ni acceso a datos.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { numero } from '../../../shared/formato.js';
+import { numero, porcentaje, textoVariacion } from '../../../shared/formato.js';
 import { TEXTOS } from '../../../shared/textos.es.js';
 
 const DURACION_MS = 600;
-
-/** Porcentaje con una decimal y coma decimal; «—» cuando no hay base. */
-export function porcentaje(valor) {
-  return valor === null ? '—' : `${(valor * 100).toFixed(1).replace('.', ',')}%`;
-}
-
-/** Texto de la variación con signo, p. ej. «+11,9 %»; null si no hay año anterior con qué comparar. */
-export function textoVariacion(variacion) {
-  if (variacion === null || variacion === undefined) return null;
-  const signo = variacion > 0 ? '+' : variacion < 0 ? '−' : '';
-  return `${signo}${Math.abs(variacion * 100).toFixed(1).replace('.', ',')} %`;
-}
 
 /** Sin animación si el usuario pidió reducir movimiento o si la página no está visible (rAF se pausa). */
 const sinMovimiento = () => typeof window === 'undefined'
