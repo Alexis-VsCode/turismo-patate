@@ -157,9 +157,6 @@ svg { flex-shrink: 0; }
 .mapa-top-fila:hover { color: var(--verde-fuerte); text-decoration: underline; }
 .leaflet-tooltip { font-size: 12px; }
 
-.pie { max-width: 1440px; margin: 0 auto; padding: 4px 16px 20px; font-size: 12px; color: var(--texto-suave); }
-.pie p { margin: 2px 0; }
-.pie-seguridad summary { cursor: pointer; font-weight: 600; }
 
 /* Tableta */
 @media (max-width: 1180px) {
@@ -183,16 +180,38 @@ svg { flex-shrink: 0; }
   .grafico, .grafico-alto { height: 280px; }
 }
 
-/* Crédito de autoría */
-.credito {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
-  margin: 10px 0 6px; padding: 10px 14px; border-radius: var(--radio);
-  background: var(--azul-noche); color: #dbe8f7; font-size: 13px;
+
+/* Pie: bloque azul con tres columnas y tarjeta de autor */
+.pie { max-width: 1440px; margin: 0 auto; padding: 6px 16px 24px; }
+.pie-bloque { background: var(--azul-noche); color: #c7d8ec; border-radius: 14px; padding: 18px 20px; font-size: 13px; }
+.pie-columnas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.pie-columnas h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 14px; color: #fff; }
+.pie-columnas h3 svg { width: 18px; height: 18px; color: var(--lima); }
+.pie-columnas p { margin: 0; line-height: 1.5; }
+.autor {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px;
+  background: var(--azul-medio); border: 1px solid var(--lima); border-radius: 12px; padding: 12px 14px;
 }
-.credito strong { color: #fff; }
-.credito-linkedin {
-  display: inline-flex; align-items: center; gap: 6px; color: #fff; font-weight: 600;
-  text-decoration: none; background: #0A66C2; border-radius: 6px; padding: 5px 10px;
+.autor-avatar {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--verde); color: #fff; font-weight: 700; letter-spacing: .03em;
 }
-.credito-linkedin:hover { background: #004182; }
-.credito-linkedin svg { width: 18px; height: 18px; }
+.autor-texto { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
+.autor-texto strong { color: #fff; font-size: 15px; }
+.autor-redes { display: flex; gap: 8px; }
+.red {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 8px;
+  color: #fff; font-weight: 600; text-decoration: none;
+}
+.red svg { width: 16px; height: 16px; }
+.red-linkedin { background: #0A66C2; }
+.red-linkedin:hover { background: #004182; }
+.red-facebook { background: #1877F2; }
+.red-facebook:hover { background: #0c5bc7; }
+.red:focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; }
+@media (max-width: 760px) {
+  .pie-columnas { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .autor-redes { width: 100%; }
+  .red { flex: 1; justify-content: center; }
+}
