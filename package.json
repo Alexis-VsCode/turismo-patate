@@ -1,12 +1,22 @@
 {
   "name": "turismo-patate-dashboard",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Dashboard público de visitantes de establecimientos turísticos del cantón Patate",
+  "description": "Dashboard público de visitantes de los establecimientos turísticos del cantón Patate (Ecuador)",
+  "author": "Kevin Alexis Barrera Llerena (https://www.linkedin.com/in/alexisbarreradesarrolador/)",
+  "homepage": "https://alexis-vscode.github.io/turismo-patate/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alexis-VsCode/turismo-patate.git"
+  },
+  "license": "UNLICENSED",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "oraculo": "python tools/oraculo.py",
     "test": "node --test \"test/**/*.test.mjs\"",
-    "datos": "node tools/construir-datos.mjs --desde-archivo test/fixtures/piloto-publicado.xlsx"
+    "datos": "node tools/construir-datos.mjs --desde-archivo test/fixtures/piloto-publicado.xlsx",
+    "oraculo": "python tools/oraculo.py"
   }
 }
