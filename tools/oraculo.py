@@ -100,7 +100,12 @@ def escenario(filas, filtros):
     ultimo = max((f["mes"] for f in base_evo if f["anio"] == anio), default=-1)
     generos = ["Masculino", "Femenino"]
     eg = suma_por(sel, lambda f: f"{f['rango']}|{f['genero']}")
+    mes_f = filtros.get("mes")
+    ult = ultimo
+    act_v = sum(f["cantidad"] for f in base_evo if f["anio"] == anio and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
+    ant_v = sum(f["cantidad"] for f in base_evo if f["anio"] == (anio or 0) - 1 and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
     return {
+        "variacion": {"anio": anio, "actual": act_v, "anterior": ant_v},
         "kpis": {"total": total, "nacionales": nac, "extranjeros": total - nac},
         "evolucion": {"anio": anio, "actual": [v if i <= ultimo else None for i, v in enumerate(actual)], "anterior": anterior},
         "porMotivo": ordenado(suma_por(sel, lambda f: f["motivo"])),

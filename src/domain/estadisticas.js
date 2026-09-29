@@ -89,6 +89,33 @@ export function evolucionMensual(filas, anio) {
   };
 }
 
+/**
+ * Variación del período elegido contra el mismo período del año anterior.
+ * Con mes elegido compara ese mes; sin mes, compara de enero al último mes con datos del año de referencia
+ * (lo que va del año), para no enfrentar un año incompleto contra uno completo.
+ * @param {Array<object>} filas filas normalizadas
+ * @param {object} filtros estado de filtros
+ * @returns {{ anio: number|null, anioAnterior: number|null, actual: number, anterior: number, variacion: number|null }}
+ */
+export function variacionInteranual(filas, filtros) {
+  // Paso 1: misma base que la evolución mensual (todos los filtros salvo el período)
+  const base = filtrar(filas, filtros, ['anio', 'mes']);
+  const anio = anioDeReferencia(base, filtros.anio);
+  if (!anio) return { anio: null, anioAnterior: null, actual: 0, anterior: 0, variacion: null };
+  // Paso 2: meses comparables
+  const ultimoMes = base.reduce((max, f) => (f.anio === anio ? Math.max(max, f.mes) : max), -1);
+  const enPeriodo = (mes) => (filtros.mes === null || filtros.mes === undefined ? mes <= ultimoMes : mes === filtros.mes);
+  // Paso 3: totales de ambos años y variación relativa (null sin base)
+  let actual = 0;
+  let anterior = 0;
+  for (const f of base) {
+    if (!enPeriodo(f.mes)) continue;
+    if (f.anio === anio) actual += f.cantidad;
+    else if (f.anio === anio - 1) anterior += f.cantidad;
+  }
+  return { anio, anioAnterior: anio - 1, actual, anterior, variacion: anterior ? (actual - anterior) / anterior : null };
+}
+
 /** Lista ordenada de mayor a menor a partir de un Map de sumas. */
 export function ordenar(mapa) {
   return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));

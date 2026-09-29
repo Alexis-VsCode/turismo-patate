@@ -14,7 +14,7 @@ import { leerLibro } from '../../src/infrastructure/lector-libro.js';
 import { CONFIG } from '../../src/infrastructure/config.js';
 import {
   filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual,
-  porMotivo, porCiudad, porProvincia, porPais, edadGenero,
+  porMotivo, porCiudad, porProvincia, porPais, edadGenero, variacionInteranual,
 } from '../../src/domain/estadisticas.js';
 
 const datos = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
@@ -42,6 +42,9 @@ for (const { nombre, filtros: parciales } of escenarios) {
     assert.deepEqual(evo.actual, e.evolucion.actual);
     assert.deepEqual(evo.anterior, e.evolucion.anterior);
 
+    const v = variacionInteranual(datos.filas, filtros);
+    assert.deepEqual({ anio: v.anio, actual: v.actual, anterior: v.anterior }, e.variacion);
+    assert.equal(v.variacion, e.variacion.anterior ? (e.variacion.actual - e.variacion.anterior) / e.variacion.anterior : null);
     assert.deepEqual(porMotivo(sel), e.porMotivo);
     assert.deepEqual(porCiudad(sel), e.porCiudad);
     assert.deepEqual(porProvincia(sel), e.porProvincia);
@@ -55,4 +58,12 @@ test('sin visitantes los porcentajes son null, nunca NaN ni infinito', () => {
   assert.equal(k.total, 0);
   assert.equal(k.pctNacionales, null);
   assert.equal(k.pctExtranjeros, null);
+});
+
+test('variación sin datos del año anterior es null, nunca infinito', () => {
+  const filas = [{ anio: 2026, mes: 0, cantidad: 5, establecimiento: 'x', nacional: true, motivo: 'm', rangoEdad: '18-25', genero: 'F', procedencia: '' }];
+  const v = variacionInteranual(filas, filtrosVacios());
+  assert.equal(v.actual, 5);
+  assert.equal(v.anterior, 0);
+  assert.equal(v.variacion, null);
 });

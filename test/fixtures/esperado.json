@@ -1,5 +1,10 @@
 {
  "todo": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 43480,
+   "anterior": 38849
+  },
   "kpis": {
    "total": 96452,
    "nacionales": 79149,
@@ -306,6 +311,11 @@
   ]
  },
  "un-establecimiento": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 158,
+   "anterior": 151
+  },
   "kpis": {
    "total": 344,
    "nacionales": 290,
@@ -536,6 +546,11 @@
   ]
  },
  "2026-julio": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 6017,
+   "anterior": 5288
+  },
   "kpis": {
    "total": 6017,
    "nacionales": 4995,
@@ -842,6 +857,11 @@
   ]
  },
  "negocios-femenino": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 1329,
+   "anterior": 1177
+  },
   "kpis": {
    "total": 2847,
    "nacionales": 2321,
@@ -1128,6 +1148,11 @@
   ]
  },
  "solo-extranjeros": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 7610,
+   "anterior": 6999
+  },
   "kpis": {
    "total": 17303,
    "nacionales": 0,
@@ -1260,6 +1285,11 @@
   ]
  },
  "ciudad-ambato-2025": {
+  "variacion": {
+   "anio": 2025,
+   "actual": 10481,
+   "anterior": 0
+  },
   "kpis": {
    "total": 10481,
    "nacionales": 10481,
@@ -1361,6 +1391,11 @@
   ]
  },
  "pais-colombia": {
+  "variacion": {
+   "anio": 2026,
+   "actual": 1871,
+   "anterior": 1771
+  },
   "kpis": {
    "total": 4287,
    "nacionales": 0,
