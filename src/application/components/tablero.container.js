@@ -25,9 +25,10 @@ function coloresDelTema() {
   const css = getComputedStyle(document.documentElement);
   const v = (n) => css.getPropertyValue(n).trim();
   return {
-    verde: v('--verde'), verdeFuerte: v('--verde-fuerte'), verdeClaro: v('--verde-claro'), lima: v('--lima'),
-    amarillo: v('--amarillo'), naranja: v('--naranja'), magenta: v('--magenta'), oliva: v('--oliva'),
-    texto: v('--texto'), rejilla: v('--rejilla'), superficie: v('--superficie'),
+    verde: v('--verde'), verdeTexto: v('--verde-texto'), lima: v('--lima'), amarillo: v('--amarillo'),
+    oliva: v('--oliva'), bosque: v('--bosque'), tendencia: v('--tendencia'),
+    texto: v('--texto'), rejilla: v('--rejilla'), superficie: v('--superficie'), borde: v('--borde'),
+    textoSobreColor: v('--texto-sobre-color'),
   };
 }
 
@@ -160,10 +161,12 @@ export function montarTablero(facade, config) {
   // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
   setInterval(() => { if (facade.tocaActualizar()) facade.cargar(true); }, REVISION_AUTOMATICA_MS);
   document.addEventListener('visibilitychange', () => { if (facade.tocaActualizar()) facade.cargar(true); });
-  new ResizeObserver(() => {
+  const observador = new ResizeObserver(() => {
     Object.values(graficos).forEach((g) => g.resize());
     if (mapa) mapa.redimensionar();
-  }).observe($('tablero'));
+  });
+  observador.observe($('tablero'));
+  document.querySelectorAll('.grafico').forEach((zona) => observador.observe(zona));
 
   // Paso 6: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;

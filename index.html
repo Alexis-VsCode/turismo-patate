@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#0B2545">
+  <meta name="theme-color" content="#0f3a1d">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <script src="src/shared/tema-inicial.js"></script>
@@ -64,7 +64,7 @@
       <section class="kpis" aria-label="Resumen de visitantes">
         <div class="tarjeta kpi-total">
           <div class="kpi-encabezado"><span>Total visitantes</span>
-            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 12l10-4 12 4 10-4v22l-10 4-12-4-10 4z" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M20 26s-6-6-6-10a6 6 0 0 1 12 0c0 4-6 10-6 10z" fill="#E5007E"/><circle cx="20" cy="16" r="2.2" fill="#fff"/></svg>
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 12l10-4 12 4 10-4v22l-10 4-12-4-10 4z" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M20 26s-6-6-6-10a6 6 0 0 1 12 0c0 4-6 10-6 10z" fill="#E4E430" stroke="#0f3a1d" stroke-width="1"/><circle cx="20" cy="16" r="2.2" fill="#0f3a1d"/></svg>
           </div>
           <div id="k-total" class="kpi-valor">—</div>
           <div id="k-variacion" class="kpi-variacion neutra"></div>
@@ -75,7 +75,7 @@
             <span>Nacionales</span><strong id="k-nacionales">—</strong>
           </div>
           <div class="tarjeta kpi-chica">
-            <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14" fill="#5dade2"/><path d="M10 10c4 1 5 4 3 6s1 5 4 5 2 5 0 7M22 7c-1 3 1 5 4 5s4 3 3 6M8 22c3 0 4 2 4 5" fill="none" stroke="#30A848" stroke-width="3.2" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M10 10c4 1 5 4 3 6s1 5 4 5 2 5 0 7M22 7c-1 3 1 5 4 5s4 3 3 6M8 22c3 0 4 2 4 5" fill="none" stroke="#30A848" stroke-width="3.2" stroke-linecap="round"/></svg>
             <span>Extranjeros</span><strong id="k-extranjeros">—</strong>
           </div>
         </div>
@@ -117,23 +117,28 @@
       <div id="chips" class="chips" aria-label="Filtros aplicados" hidden></div>
       <div class="paneles">
         <article class="panel panel-evolucion">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h2>Evolución de visitantes por mes</h2><p id="sub-evolucion" class="panel-sub">Comparación con el año anterior</p></div></header>
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h2>Evolución de visitantes por mes</h2></header>
+          <p id="sub-evolucion" class="panel-sub">Comparación con el año anterior</p>
           <div id="g-evolucion" class="grafico"></div>
         </article>
         <article class="panel panel-dona">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4v8l6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h2>Nacionales vs extranjeros</h2><p class="panel-sub">Participación en el total</p></div></header>
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4v8l6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h2>Nacionales vs extranjeros</h2></header>
+          <p class="panel-sub">Participación en el total</p>
           <div id="g-dona" class="grafico"></div>
         </article>
         <article class="panel">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><div><h2>Motivo de visita</h2><p class="panel-sub">Toque una barra para filtrar</p></div></header>
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><h2>Motivo de visita</h2></header>
+          <p class="panel-sub">Toque una barra para filtrar</p>
           <div id="g-motivo" class="grafico grafico-alto"></div>
         </article>
         <article class="panel">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><div><h2>Origen de visitantes</h2><p class="panel-sub">Provincias, ciudades y países</p></div></header>
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><h2>Origen de visitantes</h2></header>
+          <p class="panel-sub">Provincias, ciudades y países</p>
           <div id="g-mapa" class="grafico grafico-alto mapa"></div>
         </article>
         <article class="panel">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><div><h2>Distribución por edad y género</h2><p class="panel-sub">Rangos de edad</p></div></header>
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><h2>Distribución por edad y género</h2></header>
+          <p class="panel-sub">Rangos de edad</p>
           <div id="g-edad" class="grafico grafico-alto"></div>
         </article>
         <p id="sin-datos" class="sin-datos" hidden>Sin visitantes para los filtros elegidos. Pulse «Limpiar filtros».</p>
@@ -174,9 +179,9 @@
         </div>
         <nav class="autor-redes" aria-label="Redes del autor">
           <a class="red red-linkedin" href="https://www.linkedin.com/in/alexisbarreradesarrolador/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h3v10H5zM6.5 4.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM10 9h2.9v1.4c.5-.8 1.6-1.6 3.1-1.6 2.6 0 3.5 1.7 3.5 4.3V19h-3v-5.2c0-1.2-.3-2.2-1.5-2.2s-1.9.9-1.9 2.2V19H10z" fill="currentColor"/></svg>LinkedIn</a>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
           <a class="red red-facebook" href="https://www.facebook.com/alexis.barrerallerena1804" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7.5H16l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.2 0-3.8 1.3-3.8 3.8v2.4H8v3h2.5V21z" fill="currentColor"/></svg>Facebook</a>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>Facebook</a>
         </nav>
       </div>
     </div>

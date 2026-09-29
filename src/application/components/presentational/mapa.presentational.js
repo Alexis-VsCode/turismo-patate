@@ -43,9 +43,11 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
   const mapa = L.map(contenedor, { center: [-1.6, -78.4], zoom: 6, zoomSnap: 0.25, worldCopyJump: true, scrollWheelZoom: false, attributionControl: true });
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18, referrerPolicy: 'strict-origin-when-cross-origin', crossOrigin: false,
-    attribution: '© OpenStreetMap',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(mapa);
   mapa.attributionControl.addAttribution('Límites: geoBoundaries (CC0)');
+  // El prefijo por defecto de Leaflet incluye una bandera que la hoja de estilos de la librería fuerza con !important
+  mapa.attributionControl.setPrefix('<a href="https://leafletjs.com" title="Librería de mapas interactivos">Leaflet</a>');
   let primeraVez = true;
 
   // Paso 1: capa de provincias con índice por nombre normalizado
@@ -60,9 +62,9 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     const intensidad = maxProvincia ? 0.12 + 0.5 * Math.sqrt(valor / maxProvincia) : 0.08;
     const elegida = clave === provinciaElegida;
     return {
-      color: elegida || clave === resaltada ? colores.naranja : colores.verde,
+      color: elegida || clave === resaltada ? colores.bosque : colores.verdeTexto,
       weight: elegida ? 3 : clave === resaltada ? 2.5 : 1,
-      fillColor: elegida ? colores.naranja : colores.verde,
+      fillColor: elegida ? colores.amarillo : colores.verde,
       fillOpacity: elegida ? 0.45 : intensidad,
     };
   };
@@ -109,9 +111,9 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     }
   }
 
-  function burbuja(lat, lon, nombre, valor, maximo, color, procedencia) {
+  function burbuja(lat, lon, nombre, valor, maximo, relleno, borde, procedencia) {
     const marca = L.circleMarker([lat, lon], {
-      radius: radioDeBurbuja(valor, maximo), color: '#ffffff', weight: 1.5, fillColor: color, fillOpacity: 0.78,
+      radius: radioDeBurbuja(valor, maximo), color: borde, weight: 1.5, fillColor: relleno, fillOpacity: 0.78,
     });
     marca.bindTooltip(nodoTooltip(nombre, valor), { direction: 'top', offset: [0, -4] });
     marca.on('click', () => alElegir(procedencia));
@@ -146,13 +148,13 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
       const maximo = paises.reduce((m, p) => Math.max(m, p.valor), 0);
       for (const p of paises) {
         const c = catalogo.coordPaises.get(claveNormalizada(p.nombre));
-        if (c) puntos.push(burbuja(c.lat, c.lon, p.nombre, p.valor, maximo, colores.naranja, `P:${p.nombre}`).getLatLng());
+        if (c) puntos.push(burbuja(c.lat, c.lon, p.nombre, p.valor, maximo, colores.amarillo, colores.bosque, `P:${p.nombre}`).getLatLng());
       }
     } else {
       const maximo = ciudades.reduce((m, c) => Math.max(m, c.valor), 0);
       for (const c of ciudades) {
         const k = catalogo.ciudades.get(claveNormalizada(c.nombre));
-        if (k) puntos.push(burbuja(k.lat, k.lon, c.nombre, c.valor, maximo, colores.verdeFuerte, `C:${c.nombre}`).getLatLng());
+        if (k) puntos.push(burbuja(k.lat, k.lon, c.nombre, c.valor, maximo, colores.verdeTexto, colores.superficie, `C:${c.nombre}`).getLatLng());
       }
     }
     pintarTopPaises(paises, !modoExtranjero && procedencia === '');

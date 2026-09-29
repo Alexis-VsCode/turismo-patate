@@ -17,6 +17,7 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.mjs\"",
     "datos": "node tools/construir-datos.mjs --desde-archivo test/fixtures/piloto-publicado.xlsx",
-    "oraculo": "python tools/oraculo.py"
+    "oraculo": "python tools/oraculo.py",
+    "servir": "node tools/servir.mjs"
   }
 }
