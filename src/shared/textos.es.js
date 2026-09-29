@@ -17,6 +17,13 @@ export const TEXTOS = Object.freeze({
   nacionales: 'Nacionales',
   extranjeros: 'Extranjeros',
   visitantes: 'visitantes',
+  frescura: {
+    alDia: 'Datos al día',
+    retrasado: 'Datos con retraso',
+    vencido: 'Datos desactualizados',
+    desconocido: 'Sin verificar',
+  },
+  frescuraDetalle: (tiempo) => `Publicados ${tiempo}`,
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
   estado: (consulta, publicado, establecimientos, registros) =>

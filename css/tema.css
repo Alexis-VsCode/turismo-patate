@@ -39,6 +39,9 @@
   /* Estados */
   --sube: #17752e;
   --baja: #8a5a00;
+  --fresco: #17752e;
+  --retraso: #E4E430;
+  --vencido: #8a5a00;
   --aviso-fondo: #fff8e1;
   --aviso-borde: #f3dc8b;
   --aviso-texto: #6b5200;
@@ -84,6 +87,9 @@
   --select-borde: #5f8f6b;
   --sube: #5bd07a;
   --baja: #e8c25a;
+  --fresco: #5bd07a;
+  --retraso: #E4E430;
+  --vencido: #e8a23a;
   --aviso-fondo: #2b2a0c;
   --aviso-borde: #5d5a1a;
   --aviso-texto: #f0e98a;
@@ -152,11 +158,18 @@ svg { flex-shrink: 0; }
   display: flex; align-items: center; gap: var(--esp-3);
   font-size: 13px; color: var(--texto-suave);
 }
-.en-vivo {
-  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
-  font-weight: 600; color: var(--sube); font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+.chip-frescura {
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+  padding: 6px 12px; border: 1px solid var(--borde); border-radius: 999px; background: var(--superficie);
+  font-size: 12px; line-height: 1.2;
 }
-.punto { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 0 rgba(48, 168, 72, .6); animation: latido 2s infinite; }
+.frescura-etiqueta { font-weight: 700; color: var(--texto); }
+.frescura-detalle { color: var(--texto-suave); }
+.frescura-detalle:empty { display: none; }
+.punto { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--texto-suave); }
+.chip-frescura[data-estado="alDia"] .punto { background: var(--fresco); box-shadow: 0 0 0 0 rgba(48, 168, 72, .6); animation: latido 2s infinite; }
+.chip-frescura[data-estado="retrasado"] .punto { background: var(--retraso); outline: 1px solid var(--oliva); }
+.chip-frescura[data-estado="vencido"] .punto { background: var(--vencido); }
 @keyframes latido { 70% { box-shadow: 0 0 0 7px rgba(48, 168, 72, 0); } 100% { box-shadow: 0 0 0 0 rgba(48, 168, 72, 0); } }
 .estado-texto { flex: 1; min-width: 0; }
 
@@ -357,10 +370,10 @@ svg { flex-shrink: 0; }
   .cabecera-banner { min-height: 60px; padding: var(--esp-2) var(--esp-3); }
   .cabecera-frase { display: none; }
   .barra-estado { padding: 0 var(--esp-3); }
-  /* En celular el texto ocupa su propia fila y los botones quedan a la derecha de «En vivo» */
+  /* En celular el texto ocupa su propia fila y los botones quedan a la derecha del chip de frescura */
   .barra-estado { flex-wrap: wrap; row-gap: var(--esp-2); }
   .estado-texto { order: 3; flex: 1 1 100%; font-size: 12px; line-height: 1.35; }
-  .en-vivo { margin-right: auto; }
+  .chip-frescura { margin-right: auto; }
   .boton-actualizar { width: 44px; height: 44px; padding: 0; border-radius: 50%; }
   .boton-actualizar #btn-actualizar-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .tablero { padding: var(--esp-3); gap: var(--esp-3); }

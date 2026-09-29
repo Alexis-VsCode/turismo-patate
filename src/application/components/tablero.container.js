@@ -12,6 +12,7 @@ import { crearComboBuscable } from './compartidos/combo-buscable.js';
 import { opcionesEvolucion, opcionesDona, opcionesMotivo, opcionesEdadGenero } from './presentational/graficos.presentational.js';
 import { crearMapa } from './presentational/mapa.presentational.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
+import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
@@ -127,10 +128,15 @@ export function montarTablero(facade, config) {
     );
   }
 
+  function pintarSalud() {
+    pintarFrescura({ chip: $('chip-frescura'), etiqueta: $('frescura-etiqueta'), detalle: $('frescura-detalle') }, facade.frescura());
+  }
+
   facade.suscribir((evento) => {
     if (evento === 'datos') {
       $('error').hidden = true;
       pintarEstado();
+      pintarSalud();
       pintarFiltros();
       pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos);
       pintarPaneles();
@@ -159,8 +165,12 @@ export function montarTablero(facade, config) {
   });
 
   // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
-  setInterval(() => { if (facade.tocaActualizar()) facade.cargar(true); }, REVISION_AUTOMATICA_MS);
-  document.addEventListener('visibilitychange', () => { if (facade.tocaActualizar()) facade.cargar(true); });
+  const revisar = () => {
+    pintarSalud();
+    if (facade.tocaActualizar()) facade.cargar(true);
+  };
+  setInterval(revisar, REVISION_AUTOMATICA_MS);
+  document.addEventListener('visibilitychange', revisar);
   const observador = new ResizeObserver(() => {
     Object.values(graficos).forEach((g) => g.resize());
     if (mapa) mapa.redimensionar();

@@ -1,7 +1,7 @@
 /**
  * @file formato.js
  * @description Compartido. Formato de números, porcentajes y fecha con hora para la interfaz (separador de
- *   miles y coma decimal de Ecuador, hora de Guayaquil).
+ *   miles y coma decimal de Ecuador, hora de Guayaquil) y tiempo transcurrido.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 
@@ -32,4 +32,17 @@ export function fechaHora(valor) {
   if (Number.isNaN(fecha.getTime())) return '—';
   const p = Object.fromEntries(formatoFechaHora.formatToParts(fecha).map((x) => [x.type, x.value]));
   return `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}:${p.second}`;
+}
+
+/** Tiempo transcurrido en lenguaje natural a partir de minutos, p. ej. «hace 2 h 15 min»; «—» sin dato. */
+export function tiempoTranscurrido(minutos) {
+  if (minutos === null || minutos === undefined) return '—';
+  if (minutos < 1) return 'hace menos de 1 min';
+  if (minutos < 60) return `hace ${minutos} min`;
+  if (minutos < 60 * 24) {
+    const resto = minutos % 60;
+    return `hace ${Math.floor(minutos / 60)} h${resto ? ` ${resto} min` : ''}`;
+  }
+  const dias = Math.floor(minutos / (60 * 24));
+  return `hace ${dias} ${dias === 1 ? 'día' : 'días'}`;
 }

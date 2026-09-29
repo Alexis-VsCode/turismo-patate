@@ -6,7 +6,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { numero, porcentaje, textoVariacion, fechaHora } from '../../src/shared/formato.js';
+import { numero, porcentaje, textoVariacion, fechaHora, tiempoTranscurrido } from '../../src/shared/formato.js';
 
 test('numero usa el separador de miles de Ecuador y redondea', () => {
   assert.equal(numero(96452), '96.452');
@@ -35,4 +35,14 @@ test('fechaHora da día, mes, año y hora con segundos en hora de Ecuador, y «�
   assert.equal(fechaHora('2026-09-29T05:05:09Z'), '29/09/2026 00:05:09');
   assert.equal(fechaHora(null), '—');
   assert.equal(fechaHora('no es fecha'), '—');
+});
+
+test('tiempoTranscurrido usa minutos, horas y días y «—» sin dato', () => {
+  assert.equal(tiempoTranscurrido(0), 'hace menos de 1 min');
+  assert.equal(tiempoTranscurrido(7), 'hace 7 min');
+  assert.equal(tiempoTranscurrido(60), 'hace 1 h');
+  assert.equal(tiempoTranscurrido(135), 'hace 2 h 15 min');
+  assert.equal(tiempoTranscurrido(60 * 24 * 3 + 30), 'hace 3 días');
+  assert.equal(tiempoTranscurrido(60 * 24), 'hace 1 día');
+  assert.equal(tiempoTranscurrido(null), '—');
 });

@@ -11,9 +11,16 @@ export const CONFIG = Object.freeze({
   INTERVALO_AUTO_MS: 5 * 60 * 1000,
   /** Al cambiar de establecimiento se reusa la descarga si es más reciente que esto. */
   REUSO_MINIMO_MS: 60 * 1000,
+  /**
+   * Edad máxima, en minutos, de la publicación para cada estado del chip de frescura. Provisionales: el cron
+   * de Actions se programa cada 5 minutos, pero GitHub puede retrasarlo; se recalibran con el historial real.
+   */
+  UMBRALES_FRESCURA: Object.freeze({ alDiaMin: 20, retrasadoMin: 60 }),
   /** Límites de la descarga: una respuesta lenta o gigante produce un aviso, nunca un cuelgue. */
   TIMEOUT_MS: 15 * 1000,
   MAX_BYTES: 20 * 1024 * 1024,
+  /** Tiempo máximo de la descarga de la hoja en el build de Actions (el libro completo pesa más que datos.json). */
+  TIMEOUT_HOJA_MS: 60 * 1000,
   MAX_PESTANAS: 300,
   MAX_FILAS_PESTANA: 5000,
   /** Pestaña con listas y coordenadas. Toda pestaña que empieza por '_' o contiene 'plantilla' no es establecimiento. */

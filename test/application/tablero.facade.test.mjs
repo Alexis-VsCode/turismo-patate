@@ -139,3 +139,16 @@ test('un suscriptor que lanza no convierte una carga correcta en error ni oculta
   assert.equal(errores.length, 1);
   assert.match(errores[0].message, /falla del pintado/);
 });
+
+test('frescura es «desconocido» sin datos y sigue al reloj con la fecha de publicación', async () => {
+  const { facade, ctx } = montar();
+  assert.deepEqual(facade.frescura(), { estado: 'desconocido', minutos: null });
+  await facade.cargar(true);
+  const publicado = Date.parse(DATOS.generadoEn);
+  ctx.ahora = publicado + 5 * 60 * 1000;
+  assert.deepEqual(facade.frescura(), { estado: 'alDia', minutos: 5 });
+  ctx.ahora = publicado + 40 * 60 * 1000;
+  assert.equal(facade.frescura().estado, 'retrasado');
+  ctx.ahora = publicado + 90 * 60 * 1000;
+  assert.equal(facade.frescura().estado, 'vencido');
+});

@@ -11,6 +11,7 @@ import {
   filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual, porMotivo,
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
+import { estadoFrescura } from '../domain/frescura.js';
 
 /** Texto legible de un valor de procedencia ('NAC', 'EXT', 'C:…', 'P:…', 'PR:…'). */
 function textoProcedencia(valor) {
@@ -32,7 +33,7 @@ const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
  * Crea la fachada del tablero.
  * @param {{
  *   obtener: () => Promise<object>,
- *   config: { REUSO_MINIMO_MS: number, INTERVALO_AUTO_MS: number },
+ *   config: { REUSO_MINIMO_MS: number, INTERVALO_AUTO_MS: number, UMBRALES_FRESCURA: { alDiaMin: number, retrasadoMin: number } },
  *   reloj?: () => number,
  *   esVisible?: () => boolean,
  *   reportarError?: (error: Error) => void,
@@ -117,6 +118,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }
 
+  /** Frescura de la publicación de los datos según el reloj actual; «desconocido» mientras no haya datos. */
+  function frescura() {
+    return estadoFrescura(estado.datos && estado.datos.generadoEn, reloj(), config.UMBRALES_FRESCURA);
+  }
+
   /** Opciones de todos los combos, con el valor actual de cada filtro. */
   function opciones() {
     if (!estado.datos) return null;
@@ -182,7 +188,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, cargar, tocaActualizar, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, cargar, tocaActualizar, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
   };
 }
