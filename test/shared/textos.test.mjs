@@ -40,3 +40,10 @@ test('el centro de la dona y la nota del mapa nombran el periodo sin inventar a�
 test('la frescura del chip habla de publicación y no de actualización', () => {
   for (const texto of Object.values(TEXTOS.frescura)) assert.doesNotMatch(texto, /actualiz/i);
 });
+
+test('los avisos del intervalo usan los minutos que reciben, sin cifras escritas a mano', () => {
+  assert.match(TEXTOS.estado(10, 'a', 'b', '1', '2'), /cada 10 minutos/);
+  assert.match(TEXTOS.sinDatosAun(10), /cada 10 minutos/);
+  assert.match(TEXTOS.frescuraAyuda(10), /cada 10 minutos/);
+  assert.match(TEXTOS.estado(1, 'a', 'b', '1', '2'), /cada minuto/);
+});

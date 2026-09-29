@@ -209,3 +209,46 @@ test('la lista de motivos no se reduce al motivo elegido, para poder cambiar de 
   assert.ok(facade.vista().motivos.length > 1, 'los demás filtros siguen aplicándose a la lista');
   assert.ok(facade.vista().motivos.reduce((s, m) => s + m.valor, 0) < completa.reduce((s, m) => s + m.valor, 0));
 });
+
+test('el combo de años une los años con visitantes y los del catálogo, de mayor a menor', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const anios = facade.opciones().anio.filter((o) => o.valor !== '').map((o) => o.valor);
+  assert.deepEqual(anios, [...DATOS.catalogo.anios, ...DATOS.filas.map((f) => f.anio)]
+    .filter((a, i, l) => l.indexOf(a) === i).sort((a, b) => b - a).map(String));
+  assert.ok(DATOS.catalogo.anios.some((a) => !DATOS.filas.some((f) => f.anio === a)), 'el libro de prueba tiene un año del catálogo sin visitantes');
+});
+
+test('un año con visitantes que el catálogo no lista también aparece en el combo', async () => {
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, anios: [] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const anios = facade.opciones().anio.filter((o) => o.valor !== '').map((o) => o.valor);
+  assert.deepEqual(anios, [...new Set(DATOS.filas.map((f) => f.anio))].sort((a, b) => b - a).map(String));
+});
+
+test('un motivo del catálogo sin visitantes aparece en el combo de motivos', async () => {
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, motivos: [...DATOS.catalogo.motivos, 'Motivo nuevo de la hoja'] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const motivos = facade.opciones().motivo.map((o) => o.valor);
+  assert.ok(motivos.includes('Motivo nuevo de la hoja'));
+  assert.equal(new Set(motivos).size, motivos.length, 'sin motivos repetidos');
+});
+
+test('elegir un año del catálogo sin visitantes deja el tablero en cero sin romper nada', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const vacio = Math.max(...DATOS.catalogo.anios);
+  facade.fijarFiltro('anio', vacio);
+  const v = facade.vista();
+  assert.equal(v.kpis.total, 0);
+  assert.equal(v.kpis.pctNacionales, null);
+  assert.equal(v.textos.periodo, `durante el ${vacio}`);
+});
+
+test('el intervalo de actualización que se muestra sale de la configuración', async () => {
+  const facade = crearTableroFacade({ obtener: async () => DATOS, config: { ...CONFIG, INTERVALO_AUTO_MS: 10 * 60 * 1000 } });
+  assert.equal(facade.intervaloMinutos(), 10);
+  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).intervaloMinutos(), 5);
+});

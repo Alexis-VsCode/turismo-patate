@@ -46,6 +46,8 @@ export function empaquetar(datos, generadoEn, paisLocal) {
     diccionarios: Object.fromEntries(DICCIONARIOS.map((d) => [d, [...dic[d].keys()]])),
     filas,
     catalogo: {
+      anios: c.anios,
+      motivos: c.motivos,
       provincias: c.provincias,
       generos: c.generos,
       ciudades: [...c.ciudades.values()].map((x) => [x.nombre, x.provincia, x.lat, x.lon]),
@@ -100,6 +102,7 @@ export function desempaquetar(json, claveNormalizada) {
   }
   // Paso 3: catálogo del mapa
   const cat = json.catalogo || {};
+  const textos = (lista) => (Array.isArray(lista) ? lista.filter(esTexto).map(limpiarTexto) : []);
   const ciudades = new Map();
   for (const x of cat.ciudades || []) {
     if (Array.isArray(x) && esTexto(x[0]) && esNumero(x[2]) && esNumero(x[3])) {
@@ -112,8 +115,10 @@ export function desempaquetar(json, claveNormalizada) {
       coordPaises.set(claveNormalizada(x[0]), { nombre: limpiarTexto(x[0]), lat: x[1], lon: x[2] });
     }
   }
-  // Paso 4: rechazos y avisos se limpian como texto; el resultado tiene la forma de leerLibro() más generadoEn
-  const textos = (lista) => (Array.isArray(lista) ? lista.filter(esTexto).map(limpiarTexto) : []);
+  // Paso 4: años y motivos del catálogo; un paquete anterior que no los trae da listas vacías
+  const anios = [...new Set((Array.isArray(cat.anios) ? cat.anios : []).filter((a) => Number.isInteger(a) && a >= 2000 && a <= 2100))]
+    .sort((a, b) => b - a);
+  // Paso 5: rechazos y avisos se limpian como texto; el resultado tiene la forma de leerLibro() más generadoEn
   const limpiarAviso = (a) => ({
     pestana: limpiarTexto(a && a.pestana), fila: esNumero(a && a.fila) ? a.fila : undefined, motivo: limpiarTexto(a && a.motivo), mensaje: limpiarTexto(a && a.mensaje),
   });
@@ -122,8 +127,8 @@ export function desempaquetar(json, claveNormalizada) {
     filas,
     establecimientos: dic.establecimientos.filter(esClaveSegura),
     catalogo: {
-      completo: Boolean(cat.completo), provincias: textos(cat.provincias), generos: textos(cat.generos),
-      paises: [...coordPaises.values()].map((p) => p.nombre), motivos: [], ciudades, coordPaises,
+      completo: Boolean(cat.completo), anios, provincias: textos(cat.provincias), generos: textos(cat.generos),
+      paises: [...coordPaises.values()].map((p) => p.nombre), motivos: textos(cat.motivos), ciudades, coordPaises,
     },
     rechazos: (Array.isArray(json.rechazos) ? json.rechazos : []).map(limpiarAviso),
     avisos: (Array.isArray(json.avisos) ? json.avisos : []).map(limpiarAviso),

@@ -6,6 +6,9 @@
  */
 import { porcentaje } from './formato.js';
 
+/** «cada minuto» o «cada N minutos», para que ningún texto repita a mano la cifra de config.js. */
+const cadaMinutos = (n) => (n === 1 ? 'cada minuto' : `cada ${n} minutos`);
+
 export const TEXTOS = Object.freeze({
   todos: 'Todos',
   todosEstablecimientos: 'Todos los establecimientos',
@@ -25,12 +28,13 @@ export const TEXTOS = Object.freeze({
     vencido: 'Publicación detenida',
     desconocido: 'Sin verificar',
   },
+  frescuraAyuda: (minutos) => `Actualizar vuelve a descargar lo ya publicado. Los datos de la hoja se publican solos ${cadaMinutos(minutos)}: si la última publicación es antigua, la publicación automática se detuvo.`,
   frescuraDetalle: (tiempo) => `Última ${tiempo}`,
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
-  estado: (consulta, publicado, establecimientos, registros) =>
-    `Se actualiza automáticamente cada 5 minutos · Actualizado el ${consulta} · Datos publicados el ${publicado} · ${establecimientos} establecimientos · ${registros} registros`,
-  sinDatosAun: 'Se actualiza automáticamente cada 5 minutos · Cargando datos por primera vez…',
+  estado: (minutos, consulta, publicado, establecimientos, registros) =>
+    `Se actualiza automáticamente ${cadaMinutos(minutos)} · Actualizado el ${consulta} · Datos publicados el ${publicado} · ${establecimientos} establecimientos · ${registros} registros`,
+  sinDatosAun: (minutos) => `Se actualiza automáticamente ${cadaMinutos(minutos)} · Cargando datos por primera vez…`,
   errorDescarga: (hora) => (hora
     ? `No se pudo actualizar. Se muestran los datos de las ${hora}.`
     : 'No se pudieron cargar los datos. Revise su conexión y pulse «Actualizar».'),

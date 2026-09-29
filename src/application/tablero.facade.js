@@ -139,6 +139,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }
 
+  /** Cada cuántos minutos se actualiza el tablero, tomado de la configuración para que ningún texto repita la cifra. */
+  function intervaloMinutos() {
+    return Math.round(config.INTERVALO_AUTO_MS / 60000);
+  }
+
   /** Frescura de la publicación de los datos según el reloj actual; «desconocido» mientras no haya datos. */
   function frescura() {
     return estadoFrescura(estado.datos && estado.datos.generadoEn, reloj(), config.UMBRALES_FRESCURA);
@@ -148,8 +153,8 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function opciones() {
     if (!estado.datos) return null;
     const { filas, establecimientos, catalogo } = estado.datos;
-    // Paso 1: las opciones salen de lo que existe en los datos, no de listas fijas
-    const op = opcionesDeFiltros(filas);
+    // Paso 1: las opciones salen de la hoja: de los visitantes y, en años y motivos, también del catálogo
+    const op = opcionesDeFiltros(filas, catalogo);
     const todos = { valor: '', texto: TEXTOS.todos };
     // Paso 2: las provincias solo cuentan si hay visitantes nacionales, porque el filtro las aplica a ellos
     const provincias = [...new Set(filas.filter((x) => x.nacional && x.provincia).map((x) => x.provincia))]
@@ -221,7 +226,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
   };
 }

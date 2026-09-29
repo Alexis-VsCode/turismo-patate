@@ -136,7 +136,7 @@ export function montarTablero(facade, config) {
     const { datos, ultimaDescarga } = facade.estado;
     horaDatos = fechaHora(ultimaDescarga).slice(11, 16);
     $('estado-texto').textContent = TEXTOS.estado(
-      fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
+      facade.intervaloMinutos(), fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
       numero(datos.establecimientos.length), numero(datos.filas.length),
     );
   }
@@ -198,7 +198,8 @@ export function montarTablero(facade, config) {
 
   // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
-  $('estado-texto').textContent = TEXTOS.sinDatosAun;
+  $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.intervaloMinutos());
+  $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.intervaloMinutos());
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })
     .then((r) => r.json())
     .then((geojson) => {

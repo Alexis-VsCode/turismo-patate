@@ -156,13 +156,27 @@ export function edadGenero(filas, generos) {
   };
 }
 
-/** Opciones de los combos a partir de los datos cargados. */
-export function opcionesDeFiltros(filas) {
+/**
+ * Opciones de los combos. Años y motivos son listas cortas que la hoja también ofrece en sus desplegables, así que
+ * se unen los que tienen visitantes con los del catálogo; ciudades y países salen solo de los visitantes.
+ * @param {Array<object>} filas visitantes ya normalizados
+ * @param {{ anios?: number[], motivos?: string[] }} [catalogo] listas del catálogo de la hoja
+ */
+export function opcionesDeFiltros(filas, catalogo = {}) {
   const unicos = (fn) => [...new Set(filas.map(fn))];
+  const unir = (deLasFilas, delCatalogo, clave = (v) => v) => {
+    const vistos = new Set();
+    return [...deLasFilas, ...(delCatalogo || [])].filter((v) => {
+      const k = clave(v);
+      if (vistos.has(k)) return false;
+      vistos.add(k);
+      return true;
+    });
+  };
   return {
-    anios: unicos((f) => f.anio).sort((a, b) => b - a),
+    anios: unir(unicos((f) => f.anio), catalogo.anios).sort((a, b) => b - a),
     ciudades: unicos((f) => (f.nacional ? f.ciudad : '')).filter(Boolean).sort((a, b) => a.localeCompare(b, 'es')),
     paises: unicos((f) => (f.nacional ? '' : f.pais)).filter(Boolean).sort((a, b) => a.localeCompare(b, 'es')),
-    motivos: unicos((f) => f.motivo).sort((a, b) => a.localeCompare(b, 'es')),
+    motivos: unir(unicos((f) => f.motivo), catalogo.motivos, (m) => m.toLowerCase()).sort((a, b) => a.localeCompare(b, 'es')),
   };
 }

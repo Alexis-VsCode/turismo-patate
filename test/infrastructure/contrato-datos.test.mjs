@@ -53,3 +53,29 @@ test('rechaza un paquete alterado: índice fuera de rango, tipo inválido o vers
   const c = copia(); c.version = 99;
   assert.throws(() => desempaquetar(c, claveNormalizada), /Paquete/);
 });
+
+test('el paquete lleva los años y los motivos del catálogo y vuelven intactos', () => {
+  assert.deepEqual(json.catalogo.anios, original.catalogo.anios);
+  assert.ok(json.catalogo.anios.length > 0);
+  assert.deepEqual(vuelta.catalogo.anios, original.catalogo.anios);
+  assert.deepEqual(vuelta.catalogo.motivos, original.catalogo.motivos);
+  assert.ok(vuelta.catalogo.motivos.length > 0);
+});
+
+test('un paquete anterior, sin años ni motivos en el catálogo, sigue siendo válido', () => {
+  const viejo = JSON.parse(JSON.stringify(json));
+  delete viejo.catalogo.anios;
+  delete viejo.catalogo.motivos;
+  const datos = desempaquetar(viejo, claveNormalizada);
+  assert.deepEqual(datos.catalogo.anios, []);
+  assert.deepEqual(datos.catalogo.motivos, []);
+  assert.equal(datos.filas.length, original.filas.length);
+});
+
+test('los años alterados del catálogo se descartan: texto, decimales y fuera de rango', () => {
+  const alterado = JSON.parse(JSON.stringify(json));
+  alterado.catalogo.anios = [2027, '<script>', 2026.5, 1500, 2026, 2026];
+  assert.deepEqual(desempaquetar(alterado, claveNormalizada).catalogo.anios, [2027, 2026]);
+  alterado.catalogo.anios = 'no es una lista';
+  assert.deepEqual(desempaquetar(alterado, claveNormalizada).catalogo.anios, []);
+});
