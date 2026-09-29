@@ -125,7 +125,7 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
 
   /** Estilo de provincias, burbujas y lista de países según los datos. No mueve el encuadre del mapa. */
   function pintarCapas({ procedencia, ciudades, paises, provincias, catalogo }) {
-    // Paso 3: coropletas con el total nacional por provincia
+    // Paso 1: coropletas con el total nacional por provincia
     valoresProvincia = new Map(provincias.map((p) => [claveNormalizada(p.nombre), p.valor]));
     maxProvincia = provincias.reduce((m, p) => Math.max(m, p.valor), 0);
     provinciaElegida = '';
@@ -140,7 +140,7 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     }
     capaProvincias.setStyle(estiloProvincia);
 
-    // Paso 4: burbujas de ciudades (modo nacional) o de países (modo extranjero)
+    // Paso 2: burbujas de ciudades (modo nacional) o de países (modo extranjero)
     capaBurbujas.clearLayers();
     const modoExtranjero = procedencia === 'EXT' || procedencia.startsWith('P:');
     const puntos = [];
@@ -165,9 +165,10 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
   function actualizar(datos) {
     ultimosDatos = datos;
     const { procedencia, catalogo } = datos;
+    // Paso 1: primero se pintan las capas, que no mueven el encuadre
     const { modoExtranjero, puntos } = pintarCapas(datos);
 
-    // Paso 5: encuadre según la procedencia elegida; la primera vez sin animación y con el tamaño real
+    // Paso 2: encuadre según la procedencia elegida; la primera vez sin animación y con el tamaño real
     mapa.invalidateSize();
     const opciones = { duration: primeraVez ? 0 : 0.6, animate: !primeraVez };
     primeraVez = false;

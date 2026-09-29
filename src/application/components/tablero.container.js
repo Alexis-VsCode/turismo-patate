@@ -2,7 +2,7 @@
  * @file tablero.container.js
  * @description Container. Conecta la página con la fachada: traduce eventos del DOM y de los gráficos
  *   en acciones de la fachada y pinta la vista que ella entrega mediante los presentacionales.
- *   No calcula ni descarga nada por su cuenta.
+ *   No calcula ni descarga los datos por su cuenta: solo lee el GeoJSON local del mapa.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { TEXTOS } from '../../shared/textos.es.js';
@@ -84,7 +84,7 @@ export function montarTablero(facade, config) {
     if (p.seriesType === 'bar') facade.elegirMes(Number(p.seriesName), p.dataIndex);
   });
 
-  // Paso 3: pintado a partir de la vista de la fachada
+  // Paso 3: funciones de pintado, siempre a partir de la vista que entrega la fachada
   function pintarFiltros() {
     const op = facade.opciones();
     if (!op) return;
@@ -128,10 +128,12 @@ export function montarTablero(facade, config) {
     );
   }
 
+  /** Pinta el chip de frescura con lo que calcula la fachada; se repite con el reloj, no solo con datos nuevos. */
   function pintarSalud() {
     pintarFrescura({ chip: $('chip-frescura'), etiqueta: $('frescura-etiqueta'), detalle: $('frescura-detalle') }, facade.frescura());
   }
 
+  // Paso 4: cada evento de la fachada decide qué zonas se repintan
   facade.suscribir((evento) => {
     if (evento === 'datos') {
       $('error').hidden = true;
@@ -156,7 +158,7 @@ export function montarTablero(facade, config) {
     }
   });
 
-  // Paso 4: al cambiar de tema los gráficos releen los colores de los tokens y se repintan sin recalcular
+  // Paso 5: al cambiar de tema los gráficos releen los colores de los tokens y se repintan sin recalcular
   crearSelectorTema($('btn-tema'), () => {
     Object.assign(colores, coloresDelTema());
     const v = facade.vista();
@@ -164,7 +166,7 @@ export function montarTablero(facade, config) {
     if (mapa) mapa.repintar();
   });
 
-  // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
+  // Paso 6: actualización automática y ajuste de tamaño de gráficos y mapa
   const revisar = () => {
     pintarSalud();
     if (facade.tocaActualizar()) facade.cargar(true);
@@ -178,7 +180,7 @@ export function montarTablero(facade, config) {
   observador.observe($('tablero'));
   document.querySelectorAll('.grafico').forEach((zona) => observador.observe(zona));
 
-  // Paso 6: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
+  // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
   $('estado-texto').textContent = TEXTOS.sinDatosAun;
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })

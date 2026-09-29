@@ -19,6 +19,7 @@ const sinMovimiento = () => typeof window === 'undefined'
 function animarNumero(elemento, destino, formatear) {
   const desde = Number(elemento.dataset.valor || 0);
   elemento.dataset.valor = String(destino);
+  // Paso 1: sin movimiento reducido o sin cambio, el valor se escribe directo
   if (sinMovimiento() || desde === destino) {
     elemento.textContent = formatear(destino);
     return;
@@ -29,7 +30,7 @@ function animarNumero(elemento, destino, formatear) {
   }, DURACION_MS + 50);
   const inicio = performance.now();
   const paso = (ahora) => {
-    // Paso 1: curva de salida suave; se corta si llegó otro valor mientras animaba
+    // Paso 3: curva de salida suave; se corta si llegó otro valor mientras animaba
     if (elemento.dataset.valor !== String(destino)) return;
     const t = Math.min(1, (ahora - inicio) / DURACION_MS);
     const suave = 1 - (1 - t) ** 3;
@@ -45,6 +46,7 @@ function animarNumero(elemento, destino, formatear) {
  * @param {{ anioAnterior: number|null, variacion: number|null }} v resultado de variacionInteranual()
  */
 export function pintarKpis(elementos, k, v) {
+  // Paso 1: las tres cifras se animan hacia su valor nuevo
   animarNumero(elementos.total, k.total, numero);
   animarNumero(elementos.nacionales, Math.round((k.pctNacionales ?? 0) * 1000), (x) => (k.pctNacionales === null ? '—' : porcentaje(x / 1000)));
   animarNumero(elementos.extranjeros, Math.round((k.pctExtranjeros ?? 0) * 1000), (x) => (k.pctExtranjeros === null ? '—' : porcentaje(x / 1000)));

@@ -108,6 +108,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
       avisar('error');
       return 'error';
     } finally {
+      // Paso 4: pase lo que pase se libera el bloqueo y se avisa que terminó, para rehabilitar el botón
       estado.cargando = false;
       avisar('cargando');
     }
@@ -127,8 +128,10 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function opciones() {
     if (!estado.datos) return null;
     const { filas, establecimientos, catalogo } = estado.datos;
+    // Paso 1: las opciones salen de lo que existe en los datos, no de listas fijas
     const op = opcionesDeFiltros(filas);
     const todos = { valor: '', texto: TEXTOS.todos };
+    // Paso 2: las provincias solo cuentan si hay visitantes nacionales, porque el filtro las aplica a ellos
     const provincias = [...new Set(filas.filter((x) => x.nacional && x.provincia).map((x) => x.provincia))]
       .sort((a, b) => a.localeCompare(b, 'es'));
     return {
@@ -155,9 +158,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     if (!estado.datos) return null;
     const f = estado.filtros;
     const { filas, catalogo } = estado.datos;
+    // Paso 1: la selección con todos los filtros alimenta KPI, motivos, edad y mapa
     const sel = filtrar(filas, f);
-    // Paso 1: la evolución ignora año y mes para mostrar los 12 meses del año de referencia
+    // Paso 2: la evolución ignora año y mes para mostrar los 12 meses del año de referencia
     const baseEvolucion = filtrar(filas, f, ['anio', 'mes']);
+    // Paso 3: cada zona de la interfaz recibe su agregación ya calculada por el dominio
     return {
       kpis: kpis(sel),
       variacion: variacionInteranual(filas, f),
@@ -171,6 +176,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   /**
    * Filtros aplicados como etiquetas legibles, en el orden en que se muestran como chips.
+   * Año y mes vacíos son `null` (enero es `0`), por eso se comparan con `null` y no por veracidad.
    * @returns {Array<{ campo: string, texto: string }>}
    */
   function chipsActivos() {
