@@ -35,7 +35,8 @@ export function radioDeBurbuja(valor, maximo) {
 
 /**
  * Crea el mapa. `alElegir(procedencia)` se llama al pulsar una burbuja o una provincia.
- * Devuelve { actualizar(datosMapa) } donde datosMapa = { procedencia, ciudades, paises, provincias, catalogo }.
+ * Devuelve { actualizar(datosMapa), repintar(), redimensionar() } donde datosMapa = { procedencia, ciudades, paises,
+ * provincias, catalogo }.
  */
 export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResaltada, alElegir) {
   const L = globalThis.L;
@@ -118,7 +119,10 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     return marca;
   }
 
-  function actualizar({ procedencia, ciudades, paises, provincias, catalogo }) {
+  let ultimosDatos = null;
+
+  /** Estilo de provincias, burbujas y lista de países según los datos. No mueve el encuadre del mapa. */
+  function pintarCapas({ procedencia, ciudades, paises, provincias, catalogo }) {
     // Paso 3: coropletas con el total nacional por provincia
     valoresProvincia = new Map(provincias.map((p) => [claveNormalizada(p.nombre), p.valor]));
     maxProvincia = provincias.reduce((m, p) => Math.max(m, p.valor), 0);
@@ -152,6 +156,14 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
       }
     }
     pintarTopPaises(paises, !modoExtranjero && procedencia === '');
+    return { modoExtranjero, puntos };
+  }
+
+  /** Aplica los datos del mapa: pinta las capas y encuadra según la procedencia elegida. */
+  function actualizar(datos) {
+    ultimosDatos = datos;
+    const { procedencia, catalogo } = datos;
+    const { modoExtranjero, puntos } = pintarCapas(datos);
 
     // Paso 5: encuadre según la procedencia elegida; la primera vez sin animación y con el tamaño real
     mapa.invalidateSize();
@@ -176,5 +188,10 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     return mapa.flyToBounds(ECUADOR_CONTINENTAL, opciones);
   }
 
-  return { actualizar, redimensionar: () => mapa.invalidateSize() };
+  /** Repinta con los colores vigentes tras un cambio de tema, conservando el encuadre que eligió el visitante. */
+  function repintar() {
+    if (ultimosDatos) pintarCapas(ultimosDatos);
+  }
+
+  return { actualizar, repintar, redimensionar: () => mapa.invalidateSize() };
 }

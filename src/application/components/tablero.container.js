@@ -154,6 +154,7 @@ export function montarTablero(facade, config) {
     Object.assign(colores, coloresDelTema());
     const v = facade.vista();
     if (v) pintarGraficos(v);
+    if (mapa) mapa.repintar();
   });
 
   // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
