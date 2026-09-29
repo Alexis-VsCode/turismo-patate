@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.1.1] - 2026-09-29
+
+### Cambiado
+- **El combo de años y el de motivos salen de la hoja:** unen los que tienen visitantes con los de `_Catalogos`. Un año
+  nuevo aparece al agregarlo al catálogo, aunque aún no tenga datos; elegirlo muestra «Sin visitantes».
+- `datos.json` lleva `catalogo.anios` y `catalogo.motivos`. Los campos son aditivos: un paquete anterior sigue siendo
+  válido y da listas vacías.
+- El intervalo de actualización que muestran el aviso y la ayuda del chip sale de la configuración y ya no está escrito
+  a mano en los textos.
+
 ## [2.1.0] - 2026-09-29
 
 ### Añadido

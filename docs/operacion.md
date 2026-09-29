@@ -48,6 +48,17 @@ En unos minutos aparece en el sitio: en el combo, en los filtros, en las tarjeta
 Alimentan los desplegables de la hoja y el mapa:
 
 - **Listas:** años, meses, países, provincias, ciudades, motivos y géneros.
+
+**Qué opciones ofrecen los combos del sitio.** Una regla simple, para saber dónde tocar:
+
+| Combo | De dónde sale | Qué significa |
+|---|---|---|
+| **Año** y **Motivo** | Los visitantes **y** el catálogo | Un año o motivo nuevo aparece al agregarlo en `_Catalogos`, aunque todavía no tenga visitantes. Si se elige uno sin visitantes, el tablero dice «Sin visitantes para los filtros elegidos» |
+| **Ciudad, país y provincia** | Solo los visitantes | El catálogo trae decenas de ciudades sin visitantes; ofrecerlas todas llenaría el combo de opciones vacías |
+| **Mes** y **rango de edad** | Fijos | Siempre son los 12 meses y los rangos 0-17, 18-25, 26-35, 36-45, 46-59 y 60+ |
+
+Para abrir un año nuevo basta escribirlo en la columna Año de `_Catalogos`. Los desplegables de las pestañas leen ese
+mismo rango, así que también aparecerá al capturar.
 - **Coordenadas:** `Ciudad_Lat`/`Ciudad_Lon` y `Ciudad_Provincia` para cada ciudad; `Pais_Lat`/`Pais_Lon` para
   cada país.
 
