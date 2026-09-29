@@ -5,8 +5,8 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { esClaveSegura } from './seguridad.js';
-import { RANGOS_EDAD } from './normalizar.js';
+import { esClaveSegura } from './texto.js';
+import { RANGOS_EDAD } from './visitante.js';
 
 /** Estado de filtros vacío. `procedencia` admite '', 'NAC', 'EXT', 'C:<ciudad>', 'P:<país>' o 'PR:<provincia>'. */
 export function filtrosVacios() {

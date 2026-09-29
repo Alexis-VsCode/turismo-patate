@@ -8,13 +8,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { XLSX, RAIZ, leerFixture } from './helpers.mjs';
-import { leerLibro } from '../js/datos.js';
-import { CONFIG } from '../js/config.js';
+import { XLSX, RAIZ, leerFixture } from '../helpers.mjs';
+import { leerLibro } from '../../src/infrastructure/lector-libro.js';
+import { CONFIG } from '../../src/infrastructure/config.js';
 import {
   filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual,
   porMotivo, porCiudad, porProvincia, porPais, edadGenero,
-} from '../js/agregaciones.js';
+} from '../../src/domain/estadisticas.js';
 
 const datos = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
 const escenarios = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/escenarios.json'), 'utf8'));

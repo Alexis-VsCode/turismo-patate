@@ -6,9 +6,9 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { claveNormalizada } from './normalizar.js';
-import { numero } from './graficos.js';
-import { TEXTOS } from './textos.js';
+import { claveNormalizada } from '../../../domain/catalogo.js';
+import { numero } from '../../../shared/formato.js';
+import { TEXTOS } from '../../../shared/textos.es.js';
 
 const ECUADOR_CONTINENTAL = [[-5.02, -81.1], [1.45, -75.2]];
 const VISTA_MUNDO = { centro: [18, -45], zoom: 2 };

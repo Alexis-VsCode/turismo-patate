@@ -5,10 +5,9 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { MESES_CORTOS, TEXTOS } from './textos.js';
+import { MESES_CORTOS, TEXTOS } from '../../../shared/textos.es.js';
+import { numero } from '../../../shared/formato.js';
 
-const formato = new Intl.NumberFormat('es-EC');
-export const numero = (n) => formato.format(Math.round(n || 0));
 const TEXTO = '#2c3e50';
 const REJILLA = '#e8ece4';
 const tooltipBase = { renderMode: 'richText', confine: true };

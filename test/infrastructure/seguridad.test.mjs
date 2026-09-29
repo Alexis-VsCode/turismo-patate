@@ -7,11 +7,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { XLSX, ENCABEZADO, CATALOGO, RAIZ, libroEnMemoria } from './helpers.mjs';
-import { leerLibro } from '../js/datos.js';
-import { sumaPor } from '../js/agregaciones.js';
-import { descargarAcotado, limpiarTexto } from '../js/seguridad.js';
-import { CONFIG } from '../js/config.js';
+import { XLSX, ENCABEZADO, CATALOGO, RAIZ, libroEnMemoria } from '../helpers.mjs';
+import { leerLibro } from '../../src/infrastructure/lector-libro.js';
+import { sumaPor } from '../../src/domain/estadisticas.js';
+import { descargarAcotado } from '../../src/infrastructure/seguridad.js';
+import { limpiarTexto } from '../../src/domain/texto.js';
+import { CONFIG } from '../../src/infrastructure/config.js';
 
 test('nombres de pestaña y celdas con HTML llegan como texto literal', () => {
   const hostil = '<img src=x onerror=alert(1)>';
@@ -73,10 +74,12 @@ test('descarga normal devuelve el buffer completo', async () => {
   assert.equal(buf.byteLength, 3000);
 });
 
-test('ningún módulo de js/ usa innerHTML, outerHTML, insertAdjacentHTML, eval ni new Function', () => {
+test('ningún módulo de src/ usa innerHTML, outerHTML, insertAdjacentHTML, eval ni new Function', () => {
   const prohibido = /\b(innerHTML|outerHTML|insertAdjacentHTML|document\.write)\b|\beval\s*\(|new\s+Function\s*\(/;
-  for (const archivo of readdirSync(join(RAIZ, 'js'))) {
-    const codigo = readFileSync(join(RAIZ, 'js', archivo), 'utf8');
+  const archivos = readdirSync(join(RAIZ, 'src'), { recursive: true }).filter((a) => a.endsWith('.js'));
+  assert.ok(archivos.length >= 15, 'no se encontraron los módulos de src/');
+  for (const archivo of archivos) {
+    const codigo = readFileSync(join(RAIZ, 'src', archivo), 'utf8');
     assert.equal(prohibido.test(codigo), false, `${archivo} usa una API prohibida`);
   }
 });

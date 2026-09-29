@@ -8,12 +8,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { XLSX, RAIZ, leerFixture } from './helpers.mjs';
-import { leerLibro } from '../js/datos.js';
-import { empaquetar, desempaquetar } from '../js/paquete.js';
-import { claveNormalizada } from '../js/normalizar.js';
-import { CONFIG } from '../js/config.js';
-import { filtrar, filtrosVacios, kpis, porCiudad, porPais, edadGenero } from '../js/agregaciones.js';
+import { XLSX, RAIZ, leerFixture } from '../helpers.mjs';
+import { leerLibro } from '../../src/infrastructure/lector-libro.js';
+import { empaquetar, desempaquetar } from '../../src/infrastructure/contrato-datos.js';
+import { claveNormalizada } from '../../src/domain/catalogo.js';
+import { CONFIG } from '../../src/infrastructure/config.js';
+import { filtrar, filtrosVacios, kpis, porCiudad, porPais, edadGenero } from '../../src/domain/estadisticas.js';
 
 const original = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
 const json = JSON.parse(JSON.stringify(empaquetar(original, '2026-09-29T13:00:00.000Z', CONFIG.PAIS_LOCAL)));

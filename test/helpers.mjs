@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 export const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 // SheetJS es UMD: se evalúa aislado en un contexto propio, igual que en el navegador como script clásico
 const contexto = {};
-runInNewContext(readFileSync(join(RAIZ, 'assets/vendor/xlsx.mini.min.js'), 'utf8'), contexto);
+runInNewContext(readFileSync(join(RAIZ, 'tools/vendor/xlsx.mini.min.js'), 'utf8'), contexto);
 export const XLSX = contexto.XLSX;
 
 export const ENCABEZADO = ['Año', 'Mes', 'País', 'Provincia', 'Ciudad', 'Cantidad', 'Motivo de visita', 'Edad', 'Género'];

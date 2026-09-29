@@ -5,18 +5,21 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { CONFIG } from './config.js';
-import { TEXTOS } from './textos.js';
-import { descargarAcotado, ErrorDescarga } from './seguridad.js';
-import { desempaquetar } from './paquete.js';
-import { MESES, RANGOS_EDAD, claveNormalizada } from './normalizar.js';
+import { CONFIG } from '../../infrastructure/config.js';
+import { TEXTOS } from '../../shared/textos.es.js';
+import { numero } from '../../shared/formato.js';
+import { descargarAcotado, ErrorDescarga } from '../../infrastructure/seguridad.js';
+import { desempaquetar } from '../../infrastructure/contrato-datos.js';
+import { MESES, RANGOS_EDAD } from '../../domain/visitante.js';
+import { claveNormalizada } from '../../domain/catalogo.js';
 import {
   filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual, porMotivo,
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros,
-} from './agregaciones.js';
-import { llenarSelect, crearComboBuscable } from './filtros.js';
-import { opcionesEvolucion, opcionesDona, opcionesMotivo, opcionesEdadGenero, numero } from './graficos.js';
-import { crearMapa } from './mapa.js';
+} from '../../domain/estadisticas.js';
+import { llenarSelect } from './compartidos/select-seguro.js';
+import { crearComboBuscable } from './compartidos/combo-buscable.js';
+import { opcionesEvolucion, opcionesDona, opcionesMotivo, opcionesEdadGenero } from './presentational/graficos.presentational.js';
+import { crearMapa } from './presentational/mapa.presentational.js';
 
 const $ = (id) => document.getElementById(id);
 const MAX_PROBLEMAS_VISIBLES = 50;

@@ -5,8 +5,9 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { limpiarTexto } from './seguridad.js';
-import { claveNormalizada, construirCatalogo, mapearEncabezados, normalizarFila } from './normalizar.js';
+import { limpiarTexto } from '../domain/texto.js';
+import { claveNormalizada, construirCatalogo, mapearEncabezados } from '../domain/catalogo.js';
+import { normalizarFila } from '../domain/visitante.js';
 
 /** Opciones restrictivas de SheetJS para un archivo que editan terceros. */
 export const OPCIONES_LECTURA = Object.freeze({

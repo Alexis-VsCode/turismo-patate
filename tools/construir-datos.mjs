@@ -4,8 +4,8 @@
  * La URL de la hoja nunca se escribe en el sitio. Si algo falla, sale con error y no toca el archivo
  * anterior, así el sitio sigue mostrando los últimos datos buenos.
  *
- * Uso: SHEET_URL=... node tools/construir_datos.mjs [salida]
- *      node tools/construir_datos.mjs --desde-archivo libro.xlsx [salida]
+ * Uso: SHEET_URL=... node tools/construir-datos.mjs [salida]
+ *      node tools/construir-datos.mjs --desde-archivo libro.xlsx [salida]
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
@@ -13,17 +13,17 @@ import { readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
-import { CONFIG } from '../js/config.js';
-import { descargarAcotado } from '../js/seguridad.js';
-import { leerLibro } from '../js/datos.js';
-import { empaquetar } from '../js/paquete.js';
+import { CONFIG } from '../src/infrastructure/config.js';
+import { descargarAcotado } from '../src/infrastructure/seguridad.js';
+import { leerLibro } from '../src/infrastructure/lector-libro.js';
+import { empaquetar } from '../src/infrastructure/contrato-datos.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MINIMO_ESTABLECIMIENTOS = 1;
 
 function cargarSheetJS() {
   const contexto = {};
-  runInNewContext(readFileSync(join(RAIZ, 'assets/vendor/xlsx.mini.min.js'), 'utf8'), contexto);
+  runInNewContext(readFileSync(join(RAIZ, 'tools/vendor/xlsx.mini.min.js'), 'utf8'), contexto);
   return contexto.XLSX;
 }
 

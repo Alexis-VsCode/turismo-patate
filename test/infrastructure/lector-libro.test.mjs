@@ -5,9 +5,9 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { XLSX, ENCABEZADO, CATALOGO, libroEnMemoria } from './helpers.mjs';
-import { leerLibro, esPestanaDeSistema } from '../js/datos.js';
-import { CONFIG } from '../js/config.js';
+import { XLSX, ENCABEZADO, CATALOGO, libroEnMemoria } from '../helpers.mjs';
+import { leerLibro, esPestanaDeSistema } from '../../src/infrastructure/lector-libro.js';
+import { CONFIG } from '../../src/infrastructure/config.js';
 
 const fila = (...v) => v;
 

@@ -5,8 +5,8 @@
  *
  * Autor: Kevin Alexis Barrera Llerena 2026
  */
-import { rangoDeEdad } from './normalizar.js';
-import { limpiarTexto, esClaveSegura } from './seguridad.js';
+import { rangoDeEdad } from '../domain/visitante.js';
+import { limpiarTexto, esClaveSegura } from '../domain/texto.js';
 
 export const VERSION_PAQUETE = 1;
 const DICCIONARIOS = ['establecimientos', 'paises', 'provincias', 'ciudades', 'motivos', 'generos'];
