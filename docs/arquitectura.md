@@ -29,12 +29,12 @@ flowchart TB
 | **Infraestructura** | `src/infrastructure/config.js`, `seguridad.js`, `contrato-datos.js`, `repositorio-datos.js`, `lector-libro.js` | Configuración, descarga acotada, formato de `datos.json`, lectura del Excel (en Actions) | No tiene reglas de negocio |
 | **Fachada** | `src/application/tablero.facade.js` | Estado de datos y filtros, política de actualización, vista calculada, suscripción a eventos | No toca el DOM; recibe la descarga, el reloj y la visibilidad inyectados |
 | **Container** | `src/application/components/tablero.container.js` | Traduce eventos del DOM y de los gráficos en acciones de la fachada y pinta su vista | No calcula ni descarga |
-| **Presentacionales** | `src/application/components/presentational/*.js` | Dibujan gráficos, mapa, tarjetas y avisos | No guardan estado ni acceden a datos |
-| **Compartidos** | `src/application/components/compartidos/*.js` | Combo con búsqueda accesible y llenado seguro de `<select>` | — |
+| **Presentacionales** | `src/application/components/presentational/*.js` | Dibujan gráficos, mapa, tarjetas (con variación y cifras animadas), chips de filtros y avisos | No guardan estado ni acceden a datos |
+| **Compartidos** | `src/application/components/compartidos/*.js` | Combo con búsqueda accesible, llenado seguro de `<select>` y panel de filtros deslizable para celular y tableta | — |
 | **Shared** | `src/shared/textos.es.js`, `formato.js` | Textos visibles y formato numérico | — |
 | **Raíz** | `src/main.js` | Une la infraestructura con la fachada y monta el container | — |
 
-La regla de dependencias está en [`AGENTS.md`](../AGENTS.md#3-arquitectura-la-regla-de-dependencias-no-se-rompe),
+La regla de dependencias está en [`CONTRIBUTING.md`](../CONTRIBUTING.md#3-arquitectura-la-regla-de-dependencias-no-se-rompe),
 y la hace cumplir [`test/arquitectura.test.mjs`](../test/arquitectura.test.mjs).
 
 ## Flujo de datos

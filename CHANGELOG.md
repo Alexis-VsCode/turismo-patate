@@ -2,6 +2,26 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.0.0] - 2026-09-29
+
+### Cambiado
+- **Rediseño visual institucional moderno:**
+  - tarjetas limpias, con títulos acompañados de ícono y subtítulo;
+  - indicador «En vivo»;
+  - cabecera más compacta.
+- **Celular y tableta:** los filtros pasan a un panel que sube desde abajo, abierto por un botón flotante
+  «Filtros (n)». El botón «Actualizar» queda como ícono.
+- **Selector de establecimiento único:** se elimina el duplicado de la barra de filtros.
+
+### Añadido
+- Variación del total contra el mismo período del año anterior (`variacionInteranual`), conciliada con el
+  oráculo.
+- Chips de filtros activos, que se quitan con un toque.
+- Cifras animadas. Respetan «reducir movimiento» y llegan exactas aunque la pestaña esté en segundo plano.
+- Modo oscuro automático, que sigue el tema del dispositivo.
+- La guía `CONTRIBUTING.md` reemplaza a `AGENTS.md`.
+- Capturas de escritorio (claro y oscuro) y de celular. En total hay 64 pruebas.
+
 ## [1.2.0] - 2026-09-29
 
 ### Cambiado
@@ -18,7 +38,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - Guardián de arquitectura (`test/arquitectura.test.mjs`) y 8 pruebas de la fachada. En total, 61 pruebas.
 - Documentación de portafolio:
   - README en español e inglés;
-  - `LICENSE`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md` y `AGENTS.md`;
+  - `LICENSE`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md` y `CONTRIBUTING.md`;
   - guías de arquitectura, configuración, operación y seguridad;
   - decisiones de diseño (ADR) y capturas.
 - `.gitattributes` y `.editorconfig`.

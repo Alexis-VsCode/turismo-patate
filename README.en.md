@@ -2,7 +2,7 @@
 
 [![Publish dashboard](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml/badge.svg)](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml)
 [![Live site](https://img.shields.io/badge/demo-live-30A848)](https://alexis-vscode.github.io/turismo-patate/)
-![Tests](https://img.shields.io/badge/tests-61%20passing-30A848)
+![Tests](https://img.shields.io/badge/tests-64%20passing-30A848)
 ![License](https://img.shields.io/badge/license-all%20rights%20reserved-0B2545)
 
 > [Versión en español](README.md)
@@ -13,7 +13,9 @@ refreshes itself, with no servers of its own and no paid licenses.
 
 **Live demo:** https://alexis-vscode.github.io/turismo-patate/ (the interface is in Spanish).
 
-![Desktop view of the dashboard](docs/capturas/escritorio.jpg)
+| Light mode | Dark mode |
+|---|---|
+| ![Desktop view, light mode](docs/capturas/escritorio.jpg) | ![Desktop view, dark mode](docs/capturas/escritorio-oscuro.jpg) |
 
 ## The problem
 
@@ -28,7 +30,8 @@ come from, why they come, and their age and gender. The requirements were:
 
 ## Features
 
-- **KPIs:** total visitors and share of domestic and foreign visitors.
+- **KPIs:** total visitors with **year-over-year change** for the same period, and share of domestic and
+  foreign visitors. Figures animate when filters change.
 - **Charts:**
   - monthly trend comparing two years, with a trend line;
   - domestic vs. foreign donut;
@@ -41,11 +44,14 @@ come from, why they come, and their age and gender. The requirements were:
 - **Filters:**
   - searchable business picker, built for hundreds of options;
   - year, month, origin, reason, age and gender;
-  - **cross-filtering** by clicking charts and the map.
+  - **cross-filtering** by clicking charts and the map;
+  - **active-filter chips**, removable with one tap.
 - **Refresh:** on page load, with the «Actualizar» button, and automatically **every 5 minutes**, with the
   data timestamp always visible.
 - **Data quality:** invalid rows are never dropped silently; each one is listed with its tab and row.
-- **Responsive:** single column on phones, with no horizontal scrolling.
+- **Responsive:** single column on phones, with a floating «Filtros» button that opens a bottom sheet; no
+  horizontal scrolling.
+- **Automatic dark mode:** follows the device theme.
 
 ## How it works
 
@@ -98,13 +104,21 @@ See [SECURITY.md](SECURITY.md) to report a vulnerability.
 
 ## Tests
 
-61 automated tests run on every deployment:
+64 automated tests run on every deployment:
 - **Filter scenarios:** 7 scenarios reconcile **exactly** with an independent Python oracle over the real
   workbook.
 - **Data contract:** round-trip of `datos.json`, plus rejection of a tampered file.
 - **Security:** hostile HTML, prototype pollution and bounded downloads.
 - **Refresh policy:** tested with a simulated clock.
 - **Architecture:** the layer dependency guard.
+
+## About the project
+
+This dashboard started from a real need at the Patate municipality: local businesses were already recording
+their visitors, but the data never reached anyone. My goal was to publish it with no licenses and no servers,
+and to let anyone at the municipality add a business just by duplicating a spreadsheet tab. The key lessons: hiding
+the data source without a backend, reconciling every figure against an independent calculation, and designing
+for phones first.
 
 ## Run locally
 

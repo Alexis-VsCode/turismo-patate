@@ -7,6 +7,6 @@
 | [operacion.md](operacion.md) | Administración de la hoja | Agregar establecimientos, columnas, catálogos, permisos y qué hacer si algo falla |
 | [seguridad.md](seguridad.md) | Desarrollo y auditoría | CVE, CSP, SRI, validación de datos y limitaciones conocidas |
 | [decisiones/](decisiones/) | Todos | Por qué se eligió cada alternativa (ADR) |
-| [capturas/](capturas/) | Todos | Vistas del sitio en escritorio y en celular |
+| [capturas/](capturas/) | Todos | Vistas del sitio en escritorio (claro y oscuro) y en celular |
 
-Las reglas para mantener el repositorio están en [`../AGENTS.md`](../AGENTS.md).
+Las reglas para mantener el repositorio están en [`../CONTRIBUTING.md`](../CONTRIBUTING.md).

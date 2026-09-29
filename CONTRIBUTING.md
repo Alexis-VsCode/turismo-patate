@@ -1,14 +1,15 @@
-# AGENTS.md — Reglas de este repositorio
+# Guía de contribución
 
-Reglas para quien mantenga el proyecto, sea una persona o un agente de IA. Si una regla choca con el código,
-**manda el código**: se corrige la regla en el mismo cambio.
+Estas son las reglas con las que mantengo el proyecto. Si una regla choca con el código, **manda el código**: se
+corrige la regla en el mismo cambio. El código es de uso reservado (ver [LICENSE](LICENSE)); las propuestas de
+mejora son bienvenidas por issue antes de abrir un pull request.
 
 ## 1. Lectura inicial, en este orden
 
 1. [`README.md`](README.md)
 2. [`docs/README.md`](docs/README.md)
 3. [`docs/arquitectura.md`](docs/arquitectura.md)
-4. Este archivo
+4. Esta guía
 5. `git status --short`: nunca se asume un árbol limpio
 
 ## 2. Fuentes de verdad
@@ -69,7 +70,7 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
 - **Asunto del commit:** `tipo(ámbito): descripción`, con `tipo` ∈ `feat`, `fix`, `refactor`, `test`, `docs`,
   `chore`.
 - **No mezclar un refactor estructural con un cambio funcional** en el mismo commit.
-- **Sin firmas de herramientas de IA** en commits ni en archivos.
+- **Sin firmas automáticas de herramientas** en commits ni en archivos: el historial refleja el trabajo del autor.
 - **Una mutación hecha para probar que una prueba falla se restaura y se comprueba** con
   `git diff --quiet -- <ruta>`, no confiando en la palabra de quien la hizo.
 

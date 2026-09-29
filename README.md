@@ -2,7 +2,7 @@
 
 [![Publicar dashboard](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml/badge.svg)](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml)
 [![Sitio en línea](https://img.shields.io/badge/demo-en%20l%C3%ADnea-30A848)](https://alexis-vscode.github.io/turismo-patate/)
-![Pruebas](https://img.shields.io/badge/pruebas-61%20en%20verde-30A848)
+![Pruebas](https://img.shields.io/badge/pruebas-64%20en%20verde-30A848)
 ![Licencia](https://img.shields.io/badge/licencia-derechos%20reservados-0B2545)
 
 > [English version](README.en.md)
@@ -13,7 +13,9 @@ tablero se actualiza solo, sin servidores propios ni licencias.
 
 **Demo en vivo:** https://alexis-vscode.github.io/turismo-patate/
 
-![Vista de escritorio del dashboard](docs/capturas/escritorio.jpg)
+| Modo claro | Modo oscuro |
+|---|---|
+| ![Vista de escritorio en modo claro](docs/capturas/escritorio.jpg) | ![Vista de escritorio en modo oscuro](docs/capturas/escritorio-oscuro.jpg) |
 
 ## El problema que resuelve
 
@@ -28,7 +30,8 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 
 ## Funcionalidades
 
-- **Indicadores:** total de visitantes y porcentaje de nacionales y de extranjeros.
+- **Indicadores:** total de visitantes con su **variación contra el mismo período del año anterior**
+  (▲ o ▼), y porcentaje de nacionales y de extranjeros. Las cifras se animan al filtrar.
 - **Gráficos:**
   - evolución mensual comparando dos años, con línea de tendencia;
   - dona de nacionales frente a extranjeros;
@@ -41,11 +44,14 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 - **Filtros:**
   - combo de establecimiento con búsqueda al escribir, pensado para cientos de opciones;
   - año, mes, procedencia, motivo, edad y género;
-  - **filtrado cruzado** con clic en los gráficos y en el mapa.
+  - **filtrado cruzado** con clic en los gráficos y en el mapa;
+  - **chips de filtros activos**, que se quitan con un toque.
 - **Actualización:** al entrar, con el botón «Actualizar» y de forma automática **cada 5 minutos**, con la
   hora de los datos siempre visible.
 - **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila.
-- **Diseño adaptable:** en el celular se ve en una sola columna, sin scroll horizontal.
+- **Diseño adaptable:** en el celular se ve en una columna, con un botón flotante «Filtros» que abre un panel
+  desde abajo; sin scroll horizontal.
+- **Modo oscuro automático:** sigue el tema del dispositivo.
 
 ## Cómo funciona
 
@@ -100,11 +106,11 @@ Detalle en [docs/seguridad.md](docs/seguridad.md). Para reportar una vulnerabili
 
 ## Pruebas
 
-Son 61 pruebas automáticas y corren en cada publicación:
+Son 64 pruebas automáticas y corren en cada publicación:
 
 | Archivo | Qué prueba |
 |---|---|
-| [`test/domain/`](test/domain) | Los 7 escenarios de filtros concilian **exactamente** con un oráculo independiente en Python ([`tools/oraculo.py`](tools/oraculo.py)) sobre el libro real |
+| [`test/domain/`](test/domain) | Los 7 escenarios de filtros (totales, series y variación interanual) concilian **exactamente** con un oráculo independiente en Python ([`tools/oraculo.py`](tools/oraculo.py)) sobre el libro real |
 | [`test/infrastructure/`](test/infrastructure) | Normalización de errores reales (`agosoto`, espacios, tildes), filas rechazadas con ubicación, contrato de `datos.json` (ida y vuelta y paquete alterado), HTML hostil, `__proto__` y descarga acotada |
 | [`test/application/`](test/application) | Fachada con reloj simulado: reuso de 60 s, automático cada 5 minutos solo con la pestaña visible, conservación de datos ante errores |
 | [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) | Regla de dependencias entre capas |
@@ -140,6 +146,22 @@ de [`test/fixtures/`](test/fixtures).
 └── .github/workflows/publicar.yml
 ```
 
+## Sobre el proyecto
+
+Este tablero nació de una necesidad concreta del GAD Municipal de Patate: los establecimientos turísticos ya
+anotaban a sus visitantes, pero esos datos no llegaban a nadie. Me propuse que publicarlos no costara licencias
+ni servidores, y que cualquier persona del municipio pudiera sumar un establecimiento con solo duplicar una
+pestaña.
+
+Las decisiones que más me enseñaron:
+- **Ocultar la fuente sin un backend.** La URL de la hoja vive como secreto de GitHub Actions y el sitio solo
+  publica datos ya validados.
+- **Medir en lugar de suponer.** Cada cifra del tablero se concilia contra un cálculo independiente en Python,
+  así un error de fórmula no llega a producción.
+- **Diseñar para el celular primero.** La mayoría de visitas a la web municipal llega desde el teléfono.
+
+Las alternativas que descarté, y por qué, están en las [decisiones de diseño](docs/decisiones/).
+
 ## Documentación
 
 - [Arquitectura](docs/arquitectura.md)
@@ -149,7 +171,7 @@ de [`test/fixtures/`](test/fixtures).
 - [Decisiones de diseño (ADR)](docs/decisiones/)
 - [Registro de cambios](CHANGELOG.md)
 
-<img src="docs/capturas/celular.jpg" alt="Vista en celular" width="260" align="right">
+<img src="docs/capturas/celular.jpg" alt="Vista en celular" width="240" align="right">
 
 ## Autor
 
