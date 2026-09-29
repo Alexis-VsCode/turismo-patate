@@ -19,8 +19,8 @@ export const TEXTOS = Object.freeze({
   visitantes: 'visitantes',
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
-  estado: (fecha, establecimientos, registros) =>
-    `Se actualiza automáticamente cada 5 minutos · Datos al ${fecha} · ${establecimientos} establecimientos · ${registros} registros`,
+  estado: (consulta, publicado, establecimientos, registros) =>
+    `Se actualiza automáticamente cada 5 minutos · Actualizado el ${consulta} · Datos publicados el ${publicado} · ${establecimientos} establecimientos · ${registros} registros`,
   sinDatosAun: 'Se actualiza automáticamente cada 5 minutos · Cargando datos por primera vez…',
   errorDescarga: (hora) => (hora
     ? `No se pudo actualizar. Se muestran los datos de las ${hora}.`

@@ -1,7 +1,7 @@
 /**
  * @file formato.js
- * @description Compartido. Formato de números y porcentajes para la interfaz (separador de miles y coma
- *   decimal de Ecuador).
+ * @description Compartido. Formato de números, porcentajes y fecha con hora para la interfaz (separador de
+ *   miles y coma decimal de Ecuador, hora de Guayaquil).
  * @author Kevin Alexis Barrera Llerena 2026
  */
 
@@ -19,4 +19,17 @@ export function textoVariacion(variacion) {
   if (variacion === null || variacion === undefined) return null;
   const signo = variacion > 0 ? '+' : variacion < 0 ? '−' : '';
   return `${signo}${porcentaje(Math.abs(variacion))}`;
+}
+
+const formatoFechaHora = new Intl.DateTimeFormat('es-EC', {
+  timeZone: 'America/Guayaquil', day: '2-digit', month: '2-digit', year: 'numeric',
+  hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+});
+
+/** Fecha y hora con segundos en hora de Ecuador, p. ej. «29/09/2026 12:31:05»; «—» si el valor no es una fecha. */
+export function fechaHora(valor) {
+  const fecha = new Date(valor ?? NaN);
+  if (Number.isNaN(fecha.getTime())) return '—';
+  const p = Object.fromEntries(formatoFechaHora.formatToParts(fecha).map((x) => [x.type, x.value]));
+  return `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}:${p.second}`;
 }
