@@ -119,7 +119,7 @@ export function variacionInteranual(filas, filtros) {
 }
 
 /** Lista ordenada de mayor a menor a partir de un Map de sumas. */
-export function ordenar(mapa) {
+function ordenar(mapa) {
   return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));
 }
 

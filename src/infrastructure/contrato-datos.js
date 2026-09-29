@@ -80,7 +80,7 @@ export function desempaquetar(json, claveNormalizada) {
     const establecimiento = valor('establecimientos', e);
     if (!esClaveSegura(establecimiento)) continue;
     filas.push({
-      establecimiento, anio, mes, periodo: anio * 100 + mes + 1, pais: valor('paises', pais),
+      establecimiento, anio, mes, pais: valor('paises', pais),
       provincia: valor('provincias', prov), ciudad: valor('ciudades', ciudad), cantidad,
       motivo: valor('motivos', motivo), edad, rangoEdad: rangoDeEdad(edad), genero: valor('generos', genero),
       nacional: nacionalPorPais[pais],

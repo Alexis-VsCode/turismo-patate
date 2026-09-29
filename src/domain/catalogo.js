@@ -20,7 +20,7 @@ const ENCABEZADOS = Object.freeze({
   edad: ['edad', 'age'],
   genero: ['genero', 'sexo', 'gender'],
 });
-export const COLUMNAS_OBLIGATORIAS = Object.freeze(['anio', 'mes', 'pais', 'cantidad', 'motivo', 'edad', 'genero']);
+const COLUMNAS_OBLIGATORIAS = Object.freeze(['anio', 'mes', 'pais', 'cantidad', 'motivo', 'edad', 'genero']);
 
 /** Forma comparable de un texto: sin tildes, en minúsculas y con espacios simples. */
 export function claveNormalizada(valor) {

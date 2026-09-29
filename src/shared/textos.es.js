@@ -7,7 +7,6 @@
 export const TEXTOS = Object.freeze({
   todos: 'Todos',
   todosEstablecimientos: 'Todos los establecimientos',
-  buscarEstablecimiento: 'Escriba para buscar…',
   sinCoincidencias: 'Sin coincidencias',
   procedenciaTodos: 'Todos',
   procedenciaNacionales: 'Ecuador (todas las ciudades)',
@@ -39,19 +38,16 @@ export const TEXTOS = Object.freeze({
   mostrandoPrimeros: (n, total) => `Se muestran los primeros ${n} de ${total}.`,
   topPaises: 'Top países',
   sinDatos: 'Sin datos para los filtros elegidos',
-  anioMes: (anio, mes) => `${anio} / ${mes}`,
   tendencia: (anio) => (anio === null ? 'Tendencia' : `Tendencia ${anio}`),
   anioAnterior: 'Año anterior',
   anioActual: 'Año actual',
   sinDatosCorto: 'Sin datos',
   chipEdad: (rango) => `Edad ${rango}`,
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
-  filtros: 'Filtros',
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
   variacion: (pct, anio) => `${pct} vs ${anio}`,
   sinComparacion: 'Sin datos del año anterior',
   subtituloEvolucion: (anio, anterior) => (anio === null ? 'Sin datos' : `${anio} vs ${anterior} · por mes`),
-  enVivo: 'En vivo',
 });
 
 export const MESES_CORTOS = Object.freeze(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']);

@@ -58,7 +58,7 @@ function enteroEn(valor, minimo, maximo) {
 export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const celda = (campo) => (indices[campo] === undefined ? null : cruda[indices[campo]]);
 
-  // Paso 1: periodo
+  // Paso 1: año y mes
   const anio = enteroEn(celda('anio'), ANIO_MINIMO, ANIO_MAXIMO);
   if (anio === null) return { ok: false, motivo: `Año no válido: «${limpiarTexto(celda('anio'))}»` };
   const mes = indiceDeMes(celda('mes'));
@@ -101,7 +101,7 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   return {
     ok: true,
     fila: {
-      anio, mes, periodo: anio * 100 + mes + 1, pais, provincia, ciudad, cantidad, motivo,
+      anio, mes, pais, provincia, ciudad, cantidad, motivo,
       edad, rangoEdad: rangoDeEdad(edad), genero, nacional,
     },
   };

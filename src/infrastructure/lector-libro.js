@@ -10,7 +10,7 @@ import { claveNormalizada, construirCatalogo, mapearEncabezados } from '../domai
 import { normalizarFila } from '../domain/visitante.js';
 
 /** Opciones restrictivas de SheetJS para un archivo que editan terceros. */
-export const OPCIONES_LECTURA = Object.freeze({
+const OPCIONES_LECTURA = Object.freeze({
   type: 'array', dense: true, cellFormula: false, cellHTML: false, cellNF: false,
   cellStyles: false, cellDates: false, sheetStubs: false, bookVBA: false, WTF: false,
 });
