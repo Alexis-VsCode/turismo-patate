@@ -1,0 +1,92 @@
+/**
+ * Utilidades de seguridad para datos que vienen de una hoja editable por terceros:
+ * descarga acotada en tiempo y tamaño, limpieza de texto y claves seguras para agrupar.
+ *
+ * Autor: Kevin Alexis Barrera Llerena 2026
+ */
+
+const CLAVES_PROHIBIDAS = new Set(['__proto__', 'constructor', 'prototype']);
+const LARGO_MAXIMO_TEXTO = 120;
+
+/** Error de descarga con un código estable que la interfaz traduce a un aviso. */
+export class ErrorDescarga extends Error {
+  constructor(codigo, detalle) {
+    super(`${codigo}: ${detalle}`);
+    this.codigo = codigo;
+  }
+}
+
+/**
+ * Descarga una URL como ArrayBuffer sin credenciales ni caché, cortando si supera
+ * `timeoutMs` o `maxBytes`. El tamaño se controla leyendo el stream, porque
+ * Content-Length puede faltar o mentir.
+ */
+export async function descargarAcotado(url, { timeoutMs, maxBytes, fetchImpl = globalThis.fetch }) {
+  const control = new AbortController();
+  const temporizador = setTimeout(() => control.abort(), timeoutMs);
+  try {
+    // Paso 1: petición anónima y sin caché; el redirect a googleusercontent se sigue solo
+    let respuesta;
+    try {
+      respuesta = await fetchImpl(url, {
+        cache: 'no-store', credentials: 'omit', redirect: 'follow',
+        referrerPolicy: 'no-referrer', signal: control.signal,
+      });
+    } catch (e) {
+      throw new ErrorDescarga(control.signal.aborted ? 'TIEMPO_AGOTADO' : 'RED', String(e && e.message));
+    }
+    if (!respuesta.ok) throw new ErrorDescarga('HTTP', String(respuesta.status));
+    const declarado = Number(respuesta.headers.get('content-length'));
+    if (declarado && declarado > maxBytes) throw new ErrorDescarga('DEMASIADO_GRANDE', String(declarado));
+
+    // Paso 2: lectura del stream con tope de bytes
+    const lector = respuesta.body.getReader();
+    const trozos = [];
+    let total = 0;
+    for (;;) {
+      let parte;
+      try {
+        parte = await lector.read();
+      } catch (e) {
+        throw new ErrorDescarga(control.signal.aborted ? 'TIEMPO_AGOTADO' : 'RED', String(e && e.message));
+      }
+      if (parte.done) break;
+      total += parte.value.byteLength;
+      if (total > maxBytes) {
+        control.abort();
+        throw new ErrorDescarga('DEMASIADO_GRANDE', String(total));
+      }
+      trozos.push(parte.value);
+    }
+
+    // Paso 3: unir los trozos en un único buffer
+    const salida = new Uint8Array(total);
+    let desplazamiento = 0;
+    for (const trozo of trozos) {
+      salida.set(trozo, desplazamiento);
+      desplazamiento += trozo.byteLength;
+    }
+    return salida.buffer;
+  } finally {
+    clearTimeout(temporizador);
+  }
+}
+
+/**
+ * Convierte cualquier valor de celda en texto plano seguro: sin caracteres de control,
+ * espacios colapsados, recortado y con largo máximo. Nunca devuelve HTML interpretable
+ * porque la interfaz solo escribe con textContent.
+ */
+export function limpiarTexto(valor) {
+  if (valor === null || valor === undefined) return '';
+  return String(valor)
+    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028\u2029\ufeff]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, LARGO_MAXIMO_TEXTO);
+}
+
+/** Indica si un texto puede usarse como clave de agrupación sin riesgo de contaminar prototipos. */
+export function esClaveSegura(clave) {
+  return typeof clave === 'string' && clave.length > 0 && !CLAVES_PROHIBIDAS.has(clave);
+}

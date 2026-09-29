@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="Estadísticas de visitantes de los establecimientos turísticos del cantón Patate. GAD Municipal de San Cristóbal de Patate.">
+  <meta name="author" content="Kevin Alexis Barrera Llerena">
+  <title>Estadísticas de Visitantes · Cantón Patate</title>
+  <link rel="icon" href="assets/logo-patate.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/tema.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js" integrity="sha512-Uyq/AgtqFM4vT+unIGTDr4wMJDTUK9O5w2PXMQeBCSR8koqHpVz+qBmcQ+9Oeo5H+EmvT4pp/5QrsqhIbyjHTQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div id="franja-prueba" class="franja-prueba" hidden>DATOS DE PRUEBA · Los establecimientos y cifras son ficticios</div>
+
+  <header class="cabecera">
+    <img class="cabecera-logo" src="assets/logo-patate.png" alt="GAD Municipal de San Cristóbal de Patate" width="96" height="96">
+    <div class="cabecera-banner">
+      <div class="cabecera-titulos">
+        <h1>Estadísticas de Visitantes</h1>
+        <p>Establecimientos Turísticos - Cantón Patate</p>
+      </div>
+      <p class="cabecera-frase">¡Descubre<br>Patate!
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14zm0 0 7-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </p>
+    </div>
+  </header>
+
+  <div class="barra-estado" role="status" aria-live="polite">
+    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span id="estado-texto"></span>
+    <button id="btn-actualizar" class="boton" type="button">
+      <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="btn-actualizar-texto">Actualizar</span>
+    </button>
+  </div>
+  <p id="error" class="aviso-error" role="alert" hidden></p>
+  <details id="problemas" class="problemas" hidden>
+    <summary><span aria-hidden="true">⚠</span> <span id="problemas-resumen"></span></summary>
+    <ul id="problemas-lista"></ul>
+  </details>
+
+  <main id="tablero" class="tablero">
+    <aside class="columna-izquierda">
+      <div class="tarjeta combo-tarjeta">
+        <label class="combo-etiqueta" for="combo-entrada">Seleccionar establecimiento</label>
+        <div id="combo-establecimiento" class="combo">
+          <input id="combo-entrada" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="combo-lista" autocomplete="off" spellcheck="false">
+          <svg class="combo-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <ul id="combo-lista" role="listbox"></ul>
+        </div>
+      </div>
+
+      <section class="kpis" aria-label="Resumen de visitantes">
+        <div class="tarjeta kpi-total">
+          <div class="kpi-encabezado"><span>Total<br>visitantes</span>
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 12l10-4 12 4 10-4v22l-10 4-12-4-10 4z" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M20 26s-6-6-6-10a6 6 0 0 1 12 0c0 4-6 10-6 10z" fill="#E5007E"/><circle cx="20" cy="16" r="2.2" fill="#fff"/></svg>
+          </div>
+          <div id="k-total" class="kpi-valor">—</div>
+        </div>
+        <div class="kpi-par">
+          <div class="tarjeta kpi-chica">
+            <svg viewBox="0 0 36 28" aria-hidden="true"><rect x="3" y="3" width="30" height="7" fill="#FFD100"/><rect x="3" y="10" width="30" height="7" fill="#034EA2"/><rect x="3" y="17" width="30" height="7" fill="#ED1C24"/><circle cx="18" cy="13.5" r="3" fill="#6b4b1f"/></svg>
+            <span>Nacionales</span><strong id="k-nacionales">—</strong>
+          </div>
+          <div class="tarjeta kpi-chica">
+            <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14" fill="#5dade2"/><path d="M10 10c4 1 5 4 3 6s1 5 4 5 2 5 0 7M22 7c-1 3 1 5 4 5s4 3 3 6M8 22c3 0 4 2 4 5" fill="none" stroke="#30A848" stroke-width="3.2" stroke-linecap="round"/></svg>
+            <span>Extranjeros</span><strong id="k-extranjeros">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <details class="filtros" open>
+        <summary>Filtros</summary>
+        <div class="filtro">
+          <label for="f-anio"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2"/></svg>Año / Mes</label>
+          <div class="filtro-doble"><select id="f-anio" aria-label="Año"></select><select id="f-mes" aria-label="Mes"></select></div>
+        </div>
+        <div class="filtro">
+          <label for="f-procedencia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.5" fill="currentColor"/></svg>País / Ciudad</label>
+          <select id="f-procedencia"></select>
+        </div>
+        <div class="filtro">
+          <label for="f-establecimiento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Establecimiento</label>
+          <select id="f-establecimiento"></select>
+        </div>
+        <div class="filtro">
+          <label for="f-motivo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Motivo de visita</label>
+          <select id="f-motivo"></select>
+        </div>
+        <div class="filtro">
+          <label for="f-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>Edad</label>
+          <select id="f-edad"></select>
+        </div>
+        <div class="filtro">
+          <label for="f-genero"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="15" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 13v8M5 18h6M19 12l3-3M19 9h3v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>Género</label>
+          <select id="f-genero"></select>
+        </div>
+        <button id="btn-limpiar" class="boton boton-claro" type="button">Limpiar filtros</button>
+      </details>
+    </aside>
+
+    <section class="paneles">
+      <article class="panel panel-evolucion">
+        <h2><span>Evolución de visitantes por mes</span></h2>
+        <div id="g-evolucion" class="grafico"></div>
+      </article>
+      <article class="panel panel-dona">
+        <h2><span>Nacionales vs extranjeros</span></h2>
+        <div id="g-dona" class="grafico"></div>
+      </article>
+      <article class="panel">
+        <h2><span>Motivo de visita</span></h2>
+        <div id="g-motivo" class="grafico grafico-alto"></div>
+      </article>
+      <article class="panel">
+        <h2><span>Origen de visitantes</span></h2>
+        <div id="g-mapa" class="grafico grafico-alto mapa"></div>
+      </article>
+      <article class="panel">
+        <h2><span>Distribución por edad y género</span></h2>
+        <div id="g-edad" class="grafico grafico-alto"></div>
+      </article>
+      <p id="sin-datos" class="sin-datos" hidden>Sin visitantes para los filtros elegidos. Pulse «Limpiar filtros».</p>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>GAD Municipal de San Cristóbal de Patate · Datos declarados por los establecimientos turísticos del cantón.</p>
+    <p>Mapa © OpenStreetMap · Límites: geoBoundaries (CC0) · Foto de cabecera: «Valle del Patate», DIOHER_PAVAL, CC BY 3.0, vía Wikimedia Commons.</p>
+    <div class="credito">
+      <span>Diseño y desarrollo: <strong>Ing. Kevin Alexis Barrera Llerena</strong> · Ingeniero de Software · © 2026. Todos los derechos de desarrollo reservados.</span>
+      <a class="credito-linkedin" href="https://www.linkedin.com/in/alexisbarreradesarrolador/" target="_blank" rel="noopener noreferrer" aria-label="Perfil de LinkedIn de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="4" fill="#0A66C2"/><path d="M7 10h2.5v7H7zM8.25 6.5a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8zM11 10h2.4v1c.4-.7 1.3-1.2 2.4-1.2 2 0 2.7 1.3 2.7 3.3V17H16v-3.4c0-.9-.2-1.6-1.1-1.6-.9 0-1.4.6-1.4 1.6V17H11z" fill="#fff"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <details class="pie-seguridad">
+      <summary>Seguridad y datos</summary>
+      <p>Este sitio es de solo lectura, no usa cookies ni rastreo y no recoge datos de quien lo visita. Las librerías tienen versión fija y firma de integridad, y la política de contenidos solo permite cargar recursos de orígenes autorizados. Las cifras son agregadas y no incluyen datos personales.</p>
+    </details>
+  </footer>
+</body>
+</html>

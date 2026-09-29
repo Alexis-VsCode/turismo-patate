@@ -1,0 +1,1459 @@
+{
+ "todo": {
+  "kpis": {
+   "total": 96452,
+   "nacionales": 79149,
+   "extranjeros": 17303
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    3671,
+    6211,
+    4334,
+    5028,
+    3498,
+    4401,
+    6017,
+    6417,
+    3903,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    2974,
+    5366,
+    3955,
+    4856,
+    2947,
+    3721,
+    5288,
+    5983,
+    3759,
+    3654,
+    4371,
+    6098
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Turismo",
+    "valor": 33109
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 19919
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 18044
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 12088
+   },
+   {
+    "nombre": "Evento",
+    "valor": 8120
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 5172
+   }
+  ],
+  "porCiudad": [
+   {
+    "nombre": "Ambato",
+    "valor": 18782
+   },
+   {
+    "nombre": "Quito",
+    "valor": 13444
+   },
+   {
+    "nombre": "Riobamba",
+    "valor": 6120
+   },
+   {
+    "nombre": "Latacunga",
+    "valor": 5597
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 4954
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 3063
+   },
+   {
+    "nombre": "Baños",
+    "valor": 2938
+   },
+   {
+    "nombre": "Pelileo",
+    "valor": 2925
+   },
+   {
+    "nombre": "Píllaro",
+    "valor": 2420
+   },
+   {
+    "nombre": "Patate",
+    "valor": 2409
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 1912
+   },
+   {
+    "nombre": "Santo Domingo",
+    "valor": 1833
+   },
+   {
+    "nombre": "Ibarra",
+    "valor": 1744
+   },
+   {
+    "nombre": "Machala",
+    "valor": 1502
+   },
+   {
+    "nombre": "Guaranda",
+    "valor": 1373
+   },
+   {
+    "nombre": "Loja",
+    "valor": 1306
+   },
+   {
+    "nombre": "Portoviejo",
+    "valor": 1284
+   },
+   {
+    "nombre": "Tena",
+    "valor": 1284
+   },
+   {
+    "nombre": "Manta",
+    "valor": 1244
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 697
+   },
+   {
+    "nombre": "Babahoyo",
+    "valor": 662
+   },
+   {
+    "nombre": "Azogues",
+    "valor": 568
+   },
+   {
+    "nombre": "Tulcán",
+    "valor": 547
+   },
+   {
+    "nombre": "Macas",
+    "valor": 541
+   }
+  ],
+  "porProvincia": [
+   {
+    "nombre": "Tungurahua",
+    "valor": 29474
+   },
+   {
+    "nombre": "Pichincha",
+    "valor": 13444
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 6120
+   },
+   {
+    "nombre": "Cotopaxi",
+    "valor": 5597
+   },
+   {
+    "nombre": "Guayas",
+    "valor": 4954
+   },
+   {
+    "nombre": "Azuay",
+    "valor": 3063
+   },
+   {
+    "nombre": "Manabí",
+    "valor": 2528
+   },
+   {
+    "nombre": "Pastaza",
+    "valor": 1912
+   },
+   {
+    "nombre": "Santo Domingo de los Tsáchilas",
+    "valor": 1833
+   },
+   {
+    "nombre": "Imbabura",
+    "valor": 1744
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 1502
+   },
+   {
+    "nombre": "Bolívar",
+    "valor": 1373
+   },
+   {
+    "nombre": "Loja",
+    "valor": 1306
+   },
+   {
+    "nombre": "Napo",
+    "valor": 1284
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 697
+   },
+   {
+    "nombre": "Los Ríos",
+    "valor": 662
+   },
+   {
+    "nombre": "Cañar",
+    "valor": 568
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 547
+   },
+   {
+    "nombre": "Morona Santiago",
+    "valor": 541
+   }
+  ],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 4287
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 3630
+   },
+   {
+    "nombre": "Perú",
+    "valor": 2066
+   },
+   {
+    "nombre": "España",
+    "valor": 1827
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 1282
+   },
+   {
+    "nombre": "Francia",
+    "valor": 1120
+   },
+   {
+    "nombre": "Venezuela",
+    "valor": 958
+   },
+   {
+    "nombre": "Argentina",
+    "valor": 857
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 641
+   },
+   {
+    "nombre": "Chile",
+    "valor": 635
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     3960,
+     6690,
+     13973,
+     13685,
+     8839,
+     1462
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     4152,
+     6702,
+     13068,
+     13215,
+     9189,
+     1517
+    ]
+   }
+  ]
+ },
+ "un-establecimiento": {
+  "kpis": {
+   "total": 344,
+   "nacionales": 290,
+   "extranjeros": 54
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    19,
+    22,
+    14,
+    14,
+    10,
+    10,
+    25,
+    34,
+    10,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    4,
+    15,
+    19,
+    19,
+    7,
+    21,
+    34,
+    20,
+    12,
+    18,
+    10,
+    7
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Gastronomía",
+    "valor": 128
+   },
+   {
+    "nombre": "Turismo",
+    "valor": 88
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 64
+   },
+   {
+    "nombre": "Evento",
+    "valor": 25
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 24
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 15
+   }
+  ],
+  "porCiudad": [
+   {
+    "nombre": "Ambato",
+    "valor": 92
+   },
+   {
+    "nombre": "Quito",
+    "valor": 73
+   },
+   {
+    "nombre": "Machala",
+    "valor": 22
+   },
+   {
+    "nombre": "Riobamba",
+    "valor": 22
+   },
+   {
+    "nombre": "Latacunga",
+    "valor": 14
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 12
+   },
+   {
+    "nombre": "Baños",
+    "valor": 11
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 9
+   },
+   {
+    "nombre": "Patate",
+    "valor": 9
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 7
+   },
+   {
+    "nombre": "Portoviejo",
+    "valor": 5
+   },
+   {
+    "nombre": "Santo Domingo",
+    "valor": 4
+   },
+   {
+    "nombre": "Ibarra",
+    "valor": 3
+   },
+   {
+    "nombre": "Píllaro",
+    "valor": 3
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 2
+   },
+   {
+    "nombre": "Pelileo",
+    "valor": 2
+   }
+  ],
+  "porProvincia": [
+   {
+    "nombre": "Tungurahua",
+    "valor": 117
+   },
+   {
+    "nombre": "Pichincha",
+    "valor": 73
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 22
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 22
+   },
+   {
+    "nombre": "Cotopaxi",
+    "valor": 14
+   },
+   {
+    "nombre": "Azuay",
+    "valor": 12
+   },
+   {
+    "nombre": "Guayas",
+    "valor": 9
+   },
+   {
+    "nombre": "Pastaza",
+    "valor": 7
+   },
+   {
+    "nombre": "Manabí",
+    "valor": 5
+   },
+   {
+    "nombre": "Santo Domingo de los Tsáchilas",
+    "valor": 4
+   },
+   {
+    "nombre": "Imbabura",
+    "valor": 3
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 2
+   }
+  ],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 19
+   },
+   {
+    "nombre": "Perú",
+    "valor": 16
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 9
+   },
+   {
+    "nombre": "España",
+    "valor": 6
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 3
+   },
+   {
+    "nombre": "Francia",
+    "valor": 1
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     9,
+     14,
+     74,
+     54,
+     27,
+     11
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     9,
+     24,
+     41,
+     32,
+     39,
+     10
+    ]
+   }
+  ]
+ },
+ "2026-julio": {
+  "kpis": {
+   "total": 6017,
+   "nacionales": 4995,
+   "extranjeros": 1022
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    3671,
+    6211,
+    4334,
+    5028,
+    3498,
+    4401,
+    6017,
+    6417,
+    3903,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    2974,
+    5366,
+    3955,
+    4856,
+    2947,
+    3721,
+    5288,
+    5983,
+    3759,
+    3654,
+    4371,
+    6098
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Turismo",
+    "valor": 2138
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 1207
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 1079
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 838
+   },
+   {
+    "nombre": "Evento",
+    "valor": 522
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 233
+   }
+  ],
+  "porCiudad": [
+   {
+    "nombre": "Ambato",
+    "valor": 1130
+   },
+   {
+    "nombre": "Quito",
+    "valor": 858
+   },
+   {
+    "nombre": "Riobamba",
+    "valor": 416
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 304
+   },
+   {
+    "nombre": "Latacunga",
+    "valor": 290
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 207
+   },
+   {
+    "nombre": "Baños",
+    "valor": 200
+   },
+   {
+    "nombre": "Pelileo",
+    "valor": 178
+   },
+   {
+    "nombre": "Píllaro",
+    "valor": 147
+   },
+   {
+    "nombre": "Ibarra",
+    "valor": 145
+   },
+   {
+    "nombre": "Santo Domingo",
+    "valor": 143
+   },
+   {
+    "nombre": "Tena",
+    "valor": 126
+   },
+   {
+    "nombre": "Patate",
+    "valor": 123
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 120
+   },
+   {
+    "nombre": "Guaranda",
+    "valor": 114
+   },
+   {
+    "nombre": "Portoviejo",
+    "valor": 107
+   },
+   {
+    "nombre": "Machala",
+    "valor": 82
+   },
+   {
+    "nombre": "Manta",
+    "valor": 77
+   },
+   {
+    "nombre": "Loja",
+    "valor": 63
+   },
+   {
+    "nombre": "Tulcán",
+    "valor": 50
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 44
+   },
+   {
+    "nombre": "Babahoyo",
+    "valor": 32
+   },
+   {
+    "nombre": "Azogues",
+    "valor": 20
+   },
+   {
+    "nombre": "Macas",
+    "valor": 19
+   }
+  ],
+  "porProvincia": [
+   {
+    "nombre": "Tungurahua",
+    "valor": 1778
+   },
+   {
+    "nombre": "Pichincha",
+    "valor": 858
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 416
+   },
+   {
+    "nombre": "Guayas",
+    "valor": 304
+   },
+   {
+    "nombre": "Cotopaxi",
+    "valor": 290
+   },
+   {
+    "nombre": "Azuay",
+    "valor": 207
+   },
+   {
+    "nombre": "Manabí",
+    "valor": 184
+   },
+   {
+    "nombre": "Imbabura",
+    "valor": 145
+   },
+   {
+    "nombre": "Santo Domingo de los Tsáchilas",
+    "valor": 143
+   },
+   {
+    "nombre": "Napo",
+    "valor": 126
+   },
+   {
+    "nombre": "Pastaza",
+    "valor": 120
+   },
+   {
+    "nombre": "Bolívar",
+    "valor": 114
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 82
+   },
+   {
+    "nombre": "Loja",
+    "valor": 63
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 50
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 44
+   },
+   {
+    "nombre": "Los Ríos",
+    "valor": 32
+   },
+   {
+    "nombre": "Cañar",
+    "valor": 20
+   },
+   {
+    "nombre": "Morona Santiago",
+    "valor": 19
+   }
+  ],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 221
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 221
+   },
+   {
+    "nombre": "Perú",
+    "valor": 127
+   },
+   {
+    "nombre": "España",
+    "valor": 99
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 86
+   },
+   {
+    "nombre": "Francia",
+    "valor": 79
+   },
+   {
+    "nombre": "Venezuela",
+    "valor": 65
+   },
+   {
+    "nombre": "Chile",
+    "valor": 48
+   },
+   {
+    "nombre": "Argentina",
+    "valor": 46
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 30
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     201,
+     481,
+     877,
+     862,
+     603,
+     114
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     277,
+     424,
+     756,
+     722,
+     597,
+     103
+    ]
+   }
+  ]
+ },
+ "negocios-femenino": {
+  "kpis": {
+   "total": 2847,
+   "nacionales": 2321,
+   "extranjeros": 526
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    100,
+    232,
+    153,
+    121,
+    135,
+    150,
+    146,
+    201,
+    91,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    60,
+    161,
+    110,
+    154,
+    112,
+    119,
+    179,
+    164,
+    118,
+    104,
+    105,
+    132
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Negocios",
+    "valor": 2847
+   }
+  ],
+  "porCiudad": [
+   {
+    "nombre": "Ambato",
+    "valor": 477
+   },
+   {
+    "nombre": "Quito",
+    "valor": 343
+   },
+   {
+    "nombre": "Latacunga",
+    "valor": 220
+   },
+   {
+    "nombre": "Riobamba",
+    "valor": 204
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 124
+   },
+   {
+    "nombre": "Baños",
+    "valor": 98
+   },
+   {
+    "nombre": "Patate",
+    "valor": 84
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 82
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 80
+   },
+   {
+    "nombre": "Pelileo",
+    "valor": 78
+   },
+   {
+    "nombre": "Píllaro",
+    "valor": 75
+   },
+   {
+    "nombre": "Machala",
+    "valor": 62
+   },
+   {
+    "nombre": "Santo Domingo",
+    "valor": 49
+   },
+   {
+    "nombre": "Portoviejo",
+    "valor": 47
+   },
+   {
+    "nombre": "Ibarra",
+    "valor": 46
+   },
+   {
+    "nombre": "Manta",
+    "valor": 46
+   },
+   {
+    "nombre": "Loja",
+    "valor": 45
+   },
+   {
+    "nombre": "Tulcán",
+    "valor": 35
+   },
+   {
+    "nombre": "Guaranda",
+    "valor": 33
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 32
+   },
+   {
+    "nombre": "Macas",
+    "valor": 28
+   },
+   {
+    "nombre": "Tena",
+    "valor": 22
+   },
+   {
+    "nombre": "Azogues",
+    "valor": 8
+   },
+   {
+    "nombre": "Babahoyo",
+    "valor": 3
+   }
+  ],
+  "porProvincia": [
+   {
+    "nombre": "Tungurahua",
+    "valor": 812
+   },
+   {
+    "nombre": "Pichincha",
+    "valor": 343
+   },
+   {
+    "nombre": "Cotopaxi",
+    "valor": 220
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 204
+   },
+   {
+    "nombre": "Guayas",
+    "valor": 124
+   },
+   {
+    "nombre": "Manabí",
+    "valor": 93
+   },
+   {
+    "nombre": "Azuay",
+    "valor": 82
+   },
+   {
+    "nombre": "Pastaza",
+    "valor": 80
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 62
+   },
+   {
+    "nombre": "Santo Domingo de los Tsáchilas",
+    "valor": 49
+   },
+   {
+    "nombre": "Imbabura",
+    "valor": 46
+   },
+   {
+    "nombre": "Loja",
+    "valor": 45
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 35
+   },
+   {
+    "nombre": "Bolívar",
+    "valor": 33
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 32
+   },
+   {
+    "nombre": "Morona Santiago",
+    "valor": 28
+   },
+   {
+    "nombre": "Napo",
+    "valor": 22
+   },
+   {
+    "nombre": "Cañar",
+    "valor": 8
+   },
+   {
+    "nombre": "Los Ríos",
+    "valor": 3
+   }
+  ],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 111
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 91
+   },
+   {
+    "nombre": "España",
+    "valor": 73
+   },
+   {
+    "nombre": "Perú",
+    "valor": 72
+   },
+   {
+    "nombre": "Francia",
+    "valor": 46
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 39
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 30
+   },
+   {
+    "nombre": "Argentina",
+    "valor": 28
+   },
+   {
+    "nombre": "Venezuela",
+    "valor": 28
+   },
+   {
+    "nombre": "Chile",
+    "valor": 8
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     234,
+     384,
+     829,
+     781,
+     531,
+     88
+    ]
+   }
+  ]
+ },
+ "solo-extranjeros": {
+  "kpis": {
+   "total": 17303,
+   "nacionales": 0,
+   "extranjeros": 17303
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    608,
+    1129,
+    682,
+    946,
+    528,
+    781,
+    1022,
+    1162,
+    752,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    550,
+    984,
+    772,
+    840,
+    535,
+    684,
+    851,
+    1062,
+    721,
+    686,
+    885,
+    1123
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Turismo",
+    "valor": 5880
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 3400
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 3349
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 2228
+   },
+   {
+    "nombre": "Evento",
+    "valor": 1497
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 949
+   }
+  ],
+  "porCiudad": [],
+  "porProvincia": [],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 4287
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 3630
+   },
+   {
+    "nombre": "Perú",
+    "valor": 2066
+   },
+   {
+    "nombre": "España",
+    "valor": 1827
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 1282
+   },
+   {
+    "nombre": "Francia",
+    "valor": 1120
+   },
+   {
+    "nombre": "Venezuela",
+    "valor": 958
+   },
+   {
+    "nombre": "Argentina",
+    "valor": 857
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 641
+   },
+   {
+    "nombre": "Chile",
+    "valor": 635
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     642,
+     1177,
+     2582,
+     2539,
+     1575,
+     249
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     782,
+     1205,
+     2300,
+     2291,
+     1729,
+     232
+    ]
+   }
+  ]
+ },
+ "ciudad-ambato-2025": {
+  "kpis": {
+   "total": 10481,
+   "nacionales": 10481,
+   "extranjeros": 0
+  },
+  "evolucion": {
+   "anio": 2025,
+   "actual": [
+    627,
+    1119,
+    827,
+    923,
+    622,
+    683,
+    1059,
+    1174,
+    684,
+    704,
+    854,
+    1205
+   ],
+   "anterior": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Turismo",
+    "valor": 3482
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 2299
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 2037
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 1367
+   },
+   {
+    "nombre": "Evento",
+    "valor": 815
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 481
+   }
+  ],
+  "porCiudad": [
+   {
+    "nombre": "Ambato",
+    "valor": 10481
+   }
+  ],
+  "porProvincia": [
+   {
+    "nombre": "Tungurahua",
+    "valor": 10481
+   }
+  ],
+  "porPais": [],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     441,
+     691,
+     1644,
+     1342,
+     912,
+     118
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     439,
+     822,
+     1354,
+     1430,
+     1114,
+     174
+    ]
+   }
+  ]
+ },
+ "pais-colombia": {
+  "kpis": {
+   "total": 4287,
+   "nacionales": 0,
+   "extranjeros": 4287
+  },
+  "evolucion": {
+   "anio": 2026,
+   "actual": [
+    141,
+    311,
+    162,
+    216,
+    141,
+    204,
+    221,
+    286,
+    189,
+    null,
+    null,
+    null
+   ],
+   "anterior": [
+    147,
+    225,
+    208,
+    239,
+    125,
+    182,
+    207,
+    247,
+    191,
+    178,
+    201,
+    266
+   ]
+  },
+  "porMotivo": [
+   {
+    "nombre": "Turismo",
+    "valor": 1469
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 935
+   },
+   {
+    "nombre": "Descanso",
+    "valor": 827
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 567
+   },
+   {
+    "nombre": "Evento",
+    "valor": 318
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 171
+   }
+  ],
+  "porCiudad": [],
+  "porProvincia": [],
+  "porPais": [
+   {
+    "nombre": "Colombia",
+    "valor": 4287
+   }
+  ],
+  "edadGenero": [
+   {
+    "genero": "Masculino",
+    "valores": [
+     176,
+     320,
+     660,
+     578,
+     387,
+     63
+    ]
+   },
+   {
+    "genero": "Femenino",
+    "valores": [
+     152,
+     272,
+     603,
+     598,
+     440,
+     38
+    ]
+   }
+  ]
+ }
+}

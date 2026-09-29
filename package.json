@@ -1,0 +1,11 @@
+{
+  "name": "turismo-patate-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dashboard público de visitantes de establecimientos turísticos del cantón Patate",
+  "type": "module",
+  "scripts": {
+    "oraculo": "python tools/oraculo.py",
+    "test": "node --test test/*.test.mjs"
+  }
+}

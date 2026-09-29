@@ -1,0 +1,9 @@
+[
+  { "nombre": "todo", "filtros": {} },
+  { "nombre": "un-establecimiento", "filtros": { "establecimiento": "Heladería Las Orquídeas" } },
+  { "nombre": "2026-julio", "filtros": { "anio": 2026, "mes": 6 } },
+  { "nombre": "negocios-femenino", "filtros": { "motivo": "Negocios", "genero": "Femenino" } },
+  { "nombre": "solo-extranjeros", "filtros": { "procedencia": "EXT" } },
+  { "nombre": "ciudad-ambato-2025", "filtros": { "procedencia": "C:Ambato", "anio": 2025 } },
+  { "nombre": "pais-colombia", "filtros": { "procedencia": "P:Colombia" } }
+]

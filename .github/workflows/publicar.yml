@@ -1,0 +1,63 @@
+# Publica el dashboard en GitHub Pages con los datos frescos de la hoja.
+# La URL de la hoja vive solo en el secreto SHEET_URL: nunca llega al sitio ni al repositorio.
+# Autor: Kevin Alexis Barrera Llerena 2026
+name: Publicar dashboard
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pruebas
+        run: node --test test/*.test.mjs
+
+      - name: Construir datos desde la hoja
+        env:
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+        run: node tools/construir_datos.mjs sitio/datos/datos.json
+
+      - name: Armar el sitio (solo archivos públicos)
+        run: |
+          mkdir -p sitio
+          cp index.html sitio/
+          cp -r css js sitio/
+          mkdir -p sitio/assets
+          cp assets/logo-patate.png assets/fondo-cabecera.jpg assets/ecu-provincias.geojson sitio/assets/
+          touch sitio/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: sitio
+
+  desplegar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4
