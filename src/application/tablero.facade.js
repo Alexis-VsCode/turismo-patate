@@ -22,6 +22,9 @@ function textoProcedencia(valor) {
   return tipo === 'PR' ? TEXTOS.provinciaPrefijo + nombre : nombre;
 }
 
+/** Reporte por defecto: el error sale de la pila actual y llega al manejador global, sin frenar a los demás. */
+const relanzarAparte = (error) => queueMicrotask(() => { throw error; });
+
 /** Filtros cuyo valor vacío es null (numéricos) en lugar de cadena vacía. */
 const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
 
@@ -32,12 +35,23 @@ const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
  *   config: { REUSO_MINIMO_MS: number, INTERVALO_AUTO_MS: number },
  *   reloj?: () => number,
  *   esVisible?: () => boolean,
- * }} dependencias fuente de datos, configuración, reloj y visibilidad de la página (inyectables en pruebas)
+ *   reportarError?: (error: Error) => void,
+ * }} dependencias fuente de datos, configuración, reloj, visibilidad de la página y reporte de errores de
+ *   suscriptores (todos inyectables en pruebas)
  */
-export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisible = () => true }) {
+export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisible = () => true, reportarError = relanzarAparte }) {
   const estado = { datos: null, filtros: filtrosVacios(), ultimaDescarga: 0, cargando: false, error: null };
   const oyentes = new Set();
-  const avisar = (evento) => oyentes.forEach((fn) => fn(evento));
+  /** Entrega el evento a cada suscriptor por separado: si uno falla, los demás lo reciben y la carga sigue válida. */
+  const avisar = (evento) => {
+    for (const fn of oyentes) {
+      try {
+        fn(evento);
+      } catch (error) {
+        reportarError(error);
+      }
+    }
+  };
 
   /** Registra una función que recibe 'datos', 'filtros', 'cargando' o 'error'. Devuelve la función para anularla. */
   function suscribir(fn) {

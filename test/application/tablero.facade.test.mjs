@@ -124,3 +124,18 @@ test('opciones de los combos incluyen los 100 establecimientos y la procedencia 
   assert.ok(op.procedencia.some((o) => o.valor === 'P:Colombia'));
   assert.ok(op.procedencia.some((o) => o.valor === 'PR:Tungurahua'));
 });
+
+test('un suscriptor que lanza no convierte una carga correcta en error ni oculta el evento a los demás', async () => {
+  const errores = [];
+  const eventos = [];
+  const facade = crearTableroFacade({
+    obtener: async () => DATOS, config: CONFIG, reloj: () => 1_000_000, reportarError: (e) => errores.push(e),
+  });
+  facade.suscribir((e) => { if (e === 'datos') throw new Error('falla del pintado'); });
+  facade.suscribir((e) => eventos.push(e));
+  assert.equal(await facade.cargar(true), 'cargado');
+  assert.equal(facade.estado.error, null);
+  assert.deepEqual(eventos, ['cargando', 'datos', 'cargando']);
+  assert.equal(errores.length, 1);
+  assert.match(errores[0].message, /falla del pintado/);
+});

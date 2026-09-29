@@ -6,7 +6,7 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { MESES_CORTOS, TEXTOS } from '../../../shared/textos.es.js';
-import { numero } from '../../../shared/formato.js';
+import { numero, porcentaje } from '../../../shared/formato.js';
 
 const tooltipBase = { renderMode: 'richText', confine: true };
 
@@ -24,8 +24,8 @@ export function opcionesEvolucion(evo, colores, mesResaltado) {
     xAxis: { type: 'category', data: MESES_CORTOS, axisLabel: { color: colores.texto, interval: 0, fontSize: 11 }, axisTick: { show: false }, axisLine: { lineStyle: { color: colores.rejilla } } },
     yAxis: { type: 'value', axisLabel: { color: colores.texto, formatter: (v) => numero(v) }, splitLine: { lineStyle: { color: colores.rejilla } } },
     series: [
-      { name: String(evo.anioAnterior), type: 'bar', barGap: '8%', itemStyle: { color: colores.verde }, data: conResalte(evo.anterior, colores.verde) },
-      { name: String(evo.anio), type: 'bar', itemStyle: { color: colores.lima }, data: conResalte(evo.actual, colores.lima), label: etiqueta },
+      { name: evo.anioAnterior === null ? TEXTOS.anioAnterior : String(evo.anioAnterior), type: 'bar', barGap: '8%', itemStyle: { color: colores.verde }, data: conResalte(evo.anterior, colores.verde) },
+      { name: evo.anio === null ? TEXTOS.anioActual : String(evo.anio), type: 'bar', itemStyle: { color: colores.lima }, data: conResalte(evo.actual, colores.lima), label: etiqueta },
       {
         name: TEXTOS.tendencia(evo.anio), type: 'line', data: evo.actual, smooth: true, symbolSize: 5, z: 1,
         lineStyle: { width: 2, color: colores.oliva }, itemStyle: { color: colores.oliva }, connectNulls: false,
@@ -38,12 +38,12 @@ export function opcionesEvolucion(evo, colores, mesResaltado) {
 export function opcionesDona(k, colores) {
   return {
     animationDuration: 400,
-    tooltip: { ...tooltipBase, trigger: 'item', formatter: (p) => `${p.name}: ${numero(p.value)} (${p.percent}%)` },
+    tooltip: { ...tooltipBase, trigger: 'item', formatter: (p) => `${p.name}: ${numero(p.value)} (${porcentaje(p.percent / 100)})` },
     legend: { bottom: 4, left: 'center', itemWidth: 12, itemHeight: 12, itemGap: 18, textStyle: { color: colores.texto, fontSize: 13 } },
     series: [{
       type: 'pie', radius: ['50%', '76%'], center: ['50%', '45%'], avoidLabelOverlap: true,
       itemStyle: { borderColor: colores.superficie, borderWidth: 2 },
-      label: { position: 'inside', color: '#10250a', fontSize: 13, fontWeight: 'bold', formatter: (p) => (p.percent >= 4 ? `${p.percent.toFixed(1)}%` : '') },
+      label: { position: 'inside', color: '#10250a', fontSize: 13, fontWeight: 'bold', formatter: (p) => (p.percent >= 4 ? porcentaje(p.percent / 100) : '') },
       data: [
         { name: TEXTOS.nacionales, value: k.nacionales, itemStyle: { color: colores.verde } },
         { name: TEXTOS.extranjeros, value: k.extranjeros, itemStyle: { color: colores.amarillo } },

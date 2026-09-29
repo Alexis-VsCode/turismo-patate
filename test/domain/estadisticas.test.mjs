@@ -67,3 +67,19 @@ test('variación sin datos del año anterior es null, nunca infinito', () => {
   assert.equal(v.anterior, 0);
   assert.equal(v.variacion, null);
 });
+
+test('evolución sin año de referencia devuelve series vacías y no inventa años', () => {
+  const evo = evolucionMensual([], anioDeReferencia([], null));
+  assert.equal(evo.anio, null);
+  assert.equal(evo.anioAnterior, null);
+  assert.deepEqual(evo.actual, Array(12).fill(null));
+  assert.deepEqual(evo.anterior, Array(12).fill(0));
+});
+
+test('un establecimiento sin filas produce la misma evolución vacía', () => {
+  const filtros = { ...filtrosVacios(), establecimiento: 'No existe' };
+  const base = filtrar(datos.filas, filtros, ['anio', 'mes']);
+  const evo = evolucionMensual(base, anioDeReferencia(base, filtros.anio));
+  assert.equal(evo.anio, null);
+  assert.equal(evo.anioAnterior, null);
+});

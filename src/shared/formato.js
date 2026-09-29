@@ -14,9 +14,9 @@ export function porcentaje(valor) {
   return valor === null ? '—' : `${(valor * 100).toFixed(1).replace('.', ',')}%`;
 }
 
-/** Texto de la variación con signo, p. ej. «+11,9 %»; null si no hay año anterior con qué comparar. */
+/** Texto de la variación con signo, p. ej. «+11,9%»; null si no hay año anterior con qué comparar. */
 export function textoVariacion(variacion) {
   if (variacion === null || variacion === undefined) return null;
   const signo = variacion > 0 ? '+' : variacion < 0 ? '−' : '';
-  return `${signo}${Math.abs(variacion * 100).toFixed(1).replace('.', ',')} %`;
+  return `${signo}${porcentaje(Math.abs(variacion))}`;
 }

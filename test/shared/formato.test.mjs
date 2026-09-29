@@ -23,9 +23,9 @@ test('porcentaje usa una decimal con coma y «—» sin base', () => {
 });
 
 test('textoVariacion lleva signo y es null sin año anterior', () => {
-  assert.equal(textoVariacion(0.119), '+11,9 %');
-  assert.equal(textoVariacion(-0.05), '−5,0 %');
-  assert.equal(textoVariacion(0), '0,0 %');
+  assert.equal(textoVariacion(0.119), '+11,9%');
+  assert.equal(textoVariacion(-0.05), '−5,0%');
+  assert.equal(textoVariacion(0), '0,0%');
   assert.equal(textoVariacion(null), null);
   assert.equal(textoVariacion(undefined), null);
 });

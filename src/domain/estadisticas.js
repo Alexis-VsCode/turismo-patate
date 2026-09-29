@@ -75,6 +75,8 @@ export function anioDeReferencia(filas, anioFiltrado) {
 
 /** Evolución de 12 meses del año de referencia y del anterior (null en meses sin datos del año actual). */
 export function evolucionMensual(filas, anio) {
+  // Paso 1: sin año de referencia no hay nada que comparar; no se inventa un «año anterior»
+  if (!anio) return { anio: null, anioAnterior: null, actual: Array(12).fill(null), anterior: Array(12).fill(0) };
   const serie = (a) => {
     const valores = Array(12).fill(0);
     for (const f of filas) if (f.anio === a) valores[f.mes] += f.cantidad;
