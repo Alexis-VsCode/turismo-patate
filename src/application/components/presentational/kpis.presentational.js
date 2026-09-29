@@ -1,8 +1,8 @@
 /**
  * @file kpis.presentational.js
- * @description Presentacional. Pinta las tres tarjetas de la esquina (total, nacionales y extranjeros),
- *   con una animación breve de las cifras y la variación contra el mismo período del año anterior.
- *   Sin estado de negocio ni acceso a datos.
+ * @description Presentacional. Pinta la tarjeta del total con su variación contra el mismo período del año
+ *   anterior y las tarjetas de nacionales y extranjeros del panel de participación, con una animación breve de
+ *   las cifras. Sin estado de negocio ni acceso a datos.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { numero, porcentaje, textoVariacion } from '../../../shared/formato.js';
@@ -41,15 +41,20 @@ function animarNumero(elemento, destino, formatear) {
 }
 
 /**
- * @param {{ total: HTMLElement, nacionales: HTMLElement, extranjeros: HTMLElement, variacion: HTMLElement }} elementos
- * @param {{ total: number, pctNacionales: number|null, pctExtranjeros: number|null }} k resultado de kpis()
+ * @param {{ total: HTMLElement, variacion: HTMLElement, nacionales: HTMLElement, nacionalesPct: HTMLElement,
+ *   extranjeros: HTMLElement, extranjerosPct: HTMLElement, resumen: HTMLElement }} elementos
+ * @param {{ total: number, nacionales: number, extranjeros: number, pctNacionales: number|null, pctExtranjeros: number|null }} k resultado de kpis()
  * @param {{ anioAnterior: number|null, variacion: number|null }} v resultado de variacionInteranual()
+ * @param {string} textoResumen frase de participación ya redactada para los filtros vigentes
  */
-export function pintarKpis(elementos, k, v) {
-  // Paso 1: las tres cifras se animan hacia su valor nuevo
+export function pintarKpis(elementos, k, v, textoResumen) {
+  // Paso 1: las cifras se animan hacia su valor nuevo; los porcentajes y la frase cambian de una vez
   animarNumero(elementos.total, k.total, numero);
-  animarNumero(elementos.nacionales, Math.round((k.pctNacionales ?? 0) * 1000), (x) => (k.pctNacionales === null ? '—' : porcentaje(x / 1000)));
-  animarNumero(elementos.extranjeros, Math.round((k.pctExtranjeros ?? 0) * 1000), (x) => (k.pctExtranjeros === null ? '—' : porcentaje(x / 1000)));
+  animarNumero(elementos.nacionales, k.nacionales, numero);
+  animarNumero(elementos.extranjeros, k.extranjeros, numero);
+  elementos.nacionalesPct.textContent = porcentaje(k.pctNacionales);
+  elementos.extranjerosPct.textContent = porcentaje(k.pctExtranjeros);
+  elementos.resumen.textContent = textoResumen;
 
   // Paso 2: variación con flecha y color según el sentido
   const texto = textoVariacion(v.variacion);

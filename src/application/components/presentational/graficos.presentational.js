@@ -40,40 +40,23 @@ export function opcionesEvolucion(evo, colores, mesResaltado) {
   };
 }
 
-/** Dona nacionales vs extranjeros con porcentaje en la etiqueta. */
-export function opcionesDona(k, colores) {
+/** Dona nacionales vs extranjeros con el total y el periodo al centro; las tarjetas del panel hacen de leyenda. */
+export function opcionesDona(k, colores, centro) {
   return {
     animationDuration: 400,
+    title: {
+      text: numero(k.total), subtext: centro, left: 'center', top: 'center', itemGap: 2,
+      textStyle: { color: colores.texto, fontSize: 24, fontWeight: 800 }, subtextStyle: { color: colores.texto, fontSize: 12 },
+    },
     tooltip: { ...tooltipBase(colores), trigger: 'item', formatter: (p) => `${p.name}: ${numero(p.value)} (${porcentaje(p.percent / 100)})` },
-    legend: { bottom: 4, left: 'center', itemWidth: 12, itemHeight: 12, itemGap: 18, textStyle: { color: colores.texto, fontSize: 13 } },
     series: [{
-      type: 'pie', radius: ['50%', '76%'], center: ['50%', '45%'], avoidLabelOverlap: true,
+      type: 'pie', radius: ['58%', '88%'], center: ['50%', '50%'], avoidLabelOverlap: true,
       itemStyle: { borderColor: colores.superficie, borderWidth: 2 },
       label: { position: 'inside', color: colores.textoSobreColor, fontSize: 13, fontWeight: 'bold', formatter: (p) => (p.percent >= 4 ? porcentaje(p.percent / 100) : '') },
       data: [
         { name: TEXTOS.nacionales, value: k.nacionales, itemStyle: { color: colores.verde } },
         { name: TEXTOS.extranjeros, value: k.extranjeros, itemStyle: { color: colores.amarillo } },
       ],
-    }],
-  };
-}
-
-/** Barras horizontales por motivo, de mayor a menor (el mayor arriba). */
-export function opcionesMotivo(lista, colores, seleccionado) {
-  const invertida = [...lista].reverse();
-  return {
-    animationDuration: 400,
-    grid: { left: 8, right: 56, top: 8, bottom: 8, containLabel: true },
-    tooltip: { ...tooltipBase(colores), trigger: 'item', formatter: (p) => `${p.name}: ${numero(p.value)}` },
-    xAxis: { type: 'value', show: false },
-    yAxis: { type: 'category', data: invertida.map((m) => m.nombre), axisLabel: { color: colores.texto, fontSize: 12 }, axisTick: { show: false }, axisLine: { show: false } },
-    series: [{
-      type: 'bar', barMaxWidth: 34,
-      data: invertida.map((m) => ({
-        value: m.valor,
-        itemStyle: { color: colores.verde, borderRadius: [0, 4, 4, 0], opacity: !seleccionado || seleccionado === m.nombre ? 1 : 0.35 },
-      })),
-      label: { show: true, position: 'right', color: colores.texto, fontSize: 12, formatter: (p) => numero(p.value) },
     }],
   };
 }

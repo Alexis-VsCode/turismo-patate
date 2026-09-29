@@ -32,3 +32,10 @@ test('la dona usa coma decimal en la etiqueta y en el tooltip', () => {
   assert.equal(etiqueta({ percent: 2 }), '');
   assert.equal(dona.tooltip.formatter({ name: 'Nacionales', value: 1000, percent: 63.5 }), 'Nacionales: 1.000 (63,5%)');
 });
+
+test('la dona muestra el total y el periodo al centro y no repite la leyenda', () => {
+  const dona = opcionesDona({ total: 96452, nacionales: 79216, extranjeros: 17236 }, colores, 'Visitantes 2025');
+  assert.equal(dona.title.text, '96.452');
+  assert.equal(dona.title.subtext, 'Visitantes 2025');
+  assert.equal(dona.legend, undefined);
+});

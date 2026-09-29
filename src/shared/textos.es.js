@@ -4,6 +4,8 @@
  *   index.html; todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
  * @author Kevin Alexis Barrera Llerena 2026
  */
+import { porcentaje } from './formato.js';
+
 export const TEXTOS = Object.freeze({
   todos: 'Todos',
   todosEstablecimientos: 'Todos los establecimientos',
@@ -18,12 +20,12 @@ export const TEXTOS = Object.freeze({
   extranjeros: 'Extranjeros',
   visitantes: 'visitantes',
   frescura: {
-    alDia: 'Datos al día',
-    retrasado: 'Datos con retraso',
-    vencido: 'Datos desactualizados',
+    alDia: 'Publicación al día',
+    retrasado: 'Publicación retrasada',
+    vencido: 'Publicación detenida',
     desconocido: 'Sin verificar',
   },
-  frescuraDetalle: (tiempo) => `Publicados ${tiempo}`,
+  frescuraDetalle: (tiempo) => `Última ${tiempo}`,
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
   estado: (consulta, publicado, establecimientos, registros) =>
@@ -43,7 +45,6 @@ export const TEXTOS = Object.freeze({
   avisosPestanas: (n) => `${n} ${n === 1 ? 'aviso' : 'avisos'} de pestañas`,
   filaDe: (pestana, fila) => `${pestana} · fila ${fila}`,
   mostrandoPrimeros: (n, total) => `Se muestran los primeros ${n} de ${total}.`,
-  topPaises: 'Top países',
   sinDatos: 'Sin datos para los filtros elegidos',
   tendencia: (anio) => (anio === null ? 'Tendencia' : `Tendencia ${anio}`),
   anioAnterior: 'Año anterior',
@@ -56,6 +57,21 @@ export const TEXTOS = Object.freeze({
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
   variacion: (pct, anio) => `${pct} vs ${anio}`,
   sinComparacion: 'Sin datos del año anterior',
+  periodo: (anio, mes) => {
+    if (anio !== null && mes) return `en ${mes.toLowerCase()} de ${anio}`;
+    if (anio !== null) return `durante el ${anio}`;
+    if (mes) return `en ${mes.toLowerCase()} de todos los años`;
+    return 'en todo el período';
+  },
+  resumenParticipacion: (k, periodo) => {
+    if (!k.total) return 'Sin visitantes para los filtros elegidos.';
+    if (k.pctExtranjeros === 0) return `Todos los visitantes son nacionales ${periodo}.`;
+    if (k.pctNacionales === 0) return `Todos los visitantes son extranjeros ${periodo}.`;
+    return `Los visitantes nacionales representan el ${porcentaje(k.pctNacionales)} del total y los extranjeros el ${porcentaje(k.pctExtranjeros)} ${periodo}.`;
+  },
+  centroDona: (anio) => (anio === null ? 'Visitantes' : `Visitantes ${anio}`),
+  notaMapa: (anio) => `Tamaño del círculo proporcional al total de visitantes (${anio === null ? 'todos los años' : anio}).`,
+  topVista: { provincias: 'Top provincias', ciudades: 'Top ciudades', paises: 'Top países' },
   subtituloEvolucion: (anio, anterior) => (anio === null ? 'Sin datos' : `${anio} vs ${anterior} · por mes`),
 });
 

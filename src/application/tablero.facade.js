@@ -26,6 +26,17 @@ function textoProcedencia(valor) {
 /** Reporte por defecto: el error sale de la pila actual y llega al manejador global, sin frenar a los demás. */
 const relanzarAparte = (error) => queueMicrotask(() => { throw error; });
 
+/** Pestañas del mapa de origen. */
+const VISTAS_MAPA = new Set(['provincias', 'ciudades', 'paises']);
+
+/** Pestaña que corresponde a un filtro de procedencia concreto; null si el filtro no fuerza ninguna. */
+function vistaDeProcedencia(procedencia) {
+  if (procedencia === 'EXT' || procedencia.startsWith('P:')) return 'paises';
+  if (procedencia.startsWith('C:')) return 'ciudades';
+  if (procedencia.startsWith('PR:')) return 'provincias';
+  return null;
+}
+
 /** Filtros cuyo valor vacío es null (numéricos) en lugar de cadena vacía. */
 const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
 
@@ -41,7 +52,7 @@ const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
  *   suscriptores (todos inyectables en pruebas)
  */
 export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisible = () => true, reportarError = relanzarAparte }) {
-  const estado = { datos: null, filtros: filtrosVacios(), ultimaDescarga: 0, cargando: false, error: null };
+  const estado = { datos: null, filtros: filtrosVacios(), vistaMapa: 'provincias', ultimaDescarga: 0, cargando: false, error: null };
   const oyentes = new Set();
   /** Entrega el evento a cada suscriptor por separado: si uno falla, los demás lo reciben y la carga sigue válida. */
   const avisar = (evento) => {
@@ -54,7 +65,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     }
   };
 
-  /** Registra una función que recibe 'datos', 'filtros', 'cargando' o 'error'. Devuelve la función para anularla. */
+  /** Registra una función que recibe 'datos', 'filtros', 'vistaMapa', 'cargando' o 'error'. Devuelve la función para anularla. */
   function suscribir(fn) {
     oyentes.add(fn);
     return () => oyentes.delete(fn);
@@ -64,7 +75,16 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function fijarFiltro(campo, valor) {
     const vacio = valor === '' || valor === null || valor === undefined;
     estado.filtros[campo] = vacio ? (FILTROS_NUMERICOS.has(campo) ? null : '') : valor;
+    // Paso 1: elegir un origen concreto lleva el mapa a la pestaña que lo muestra; «todos» y «nacionales» no la cambian
+    if (campo === 'procedencia') estado.vistaMapa = vistaDeProcedencia(estado.filtros.procedencia) ?? estado.vistaMapa;
     avisar('filtros');
+  }
+
+  /** Cambia la pestaña del mapa (provincias, ciudades o países). Ignora modos desconocidos y repeticiones. */
+  function fijarVistaMapa(modo) {
+    if (!VISTAS_MAPA.has(modo) || modo === estado.vistaMapa) return;
+    estado.vistaMapa = modo;
+    avisar('vistaMapa');
   }
 
   /** Aplica el filtro o lo quita si ya tenía ese mismo valor (clic repetido en un gráfico). */
@@ -162,14 +182,21 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     const sel = filtrar(filas, f);
     // Paso 2: la evolución ignora año y mes para mostrar los 12 meses del año de referencia
     const baseEvolucion = filtrar(filas, f, ['anio', 'mes']);
-    // Paso 3: cada zona de la interfaz recibe su agregación ya calculada por el dominio
+    // Paso 3: la lista de motivos ignora su propio filtro para que el visitante pueda pasar de un motivo a otro
+    const baseMotivos = filtrar(filas, f, ['motivo']);
+    // Paso 4: cada zona de la interfaz recibe su agregación ya calculada por el dominio
     return {
       kpis: kpis(sel),
       variacion: variacionInteranual(filas, f),
       evolucion: evolucionMensual(baseEvolucion, anioDeReferencia(baseEvolucion, f.anio)),
-      motivos: porMotivo(sel),
+      motivos: porMotivo(baseMotivos),
       edadGenero: edadGenero(sel, catalogo.generos),
-      mapa: { procedencia: f.procedencia, ciudades: porCiudad(sel), paises: porPais(sel), provincias: porProvincia(sel), catalogo },
+      mapa: { vista: estado.vistaMapa, procedencia: f.procedencia, ciudades: porCiudad(sel), paises: porPais(sel), provincias: porProvincia(sel), catalogo },
+      textos: {
+        periodo: TEXTOS.periodo(f.anio, f.mes === null ? null : MESES[f.mes]),
+        centro: TEXTOS.centroDona(f.anio),
+        notaMapa: TEXTOS.notaMapa(f.anio),
+      },
       filtros: { ...f },
     };
   }
@@ -194,7 +221,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, cargar, tocaActualizar, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
   };
 }

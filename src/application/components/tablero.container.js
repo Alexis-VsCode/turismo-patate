@@ -9,9 +9,10 @@ import { TEXTOS } from '../../shared/textos.es.js';
 import { numero, fechaHora } from '../../shared/formato.js';
 import { llenarSelect } from './compartidos/select-seguro.js';
 import { crearComboBuscable } from './compartidos/combo-buscable.js';
-import { opcionesEvolucion, opcionesDona, opcionesMotivo, opcionesEdadGenero } from './presentational/graficos.presentational.js';
+import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentational/graficos.presentational.js';
 import { crearMapa } from './presentational/mapa.presentational.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
+import { pintarMotivos } from './presentational/motivos.presentational.js';
 import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
@@ -44,7 +45,6 @@ export function montarTablero(facade, config) {
   const graficos = {
     evolucion: echarts.init($('g-evolucion')),
     dona: echarts.init($('g-dona')),
-    motivo: echarts.init($('g-motivo')),
     edad: echarts.init($('g-edad')),
   };
   let mapa = null;
@@ -70,6 +70,8 @@ export function montarTablero(facade, config) {
     });
   }
   $('btn-limpiar').addEventListener('click', () => facade.limpiarFiltros());
+  const segmentos = document.querySelectorAll('.segmento');
+  segmentos.forEach((boton) => boton.addEventListener('click', () => facade.fijarVistaMapa(boton.dataset.vista)));
   $('btn-actualizar').addEventListener('click', () => facade.cargar(true));
   const panelFiltros = crearPanelFiltros({
     boton: $('btn-filtros'), dialogo: $('dialogo-filtros'), cuerpo: $('dialogo-filtros-cuerpo'),
@@ -77,7 +79,6 @@ export function montarTablero(facade, config) {
   });
 
   // Paso 2: filtrado cruzado desde los gráficos
-  graficos.motivo.on('click', (p) => facade.alternarFiltro('motivo', p.name));
   graficos.edad.on('click', (p) => facade.alternarFiltro('rangoEdad', p.name));
   graficos.dona.on('click', (p) => facade.fijarFiltro('procedencia', p.name === TEXTOS.extranjeros ? 'EXT' : 'NAC'));
   graficos.evolucion.on('click', (p) => {
@@ -103,18 +104,30 @@ export function montarTablero(facade, config) {
 
   function pintarGraficos(v) {
     graficos.evolucion.setOption(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), true);
-    graficos.dona.setOption(opcionesDona(v.kpis, colores), true);
-    graficos.motivo.setOption(opcionesMotivo(v.motivos, colores, v.filtros.motivo), true);
+    graficos.dona.setOption(opcionesDona(v.kpis, colores, v.textos.centro), true);
     graficos.edad.setOption(opcionesEdadGenero(v.edadGenero, colores, v.filtros.rangoEdad), true);
   }
 
   function pintarPaneles() {
     const v = facade.vista();
     if (!v) return;
-    pintarKpis({ total: $('k-total'), nacionales: $('k-nacionales'), extranjeros: $('k-extranjeros'), variacion: $('k-variacion') }, v.kpis, v.variacion);
+    pintarKpis({
+      total: $('k-total'), variacion: $('k-variacion'),
+      nacionales: $('k-nacionales'), nacionalesPct: $('k-nacionales-pct'),
+      extranjeros: $('k-extranjeros'), extranjerosPct: $('k-extranjeros-pct'),
+      resumen: $('resumen-participacion'),
+    }, v.kpis, v.variacion, TEXTOS.resumenParticipacion(v.kpis, v.textos.periodo));
+    pintarMotivos($('lista-motivos'), v.motivos, v.filtros.motivo, (motivo) => facade.alternarFiltro('motivo', motivo));
     $('sub-evolucion').textContent = TEXTOS.subtituloEvolucion(v.evolucion.anio, v.evolucion.anioAnterior);
     pintarGraficos(v);
     $('sin-datos').hidden = v.kpis.total > 0;
+    pintarMapa(v);
+  }
+
+  /** Marca la pestaña activa y redibuja el mapa, su lista «Top» y la nota de escala. */
+  function pintarMapa(v) {
+    segmentos.forEach((boton) => boton.setAttribute('aria-pressed', String(boton.dataset.vista === v.mapa.vista)));
+    $('nota-mapa').textContent = v.textos.notaMapa;
     if (mapa) mapa.actualizar(v.mapa);
   }
 
@@ -145,6 +158,9 @@ export function montarTablero(facade, config) {
     } else if (evento === 'filtros') {
       pintarFiltros();
       pintarPaneles();
+    } else if (evento === 'vistaMapa') {
+      const v = facade.vista();
+      if (v) pintarMapa(v);
     } else if (evento === 'cargando') {
       const { cargando } = facade.estado;
       document.body.classList.toggle('cargando', cargando);

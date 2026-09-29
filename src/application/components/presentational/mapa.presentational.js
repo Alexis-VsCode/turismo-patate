@@ -1,9 +1,9 @@
 /**
  * @file mapa.presentational.js
  * @description Presentacional. Mapa de origen de visitantes con Leaflet sobre teselas de OpenStreetMap:
- *   provincias de Ecuador (GeoJSON local) coloreadas por visitantes nacionales, burbujas por ciudad
- *   o por país y encuadre automático según el filtro País / Ciudad. Todo contenido de la hoja se
- *   inserta como nodo de texto, nunca como HTML.
+ *   provincias de Ecuador (GeoJSON local) coloreadas por visitantes nacionales, burbujas por provincia,
+ *   ciudad o país según la pestaña activa, lista «Top» del mismo nivel y encuadre automático según la
+ *   pestaña y el filtro País / Ciudad. Todo contenido de la hoja se inserta como nodo de texto, nunca como HTML.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { claveNormalizada } from '../../../domain/catalogo.js';
@@ -35,8 +35,8 @@ export function radioDeBurbuja(valor, maximo) {
 
 /**
  * Crea el mapa. `alElegir(procedencia)` se llama al pulsar una burbuja o una provincia.
- * Devuelve { actualizar(datosMapa), repintar(), redimensionar() } donde datosMapa = { procedencia, ciudades, paises,
- * provincias, catalogo }.
+ * Devuelve { actualizar(datosMapa), repintar(), redimensionar() } donde datosMapa = { vista, procedencia, ciudades,
+ * paises, provincias, catalogo } y vista es 'provincias', 'ciudades' o 'paises'.
  */
 export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResaltada, alElegir) {
   const L = globalThis.L;
@@ -77,36 +77,37 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
   }).addTo(mapa);
   const capaBurbujas = L.layerGroup().addTo(mapa);
 
-  // Paso 2: lista compacta de países, como control del mapa
-  const ControlPaises = L.Control.extend({
+  // Paso 2: lista «Top» del modo activo, como control del mapa
+  const ControlTop = L.Control.extend({
     onAdd() {
-      const caja = L.DomUtil.create('div', 'mapa-top-paises');
+      const caja = L.DomUtil.create('div', 'mapa-top');
       L.DomEvent.disableClickPropagation(caja);
       return caja;
     },
   });
-  const controlPaises = new ControlPaises({ position: 'topright' });
-  controlPaises.addTo(mapa);
+  const controlTop = new ControlTop({ position: 'topright' });
+  controlTop.addTo(mapa);
 
-  function pintarTopPaises(paises, visible) {
-    const caja = controlPaises.getContainer();
-    while (caja.firstChild) caja.removeChild(caja.firstChild);
-    caja.hidden = !visible || !paises.length;
+  /** Muestra las cinco primeras filas de la lista; cada fila elige su procedencia al pulsarla. */
+  function pintarTop(titulo, filas, prefijo) {
+    const caja = controlTop.getContainer();
+    caja.replaceChildren();
+    caja.hidden = !filas.length;
     if (caja.hidden) return;
-    const titulo = document.createElement('div');
-    titulo.className = 'mapa-top-titulo';
-    titulo.textContent = TEXTOS.topPaises;
-    caja.appendChild(titulo);
-    for (const p of paises.slice(0, 5)) {
+    const encabezado = document.createElement('div');
+    encabezado.className = 'mapa-top-titulo';
+    encabezado.textContent = titulo;
+    caja.appendChild(encabezado);
+    for (const f of filas.slice(0, 5)) {
       const fila = document.createElement('button');
       fila.type = 'button';
       fila.className = 'mapa-top-fila';
       const nombre = document.createElement('span');
-      nombre.textContent = p.nombre;
+      nombre.textContent = f.nombre;
       const valor = document.createElement('span');
-      valor.textContent = numero(p.valor);
+      valor.textContent = numero(f.valor);
       fila.append(nombre, valor);
-      fila.addEventListener('click', () => alElegir(`P:${p.nombre}`));
+      fila.addEventListener('click', () => alElegir(`${prefijo}${f.nombre}`));
       caja.appendChild(fila);
     }
   }
@@ -123,10 +124,10 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
 
   let ultimosDatos = null;
 
-  /** Estilo de provincias, burbujas y lista de países según los datos. No mueve el encuadre del mapa. */
-  function pintarCapas({ procedencia, ciudades, paises, provincias, catalogo }) {
-    // Paso 1: coropletas con el total nacional por provincia
-    valoresProvincia = new Map(provincias.map((p) => [claveNormalizada(p.nombre), p.valor]));
+  /** Estilo de provincias, burbujas y lista «Top» según la pestaña activa. No mueve el encuadre del mapa. */
+  function pintarCapas({ vista, procedencia, ciudades, paises, provincias, catalogo }) {
+    // Paso 1: las provincias solo se colorean con los nacionales; en la pestaña de países quedan como contorno
+    valoresProvincia = new Map(vista === 'paises' ? [] : provincias.map((p) => [claveNormalizada(p.nombre), p.valor]));
     maxProvincia = provincias.reduce((m, p) => Math.max(m, p.valor), 0);
     provinciaElegida = '';
     if (procedencia.startsWith('PR:')) provinciaElegida = claveNormalizada(procedencia.slice(3));
@@ -140,51 +141,61 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     }
     capaProvincias.setStyle(estiloProvincia);
 
-    // Paso 2: burbujas de ciudades (modo nacional) o de países (modo extranjero)
+    // Paso 2: burbujas del nivel de la pestaña: centro de cada provincia, ciudades o países
     capaBurbujas.clearLayers();
-    const modoExtranjero = procedencia === 'EXT' || procedencia.startsWith('P:');
     const puntos = [];
-    if (modoExtranjero) {
+    if (vista === 'paises') {
       const maximo = paises.reduce((m, p) => Math.max(m, p.valor), 0);
       for (const p of paises) {
         const c = catalogo.coordPaises.get(claveNormalizada(p.nombre));
         if (c) puntos.push(burbuja(c.lat, c.lon, p.nombre, p.valor, maximo, colores.amarillo, colores.bosque, `P:${p.nombre}`).getLatLng());
       }
-    } else {
+    } else if (vista === 'ciudades') {
       const maximo = ciudades.reduce((m, c) => Math.max(m, c.valor), 0);
       for (const c of ciudades) {
         const k = catalogo.ciudades.get(claveNormalizada(c.nombre));
         if (k) puntos.push(burbuja(k.lat, k.lon, c.nombre, c.valor, maximo, colores.verdeTexto, colores.superficie, `C:${c.nombre}`).getLatLng());
       }
+    } else {
+      for (const p of provincias) {
+        const capa = capasProvincia.get(claveNormalizada(p.nombre));
+        if (!capa || p.valor <= 0) continue;
+        const centro = capa.getBounds().getCenter();
+        puntos.push(burbuja(centro.lat, centro.lng, p.nombre, p.valor, maxProvincia, colores.verdeTexto, colores.superficie, `PR:${p.nombre}`).getLatLng());
+      }
     }
-    pintarTopPaises(paises, !modoExtranjero && procedencia === '');
-    return { modoExtranjero, puntos };
+
+    // Paso 3: la lista «Top» sigue la misma pestaña
+    if (vista === 'paises') pintarTop(TEXTOS.topVista.paises, paises, 'P:');
+    else if (vista === 'ciudades') pintarTop(TEXTOS.topVista.ciudades, ciudades, 'C:');
+    else pintarTop(TEXTOS.topVista.provincias, provincias, 'PR:');
+    return { puntos };
   }
 
-  /** Aplica los datos del mapa: pinta las capas y encuadra según la procedencia elegida. */
+  /** Aplica los datos del mapa: pinta las capas y encuadra según la pestaña y la procedencia elegida. */
   function actualizar(datos) {
     ultimosDatos = datos;
-    const { procedencia, catalogo } = datos;
+    const { vista, procedencia, catalogo } = datos;
     // Paso 1: primero se pintan las capas, que no mueven el encuadre
-    const { modoExtranjero, puntos } = pintarCapas(datos);
+    const { puntos } = pintarCapas(datos);
 
-    // Paso 2: encuadre según la procedencia elegida; la primera vez sin animación y con el tamaño real
+    // Paso 2: el encuadre depende de la pestaña; la procedencia solo lo acerca si es del mismo nivel
     mapa.invalidateSize();
     const opciones = { duration: primeraVez ? 0 : 0.6, animate: !primeraVez };
     primeraVez = false;
-    if (procedencia.startsWith('C:')) {
+    if (vista === 'ciudades' && procedencia.startsWith('C:')) {
       const c = catalogo.ciudades.get(claveNormalizada(procedencia.slice(2)));
       if (c) return mapa.flyTo([c.lat, c.lon], ZOOM_CIUDAD, opciones);
     }
-    if (procedencia.startsWith('PR:')) {
+    if (vista === 'provincias' && procedencia.startsWith('PR:')) {
       const capa = capasProvincia.get(claveNormalizada(procedencia.slice(3)));
       if (capa) return mapa.flyToBounds(capa.getBounds(), { ...opciones, padding: [12, 12] });
     }
-    if (procedencia.startsWith('P:')) {
-      const c = catalogo.coordPaises.get(claveNormalizada(procedencia.slice(2)));
-      if (c) return mapa.flyTo([c.lat, c.lon], ZOOM_PAIS, opciones);
-    }
-    if (modoExtranjero) {
+    if (vista === 'paises') {
+      if (procedencia.startsWith('P:')) {
+        const c = catalogo.coordPaises.get(claveNormalizada(procedencia.slice(2)));
+        if (c) return mapa.flyTo([c.lat, c.lon], ZOOM_PAIS, opciones);
+      }
       if (puntos.length) return mapa.flyToBounds(L.latLngBounds(puntos), { ...opciones, padding: [24, 24], maxZoom: 4 });
       return mapa.flyTo(VISTA_MUNDO.centro, VISTA_MUNDO.zoom, opciones);
     }

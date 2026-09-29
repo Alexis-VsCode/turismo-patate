@@ -152,3 +152,60 @@ test('frescura es «desconocido» sin datos y sigue al reloj con la fecha de pub
   ctx.ahora = publicado + 90 * 60 * 1000;
   assert.equal(facade.frescura().estado, 'vencido');
 });
+
+test('la vista trae los textos del periodo según año y mes elegidos', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().textos.periodo, 'en todo el período');
+  assert.equal(facade.vista().textos.centro, 'Visitantes');
+  facade.fijarFiltro('anio', 2025);
+  assert.equal(facade.vista().textos.periodo, 'durante el 2025');
+  assert.equal(facade.vista().textos.centro, 'Visitantes 2025');
+  assert.match(facade.vista().textos.notaMapa, /\(2025\)/);
+  facade.fijarFiltro('mes', 2);
+  assert.equal(facade.vista().textos.periodo, 'en marzo de 2025');
+});
+
+test('la vista del mapa empieza en provincias, acepta solo modos conocidos y avisa con su propio evento', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().mapa.vista, 'provincias');
+  ctx.eventos.length = 0;
+  facade.fijarVistaMapa('ciudades');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.deepEqual(ctx.eventos, ['vistaMapa']);
+  facade.fijarVistaMapa('galaxias');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  facade.fijarVistaMapa('ciudades');
+  assert.deepEqual(ctx.eventos, ['vistaMapa'], 'repetir el mismo modo no vuelve a avisar');
+});
+
+test('la pestaña del mapa sigue al filtro de procedencia y conserva la elegida con «todos» o «nacionales»', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const vistaTras = (procedencia) => { facade.fijarFiltro('procedencia', procedencia); return facade.vista().mapa.vista; };
+  assert.equal(vistaTras('P:Colombia'), 'paises');
+  assert.equal(vistaTras('C:Ambato'), 'ciudades');
+  assert.equal(vistaTras('PR:Tungurahua'), 'provincias');
+  facade.fijarVistaMapa('paises');
+  assert.equal(vistaTras('NAC'), 'paises');
+  assert.equal(vistaTras(''), 'paises');
+  assert.equal(vistaTras('EXT'), 'paises');
+  facade.fijarVistaMapa('ciudades');
+  facade.limpiarFiltros();
+  assert.equal(facade.vista().mapa.vista, 'ciudades', 'limpiar filtros no cambia la pestaña elegida');
+});
+
+test('la lista de motivos no se reduce al motivo elegido, para poder cambiar de uno a otro', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const completa = facade.vista().motivos;
+  assert.ok(completa.length > 1);
+  facade.fijarFiltro('motivo', completa[0].nombre);
+  const filtrada = facade.vista().motivos;
+  assert.deepEqual(filtrada, completa);
+  assert.equal(facade.vista().kpis.total, completa[0].valor, 'el resto del tablero sí queda filtrado');
+  facade.fijarFiltro('anio', 2025);
+  assert.ok(facade.vista().motivos.length > 1, 'los demás filtros siguen aplicándose a la lista');
+  assert.ok(facade.vista().motivos.reduce((s, m) => s + m.valor, 0) < completa.reduce((s, m) => s + m.valor, 0));
+});

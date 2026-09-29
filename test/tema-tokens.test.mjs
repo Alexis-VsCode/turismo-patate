@@ -6,14 +6,19 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { RAIZ } from './helpers.mjs';
 
 const CSS = readFileSync(join(RAIZ, 'css/tema.css'), 'utf8');
 const CONTAINER = readFileSync(join(RAIZ, 'src/application/components/tablero.container.js'), 'utf8');
 
-const definidos = new Set([...CSS.matchAll(/(--[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+// Además de los tokens de la hoja, valen las variables que el código fija en cada elemento con setProperty
+const SRC = join(RAIZ, 'src');
+const enTiempoDeEjecucion = readdirSync(SRC, { recursive: true })
+  .filter((a) => a.endsWith('.js'))
+  .flatMap((a) => [...readFileSync(join(SRC, a), 'utf8').matchAll(/setProperty\('(--[a-z0-9-]+)'/g)].map((m) => m[1]));
+const definidos = new Set([...CSS.matchAll(/(--[a-z0-9-]+)\s*:/g)].map((m) => m[1]).concat(enTiempoDeEjecucion));
 
 test('todo var(--token) de tema.css está definido', () => {
   const usados = [...CSS.matchAll(/var\((--[a-z0-9-]+)/g)].map((m) => m[1]);
