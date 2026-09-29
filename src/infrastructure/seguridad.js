@@ -1,8 +1,8 @@
 /**
- * Utilidades de seguridad para datos que vienen de una hoja editable por terceros:
- * descarga acotada en tiempo y tamaño, limpieza de texto y claves seguras para agrupar.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file seguridad.js
+ * @description Infraestructura. Utilidades de seguridad para datos que vienen de una hoja editable por
+ *   terceros: descarga acotada en tiempo y tamaño, limpieza de texto y claves seguras para agrupar.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 
 /** Error de descarga con un código estable que la interfaz traduce a un aviso. */

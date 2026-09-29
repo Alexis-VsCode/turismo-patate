@@ -1,7 +1,7 @@
 /**
- * Utilidades comunes de las pruebas: carga SheetJS local y arma libros de prueba en memoria.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file helpers.mjs
+ * @description Utilidades comunes de las pruebas: carga SheetJS local y arma libros de prueba en memoria.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { runInNewContext } from 'node:vm';
 import { readFileSync } from 'node:fs';

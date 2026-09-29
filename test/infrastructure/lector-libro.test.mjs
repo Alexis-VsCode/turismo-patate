@@ -1,7 +1,8 @@
 /**
- * T-Datos: lectura del libro, pestañas de sistema, normalización y rechazos con ubicación.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file lector-libro.test.mjs
+ * @description Infraestructura. T-Datos: lectura del libro, pestañas de sistema, normalización y rechazos con
+ *   ubicación.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

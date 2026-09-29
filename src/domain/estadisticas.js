@@ -1,9 +1,9 @@
 /**
- * Cálculos del dashboard como funciones puras sobre filas normalizadas.
- * Ningún gráfico calcula por su cuenta: todos consumen lo que devuelve este módulo.
- * Total de visitantes = suma de Cantidad de las filas filtradas.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file estadisticas.js
+ * @description Dominio. Cálculos del dashboard como funciones puras sobre filas normalizadas. Ningún gráfico
+ *   calcula por su cuenta: todos consumen lo que devuelve este módulo. Total de visitantes = suma de
+ *   Cantidad de las filas filtradas.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { esClaveSegura } from './texto.js';
 import { RANGOS_EDAD } from './visitante.js';

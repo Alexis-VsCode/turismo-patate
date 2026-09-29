@@ -1,9 +1,10 @@
 /**
- * Formato compacto de `datos/datos.json`: lo escribe el constructor (GitHub Actions) a partir
- * de la hoja, y lo lee el navegador. Las filas van como índices a diccionarios para que el
- * archivo sea liviano. El navegador valida todo al desempaquetar, porque es su única entrada.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file contrato-datos.js
+ * @description Infraestructura. Formato compacto de `datos/datos.json`: lo escribe el constructor (GitHub
+ *   Actions) a partir de la hoja, y lo lee el navegador. Las filas van como índices a diccionarios
+ *   para que el archivo sea liviano. El navegador valida todo al desempaquetar, porque es su única
+ *   entrada.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { rangoDeEdad } from '../domain/visitante.js';
 import { limpiarTexto, esClaveSegura } from '../domain/texto.js';

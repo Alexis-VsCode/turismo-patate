@@ -1,7 +1,8 @@
 /**
- * T-Seguridad: contenido hostil en la hoja, contaminación de prototipos y descarga acotada.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file seguridad.test.mjs
+ * @description Infraestructura. T-Seguridad: contenido hostil en la hoja, contaminación de prototipos y
+ *   descarga acotada.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

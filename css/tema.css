@@ -1,5 +1,9 @@
-/* Tema del dashboard de visitantes del cantón Patate. Colores tomados del logo del GAD.
-   Autor: Kevin Alexis Barrera Llerena 2026 */
+/**
+ * @file tema.css
+ * @description Tema del dashboard: tokens de color tomados del logo del GAD Municipal de Patate,
+ *   layout de escritorio, tableta y celular.
+ * @author Kevin Alexis Barrera Llerena 2026
+ */
 :root {
   --verde: #30A848;
   --verde-fuerte: #1f8a3a;

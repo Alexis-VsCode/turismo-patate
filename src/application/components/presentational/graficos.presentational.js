@@ -1,9 +1,9 @@
 /**
- * Opciones de ECharts por panel, construidas solo a partir de los resultados de agregaciones.js.
- * Los tooltips usan renderMode 'richText' (se dibujan en canvas), de modo que ningún texto
- * de la hoja se interpreta como HTML.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file graficos.presentational.js
+ * @description Presentacional. Opciones de ECharts por panel, construidas solo a partir de los resultados de
+ *   agregaciones.js. Los tooltips usan renderMode 'richText' (se dibujan en canvas), de modo que
+ *   ningún texto de la hoja se interpreta como HTML.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { MESES_CORTOS, TEXTOS } from '../../../shared/textos.es.js';
 import { numero } from '../../../shared/formato.js';

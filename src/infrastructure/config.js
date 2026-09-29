@@ -1,8 +1,8 @@
 /**
- * Configuración única del dashboard: fuente de datos, intervalos de actualización
- * y límites de seguridad. Cambiar un valor aquí basta; ningún otro módulo repite estos números.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file config.js
+ * @description Infraestructura. Configuración única del dashboard: fuente de datos, intervalos de actualización
+ *   y límites de seguridad. Cambiar un valor aquí basta; ningún otro módulo repite estos números.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 export const CONFIG = Object.freeze({
   /** Datos que publica GitHub Actions en el propio sitio. La URL de la hoja vive solo en el secreto SHEET_URL. */

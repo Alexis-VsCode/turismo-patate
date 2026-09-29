@@ -1,13 +1,12 @@
 /**
- * Constructor de datos para GitHub Actions: descarga la hoja publicada desde la URL guardada en el
- * secreto SHEET_URL, la valida con las mismas reglas del dashboard y escribe `datos/datos.json`.
- * La URL de la hoja nunca se escribe en el sitio. Si algo falla, sale con error y no toca el archivo
- * anterior, así el sitio sigue mostrando los últimos datos buenos.
- *
- * Uso: SHEET_URL=... node tools/construir-datos.mjs [salida]
- *      node tools/construir-datos.mjs --desde-archivo libro.xlsx [salida]
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file construir-datos.mjs
+ * @description Constructor de datos para GitHub Actions: descarga la hoja publicada desde la URL guardada en el
+ *   secreto SHEET_URL, la valida con las mismas reglas del dashboard y escribe `datos/datos.json`.
+ *   La URL de la hoja nunca se escribe en el sitio. Si algo falla, sale con error y no toca el
+ *   archivo anterior, así el sitio sigue mostrando los últimos datos buenos. Uso: SHEET_URL=... node
+ *   tools/construir-datos.mjs [salida] node tools/construir-datos.mjs --desde-archivo libro.xlsx
+ *   [salida]
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs';
 import { dirname, join } from 'node:path';

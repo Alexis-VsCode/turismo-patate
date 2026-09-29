@@ -1,9 +1,9 @@
 /**
- * Normalización de filas crudas de las pestañas de establecimiento contra el catálogo
- * publicado en `_Catalogos`. Cada fila termina limpia o rechazada con un motivo legible:
- * nunca se descarta en silencio.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file visitante.js
+ * @description Dominio. Normalización de filas crudas de las pestañas de establecimiento contra el catálogo
+ *   publicado en `_Catalogos`. Cada fila termina limpia o rechazada con un motivo legible: nunca se
+ *   descarta en silencio.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { limpiarTexto } from './texto.js';
 import { claveNormalizada, canonico } from './catalogo.js';

@@ -1,8 +1,8 @@
 /**
- * Textos visibles que arma el código. Los textos fijos de la página viven en index.html;
- * todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file textos.es.js
+ * @description Compartido. Textos visibles que arma el código. Los textos fijos de la página viven en
+ *   index.html; todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 export const TEXTOS = Object.freeze({
   todos: 'Todos',

@@ -1,0 +1,85 @@
+# AGENTS.md — Reglas de este repositorio
+
+Reglas para quien mantenga el proyecto, sea una persona o un agente de IA. Si una regla choca con el código,
+**manda el código**: se corrige la regla en el mismo cambio.
+
+## 1. Lectura inicial, en este orden
+
+1. [`README.md`](README.md)
+2. [`docs/README.md`](docs/README.md)
+3. [`docs/arquitectura.md`](docs/arquitectura.md)
+4. Este archivo
+5. `git status --short`: nunca se asume un árbol limpio
+
+## 2. Fuentes de verdad
+
+**Código y pruebas > documentación de `docs/` > este archivo > conocimiento externo.** Ninguna cifra (versiones,
+número de pruebas, CVE) se escribe sin medirla en el momento.
+
+## 3. Arquitectura: la regla de dependencias no se rompe
+
+| Capa | Carpeta | Puede importar |
+|---|---|---|
+| Dominio | `src/domain/` | solo dominio |
+| Infraestructura | `src/infrastructure/` | dominio, infraestructura |
+| Fachada | `src/application/*.facade.js` | dominio, shared |
+| Presentacional | `src/application/components/presentational/` | dominio, shared |
+| Compartidos | `src/application/components/compartidos/` | dominio, shared |
+| Container | `src/application/components/*.container.js` | shared, presentacionales, compartidos |
+| Raíz de composición | `src/main.js` | todas |
+
+- **Sin paquetes npm en `src/`.** Las librerías de terceros entran por `<script>` con SRI.
+- **La fachada no toca el DOM ni la red:** recibe sus dependencias inyectadas.
+- **Los presentacionales no guardan estado.**
+- **Una sola fuente de configuración:** [`src/infrastructure/config.js`](src/infrastructure/config.js).
+- **Todo texto visible sale de [`src/shared/textos.es.js`](src/shared/textos.es.js).**
+- `test/arquitectura.test.mjs` hace cumplir esta tabla. Si falla, se corrige el import; no se relaja la regla.
+
+## 4. Seguridad: reglas que no se negocian
+
+- **Todo dato de la hoja es entrada no confiable.** Se escribe con `textContent` o `createElement`. Quedan
+  prohibidos `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval` y `new Function`, y una prueba lo vigila.
+- **La URL de la hoja vive solo en el secreto `SHEET_URL`.** Nunca en el código, en commits, en issues ni en
+  `datos.json`.
+- **Cambiar la versión de una librería** exige:
+  - revisar sus CVE;
+  - recalcular el `integrity`;
+  - actualizar la tabla de [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) y [`docs/seguridad.md`](docs/seguridad.md).
+- **Cambios en la CSP:** si se agrega un origen, se agrega solo ese, sin comodines amplios.
+
+## 5. Estilo de código
+
+- **Cabecera de archivo:**
+  ```js
+  /**
+   * @file nombre.js
+   * @description Capa. Qué hace y qué no hace.
+   * @author Kevin Alexis Barrera Llerena 2026
+   */
+  ```
+- **Funciones públicas:** JSDoc con `@param` y `@returns`.
+- **Comentarios internos:** solo `// Paso N: …`, que explican el porqué. La historia de un cambio va al
+  commit, nunca al código.
+- **Nombres del negocio en español**, funciones cortas, sin código muerto ni `console.log`.
+- **Sin emojis** en código ni en documentación.
+
+## 6. Git
+
+- `git add` **por ruta explícita**. Nunca `git add -A`, `git add .` ni `git commit -a`.
+- **Asunto del commit:** `tipo(ámbito): descripción`, con `tipo` ∈ `feat`, `fix`, `refactor`, `test`, `docs`,
+  `chore`.
+- **No mezclar un refactor estructural con un cambio funcional** en el mismo commit.
+- **Sin firmas de herramientas de IA** en commits ni en archivos.
+- **Una mutación hecha para probar que una prueba falla se restaura y se comprueba** con
+  `git diff --quiet -- <ruta>`, no confiando en la palabra de quien la hizo.
+
+## 7. Definición de terminado
+
+1. `npm test` en verde, con un número de pruebas igual o mayor al anterior.
+2. **Si cambió un cálculo:** oráculo regenerado (`npm run oraculo`) y conciliación en verde.
+3. **Verificación en el navegador:**
+   - consola sin errores ni violaciones de CSP;
+   - celular sin scroll horizontal.
+4. Documentación de `docs/` y `CHANGELOG.md` actualizadas en el mismo cambio.
+5. `git status --short` limpio.
+6. Tras el push, la ejecución de GitHub Actions termina en éxito y el sitio publicado funciona.

@@ -1,8 +1,9 @@
 /**
- * Controles de filtro: combos nativos llenados de forma segura y un combo con búsqueda
- * para el establecimiento (cientos de opciones). Todo texto de la hoja se escribe con textContent.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file combo-buscable.js
+ * @description Componente compartido. Controles de filtro: combos nativos llenados de forma segura y un combo
+ *   con búsqueda para el establecimiento (cientos de opciones). Todo texto de la hoja se escribe con
+ *   textContent.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { claveNormalizada } from '../../../domain/catalogo.js';
 

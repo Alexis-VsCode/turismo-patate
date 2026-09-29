@@ -1,8 +1,9 @@
 /**
- * T-Cálculos: los números del dashboard contra el oráculo independiente (tools/oraculo.py)
- * sobre el libro publicado real, en todos los escenarios de test/fixtures/escenarios.json.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file estadisticas.test.mjs
+ * @description Dominio. T-Cálculos: los números del dashboard contra el oráculo independiente
+ *   (tools/oraculo.py) sobre el libro publicado real, en todos los escenarios de
+ *   test/fixtures/escenarios.json.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

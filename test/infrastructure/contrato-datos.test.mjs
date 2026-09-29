@@ -1,8 +1,8 @@
 /**
- * T-Paquete: datos.json conserva exactamente los números (ida y vuelta contra el oráculo)
- * y el navegador rechaza un paquete alterado.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file contrato-datos.test.mjs
+ * @description Infraestructura. T-Paquete: datos.json conserva exactamente los números (ida y vuelta contra el
+ *   oráculo) y el navegador rechaza un paquete alterado.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

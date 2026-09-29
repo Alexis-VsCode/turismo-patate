@@ -1,10 +1,10 @@
 /**
- * Mapa de origen de visitantes con Leaflet sobre teselas de OpenStreetMap:
- * provincias de Ecuador (GeoJSON local) coloreadas por visitantes nacionales, burbujas por
- * ciudad o por país y encuadre automático según el filtro País / Ciudad.
- * Todo contenido de la hoja se inserta como nodo de texto, nunca como HTML.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file mapa.presentational.js
+ * @description Presentacional. Mapa de origen de visitantes con Leaflet sobre teselas de OpenStreetMap:
+ *   provincias de Ecuador (GeoJSON local) coloreadas por visitantes nacionales, burbujas por ciudad
+ *   o por país y encuadre automático según el filtro País / Ciudad. Todo contenido de la hoja se
+ *   inserta como nodo de texto, nunca como HTML.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { claveNormalizada } from '../../../domain/catalogo.js';
 import { numero } from '../../../shared/formato.js';

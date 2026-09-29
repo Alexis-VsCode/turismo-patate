@@ -1,9 +1,9 @@
 /**
- * Lectura del libro publicado: cada pestaña que no es de sistema es un establecimiento.
- * Devuelve filas normalizadas, rechazos con ubicación y avisos por pestaña; una pestaña
- * mal armada se reporta sin tumbar a las demás.
- *
- * Autor: Kevin Alexis Barrera Llerena 2026
+ * @file lector-libro.js
+ * @description Infraestructura. Lectura del libro publicado: cada pestaña que no es de sistema es un
+ *   establecimiento. Devuelve filas normalizadas, rechazos con ubicación y avisos por pestaña; una
+ *   pestaña mal armada se reporta sin tumbar a las demás.
+ * @author Kevin Alexis Barrera Llerena 2026
  */
 import { limpiarTexto } from '../domain/texto.js';
 import { claveNormalizada, construirCatalogo, mapearEncabezados } from '../domain/catalogo.js';
