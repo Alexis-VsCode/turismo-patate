@@ -117,7 +117,7 @@ Son 64 pruebas automáticas y corren en cada publicación:
 
 ## Ejecutar en local
 
-Requisitos: Node 20 o superior y Python 3 con `openpyxl` (solo para el oráculo y el generador de datos de prueba).
+Requisitos: Node 22 o superior y Python 3 con `openpyxl` (solo para el oráculo y el generador de datos de prueba).
 
 ```bash
 npm test
