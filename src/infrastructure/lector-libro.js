@@ -44,7 +44,7 @@ export function leerLibro(buffer, XLSX, config) {
   const catalogo = construirCatalogo(hojaCatalogo ? filasDeHoja(XLSX, hojaCatalogo) : null);
   if (!catalogo.completo) avisos.push({ pestana: config.PESTANA_CATALOGOS, mensaje: 'Catálogo ausente o incompleto: el mapa puede quedar sin ubicaciones' });
 
-  // Paso 2: pestañas de establecimiento, con tope de cantidad
+  // Paso 2: pestañas de establecimiento, con tope de cantidad; un nombre vacío o repetido se omite y se avisa
   let nombres = libro.SheetNames.filter((n) => !esPestanaDeSistema(n));
   if (nombres.length > config.MAX_PESTANAS) {
     avisos.push({ pestana: '', mensaje: `Hay ${nombres.length} pestañas; se leen solo las primeras ${config.MAX_PESTANAS}` });
@@ -79,6 +79,7 @@ export function leerLibro(buffer, XLSX, config) {
       else rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
     });
   }
+  // Paso 5: el resultado sale ordenado por nombre; el orden de los combos depende de esto
   establecimientos.sort((a, b) => a.localeCompare(b, 'es'));
   return { filas, rechazos, avisos, establecimientos, catalogo };
 }

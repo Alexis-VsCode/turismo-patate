@@ -17,6 +17,10 @@ export class ErrorDescarga extends Error {
  * Descarga una URL como ArrayBuffer sin credenciales ni caché, cortando si supera
  * `timeoutMs` o `maxBytes`. El tamaño se controla leyendo el stream, porque
  * Content-Length puede faltar o mentir.
+ * @param {string} url dirección a descargar
+ * @param {{ timeoutMs: number, maxBytes: number, fetchImpl?: Function }} opciones límites y `fetch` inyectable
+ * @returns {Promise<ArrayBuffer>} el contenido completo, dentro de los límites
+ * @throws {ErrorDescarga} con código TIEMPO_AGOTADO, DEMASIADO_GRANDE, HTTP o RED
  */
 export async function descargarAcotado(url, { timeoutMs, maxBytes, fetchImpl = globalThis.fetch }) {
   const control = new AbortController();

@@ -54,6 +54,9 @@ export function canonico(lista, valor) {
  * Construye el catálogo a partir de las filas de `_Catalogos` (primera fila = encabezados).
  * Si la pestaña falta o viene vacía, devuelve un catálogo mínimo y `completo: false`,
  * para que el dashboard siga funcionando y avise.
+ * @param {Array<Array>|null} filasCatalogo filas de la pestaña `_Catalogos`, o null si no existe
+ * @returns {{ completo: boolean, paises: string[], motivos: string[], generos: string[], provincias: string[],
+ *   ciudades: Map<string, object>, coordPaises: Map<string, object> }}
  */
 export function construirCatalogo(filasCatalogo) {
   const catalogo = {
@@ -96,6 +99,7 @@ export function construirCatalogo(filasCatalogo) {
       catalogo.coordPaises.set(claveNormalizada(pais), { nombre: pais, lat: pLat, lon: pLon });
     }
   }
+  // Paso 4: el catálogo es «completo» solo con países, motivos y ciudades; si no, el mapa avisa que faltan ubicaciones
   if (generos.length) catalogo.generos = generos;
   catalogo.completo = catalogo.paises.length > 0 && catalogo.motivos.length > 0 && catalogo.ciudades.size > 0;
   return catalogo;

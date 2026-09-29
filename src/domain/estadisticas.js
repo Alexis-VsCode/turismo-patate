@@ -29,9 +29,15 @@ function cumpleProcedencia(fila, procedencia) {
 /**
  * Aplica los filtros. `ignorar` lista claves de filtro que no se aplican,
  * p. ej. la evolución mensual ignora año y mes para mostrar los 12 meses.
+ * @param {Array<object>} filas filas normalizadas
+ * @param {object} filtros estado de filtros (ver filtrosVacios)
+ * @param {string[]} [ignorar] claves de filtro que se dejan sin aplicar
+ * @returns {Array<object>} las filas que cumplen todos los filtros activos
  */
 export function filtrar(filas, filtros, ignorar = []) {
+  // Paso 1: un filtro vacío o ignorado no restringe; 0 (enero) es un valor válido, por eso se compara con null
   const usa = (clave) => !ignorar.includes(clave) && filtros[clave] !== '' && filtros[clave] !== null;
+  // Paso 2: la fila se queda solo si cumple todos los filtros activos a la vez
   return filas.filter((f) =>
     (!usa('establecimiento') || f.establecimiento === filtros.establecimiento) &&
     (!usa('anio') || f.anio === filtros.anio) &&
@@ -55,11 +61,17 @@ export function sumaPor(filas, claveDe) {
 
 const total = (filas) => filas.reduce((suma, f) => suma + f.cantidad, 0);
 
-/** Tarjetas: total, nacionales y extranjeros; los porcentajes son null sin visitantes. */
+/**
+ * Tarjetas: total, nacionales y extranjeros; los porcentajes son null sin visitantes.
+ * @param {Array<object>} filas filas ya filtradas
+ * @returns {{ total: number, nacionales: number, extranjeros: number, pctNacionales: number|null, pctExtranjeros: number|null }}
+ */
 export function kpis(filas) {
+  // Paso 1: los extranjeros salen por diferencia, así nacionales + extranjeros siempre suman el total
   const todos = total(filas);
   const nacionales = total(filas.filter((f) => f.nacional));
   const extranjeros = todos - nacionales;
+  // Paso 2: sin visitantes los porcentajes son null (se muestran «—»), no 0 %
   return {
     total: todos, nacionales, extranjeros,
     pctNacionales: todos ? nacionales / todos : null,
@@ -73,16 +85,23 @@ export function anioDeReferencia(filas, anioFiltrado) {
   return filas.reduce((max, f) => Math.max(max, f.anio), 0) || null;
 }
 
-/** Evolución de 12 meses del año de referencia y del anterior (null en meses sin datos del año actual). */
+/**
+ * Evolución de 12 meses del año de referencia y del anterior (null en meses sin datos del año actual).
+ * @param {Array<object>} filas filas filtradas sin restringir año ni mes
+ * @param {number|null} anio año de referencia (ver anioDeReferencia)
+ * @returns {{ anio: number|null, anioAnterior: number|null, actual: Array<number|null>, anterior: number[] }}
+ */
 export function evolucionMensual(filas, anio) {
   // Paso 1: sin año de referencia no hay nada que comparar; no se inventa un «año anterior»
   if (!anio) return { anio: null, anioAnterior: null, actual: Array(12).fill(null), anterior: Array(12).fill(0) };
+  // Paso 2: una serie de 12 meses por año
   const serie = (a) => {
     const valores = Array(12).fill(0);
     for (const f of filas) if (f.anio === a) valores[f.mes] += f.cantidad;
     return valores;
   };
   const actual = serie(anio);
+  // Paso 3: los meses posteriores al último con datos del año actual quedan en null, no en 0
   const ultimoMes = filas.reduce((max, f) => (f.anio === anio ? Math.max(max, f.mes) : max), -1);
   return {
     anio, anioAnterior: anio - 1,

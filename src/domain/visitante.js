@@ -53,7 +53,12 @@ function enteroEn(valor, minimo, maximo) {
 
 /**
  * Normaliza una fila cruda de una pestaña de establecimiento.
- * Devuelve { ok: true, fila } o { ok: false, motivo } con un texto que entiende quien llena la hoja.
+ * @param {Array} cruda celdas de la fila tal como salen de la hoja
+ * @param {object} indices posición de cada columna (ver mapearEncabezados)
+ * @param {object} catalogo catálogo de listas y coordenadas (ver construirCatalogo)
+ * @param {string} paisLocal país que define a un visitante como nacional
+ * @returns {{ ok: true, fila: object } | { ok: false, motivo: string }} la fila limpia o el motivo, escrito para
+ *   quien llena la hoja
  */
 export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const celda = (campo) => (indices[campo] === undefined ? null : cruda[indices[campo]]);
@@ -70,12 +75,13 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const edad = enteroEn(celda('edad'), 0, EDAD_MAXIMA);
   if (edad === null) return { ok: false, motivo: `Edad no válida: «${limpiarTexto(celda('edad'))}»` };
 
-  // Paso 3: procedencia; el país decide si es nacional y si aplican provincia y ciudad
+  // Paso 3: país y nacionalidad; el país decide si aplican provincia y ciudad
   const paisTexto = limpiarTexto(celda('pais'));
   if (!paisTexto) return { ok: false, motivo: 'País vacío' };
   const pais = catalogo.paises.length ? canonico(catalogo.paises, paisTexto) : paisTexto;
   if (!pais) return { ok: false, motivo: `País fuera del catálogo: «${paisTexto}»` };
   const nacional = claveNormalizada(pais) === claveNormalizada(paisLocal);
+  // Paso 4: ciudad y provincia solo para nacionales; la provincia del catálogo manda sobre la escrita
   let ciudad = '';
   let provincia = '';
   if (nacional) {
@@ -90,7 +96,7 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
     if (ciudadCat && ciudadCat.provincia) provincia = ciudadCat.provincia;
   }
 
-  // Paso 4: motivo y género contra el catálogo
+  // Paso 5: motivo y género contra el catálogo
   const motivoTexto = limpiarTexto(celda('motivo'));
   const motivo = catalogo.motivos.length ? canonico(catalogo.motivos, motivoTexto) : motivoTexto;
   if (!motivo) return { ok: false, motivo: `Motivo fuera del catálogo: «${motivoTexto}»` };
@@ -98,6 +104,7 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const genero = canonico(catalogo.generos, generoTexto);
   if (!genero) return { ok: false, motivo: `Género fuera del catálogo: «${generoTexto}»` };
 
+  // Paso 6: fila limpia; el rango de edad se deriva de la edad validada
   return {
     ok: true,
     fila: {
