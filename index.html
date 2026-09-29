@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#0B2545">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <script src="src/shared/tema-inicial.js"></script>
   <meta name="description" content="Estadísticas de visitantes de los establecimientos turísticos del cantón Patate. GAD Municipal de San Cristóbal de Patate.">
   <meta name="author" content="Kevin Alexis Barrera Llerena">
   <title>Estadísticas de Visitantes · Cantón Patate</title>
@@ -34,6 +35,10 @@
   <div class="barra-estado" role="status" aria-live="polite">
     <span class="en-vivo"><span class="punto" aria-hidden="true"></span>En vivo</span>
     <span id="estado-texto" class="estado-texto"></span>
+    <button id="btn-tema" class="boton boton-tema" type="button" aria-label="Modo oscuro" aria-pressed="false">
+      <svg class="icono icono-sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="icono icono-luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
     <button id="btn-actualizar" class="boton boton-actualizar" type="button" aria-label="Actualizar datos">
       <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span id="btn-actualizar-texto">Actualizar</span>

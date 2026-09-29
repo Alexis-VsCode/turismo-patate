@@ -42,6 +42,8 @@ export const TEXTOS = Object.freeze({
   anioAnterior: 'Año anterior',
   anioActual: 'Año actual',
   sinDatosCorto: 'Sin datos',
+  temaAOscuro: 'Cambiar a modo oscuro',
+  temaAClaro: 'Cambiar a modo claro',
   chipEdad: (rango) => `Edad ${rango}`,
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),

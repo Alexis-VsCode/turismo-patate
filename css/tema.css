@@ -38,8 +38,7 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+:root[data-theme="dark"] {
     --fondo: #0a1626;
     --superficie: #10223a;
     --superficie-2: #152b47;
@@ -51,7 +50,6 @@
     --baja: #ff7b7b;
     --sombra: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 22px rgba(0, 0, 0, .25);
     color-scheme: dark;
-  }
 }
 
 /* ============ Base ============ */
@@ -139,6 +137,14 @@ svg { flex-shrink: 0; }
 .tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); }
 .columna-izquierda { display: flex; flex-direction: column; gap: var(--esp-3); min-width: 0; }
 .contenido { min-width: 0; display: flex; flex-direction: column; gap: var(--esp-3); }
+
+/* Botón de tema: muestra el ícono de la acción (luna en claro, sol en oscuro) */
+.boton-tema { flex-shrink: 0; width: 44px; height: 44px; padding: 0; border-radius: 50%; background: var(--superficie); color: var(--texto); border: 1px solid var(--borde); }
+.boton-tema:hover { background: var(--superficie-2); }
+.boton-tema .icono { width: 20px; height: 20px; }
+.icono-sol { display: none; }
+:root[data-theme="dark"] .icono-sol { display: inline-block; }
+:root[data-theme="dark"] .icono-luna { display: none; }
 
 /* Combo con búsqueda */
 .combo-tarjeta { padding: var(--esp-3); }
@@ -233,14 +239,12 @@ svg { flex-shrink: 0; }
 .leaflet-tooltip { font: 12px var(--fuente); }
 
 /* Modo oscuro: ajustes que no son solo tokens */
-@media (prefers-color-scheme: dark) {
-  .kpi-total { border-top-color: var(--lima); }
-  .chip { color: #9fe3b0; }
-  .panel-cabecera > svg { color: var(--lima); }
-  .mapa { background: #0e2033; }
-  .mapa .leaflet-tile-pane { filter: brightness(.72) contrast(1.1) saturate(.8); }
-  .pie-bloque { background: #07111f; border: 1px solid var(--borde); }
-}
+:root[data-theme="dark"] .kpi-total { border-top-color: var(--lima); }
+:root[data-theme="dark"] .chip { color: #9fe3b0; }
+:root[data-theme="dark"] .panel-cabecera > svg { color: var(--lima); }
+:root[data-theme="dark"] .mapa { background: #0e2033; }
+:root[data-theme="dark"] .mapa .leaflet-tile-pane { filter: brightness(.72) contrast(1.1) saturate(.8); }
+:root[data-theme="dark"] .pie-bloque { background: #07111f; border: 1px solid var(--borde); }
 
 /* Panel de filtros deslizable (celular y tableta) */
 .dialogo-filtros {

@@ -15,6 +15,7 @@ import { pintarKpis } from './presentational/kpis.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
+import { crearSelectorTema } from './compartidos/selector-tema.js';
 
 /** Intervalo con que se revisa si toca la actualización automática. */
 const REVISION_AUTOMATICA_MS = 30 * 1000;
@@ -37,7 +38,7 @@ function coloresDelTema() {
  */
 export function montarTablero(facade, config) {
   const $ = (id) => document.getElementById(id);
-  let colores = coloresDelTema();
+  const colores = coloresDelTema();
   const graficos = {
     evolucion: echarts.init($('g-evolucion')),
     dona: echarts.init($('g-dona')),
@@ -98,15 +99,19 @@ export function montarTablero(facade, config) {
     panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 
+  function pintarGraficos(v) {
+    graficos.evolucion.setOption(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), true);
+    graficos.dona.setOption(opcionesDona(v.kpis, colores), true);
+    graficos.motivo.setOption(opcionesMotivo(v.motivos, colores, v.filtros.motivo), true);
+    graficos.edad.setOption(opcionesEdadGenero(v.edadGenero, colores, v.filtros.rangoEdad), true);
+  }
+
   function pintarPaneles() {
     const v = facade.vista();
     if (!v) return;
     pintarKpis({ total: $('k-total'), nacionales: $('k-nacionales'), extranjeros: $('k-extranjeros'), variacion: $('k-variacion') }, v.kpis, v.variacion);
     $('sub-evolucion').textContent = TEXTOS.subtituloEvolucion(v.evolucion.anio, v.evolucion.anioAnterior);
-    graficos.evolucion.setOption(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), true);
-    graficos.dona.setOption(opcionesDona(v.kpis, colores), true);
-    graficos.motivo.setOption(opcionesMotivo(v.motivos, colores, v.filtros.motivo), true);
-    graficos.edad.setOption(opcionesEdadGenero(v.edadGenero, colores, v.filtros.rangoEdad), true);
+    pintarGraficos(v);
     $('sin-datos').hidden = v.kpis.total > 0;
     if (mapa) mapa.actualizar(v.mapa);
   }
@@ -144,10 +149,11 @@ export function montarTablero(facade, config) {
     }
   });
 
-  // Paso 4: si el dispositivo cambia entre modo claro y oscuro, los gráficos toman la nueva paleta
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    colores = coloresDelTema();
-    pintarPaneles();
+  // Paso 4: al cambiar de tema los gráficos releen los colores de los tokens y se repintan sin recalcular
+  crearSelectorTema($('btn-tema'), () => {
+    Object.assign(colores, coloresDelTema());
+    const v = facade.vista();
+    if (v) pintarGraficos(v);
   });
 
   // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
