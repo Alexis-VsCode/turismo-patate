@@ -13,6 +13,8 @@ import { opcionesEvolucion, opcionesDona, opcionesMotivo, opcionesEdadGenero } f
 import { crearMapa } from './presentational/mapa.presentational.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
+import { pintarChips } from './presentational/chips.presentational.js';
+import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 
 /** Intervalo con que se revisa si toca la actualización automática. */
 const REVISION_AUTOMATICA_MS = 30 * 1000;
@@ -24,6 +26,7 @@ function coloresDelTema() {
   return {
     verde: v('--verde'), verdeFuerte: v('--verde-fuerte'), verdeClaro: v('--verde-claro'), lima: v('--lima'),
     amarillo: v('--amarillo'), naranja: v('--naranja'), magenta: v('--magenta'), oliva: v('--oliva'),
+    texto: v('--texto'), rejilla: v('--rejilla'), superficie: v('--superficie'),
   };
 }
 
@@ -34,7 +37,7 @@ function coloresDelTema() {
  */
 export function montarTablero(facade, config) {
   const $ = (id) => document.getElementById(id);
-  const colores = coloresDelTema();
+  let colores = coloresDelTema();
   const graficos = {
     evolucion: echarts.init($('g-evolucion')),
     dona: echarts.init($('g-dona')),
@@ -55,17 +58,20 @@ export function montarTablero(facade, config) {
   });
   const selects = {
     anio: $('f-anio'), mes: $('f-mes'), procedencia: $('f-procedencia'), motivo: $('f-motivo'),
-    rangoEdad: $('f-edad'), genero: $('f-genero'), establecimiento: $('f-establecimiento'),
+    rangoEdad: $('f-edad'), genero: $('f-genero'),
   };
   for (const [campo, select] of Object.entries(selects)) {
     select.addEventListener('change', (e) => {
       const valor = e.target.value;
       facade.fijarFiltro(campo, (campo === 'anio' || campo === 'mes') && valor !== '' ? Number(valor) : valor);
-      if (campo === 'establecimiento') facade.cargar(false);
     });
   }
   $('btn-limpiar').addEventListener('click', () => facade.limpiarFiltros());
   $('btn-actualizar').addEventListener('click', () => facade.cargar(true));
+  const panelFiltros = crearPanelFiltros({
+    boton: $('btn-filtros'), dialogo: $('dialogo-filtros'), cuerpo: $('dialogo-filtros-cuerpo'),
+    bloque: $('bloque-filtros'), lugarOriginal: $('lugar-filtros'), cerrar: $('btn-cerrar-filtros'),
+  });
 
   // Paso 2: filtrado cruzado desde los gráficos
   graficos.motivo.on('click', (p) => facade.alternarFiltro('motivo', p.name));
@@ -84,12 +90,19 @@ export function montarTablero(facade, config) {
     for (const [campo, select] of Object.entries(selects)) llenarSelect(select, op[campo], valor(campo));
     combo.fijarOpciones(op.establecimientos);
     combo.fijarValor(f.establecimiento);
+    const chips = facade.chipsActivos();
+    pintarChips($('chips'), chips, (campo) => {
+      facade.fijarFiltro(campo, '');
+      if (campo === 'establecimiento') facade.cargar(false);
+    });
+    panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 
   function pintarPaneles() {
     const v = facade.vista();
     if (!v) return;
-    pintarKpis({ total: $('k-total'), nacionales: $('k-nacionales'), extranjeros: $('k-extranjeros') }, v.kpis);
+    pintarKpis({ total: $('k-total'), nacionales: $('k-nacionales'), extranjeros: $('k-extranjeros'), variacion: $('k-variacion') }, v.kpis, v.variacion);
+    $('sub-evolucion').textContent = TEXTOS.subtituloEvolucion(v.evolucion.anio, v.evolucion.anioAnterior);
     graficos.evolucion.setOption(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), true);
     graficos.dona.setOption(opcionesDona(v.kpis, colores), true);
     graficos.motivo.setOption(opcionesMotivo(v.motivos, colores, v.filtros.motivo), true);
@@ -131,7 +144,13 @@ export function montarTablero(facade, config) {
     }
   });
 
-  // Paso 4: actualización automática y ajuste de tamaño de gráficos y mapa
+  // Paso 4: si el dispositivo cambia entre modo claro y oscuro, los gráficos toman la nueva paleta
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    colores = coloresDelTema();
+    pintarPaneles();
+  });
+
+  // Paso 5: actualización automática y ajuste de tamaño de gráficos y mapa
   setInterval(() => { if (facade.tocaActualizar()) facade.cargar(true); }, REVISION_AUTOMATICA_MS);
   document.addEventListener('visibilitychange', () => { if (facade.tocaActualizar()) facade.cargar(true); });
   new ResizeObserver(() => {
@@ -139,7 +158,7 @@ export function montarTablero(facade, config) {
     if (mapa) mapa.redimensionar();
   }).observe($('tablero'));
 
-  // Paso 5: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
+  // Paso 6: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
   $('estado-texto').textContent = TEXTOS.sinDatosAun;
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })

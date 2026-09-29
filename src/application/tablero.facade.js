@@ -9,8 +9,18 @@ import { TEXTOS } from '../shared/textos.es.js';
 import { MESES, RANGOS_EDAD } from '../domain/visitante.js';
 import {
   filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual, porMotivo,
-  porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros,
+  porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
+
+/** Texto legible de un valor de procedencia ('NAC', 'EXT', 'C:…', 'P:…', 'PR:…'). */
+function textoProcedencia(valor) {
+  if (valor === 'NAC') return TEXTOS.nacionales;
+  if (valor === 'EXT') return TEXTOS.extranjeros;
+  const separador = valor.indexOf(':');
+  const tipo = valor.slice(0, separador);
+  const nombre = valor.slice(separador + 1);
+  return tipo === 'PR' ? TEXTOS.provinciaPrefijo + nombre : nombre;
+}
 
 /** Filtros cuyo valor vacío es null (numéricos) en lugar de cadena vacía. */
 const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
@@ -130,6 +140,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     const baseEvolucion = filtrar(filas, f, ['anio', 'mes']);
     return {
       kpis: kpis(sel),
+      variacion: variacionInteranual(filas, f),
       evolucion: evolucionMensual(baseEvolucion, anioDeReferencia(baseEvolucion, f.anio)),
       motivos: porMotivo(sel),
       edadGenero: edadGenero(sel, catalogo.generos),
@@ -138,7 +149,25 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     };
   }
 
+  /**
+   * Filtros aplicados como etiquetas legibles, en el orden en que se muestran como chips.
+   * @returns {Array<{ campo: string, texto: string }>}
+   */
+  function chipsActivos() {
+    const f = estado.filtros;
+    const chips = [];
+    if (f.establecimiento) chips.push({ campo: 'establecimiento', texto: f.establecimiento });
+    if (f.anio !== null) chips.push({ campo: 'anio', texto: String(f.anio) });
+    if (f.mes !== null) chips.push({ campo: 'mes', texto: MESES[f.mes] });
+    if (f.procedencia) chips.push({ campo: 'procedencia', texto: textoProcedencia(f.procedencia) });
+    if (f.motivo) chips.push({ campo: 'motivo', texto: f.motivo });
+    if (f.rangoEdad) chips.push({ campo: 'rangoEdad', texto: TEXTOS.chipEdad(f.rangoEdad) });
+    if (f.genero) chips.push({ campo: 'genero', texto: f.genero });
+    return chips;
+  }
+
   return {
+    chipsActivos,
     suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, cargar, tocaActualizar, opciones, vista,
     get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
   };

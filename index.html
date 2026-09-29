@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0B2545">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="description" content="Estadísticas de visitantes de los establecimientos turísticos del cantón Patate. GAD Municipal de San Cristóbal de Patate.">
@@ -19,22 +21,20 @@
   <div id="franja-prueba" class="franja-prueba" hidden>DATOS DE PRUEBA · Los establecimientos y cifras son ficticios</div>
 
   <header class="cabecera">
-    <img class="cabecera-logo" src="assets/logo-patate.png" alt="GAD Municipal de San Cristóbal de Patate" width="96" height="96">
+    <img class="cabecera-logo" src="assets/logo-patate.png" alt="GAD Municipal de San Cristóbal de Patate" width="88" height="88">
     <div class="cabecera-banner">
       <div class="cabecera-titulos">
         <h1>Estadísticas de Visitantes</h1>
         <p>Establecimientos Turísticos - Cantón Patate</p>
       </div>
-      <p class="cabecera-frase">¡Descubre<br>Patate!
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14zm0 0 7-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      </p>
+      <p class="cabecera-frase">¡Descubre<br>Patate!</p>
     </div>
   </header>
 
   <div class="barra-estado" role="status" aria-live="polite">
-    <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span id="estado-texto"></span>
-    <button id="btn-actualizar" class="boton" type="button">
+    <span class="en-vivo"><span class="punto" aria-hidden="true"></span>En vivo</span>
+    <span id="estado-texto" class="estado-texto"></span>
+    <button id="btn-actualizar" class="boton boton-actualizar" type="button" aria-label="Actualizar datos">
       <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span id="btn-actualizar-texto">Actualizar</span>
     </button>
@@ -58,14 +58,15 @@
 
       <section class="kpis" aria-label="Resumen de visitantes">
         <div class="tarjeta kpi-total">
-          <div class="kpi-encabezado"><span>Total<br>visitantes</span>
+          <div class="kpi-encabezado"><span>Total visitantes</span>
             <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 12l10-4 12 4 10-4v22l-10 4-12-4-10 4z" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M20 26s-6-6-6-10a6 6 0 0 1 12 0c0 4-6 10-6 10z" fill="#E5007E"/><circle cx="20" cy="16" r="2.2" fill="#fff"/></svg>
           </div>
           <div id="k-total" class="kpi-valor">—</div>
+          <div id="k-variacion" class="kpi-variacion neutra"></div>
         </div>
         <div class="kpi-par">
           <div class="tarjeta kpi-chica">
-            <svg viewBox="0 0 36 28" aria-hidden="true"><rect x="3" y="3" width="30" height="7" fill="#FFD100"/><rect x="3" y="10" width="30" height="7" fill="#034EA2"/><rect x="3" y="17" width="30" height="7" fill="#ED1C24"/><circle cx="18" cy="13.5" r="3" fill="#6b4b1f"/></svg>
+            <svg viewBox="0 0 36 28" aria-hidden="true"><rect x="3" y="3" width="30" height="7" rx="1" fill="#FFD100"/><rect x="3" y="10" width="30" height="7" fill="#034EA2"/><rect x="3" y="17" width="30" height="7" rx="1" fill="#ED1C24"/><circle cx="18" cy="13.5" r="3" fill="#6b4b1f"/></svg>
             <span>Nacionales</span><strong id="k-nacionales">—</strong>
           </div>
           <div class="tarjeta kpi-chica">
@@ -75,8 +76,13 @@
         </div>
       </section>
 
-      <details class="filtros" open>
-        <summary>Filtros</summary>
+      <button id="btn-filtros" class="boton boton-filtros" type="button" aria-haspopup="dialog">
+        <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="boton-filtros-texto">Filtros</span>
+      </button>
+
+      <div id="lugar-filtros">
+      <section id="bloque-filtros" class="filtros" aria-label="Filtros">
+        <h2 class="filtros-titulo">Filtros</h2>
         <div class="filtro">
           <label for="f-anio"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2"/></svg>Año / Mes</label>
           <div class="filtro-doble"><select id="f-anio" aria-label="Año"></select><select id="f-mes" aria-label="Mes"></select></div>
@@ -84,10 +90,6 @@
         <div class="filtro">
           <label for="f-procedencia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.5" fill="currentColor"/></svg>País / Ciudad</label>
           <select id="f-procedencia"></select>
-        </div>
-        <div class="filtro">
-          <label for="f-establecimiento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M3 9h18M9 20v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Establecimiento</label>
-          <select id="f-establecimiento"></select>
         </div>
         <div class="filtro">
           <label for="f-motivo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Motivo de visita</label>
@@ -102,33 +104,46 @@
           <select id="f-genero"></select>
         </div>
         <button id="btn-limpiar" class="boton boton-claro" type="button">Limpiar filtros</button>
-      </details>
+      </section>
+      </div>
     </aside>
 
-    <section class="paneles">
-      <article class="panel panel-evolucion">
-        <h2><span>Evolución de visitantes por mes</span></h2>
-        <div id="g-evolucion" class="grafico"></div>
-      </article>
-      <article class="panel panel-dona">
-        <h2><span>Nacionales vs extranjeros</span></h2>
-        <div id="g-dona" class="grafico"></div>
-      </article>
-      <article class="panel">
-        <h2><span>Motivo de visita</span></h2>
-        <div id="g-motivo" class="grafico grafico-alto"></div>
-      </article>
-      <article class="panel">
-        <h2><span>Origen de visitantes</span></h2>
-        <div id="g-mapa" class="grafico grafico-alto mapa"></div>
-      </article>
-      <article class="panel">
-        <h2><span>Distribución por edad y género</span></h2>
-        <div id="g-edad" class="grafico grafico-alto"></div>
-      </article>
-      <p id="sin-datos" class="sin-datos" hidden>Sin visitantes para los filtros elegidos. Pulse «Limpiar filtros».</p>
+    <section class="contenido">
+      <div id="chips" class="chips" aria-label="Filtros aplicados" hidden></div>
+      <div class="paneles">
+        <article class="panel panel-evolucion">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h2>Evolución de visitantes por mes</h2><p id="sub-evolucion" class="panel-sub">Comparación con el año anterior</p></div></header>
+          <div id="g-evolucion" class="grafico"></div>
+        </article>
+        <article class="panel panel-dona">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4v8l6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h2>Nacionales vs extranjeros</h2><p class="panel-sub">Participación en el total</p></div></header>
+          <div id="g-dona" class="grafico"></div>
+        </article>
+        <article class="panel">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><div><h2>Motivo de visita</h2><p class="panel-sub">Toque una barra para filtrar</p></div></header>
+          <div id="g-motivo" class="grafico grafico-alto"></div>
+        </article>
+        <article class="panel">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><div><h2>Origen de visitantes</h2><p class="panel-sub">Provincias, ciudades y países</p></div></header>
+          <div id="g-mapa" class="grafico grafico-alto mapa"></div>
+        </article>
+        <article class="panel">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><div><h2>Distribución por edad y género</h2><p class="panel-sub">Rangos de edad</p></div></header>
+          <div id="g-edad" class="grafico grafico-alto"></div>
+        </article>
+        <p id="sin-datos" class="sin-datos" hidden>Sin visitantes para los filtros elegidos. Pulse «Limpiar filtros».</p>
+      </div>
     </section>
   </main>
+
+  <dialog id="dialogo-filtros" class="dialogo-filtros" aria-labelledby="dialogo-filtros-titulo">
+    <div class="dialogo-cabecera">
+      <span class="dialogo-asa" aria-hidden="true"></span>
+      <h2 id="dialogo-filtros-titulo">Filtros</h2>
+      <button id="btn-cerrar-filtros" class="boton-icono" type="button" aria-label="Cerrar filtros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+    </div>
+    <div id="dialogo-filtros-cuerpo" class="dialogo-cuerpo"></div>
+  </dialog>
 
   <footer class="pie">
     <div class="pie-bloque">
