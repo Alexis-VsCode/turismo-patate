@@ -47,3 +47,21 @@ test('los avisos del intervalo usan los minutos que reciben, sin cifras escritas
   assert.match(TEXTOS.frescuraAyuda(10), /cada 10 minutos/);
   assert.match(TEXTOS.estado(1, 'a', 'b', '1', '2'), /cada minuto/);
 });
+
+test('ningún archivo de código escribe a mano una cifra de minutos', async () => {
+  const { readFileSync, readdirSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { RAIZ } = await import('../helpers.mjs');
+  const src = join(RAIZ, 'src');
+  const mal = [];
+  for (const a of readdirSync(src, { recursive: true }).filter((x) => x.endsWith('.js') && !x.endsWith('config.js'))) {
+    const texto = readFileSync(join(src, a), 'utf8');
+    for (const m of texto.matchAll(/(?:`[^`\n]*|'[^'\n]*)cada\s+\d+\s+minutos/g)) mal.push(`${a}: ${m[0].slice(0, 70)}`);
+  }
+  assert.deepEqual(mal, []);
+  assert.equal(/cada\s+\d+\s+minutos/.test(readFileSync(join(RAIZ, 'index.html'), 'utf8')), false);
+});
+
+test('la ayuda del chip habla de la publicación con los minutos que recibe', () => {
+  assert.match(TEXTOS.frescuraAyuda(15), /se publican solos cada 15 minutos/);
+});

@@ -9,6 +9,8 @@ export const CONFIG = Object.freeze({
   URL_DATOS: 'datos/datos.json',
   /** Actualización automática mientras la pestaña está visible. Google cachea lo publicado ~5 min. */
   INTERVALO_AUTO_MS: 5 * 60 * 1000,
+  /** Cada cuántos minutos se vuelve a publicar el sitio (cron-job.org). Lo usan el aviso del chip y la documentación. */
+  PUBLICACION_MINUTOS: 5,
   /** Al cambiar de establecimiento se reusa la descarga si es más reciente que esto. */
   REUSO_MINIMO_MS: 60 * 1000,
   /**

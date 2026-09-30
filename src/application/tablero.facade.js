@@ -1,7 +1,7 @@
 /**
  * @file tablero.facade.js
  * @description Aplicación. Fachada del tablero: guarda el estado (datos y filtros), aplica la política
- *   de actualización (reuso de 60 s y automática cada 5 minutos solo con la pestaña visible) y entrega
+ *   de actualización (reuso de 60 s y automática, según la configuración, solo con la pestaña visible) y entrega
  *   a la interfaz la vista ya calculada. No toca el DOM: se prueba completa en Node.
  * @author Kevin Alexis Barrera Llerena 2026
  */
@@ -144,6 +144,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return Math.round(config.INTERVALO_AUTO_MS / 60000);
   }
 
+  /** Cada cuántos minutos se vuelve a publicar el sitio, tomado de la configuración. */
+  function publicacionMinutos() {
+    return config.PUBLICACION_MINUTOS;
+  }
+
   /** Frescura de la publicación de los datos según el reloj actual; «desconocido» mientras no haya datos. */
   function frescura() {
     return estadoFrescura(estado.datos && estado.datos.generadoEn, reloj(), config.UMBRALES_FRESCURA);
@@ -226,7 +231,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
   };
 }

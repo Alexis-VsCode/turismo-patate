@@ -263,3 +263,11 @@ test('un motivo del catálogo escrito sin tilde no se duplica con el que trae el
   const motivos = facade.opciones().motivo.map((o) => o.valor).filter((v) => v !== '');
   assert.equal(motivos.filter((m) => m.normalize('NFD').replace(/[̀-ͯ]/g, '') === sinTilde).length, 1);
 });
+
+test('los minutos de publicación salen de la configuración y no del refresco del navegador', () => {
+  const config = { ...CONFIG, INTERVALO_AUTO_MS: 5 * 60 * 1000, PUBLICACION_MINUTOS: 15 };
+  const facade = crearTableroFacade({ obtener: async () => DATOS, config });
+  assert.equal(facade.publicacionMinutos(), 15);
+  assert.equal(facade.intervaloMinutos(), 5);
+  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).publicacionMinutos(), CONFIG.PUBLICACION_MINUTOS);
+});

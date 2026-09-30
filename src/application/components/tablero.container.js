@@ -199,7 +199,7 @@ export function montarTablero(facade, config) {
   // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
   $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.intervaloMinutos());
-  $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.intervaloMinutos());
+  $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })
     .then((r) => r.json())
     .then((geojson) => {
