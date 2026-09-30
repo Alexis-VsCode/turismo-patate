@@ -76,3 +76,14 @@ test('sin catálogo sigue funcionando y avisa', () => {
   assert.equal(d.filas[0].nacional, false);
   assert.ok(d.avisos.some((a) => /Catálogo/.test(a.mensaje)));
 });
+
+test('los avisos del catálogo llegan a los avisos del libro con la pestaña del catálogo', () => {
+  const catalogo = [...CATALOGO, [null, null, null, 'Madrid', 40.4, -3.7, null, 'Pichincha', null, null, null, null]];
+  const buf = libroEnMemoria({
+    _Catalogos: catalogo,
+    Hostal: [ENCABEZADO, [2025, 'Enero', 'Ecuador', 'Tungurahua', 'Ambato', 1, 'Turismo', 30, 'Masculino']],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  const aviso = d.avisos.find((a) => a.pestana === CONFIG.PESTANA_CATALOGOS && /fuera de Ecuador/i.test(a.mensaje));
+  assert.ok(aviso, JSON.stringify(d.avisos));
+});

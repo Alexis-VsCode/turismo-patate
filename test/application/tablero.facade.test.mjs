@@ -252,3 +252,14 @@ test('el intervalo de actualización que se muestra sale de la configuración', 
   assert.equal(facade.intervaloMinutos(), 10);
   assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).intervaloMinutos(), 5);
 });
+
+test('un motivo del catálogo escrito sin tilde no se duplica con el que trae el visitante', async () => {
+  const conTilde = DATOS.filas.find((f) => /[áéíóú]/i.test(f.motivo));
+  assert.ok(conTilde, 'el libro de prueba tiene un motivo con tilde');
+  const sinTilde = conTilde.motivo.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, motivos: [...DATOS.catalogo.motivos, sinTilde] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const motivos = facade.opciones().motivo.map((o) => o.valor).filter((v) => v !== '');
+  assert.equal(motivos.filter((m) => m.normalize('NFD').replace(/[̀-ͯ]/g, '') === sinTilde).length, 1);
+});

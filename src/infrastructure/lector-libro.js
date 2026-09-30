@@ -42,6 +42,7 @@ export function leerLibro(buffer, XLSX, config) {
   // Paso 1: catálogo; si falta, se sigue con uno mínimo y se avisa
   const hojaCatalogo = libro.Sheets[config.PESTANA_CATALOGOS];
   const catalogo = construirCatalogo(hojaCatalogo ? filasDeHoja(XLSX, hojaCatalogo) : null);
+  for (const mensaje of catalogo.avisos) avisos.push({ pestana: config.PESTANA_CATALOGOS, mensaje });
   if (!catalogo.completo) avisos.push({ pestana: config.PESTANA_CATALOGOS, mensaje: 'Catálogo ausente o incompleto: el mapa puede quedar sin ubicaciones' });
 
   // Paso 2: pestañas de establecimiento, con tope de cantidad; un nombre vacío o repetido se omite y se avisa

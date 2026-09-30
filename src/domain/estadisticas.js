@@ -6,6 +6,7 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { esClaveSegura } from './texto.js';
+import { claveNormalizada } from './catalogo.js';
 import { RANGOS_EDAD } from './visitante.js';
 
 /** Estado de filtros vacío. `procedencia` admite '', 'NAC', 'EXT', 'C:<ciudad>', 'P:<país>' o 'PR:<provincia>'. */
@@ -177,6 +178,6 @@ export function opcionesDeFiltros(filas, catalogo = {}) {
     anios: unir(unicos((f) => f.anio), catalogo.anios).sort((a, b) => b - a),
     ciudades: unicos((f) => (f.nacional ? f.ciudad : '')).filter(Boolean).sort((a, b) => a.localeCompare(b, 'es')),
     paises: unicos((f) => (f.nacional ? '' : f.pais)).filter(Boolean).sort((a, b) => a.localeCompare(b, 'es')),
-    motivos: unir(unicos((f) => f.motivo), catalogo.motivos, (m) => m.toLowerCase()).sort((a, b) => a.localeCompare(b, 'es')),
+    motivos: unir(unicos((f) => f.motivo), catalogo.motivos, claveNormalizada).sort((a, b) => a.localeCompare(b, 'es')),
   };
 }
