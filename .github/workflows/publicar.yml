@@ -1,5 +1,7 @@
 # Publica el dashboard en GitHub Pages con los datos frescos de la hoja.
 # La URL de la hoja vive solo en el secreto SHEET_URL: nunca llega al sitio ni al repositorio.
+# Quién lo arranca: cron-job.org (una sola tarea, cada 5 minutos, vía workflow_dispatch) es el disparador principal.
+# El schedule de abajo es solo un respaldo: GitHub puede retrasarlo o descartarlo bajo carga.
 # Autor: Kevin Alexis Barrera Llerena 2026
 name: Publicar dashboard
 
@@ -7,7 +9,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +24,7 @@ concurrency:
 jobs:
   construir:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +32,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Pruebas
+      - name: Pruebas (solo cuando cambia el código)
+        if: github.event_name == 'push'
         run: node --test "test/**/*.test.mjs"
 
       - name: Construir datos desde la hoja
@@ -55,6 +59,7 @@ jobs:
   desplegar:
     needs: construir
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.despliegue.outputs.page_url }}

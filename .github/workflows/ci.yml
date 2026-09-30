@@ -1,0 +1,25 @@
+# Valida un cambio antes de publicarlo: corre todas las pruebas, sin construir datos ni desplegar.
+# Se ejecuta en pull requests y a mano; en main las pruebas ya corren dentro de la publicación.
+# Autor: Kevin Alexis Barrera Llerena 2026
+name: Validar cambios
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pruebas
+        run: node --test "test/**/*.test.mjs"
