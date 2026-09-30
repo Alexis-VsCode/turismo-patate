@@ -26,6 +26,14 @@ const formatoFechaHora = new Intl.DateTimeFormat('es-EC', {
   hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
 });
 
+const formatoHora = new Intl.DateTimeFormat('es-EC', { timeZone: 'America/Guayaquil', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+/** Hora y minutos en hora de Ecuador, p. ej. «12:31»; «—» si el valor no es una fecha. */
+export function hora(valor) {
+  const fecha = new Date(valor ?? NaN);
+  return Number.isNaN(fecha.getTime()) ? '—' : formatoHora.format(fecha);
+}
+
 /** Fecha y hora con segundos en hora de Ecuador, p. ej. «29/09/2026 12:31:05»; «—» si el valor no es una fecha. */
 export function fechaHora(valor) {
   const fecha = new Date(valor ?? NaN);

@@ -6,7 +6,7 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { TEXTOS } from '../../shared/textos.es.js';
-import { numero, fechaHora } from '../../shared/formato.js';
+import { numero, fechaHora, hora } from '../../shared/formato.js';
 import { llenarSelect } from './compartidos/select-seguro.js';
 import { crearComboBuscable } from './compartidos/combo-buscable.js';
 import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentational/graficos.presentational.js';
@@ -134,7 +134,7 @@ export function montarTablero(facade, config) {
   /** «Actualizado» es la última descarga; «publicados» es el build de Actions, que solo cambia con datos nuevos. */
   function pintarEstado() {
     const { datos, ultimaDescarga } = facade.estado;
-    horaDatos = fechaHora(ultimaDescarga).slice(11, 16);
+    horaDatos = hora(ultimaDescarga);
     $('estado-texto').textContent = TEXTOS.estado(
       facade.intervaloMinutos(), fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
       numero(datos.establecimientos.length), numero(datos.filas.length),
