@@ -11,8 +11,8 @@ una publicación falló. No sustituye un monitoreo externo (ver [Límites](#lím
 | **SLO** | Al día mientras la edad no supere `UMBRALES_FRESCURA.alDiaMin` de [`src/infrastructure/config.js`](../src/infrastructure/config.js). Los umbrales viven solo allí |
 | **Cálculo** | Función pura [`estadoFrescura`](../src/domain/frescura.js), expuesta por la fachada como `frescura()` y probada con límites exactos |
 
-Los umbrales son **provisionales**: el cron de Actions se programa cada 5 minutos, pero GitHub puede retrasarlo y,
-al momento de escribir esto, el historial público no tenía ejecuciones programadas con las que calibrarlos. Se
+Los umbrales son **provisionales**: la publicación la dispara cron-job.org cada 5 minutos (el `schedule` de GitHub nunca se disparó en este
+repositorio), así que el intervalo real se puede medir en el historial público de Actions. Se
 recalculan con la mediana y el P95 del intervalo real entre ejecuciones cuando exista ese historial.
 
 ## Lo que ve el visitante

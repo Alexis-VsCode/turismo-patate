@@ -73,7 +73,16 @@ Hay que hacerlo si la URL se filtró o si cambió la hoja:
 
 ## Frecuencia de publicación
 
-El workflow corre en cada `push` a `main`, cada 5 minutos (`schedule`) y a mano (**Run workflow**).
+El workflow se arranca de tres maneras:
 
-- **Para bajar la frecuencia:** cambia el `cron`. Por ejemplo, `'*/15 * * * *'` publica cada 15 minutos.
+| Disparador | Cuándo | Qué hace |
+|---|---|---|
+| **cron-job.org** (una sola tarea, cada 5 minutos) | Es el que manda. Llama a la API de GitHub (`workflow_dispatch`) con un token de permiso mínimo | Construye los datos y despliega, sin correr las pruebas |
+| `push` a `main` | Cada cambio de código | Corre las pruebas, construye y despliega |
+| `schedule` del propio workflow (`*/15`) | Respaldo: GitHub puede retrasarlo o descartarlo bajo carga | Igual que cron-job.org |
+
+La cifra de 5 minutos vive en `PUBLICACION_MINUTOS` de [`config.js`](../src/infrastructure/config.js): de ahí salen el texto de ayuda del chip y
+esta documentación. El `schedule` del YAML no puede leer esa constante y se cambia a mano.
+
+- **Para cambiar la frecuencia:** edita la tarea en cron-job.org y actualiza `PUBLICACION_MINUTOS`.
 - **Para pausarlo:** **Actions → Publicar dashboard → … → Disable workflow**.

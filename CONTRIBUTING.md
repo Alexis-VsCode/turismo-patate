@@ -36,6 +36,7 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
 - **Una sola fuente de configuración:** [`src/infrastructure/config.js`](src/infrastructure/config.js).
 - **Todo texto visible sale de [`src/shared/textos.es.js`](src/shared/textos.es.js), y ningún texto repite una cifra de
   `config.js`** (por ejemplo, el intervalo de actualización): la recibe como parámetro desde la fachada.
+- **Las columnas del catálogo se identifican por su encabezado**, no por su posición: se pueden reordenar en la hoja sin tocar el código.
 - **Una opción de combo aparece si tiene visitantes o está en la lista corta del catálogo** (años y motivos). Lo que
   la hoja pueda decir, lo dice la hoja: no se agregan listas fijas al código, salvo meses y rangos de edad.
 - **Un presentacional no importa a otro presentacional:** lo que comparten dos, sube a `shared` o se junta en un

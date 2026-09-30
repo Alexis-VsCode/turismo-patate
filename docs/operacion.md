@@ -9,7 +9,7 @@ Guía para quien administra la hoja de cálculo y el sitio. No hace falta saber 
 3. Quien visita el sitio ve cuándo se actualizó en su navegador, cuándo se publicaron los datos y un chip de estado
    («Publicación al día», «retrasada» o «detenida»). Ver [observabilidad.md](observabilidad.md).
 
-**Cuánto tarda un dato nuevo en aparecer:** entre 5 y 15 minutos. Google republica la hoja cada ~5 minutos y
+**Cuánto tarda un dato nuevo en aparecer:** hasta 10 minutos (la publicación corre cada 5 minutos). Google republica la hoja cada ~5 minutos y
 GitHub puede retrasar la tarea programada en horas de mucha carga.
 
 ## Qué pestañas cuentan como establecimiento
@@ -45,9 +45,24 @@ En unos minutos aparece en el sitio: en el combo, en los filtros, en las tarjeta
 
 ## Catálogos (`_Catalogos`)
 
-Alimentan los desplegables de la hoja y el mapa:
+Alimentan los desplegables de la hoja y el mapa. Están en **cuatro bloques**, separados por una columna vacía y con un color de
+encabezado distinto, y cada pareja de datos queda pegada:
 
-- **Listas:** años, meses, países, provincias, ciudades, motivos y géneros.
+| Bloque | Columnas |
+|---|---|
+| Listas | Año · Mes · Motivo · Género |
+| Países | País · Pais_Lat · Pais_Lon |
+| Ciudades de Ecuador | Ciudad · Ciudad_Provincia · Ciudad_Lat · Ciudad_Lon |
+| Provincias | Provincia · Provincia_Lat · Provincia_Lon |
+
+- **Cómo agregar algo:** escríbalo en la primera fila vacía del bloque. Los desplegables de todas las pestañas llegan hasta la fila 1000,
+  así que lo nuevo aparece solo.
+- **Cómo ordenar:** seleccione el bloque completo y use *Datos → Ordenar rango*. Nunca ordene una columna suelta: separaría la ciudad de
+  su provincia y de sus coordenadas.
+- **Repetidos:** la hoja rechaza un nombre que ya existe y pinta de rojo los repetidos. Si aun así llegara uno al tablero, el aviso de
+  «filas con problemas» lo indica y se conserva el primero.
+- **Coordenadas de provincia:** son el centro aproximado de su contorno en el mapa. Hoy sirven de referencia; el tablero ubica las burbujas
+  con el contorno.
 
 **Qué opciones ofrecen los combos del sitio.** Una regla simple, para saber dónde tocar:
 

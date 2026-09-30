@@ -7,3 +7,4 @@
 | [003](003-mapa-leaflet-y-openstreetmap.md) | Mapa con Leaflet y OpenStreetMap |
 | [004](004-capas-semihexagonales.md) | Capas semihexagonales en JavaScript sin framework |
 | [005](005-tema-y-excepciones-de-color.md) | Tema claro y oscuro, y excepciones de color |
+| [006](006-catalogo-en-bloques-en-una-pestana.md) | Catálogo en bloques dentro de una sola pestaña |

@@ -2,6 +2,28 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.2.0] - 2026-09-30
+
+### Añadido
+- **Avisos del catálogo:** el lector avisa de ciudades repetidas (se conserva la primera), ciudades con coordenadas fuera de Ecuador
+  (se omiten) y ciudades cuya provincia no está en la lista. Aparecen en el aviso de «filas con problemas».
+- `PUBLICACION_MINUTOS` en `config.js`: la cifra de publicación sale de un solo lugar.
+- Pruebas del repositorio: barrido de azules, descarga de `datos.json` y hora formateada.
+- `ci.yml` para validar cambios y `dependabot.yml` para mantener al día las acciones de GitHub.
+- ADR 006.
+
+### Cambiado
+- La publicación corre las pruebas solo cuando hay un `push`; las ejecuciones periódicas solo construyen y despliegan. Tiempo límite de 10
+  minutos por trabajo y `schedule` propio como respaldo cada 15 minutos.
+- Los motivos del catálogo con y sin tilde ya no se duplican en el combo.
+- La ayuda del chip habla de los minutos de publicación y no del refresco del navegador.
+- Hoja de cálculo: `_Catalogos` en cuatro bloques, con latitud y longitud de provincias, desplegables hasta la fila 1000 y protección contra
+  repetidos; la primera pestaña pasa a ser `_Inicio`.
+
+### Corregido
+- Se recreó el despliegue de Pages: el sitio había dejado de actualizarse a las 01:14 UTC del 30/09 aunque las ejecuciones figuraban como
+  exitosas.
+
 ## [2.1.1] - 2026-09-29
 
 ### Cambiado
