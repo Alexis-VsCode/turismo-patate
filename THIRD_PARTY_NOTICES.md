@@ -10,6 +10,9 @@ Este proyecto usa los siguientes componentes y datos de terceros. Cada uno conse
 | Simple Icons | 16.x | Glifos de LinkedIn, Facebook y TikTok de los botones del pie (los logotipos son marcas de sus titulares) | CC0 1.0 | https://simpleicons.org |
 | Datos de OpenStreetMap | — | Teselas del mapa base | ODbL 1.0 («© OpenStreetMap contributors») | https://www.openstreetmap.org/copyright |
 | geoBoundaries (ECU ADM1) | 2023 | Límites provinciales de Ecuador (`assets/ecu-provincias.geojson`) | CC0 1.0 | https://www.geoboundaries.org |
+| geoBoundaries (ECU ADM2) | 2019 | Cantones del Ecuador: nombre y un punto interior de cada cantón (`tools/catalogos/ciudades-ecuador.csv`) | CC BY 3.0 IGO | https://www.geoboundaries.org |
+| mledoze/countries | — | Países con su nombre en español y coordenadas aproximadas (`tools/catalogos/paises.csv`) | ODbL 1.0 | https://github.com/mledoze/countries |
+| GeoNames (Ecuador) | — | Solo para contrastar nombres de cantones al generar el catálogo; no se publica | CC BY 4.0 | https://www.geonames.org |
 | «VALLE DEL PATATE», DIOHER_PAVAL | — | Foto de la cabecera (`assets/fondo-cabecera.jpg`), recortada | CC BY 3.0 | Wikimedia Commons |
 
 El logo del GAD Municipal de San Cristóbal de Patate pertenece a su titular y se usa con fines de

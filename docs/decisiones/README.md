@@ -8,3 +8,5 @@
 | [004](004-capas-semihexagonales.md) | Capas semihexagonales en JavaScript sin framework |
 | [005](005-tema-y-excepciones-de-color.md) | Tema claro y oscuro, y excepciones de color |
 | [006](006-catalogo-en-bloques-en-una-pestana.md) | Catálogo en bloques dentro de una sola pestaña |
+| [007](007-formato-mensual-de-captura.md) | Formato mensual de captura con totales por rango de edad |
+| [008](008-filtros-de-varias-opciones.md) | Filtros de varias opciones |

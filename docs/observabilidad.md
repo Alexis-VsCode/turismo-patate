@@ -51,7 +51,7 @@ lo dice. Por eso el chip habla de «publicación» y nunca de «datos actualizad
 ejecución (pestaña **Actions**):
 
 ```json
-{"evento":"datos_construidos","establecimientos":100,"filas":29628,"rechazos":0,"avisos":0,"duracionMs":2282}
+{"evento":"datos_construidos","establecimientos":106,"filas":92702,"discapacidad":1808,"rechazos":0,"avisos":0,"bytes":2593317,"duracionMs":9287}
 {"evento":"error_construccion","mensaje":"SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)"}
 ```
 

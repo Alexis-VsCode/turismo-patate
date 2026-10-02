@@ -2,6 +2,27 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.3.0] - 2026-10-01
+
+### Añadido
+- **Filtros de varias opciones** en establecimiento, procedencia (país, ciudad y provincia), motivo, edad y género, con etiquetas removibles
+  y «Quitar todos». Año y mes siguen siendo de una sola opción. ADR 008.
+- **Formato mensual de captura:** una fila por mes, origen y motivo, con mujeres y hombres por rango de edad y personas con discapacidad. La hoja
+  calcula los totales y marca en rojo lo que no cuadra. El formato anterior sigue valiendo. ADR 007.
+- **Panel «Personas con discapacidad»** y leyenda «Total mujeres» / «Total hombres» con totales y porcentajes en el gráfico de edad.
+- **Catálogos completos:** los cantones del Ecuador con su provincia y coordenadas, y los países reconocidos (`tools/catalogos/`).
+- Generador del libro de captura (`tools/excel/generar-excel.py`) y oráculo del formato mensual.
+- El log de la publicación incluye los registros de discapacidad y el tamaño del paquete.
+
+### Cambiado
+- **Rangos de edad:** 0-30, 31-45, 46-60 y 61+ (antes 0-17, 18-25, 26-35, 36-45, 46-59 y 60+).
+- La edad y el género suben a la primera fila de paneles y la discapacidad ocupa la segunda, como en la maqueta del municipio.
+- `datos.json` lleva una clave opcional `discapacidad`; los paquetes anteriores siguen siendo válidos.
+- Los filtros viven en `src/domain/filtros.js`.
+
+### Corregido
+- El pie atribuye los cantones (CC BY 3.0 IGO) y los países (ODbL) además de los límites provinciales (CC0).
+
 ## [2.2.0] - 2026-09-30
 
 ### Añadido

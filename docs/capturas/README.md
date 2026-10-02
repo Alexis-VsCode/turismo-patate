@@ -7,6 +7,7 @@ Vistas del tablero que usa el `README`. Se regeneran cuando cambia el diseño.
 | `escritorio.jpg` · `escritorio-oscuro.jpg` | Página completa a 1440 px de ancho, en modo claro y oscuro |
 | `celular.jpg` · `celular-oscuro.jpg` | Primera pantalla a 390 px de ancho |
 | `celular-mapa.jpg` | Panel «Origen de visitantes» en celular |
+| `arquitectura.png` · `indicador-servicio.png` | Diagramas de cómo funciona y del indicador de frescura (ilustraciones; no se regeneran con esta receta) |
 
 ## Receta
 

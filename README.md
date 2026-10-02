@@ -43,14 +43,17 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 - **Gráficos:**
   - evolución mensual comparando dos años, con línea de tendencia;
   - motivos de visita con ícono, barra, cifra y porcentaje;
-  - distribución por edad y género.
+  - distribución por edad (0-30, 31-45, 46-60 y 61+) con **Total mujeres** y **Total hombres**, sus cifras y porcentajes;
+  - **personas con discapacidad**: la cifra, su porcentaje sobre los visitantes y cuántos registros mensuales caen en cada
+    rango (1-5, 6-10, 11-15). Se publica solo como cifra agregada y no se cruza con la edad ni con el género.
 - **Mapa real** (OpenStreetMap + Leaflet) con tres pestañas: **Provincias**, **Ciudades** y **Países**. Cada
   pestaña cambia las burbujas, el «Top» y el encuadre, y se sincroniza con el filtro País / Ciudad.
 - **Filtros:**
-  - combo de establecimiento con búsqueda al escribir, pensado para cientos de opciones;
-  - año, mes, procedencia, motivo, edad y género;
+  - **varias opciones a la vez** en establecimiento, país / ciudad / provincia, motivo, edad y género, con búsqueda al escribir
+    (más de 450 opciones de procedencia, agrupadas); año y mes son de una sola opción;
+  - dentro de un filtro las opciones se suman y entre filtros se cruzan;
   - **filtrado cruzado** con clic en los gráficos, en la lista de motivos y en el mapa;
-  - **chips de filtros activos**, que se quitan con un toque.
+  - **etiquetas de filtros activos** sobre los gráficos, que se quitan una por una o todas a la vez, y que filtran todo el tablero.
 - **Actualización y frescura:** al entrar, con el botón «Actualizar» y de forma automática **cada 5 minutos**. El
   sitio muestra cuándo se actualizó en este navegador y cuándo se publicaron los datos, y un chip indica si la
   publicación está al día, retrasada o detenida.
@@ -108,7 +111,7 @@ Detalle, umbrales y qué hacer cuando el chip no está en verde: [docs/observabi
 |---|---|
 | Interfaz | HTML, CSS y JavaScript (módulos ES), sin framework ni paso de build |
 | Gráficos | Apache ECharts 6.1.0 |
-| Mapa | Leaflet 1.9.4 + teselas OpenStreetMap + límites geoBoundaries (CC0) |
+| Mapa | Leaflet 1.9.4 + teselas OpenStreetMap + límites provinciales geoBoundaries (CC0); catálogo de cantones geoBoundaries (CC BY 3.0 IGO) y de países mledoze/countries (ODbL) |
 | Lectura del Excel | SheetJS 0.20.3, solo dentro de GitHub Actions |
 | Publicación | GitHub Actions (cada 5 min) + GitHub Pages |
 | Pruebas | `node:test` (Node 22) y oráculo independiente en Python/openpyxl |

@@ -20,7 +20,29 @@ Todas, excepto:
 
 El nombre de la pestaña es el nombre que aparece en el sitio.
 
-## Columnas fijas de cada pestaña
+## Columnas de cada pestaña
+
+El sitio reconoce **dos formatos** por los encabezados de la pestaña. Una misma pestaña no puede mezclarlos: si lo hace, se omite y
+el aviso lo dice.
+
+### Formato mensual (el de la plantilla)
+
+Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la hoja calcula los totales y marca en rojo lo que no cuadra.
+
+| Escribe usted | Calcula la hoja (columnas grises) |
+|---|---|
+| Año · Mes · País · Ciudad · Motivo de visita · Mujeres 0-30 · 31-45 · 46-60 · 61+ · Hombres 0-30 · 31-45 · 46-60 · 61+ · Personas con discapacidad | Provincia · Total mujeres · Total hombres · Total visitantes · Nacionales · Extranjeros · Estado |
+
+- **Los ocho números** son enteros de 0 en adelante. Una celda vacía cuenta como cero y una fila sin ningún número se ignora.
+- **Personas con discapacidad** no puede superar el total de visitantes de la fila. La hoja no deja escribir un valor mayor y la fila se pinta de
+  rojo; si aun así llegara al sitio, esa fila se rechaza con su pestaña y su fila.
+- **Estado** dice «OK» o qué corregir («Revisar: discapacidad 19 mayor que el total 16», «Falta la ciudad»). Las filas en rojo no se publican.
+- **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises no se escriben; para que nadie las pise,
+  protéjalas en Google Sheets (*Datos → Proteger hojas y rangos*).
+- **Por qué ocho columnas y no una por género:** así el sitio puede filtrar por edad y por género a la vez y mostrar «Total mujeres» y
+  «Total hombres» por rango de edad con cifras exactas.
+
+### Formato anterior (sigue funcionando)
 
 | Año | Mes | País | Provincia | Ciudad | Cantidad | Motivo de visita | Edad | Género |
 |---|---|---|---|---|---|---|---|---|
@@ -34,6 +56,7 @@ El nombre de la pestaña es el nombre que aparece en el sitio.
 - **No se mueven ni se renombran las columnas.** El sitio las reconoce por su nombre, con variantes (por
   ejemplo «Motivo» o «Motivo de visita», «Sexo» o «Género»). **Provincia y Ciudad son opcionales**; las demás son
   obligatorias.
+- **Las personas con discapacidad solo existen en el formato mensual.** Una columna con ese nombre en una pestaña del formato anterior se ignora.
 
 ## Agregar un establecimiento
 
@@ -69,7 +92,7 @@ encabezado distinto, y cada pareja de datos queda pegada:
 | Combo | De dónde sale | Qué significa |
 |---|---|---|
 | **Año** y **Motivo** | Los visitantes **y** el catálogo | Un año o motivo nuevo aparece al agregarlo en `_Catalogos`, aunque todavía no tenga visitantes. Si se elige uno sin visitantes, el tablero dice «Sin visitantes para los filtros elegidos» |
-| **Ciudad, país y provincia** | Solo los visitantes | El catálogo trae decenas de ciudades sin visitantes; ofrecerlas todas llenaría el combo de opciones vacías |
+| **Ciudad, país y provincia** | Solo los visitantes | El catálogo trae más de 200 ciudades y 190 países sin visitantes; ofrecerlos todos llenaría el filtro de opciones vacías. Los desplegables de la hoja, en cambio, sí ofrecen todo el catálogo |
 | **Mes** y **rango de edad** | Fijos | Siempre son los 12 meses y los rangos 0-30, 31-45, 46-60 y 61+ |
 
 Para abrir un año nuevo basta escribirlo en la columna Año de `_Catalogos`. Los desplegables de las pestañas leen ese
@@ -109,3 +132,15 @@ con la pestaña y el número de fila.
 3. Para cambiar la foto de la cabecera, reemplazar [`assets/fondo-cabecera.jpg`](../assets/fondo-cabecera.jpg)
    por una propia del GAD, con el mismo nombre, y actualizar el crédito en `index.html` y en
    `THIRD_PARTY_NOTICES.md`.
+
+## Varias opciones en los filtros
+
+Los filtros de establecimiento, país / ciudad / provincia, motivo, edad y género aceptan **varias opciones a la vez**: cada opción elegida
+queda como una etiqueta sobre los gráficos y se quita con su «×» o todas juntas con «Quitar todos». Dentro de un filtro las opciones se
+suman (Colombia y Perú) y entre filtros se cruzan (Colombia o Perú, y además turismo). Año y mes son de una sola opción.
+
+## Catálogos completos
+
+`_Catalogos` trae todas las provincias, los cantones del Ecuador (con su provincia y sus coordenadas aproximadas) y los países
+reconocidos. Se regeneran con [`tools/catalogos/`](../tools/catalogos/LEEME.md) y el libro de captura con
+[`tools/excel/generar-excel.py`](../tools/excel/generar-excel.py). Nada de lo que ya estaba se quita ni se renombra.

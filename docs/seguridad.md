@@ -55,6 +55,15 @@ font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
   prohíbe `no-referrer`. Los scripts de los CDN van con `no-referrer`.
 - **Solo agregados:** la hoja no debe contener datos personales, porque su contenido agregado es público.
 
+## Discapacidad
+
+La cantidad de personas con discapacidad es un dato sensible. Por eso:
+
+- La hoja pide **solo un número por fila** (mes, origen y motivo), nunca nombres, cédulas ni diagnósticos.
+- El sitio publica **solo cifras agregadas**: el total, su porcentaje sobre los visitantes y cuántos registros caen en cada rango.
+- No se cruza con la edad ni con el género, para que ninguna combinación de filtros aísle a una persona.
+- Confirme con el GAD que esta publicación agregada es aceptable antes de cargar datos reales.
+
 ## Limitaciones conocidas
 
 - **Cabeceras:** GitHub Pages no permite `frame-ancestors` ni `X-Frame-Options`, así que el sitio se puede

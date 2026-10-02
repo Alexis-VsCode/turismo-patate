@@ -43,14 +43,17 @@ come from, why they come, and their age and gender. The requirements were:
 - **Charts:**
   - monthly evolution comparing two years, with a trend line;
   - visit reasons with an icon, a bar, a figure and a percentage;
-  - distribution by age and gender.
+  - distribution by age (0-30, 31-45, 46-60 and 61+) with **Total women** and **Total men**, their figures and percentages;
+  - **people with disabilities**: the total, its share of visitors and how many monthly records fall in each range
+    (1-5, 6-10, 11-15). It is published only as an aggregate figure and is not crossed with age or gender.
 - **Real map** (OpenStreetMap + Leaflet) with three tabs: **Provinces**, **Cities** and **Countries**. Each tab
   changes the bubbles, the "Top" list and the framing, and stays in sync with the Country / City filter.
 - **Filters:**
-  - business combo box with type-ahead search, built for hundreds of options;
-  - year, month, origin, reason, age and gender;
+  - **several options at once** for business, country / city / province, reason, age and gender, with type-ahead search
+    (over 450 grouped origin options); year and month stay single-choice;
+  - options inside one filter are added together and different filters are intersected;
   - **cross-filtering** by clicking the charts, the reasons list and the map;
-  - **active-filter chips** that are removed with one tap.
+  - **active-filter tags** above the charts, removed one by one or all at once, which filter the whole dashboard.
 - **Refresh and freshness:** on load, with the "Actualizar" button and automatically **every 5 minutes**. The
   site shows when it was refreshed in this browser and when the data was published, and a chip tells whether
   publishing is up to date, delayed or stopped.
@@ -108,7 +111,7 @@ Details, thresholds and what to do when the chip is not green: [docs/observabili
 |---|---|
 | Interface | HTML, CSS and JavaScript (ES modules), no framework and no build step |
 | Charts | Apache ECharts 6.1.0 |
-| Map | Leaflet 1.9.4 + OpenStreetMap tiles + geoBoundaries limits (CC0) |
+| Map | Leaflet 1.9.4 + OpenStreetMap tiles + geoBoundaries province limits (CC0); geoBoundaries canton catalog (CC BY 3.0 IGO) and mledoze/countries (ODbL) |
 | Excel reading | SheetJS 0.20.3, only inside GitHub Actions |
 | Publishing | GitHub Actions (every 5 min) + GitHub Pages |
 | Testing | `node:test` (Node 22) and an independent Python/openpyxl oracle |

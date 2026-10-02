@@ -14,7 +14,7 @@ flowchart TB
         M --> R[repositorio-datos.js]
         C --> F
         C --> P[presentacionales<br/>gráficos · mapa · motivos · tarjetas · frescura · avisos]
-        C --> K[compartidos<br/>combo buscable · select seguro]
+        C --> K[compartidos<br/>combo de varias opciones · select seguro]
         F --> D[dominio<br/>catálogo · visitante · estadísticas · frescura · texto]
         R --> I[contrato-datos.js · seguridad.js]
         I --> D
@@ -25,12 +25,12 @@ flowchart TB
 
 | Capa | Archivos | Qué hace | Qué no hace |
 |---|---|---|---|
-| **Dominio** | `src/domain/catalogo.js`, `visitante.js`, `estadisticas.js`, `frescura.js`, `texto.js` | Normaliza filas, reconoce encabezados, calcula KPI y series, clasifica la frescura de la publicación y limpia texto | No conoce el DOM, la red ni las librerías |
+| **Dominio** | `src/domain/catalogo.js`, `visitante.js`, `filtros.js`, `estadisticas.js`, `discapacidad.js`, `frescura.js`, `texto.js` | Normaliza filas, reconoce encabezados, calcula KPI y series, clasifica la frescura de la publicación y limpia texto | No conoce el DOM, la red ni las librerías |
 | **Infraestructura** | `src/infrastructure/config.js`, `seguridad.js`, `contrato-datos.js`, `repositorio-datos.js`, `lector-libro.js` | Configuración, descarga acotada, formato de `datos.json`, lectura del Excel (en Actions) | No tiene reglas de negocio |
 | **Fachada** | `src/application/tablero.facade.js` | Estado de datos y filtros, opciones de los combos (años y motivos unen visitantes y catálogo), pestaña del mapa, política de actualización, frescura, vista calculada (incluidos los textos que dependen del periodo) y suscripción a eventos | No toca el DOM; recibe la descarga, el reloj y la visibilidad inyectados |
 | **Container** | `src/application/components/tablero.container.js` | Traduce eventos del DOM y de los gráficos en acciones de la fachada y pinta su vista | No calcula ni descarga |
 | **Presentacionales** | `src/application/components/presentational/*.js` | Dibujan gráficos, mapa por pestañas, motivos con íconos, tarjetas (con variación y cifras animadas), chip de frescura, chips de filtros y avisos | No guardan estado ni acceden a datos |
-| **Compartidos** | `src/application/components/compartidos/*.js` | Combo con búsqueda accesible, llenado seguro de `<select>` y panel de filtros deslizable para celular y tableta | — |
+| **Compartidos** | `src/application/components/compartidos/*.js` | Combo de varias opciones con búsqueda accesible (casillas, grupos, teclado), llenado seguro de `<select>` y panel de filtros deslizable para celular y tableta | — |
 | **Shared** | `src/shared/textos.es.js`, `formato.js`, `tema.js`, `tema-inicial.js` | Textos visibles, formato de números y fechas, y lógica del tema. `tema-inicial.js` es un script clásico que se ejecuta antes del primer pintado (ver [ADR 005](decisiones/005-tema-y-excepciones-de-color.md)) | — |
 | **Raíz** | `src/main.js` | Une la infraestructura con la fachada y monta el container | — |
 
@@ -83,3 +83,13 @@ Lo implementa [`tablero.facade.js`](../src/application/tablero.facade.js):
 | `test/shared/` | Formato, textos que dependen de los filtros y tema (incluido el script inicial, ejecutado en un contexto aislado) |
 | `test/tema-tokens.test.mjs` | Todo token de color usado existe |
 | `test/arquitectura.test.mjs` | Regla de dependencias |
+
+## Formato mensual y filtros de varias opciones
+
+- **Dos formatos de pestaña, una sola forma interna.** [`lector-libro.js`](../src/infrastructure/lector-libro.js) reconoce el formato por los
+  encabezados (`mapearEncabezados`). Cada fila del formato mensual se expande en filas internas con la misma forma de siempre; la edad
+  interna es el límite inferior del rango (0, 31, 46, 61) y [ADR 007](decisiones/007-formato-mensual-de-captura.md) explica por qué.
+- **Discapacidad aparte.** `datos.json` lleva una clave opcional `discapacidad` con filas de ocho números. Un lector anterior la ignora y un
+  paquete anterior sin ella sigue siendo válido.
+- **Filtros como listas.** [`filtros.js`](../src/domain/filtros.js) guarda una lista por filtro (año y mes, un valor). La fachada agrega,
+  quita y limpia opciones; las etiquetas de los filtros activos son una por valor ([ADR 008](decisiones/008-filtros-de-varias-opciones.md)).
