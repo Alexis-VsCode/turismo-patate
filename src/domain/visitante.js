@@ -6,13 +6,18 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { limpiarTexto } from './texto.js';
-import { claveNormalizada, canonico } from './catalogo.js';
+import { claveNormalizada, canonico, COLUMNAS_MENSUALES, etiquetaDeColumna } from './catalogo.js';
 
 export const MESES = Object.freeze([
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ]);
 export const RANGOS_EDAD = Object.freeze(['0-30', '31-45', '46-60', '61+']);
+/** Edad con que se representa cada rango cuando la hoja trae totales por rango y no edades sueltas: su límite inferior. */
+export const EDAD_BASE_RANGO = Object.freeze([0, 31, 46, 61]);
+const CANTIDAD_MAXIMA = 100000;
+const GENERO_MUJERES = 'Femenino';
+const GENERO_HOMBRES = 'Masculino';
 const EDAD_MAXIMA = 110;
 const ANIO_MINIMO = 2000;
 const ANIO_MAXIMO = 2100;
@@ -131,4 +136,67 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
       cantidad, motivo: motivo.motivo, edad, rangoEdad: rangoDeEdad(edad), genero, nacional: origen.nacional,
     },
   };
+}
+
+/** Entero de 0 a CANTIDAD_MAXIMA; una celda en blanco cuenta como cero. */
+function leerConteo(valor, nombre) {
+  if (limpiarTexto(valor) === '') return { n: 0 };
+  const n = enteroEn(valor, 0, CANTIDAD_MAXIMA);
+  return n === null ? { error: `${nombre} no válido: «${limpiarTexto(valor)}»` } : { n };
+}
+
+/**
+ * Normaliza una fila del formato mensual: un mes de un origen y un motivo, con mujeres y hombres por rango de edad.
+ * Cada número mayor que cero se vuelve una fila interna con la edad base de su rango, así el resto del tablero
+ * sigue trabajando con la misma forma de fila. Las personas con discapacidad salen aparte porque no se cruzan con
+ * la edad ni con el género.
+ * @param {Array} cruda celdas de la fila tal como salen de la hoja
+ * @param {object} indices posición de cada columna (ver mapearEncabezados)
+ * @param {object} catalogo catálogo de listas y coordenadas (ver construirCatalogo)
+ * @param {string} paisLocal país que define a un visitante como nacional
+ * @returns {{ ok: true, filas: object[], discapacidad: object|null } | { ok: false, motivo: string }} las filas
+ *   internas (ninguna si la fila no trae visitantes) o el motivo del rechazo
+ */
+export function normalizarFilaMensual(cruda, indices, catalogo, paisLocal) {
+  const celda = (campo) => (indices[campo] === undefined ? null : cruda[indices[campo]]);
+
+  // Paso 1: los ocho números y la discapacidad; una celda con texto o un número inválido rechaza la fila
+  const conteos = [];
+  for (const campo of COLUMNAS_MENSUALES) {
+    const lectura = leerConteo(celda(campo), etiquetaDeColumna(campo));
+    if (lectura.error) return { ok: false, motivo: lectura.error };
+    conteos.push(lectura.n);
+  }
+  const personas = leerConteo(celda('discapacidad'), 'Personas con discapacidad');
+  if (personas.error) return { ok: false, motivo: personas.error };
+  const total = conteos.reduce((suma, n) => suma + n, 0);
+
+  // Paso 2: sin visitantes ni discapacidad la fila está en blanco para el tablero y se ignora, no se rechaza
+  if (total === 0 && personas.n === 0) return { ok: true, filas: [], discapacidad: null };
+  if (personas.n > total) {
+    return { ok: false, motivo: `Personas con discapacidad (${personas.n}) mayor que el total de visitantes de la fila (${total})` };
+  }
+
+  // Paso 3: período, origen y motivo, con las mismas reglas del formato anterior
+  const periodo = leerPeriodo(celda);
+  if (periodo.error) return { ok: false, motivo: periodo.error };
+  const origen = leerOrigen(celda, catalogo, paisLocal);
+  if (origen.error) return { ok: false, motivo: origen.error };
+  const motivo = leerMotivo(celda, catalogo);
+  if (motivo.error) return { ok: false, motivo: motivo.error };
+
+  // Paso 4: una fila interna por número mayor que cero; las cuatro primeras columnas son mujeres, las otras cuatro hombres
+  const comun = {
+    anio: periodo.anio, mes: periodo.mes, pais: origen.pais, provincia: origen.provincia, ciudad: origen.ciudad,
+    motivo: motivo.motivo, nacional: origen.nacional,
+  };
+  const filas = [];
+  conteos.forEach((cantidad, i) => {
+    if (cantidad === 0) return;
+    const rango = i % RANGOS_EDAD.length;
+    const genero = i < RANGOS_EDAD.length ? GENERO_MUJERES : GENERO_HOMBRES;
+    filas.push({ ...comun, cantidad, edad: EDAD_BASE_RANGO[rango], rangoEdad: RANGOS_EDAD[rango], genero });
+  });
+  const discapacidad = personas.n > 0 ? { ...comun, personas: personas.n } : null;
+  return { ok: true, filas, discapacidad };
 }

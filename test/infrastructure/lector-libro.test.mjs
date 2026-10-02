@@ -87,3 +87,69 @@ test('los avisos del catálogo llegan a los avisos del libro con la pestaña del
   const aviso = d.avisos.find((a) => a.pestana === CONFIG.PESTANA_CATALOGOS && /fuera de Ecuador/i.test(a.mensaje));
   assert.ok(aviso, JSON.stringify(d.avisos));
 });
+
+const ENC_MENSUAL = [
+  'Año', 'Mes', 'País', 'Provincia', 'Ciudad', 'Motivo de visita',
+  'Mujeres 0-30', 'Mujeres 31-45', 'Mujeres 46-60', 'Mujeres 61+', 'Hombres 0-30', 'Hombres 31-45', 'Hombres 46-60', 'Hombres 61+',
+  'Personas con discapacidad', 'Total mujeres', 'Total hombres', 'Total visitantes', 'Nacionales', 'Extranjeros', 'Estado',
+];
+const mensual = (...v) => [...v, 6, 4, 10, 10, 0, 'OK'];
+
+test('lee pestañas del formato mensual junto a las del formato anterior', () => {
+  const buf = libroEnMemoria({
+    _Catalogos: CATALOGO,
+    'Hostal Nuevo': [ENC_MENSUAL,
+      mensual(2026, 'Marzo', 'Ecuador', '', 'Ambato', 'Turismo', 2, 2, 1, 1, 1, 2, 1, 0, 2),
+      mensual(2026, 'Marzo', 'Colombia', '', '', 'Negocios', 1, 0, 0, 0, 0, 0, 0, 0, 0)],
+    'Hostal Antiguo': [ENCABEZADO, fila(2026, 'Marzo', 'Ecuador', '', 'Ambato', 4, 'Turismo', 29, 'Femenino')],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  assert.deepEqual(d.establecimientos, ['Hostal Antiguo', 'Hostal Nuevo']);
+  assert.equal(d.rechazos.length, 0, JSON.stringify(d.rechazos));
+  const nuevo = d.filas.filter((f) => f.establecimiento === 'Hostal Nuevo');
+  assert.equal(nuevo.length, 8);
+  assert.equal(nuevo.reduce((s, f) => s + f.cantidad, 0), 11);
+  assert.equal(d.filas.filter((f) => f.establecimiento === 'Hostal Antiguo').length, 1);
+  assert.deepEqual(d.discapacidad.map((x) => [x.establecimiento, x.personas, x.pais]), [['Hostal Nuevo', 2, 'Ecuador']]);
+});
+
+test('las filas mensuales inválidas se rechazan con pestaña, fila de la hoja y motivo', () => {
+  const buf = libroEnMemoria({
+    _Catalogos: CATALOGO,
+    'Hostal Nuevo': [ENC_MENSUAL,
+      mensual(2026, 'Marzo', 'Ecuador', '', 'Ambato', 'Turismo', 1, 0, 0, 0, 0, 0, 0, 0, 0),
+      mensual(2026, 'Abril', 'Ecuador', '', 'Ambato', 'Turismo', 1, 0, 0, 0, 0, 0, 0, 0, 9),
+      mensual(2026, 'Mayo', 'Ecuador', '', 'Ambato', 'Turismo', -3, 0, 0, 0, 0, 0, 0, 0, 0)],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  assert.equal(d.filas.length, 1);
+  assert.deepEqual(d.rechazos.map((r) => [r.pestana, r.fila]), [['Hostal Nuevo', 3], ['Hostal Nuevo', 4]]);
+});
+
+test('una pestaña que mezcla los dos formatos se omite con un aviso claro', () => {
+  const buf = libroEnMemoria({
+    _Catalogos: CATALOGO,
+    'Hostal Mixto': [[...ENC_MENSUAL, 'Cantidad', 'Edad', 'Género'], mensual(2026, 'Marzo', 'Ecuador', '', 'Ambato', 'Turismo', 1, 0, 0, 0, 0, 0, 0, 0, 0)],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  assert.equal(d.filas.length, 0);
+  assert.deepEqual(d.establecimientos, []);
+  assert.match(d.avisos.find((a) => a.pestana === 'Hostal Mixto').mensaje, /formatos/i);
+});
+
+test('una pestaña mensual con una columna ausente se reporta y las demás siguen', () => {
+  const sinUna = ENC_MENSUAL.filter((h) => h !== 'Hombres 61+');
+  const buf = libroEnMemoria({
+    _Catalogos: CATALOGO,
+    'Hostal Incompleto': [sinUna, [2026, 'Marzo', 'Ecuador', '', 'Ambato', 'Turismo', 1]],
+    'Hostal Antiguo': [ENCABEZADO, fila(2026, 'Marzo', 'Ecuador', '', 'Ambato', 4, 'Turismo', 29, 'Femenino')],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  assert.deepEqual(d.establecimientos, ['Hostal Antiguo']);
+  assert.match(d.avisos.find((a) => a.pestana === 'Hostal Incompleto').mensaje, /Faltan columnas/);
+});
+
+test('el resultado siempre trae la lista de discapacidad, vacía si ninguna pestaña la usa', () => {
+  const buf = libroEnMemoria({ _Catalogos: CATALOGO, A: [ENCABEZADO, fila(2026, 'Marzo', 'Ecuador', '', 'Ambato', 4, 'Turismo', 29, 'Femenino')] });
+  assert.deepEqual(leerLibro(buf, XLSX, CONFIG).discapacidad, []);
+});

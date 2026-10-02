@@ -19,12 +19,27 @@ const ENCABEZADOS = Object.freeze({
   motivo: ['motivo de visita', 'motivo'],
   edad: ['edad', 'age'],
   genero: ['genero', 'sexo', 'gender'],
+  mujeres0: ['mujeres 0-30'], mujeres1: ['mujeres 31-45'], mujeres2: ['mujeres 46-60'], mujeres3: ['mujeres 61+'],
+  hombres0: ['hombres 0-30'], hombres1: ['hombres 31-45'], hombres2: ['hombres 46-60'], hombres3: ['hombres 61+'],
+  discapacidad: ['personas con discapacidad', 'discapacidad'],
 });
 const ANIO_CATALOGO_MINIMO = 2000;
 const ANIO_CATALOGO_MAXIMO = 2100;
 /** Rectángulo que contiene a Ecuador con sus islas: una ciudad fuera de él es un error de captura. */
 const LIMITES_ECUADOR = Object.freeze({ latMin: -5.1, latMax: 1.5, lonMin: -92, lonMax: -75 });
+/** Columnas del formato anterior: una fila por grupo de visitantes con su edad, su género y su cantidad. */
 const COLUMNAS_OBLIGATORIAS = Object.freeze(['anio', 'mes', 'pais', 'cantidad', 'motivo', 'edad', 'genero']);
+const COLUMNAS_FORMATO_ANTERIOR = Object.freeze(['cantidad', 'edad', 'genero']);
+/** Columnas del formato mensual: mujeres y hombres por rango de edad, de menor a mayor. */
+export const COLUMNAS_MENSUALES = Object.freeze(['mujeres0', 'mujeres1', 'mujeres2', 'mujeres3', 'hombres0', 'hombres1', 'hombres2', 'hombres3']);
+const COLUMNAS_BASE_MENSUAL = Object.freeze(['anio', 'mes', 'pais', 'motivo']);
+const ETIQUETAS_MENSUALES = Object.freeze({
+  mujeres0: 'Mujeres 0-30', mujeres1: 'Mujeres 31-45', mujeres2: 'Mujeres 46-60', mujeres3: 'Mujeres 61+',
+  hombres0: 'Hombres 0-30', hombres1: 'Hombres 31-45', hombres2: 'Hombres 46-60', hombres3: 'Hombres 61+',
+});
+
+/** Nombre con que una columna mensual aparece en la hoja; las demás conservan su clave. */
+export const etiquetaDeColumna = (clave) => ETIQUETAS_MENSUALES[clave] || clave;
 
 /** Forma comparable de un texto: sin tildes, en minúsculas y con espacios simples. */
 export function claveNormalizada(valor) {
@@ -32,8 +47,10 @@ export function claveNormalizada(valor) {
 }
 
 /**
- * Ubica cada columna conocida en la fila de encabezados.
- * Devuelve { indices, faltantes } donde faltantes son columnas obligatorias ausentes.
+ * Ubica cada columna conocida en la fila de encabezados y reconoce el formato de la pestaña.
+ * El formato es 'anterior' (Cantidad, Edad y Género), 'mensual' (mujeres y hombres por rango de edad) o 'mixto'
+ * si trae columnas de ambos, que no se puede leer. `faltantes` son las columnas obligatorias de ese formato que
+ * no están.
  */
 export function mapearEncabezados(filaEncabezados) {
   const indices = {};
@@ -43,8 +60,12 @@ export function mapearEncabezados(filaEncabezados) {
       if (indices[campo] === undefined && alias.includes(clave)) indices[campo] = i;
     }
   });
-  const faltantes = COLUMNAS_OBLIGATORIAS.filter((c) => indices[c] === undefined);
-  return { indices, faltantes };
+  const hayMensual = COLUMNAS_MENSUALES.some((c) => indices[c] !== undefined);
+  const hayAnterior = COLUMNAS_FORMATO_ANTERIOR.some((c) => indices[c] !== undefined);
+  const formato = hayMensual && hayAnterior ? 'mixto' : hayMensual ? 'mensual' : 'anterior';
+  const exigidas = formato === 'mensual' ? [...COLUMNAS_BASE_MENSUAL, ...COLUMNAS_MENSUALES] : COLUMNAS_OBLIGATORIAS;
+  const faltantes = formato === 'mixto' ? [] : exigidas.filter((c) => indices[c] === undefined);
+  return { indices, faltantes, formato };
 }
 
 /** Busca un valor en una lista canónica por clave normalizada y devuelve la forma canónica. */

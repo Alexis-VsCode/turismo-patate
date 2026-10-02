@@ -6,8 +6,8 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { limpiarTexto } from '../domain/texto.js';
-import { claveNormalizada, construirCatalogo, mapearEncabezados } from '../domain/catalogo.js';
-import { normalizarFila } from '../domain/visitante.js';
+import { claveNormalizada, construirCatalogo, mapearEncabezados, etiquetaDeColumna } from '../domain/catalogo.js';
+import { normalizarFila, normalizarFilaMensual } from '../domain/visitante.js';
 
 /** Opciones restrictivas de SheetJS para un archivo que editan terceros. */
 const OPCIONES_LECTURA = Object.freeze({
@@ -30,13 +30,14 @@ function filasDeHoja(XLSX, hoja) {
  * @param {ArrayBuffer} buffer libro xlsx descargado
  * @param {object} XLSX instancia de SheetJS
  * @param {object} config límites y nombres de CONFIG
- * @returns {{filas, rechazos, avisos, establecimientos, catalogo}}
+ * @returns {{filas, discapacidad, rechazos, avisos, establecimientos, catalogo}}
  */
 export function leerLibro(buffer, XLSX, config) {
   const libro = XLSX.read(buffer, { ...OPCIONES_LECTURA, sheetRows: config.MAX_FILAS_PESTANA + 1 });
   const avisos = [];
   const rechazos = [];
   const filas = [];
+  const discapacidad = [];
   const establecimientos = [];
 
   // Paso 1: catálogo; si falta, se sigue con uno mínimo y se avisa
@@ -65,9 +66,13 @@ export function leerLibro(buffer, XLSX, config) {
     if (crudas.length > config.MAX_FILAS_PESTANA + 1) {
       avisos.push({ pestana: establecimiento, mensaje: `Más de ${config.MAX_FILAS_PESTANA} filas: se leen solo las primeras` });
     }
-    const { indices, faltantes } = mapearEncabezados(crudas[0]);
+    const { indices, faltantes, formato } = mapearEncabezados(crudas[0]);
+    if (formato === 'mixto') {
+      avisos.push({ pestana: establecimiento, mensaje: 'Mezcla los dos formatos (Cantidad, Edad y Género con Mujeres y Hombres por rango): se omite' });
+      continue;
+    }
     if (faltantes.length) {
-      avisos.push({ pestana: establecimiento, mensaje: `Faltan columnas: ${faltantes.join(', ')}` });
+      avisos.push({ pestana: establecimiento, mensaje: `Faltan columnas: ${faltantes.map(etiquetaDeColumna).join(', ')}` });
       continue;
     }
     establecimientos.push(establecimiento);
@@ -75,6 +80,16 @@ export function leerLibro(buffer, XLSX, config) {
     // Paso 4: filas de datos; la fila 1 de la hoja es el encabezado
     crudas.slice(1, config.MAX_FILAS_PESTANA + 1).forEach((cruda, i) => {
       if (!cruda || cruda.every((v) => limpiarTexto(v) === '')) return;
+      if (formato === 'mensual') {
+        const resultado = normalizarFilaMensual(cruda, indices, catalogo, config.PAIS_LOCAL);
+        if (!resultado.ok) {
+          rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
+          return;
+        }
+        for (const f of resultado.filas) filas.push({ ...f, establecimiento });
+        if (resultado.discapacidad) discapacidad.push({ ...resultado.discapacidad, establecimiento });
+        return;
+      }
       const resultado = normalizarFila(cruda, indices, catalogo, config.PAIS_LOCAL);
       if (resultado.ok) filas.push({ ...resultado.fila, establecimiento });
       else rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
@@ -82,5 +97,5 @@ export function leerLibro(buffer, XLSX, config) {
   }
   // Paso 5: el resultado sale ordenado por nombre; el orden de los combos depende de esto
   establecimientos.sort((a, b) => a.localeCompare(b, 'es'));
-  return { filas, rechazos, avisos, establecimientos, catalogo };
+  return { filas, discapacidad, rechazos, avisos, establecimientos, catalogo };
 }

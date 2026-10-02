@@ -6,7 +6,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { construirCatalogo } from '../../src/domain/catalogo.js';
+import { construirCatalogo, mapearEncabezados } from '../../src/domain/catalogo.js';
 
 const ENC = ['Año', 'País', 'Ciudad', 'Ciudad_Lat', 'Ciudad_Lon', 'Motivo'];
 const con = (anios) => construirCatalogo([ENC, ...anios.map((a) => [a, 'Ecuador', 'Ambato', -1.2, -78.6, 'Turismo'])]);
@@ -70,4 +70,39 @@ test('cada límite de Ecuador se comprueba por separado, en los cuatro lados', (
   const cat = conProvincias([...fuera.map(([n, lat, lon]) => [n, 'Tungurahua', lat, lon]), ['Dentro', 'Tungurahua', -1, -78]], ['Tungurahua']);
   assert.deepEqual([...cat.ciudades.keys()], ['dentro']);
   assert.equal(cat.avisos.filter((a) => /fuera de Ecuador/i.test(a)).length, 4);
+});
+
+const BASE = ['Año', 'Mes', 'País', 'Provincia', 'Ciudad', 'Motivo de visita'];
+const RANGOS = ['0-30', '31-45', '46-60', '61+'];
+const NUEVAS = [...RANGOS.map((r) => `Mujeres ${r}`), ...RANGOS.map((r) => `Hombres ${r}`)];
+
+test('una pestaña con Edad, Género y Cantidad es del formato anterior', () => {
+  const r = mapearEncabezados([...BASE, 'Cantidad', 'Edad', 'Género']);
+  assert.equal(r.formato, 'anterior');
+  assert.deepEqual(r.faltantes, []);
+});
+
+test('una pestaña con las ocho columnas de mujeres y hombres por rango es mensual', () => {
+  const r = mapearEncabezados([...BASE, ...NUEVAS, 'Personas con discapacidad ', 'Total mujeres', 'Total hombres', 'Total visitantes', 'Nacionales', 'Extranjeros', 'Estado']);
+  assert.equal(r.formato, 'mensual');
+  assert.deepEqual(r.faltantes, []);
+  assert.equal(typeof r.indices.discapacidad, 'number');
+  assert.equal(r.indices.cantidad, undefined, 'las columnas calculadas no se confunden con Cantidad');
+});
+
+test('el formato mensual avisa qué columna falta', () => {
+  const r = mapearEncabezados([...BASE, ...NUEVAS.slice(0, 7)]);
+  assert.equal(r.formato, 'mensual');
+  assert.deepEqual(r.faltantes, ['hombres3']);
+});
+
+test('mezclar columnas del formato anterior y del mensual se reconoce como mixto', () => {
+  const r = mapearEncabezados([...BASE, 'Cantidad', 'Edad', 'Género', ...NUEVAS]);
+  assert.equal(r.formato, 'mixto');
+});
+
+test('las columnas de prueba sueltas «mujeres» y «personas con discapacidad» no cambian el formato anterior', () => {
+  const r = mapearEncabezados([...BASE, 'Cantidad', 'Edad', 'Género', 'mujeres', 'personas con discapacidad ']);
+  assert.equal(r.formato, 'anterior');
+  assert.deepEqual(r.faltantes, []);
 });
