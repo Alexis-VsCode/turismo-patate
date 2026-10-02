@@ -88,19 +88,35 @@
         </div>
         <div class="filtro">
           <label for="f-procedencia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.5" fill="currentColor"/></svg>País / Ciudad</label>
-          <select id="f-procedencia"></select>
+          <div id="combo-procedencia" class="combo combo-filtro">
+            <input id="f-procedencia" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-procedencia-lista" autocomplete="off" spellcheck="false">
+            <svg class="combo-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <ul id="f-procedencia-lista" role="listbox"></ul>
+          </div>
         </div>
         <div class="filtro">
           <label for="f-motivo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Motivo de visita</label>
-          <select id="f-motivo"></select>
+          <div id="combo-motivo" class="combo combo-filtro">
+            <input id="f-motivo" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-motivo-lista" autocomplete="off" spellcheck="false">
+            <svg class="combo-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <ul id="f-motivo-lista" role="listbox"></ul>
+          </div>
         </div>
         <div class="filtro">
           <label for="f-edad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>Edad</label>
-          <select id="f-edad"></select>
+          <div id="combo-edad" class="combo combo-filtro">
+            <input id="f-edad" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-edad-lista" autocomplete="off" spellcheck="false">
+            <svg class="combo-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <ul id="f-edad-lista" role="listbox"></ul>
+          </div>
         </div>
         <div class="filtro">
           <label for="f-genero"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="15" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 13v8M5 18h6M19 12l3-3M19 9h3v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>Género</label>
-          <select id="f-genero"></select>
+          <div id="combo-genero" class="combo combo-filtro">
+            <input id="f-genero" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-genero-lista" autocomplete="off" spellcheck="false">
+            <svg class="combo-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <ul id="f-genero-lista" role="listbox"></ul>
+          </div>
         </div>
         <button id="btn-limpiar" class="boton boton-claro" type="button">Limpiar filtros</button>
       </section>

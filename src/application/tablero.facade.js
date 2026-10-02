@@ -11,7 +11,9 @@ import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo,
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
-import { filtrar, filtrosVacios } from '../domain/filtros.js';
+import {
+  filtrar, filtrosVacios, CLAVES_MULTIPLES, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros,
+} from '../domain/filtros.js';
 import { estadoFrescura } from '../domain/frescura.js';
 
 /** Texto legible de un valor de procedencia ('NAC', 'EXT', 'C:…', 'P:…', 'PR:…'). */
@@ -38,8 +40,11 @@ function vistaDeProcedencia(procedencia) {
   return null;
 }
 
-/** Filtros cuyo valor vacío es null (numéricos) en lugar de cadena vacía. */
-const FILTROS_NUMERICOS = new Set(['anio', 'mes']);
+/** Filtros que guardan una lista de opciones. */
+const ES_MULTIPLE = new Set(CLAVES_MULTIPLES);
+
+/** Última opción de procedencia elegida, que es la que el mapa resalta; vacía si no hay ninguna. */
+const ultimaProcedencia = (filtros) => valoresDeFiltro(filtros.procedencia).at(-1) ?? '';
 
 /**
  * Crea la fachada del tablero.
@@ -72,12 +77,19 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return () => oyentes.delete(fn);
   }
 
-  /** Fija un filtro; un valor vacío se normaliza a '' o null según el tipo de filtro. */
+  /**
+   * Reemplaza un filtro. Los de varias opciones aceptan una lista, un valor suelto o un vacío; año y mes, un valor
+   * o un vacío (que los deja en null).
+   */
   function fijarFiltro(campo, valor) {
-    const vacio = valor === '' || valor === null || valor === undefined;
-    estado.filtros[campo] = vacio ? (FILTROS_NUMERICOS.has(campo) ? null : '') : valor;
+    if (ES_MULTIPLE.has(campo)) {
+      estado.filtros[campo] = valoresDeFiltro(valor);
+    } else {
+      const vacio = valor === '' || valor === null || valor === undefined;
+      estado.filtros[campo] = vacio ? null : valor;
+    }
     // Paso 1: elegir un origen concreto lleva el mapa a la pestaña que lo muestra; «todos» y «nacionales» no la cambian
-    if (campo === 'procedencia') estado.vistaMapa = vistaDeProcedencia(estado.filtros.procedencia) ?? estado.vistaMapa;
+    if (campo === 'procedencia') estado.vistaMapa = vistaDeProcedencia(ultimaProcedencia(estado.filtros)) ?? estado.vistaMapa;
     avisar('filtros');
   }
 
@@ -88,9 +100,25 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     avisar('vistaMapa');
   }
 
-  /** Aplica el filtro o lo quita si ya tenía ese mismo valor (clic repetido en un gráfico). */
+  /** Agrega la opción a un filtro de varias opciones o la quita si ya estaba (clic repetido en un gráfico). */
   function alternarFiltro(campo, valor) {
-    fijarFiltro(campo, estado.filtros[campo] === valor ? '' : valor);
+    if (!ES_MULTIPLE.has(campo)) {
+      fijarFiltro(campo, estado.filtros[campo] === valor ? null : valor);
+      return;
+    }
+    const antes = estado.filtros[campo];
+    estado.filtros[campo] = alternarValor(antes, valor);
+    // Paso 1: el mapa va a la pestaña de la opción recién agregada; quitar una opción no lo mueve
+    if (campo === 'procedencia' && estado.filtros[campo].length > antes.length) {
+      estado.vistaMapa = vistaDeProcedencia(valor) ?? estado.vistaMapa;
+    }
+    avisar('filtros');
+  }
+
+  /** Quita una opción de un filtro de varias opciones; en año y mes, vacía el filtro. */
+  function quitarFiltro(campo, valor) {
+    estado.filtros[campo] = ES_MULTIPLE.has(campo) ? quitarValor(estado.filtros[campo], valor) : null;
+    avisar('filtros');
   }
 
   /** Clic en una columna de la evolución: fija el año de la serie y alterna el mes. */
@@ -162,25 +190,25 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     // Paso 1: las opciones salen de la hoja: de los visitantes y, en años y motivos, también del catálogo
     const op = opcionesDeFiltros(filas, catalogo);
     const todos = { valor: '', texto: TEXTOS.todos };
+    const opcion = (valor, texto, grupo) => (grupo ? { valor, texto, grupo } : { valor, texto });
     // Paso 2: las provincias solo cuentan si hay visitantes nacionales, porque el filtro las aplica a ellos
     const provincias = [...new Set(filas.filter((x) => x.nacional && x.provincia).map((x) => x.provincia))]
       .sort((a, b) => a.localeCompare(b, 'es'));
     return {
       anio: [todos, ...op.anios.map((a) => ({ valor: String(a), texto: String(a) }))],
       mes: [todos, ...MESES.map((m, i) => ({ valor: String(i), texto: m }))],
+      // Los filtros de varias opciones no ofrecen «Todos»: una lista vacía ya significa todos
       procedencia: [
-        { valor: '', texto: TEXTOS.procedenciaTodos },
-        { valor: 'NAC', texto: TEXTOS.procedenciaNacionales },
-        ...op.ciudades.map((c) => ({ valor: `C:${c}`, texto: c, grupo: TEXTOS.grupoCiudades })),
-        ...provincias.map((p) => ({ valor: `PR:${p}`, texto: TEXTOS.provinciaPrefijo + p, grupo: TEXTOS.grupoCiudades })),
-        { valor: 'EXT', texto: TEXTOS.procedenciaExtranjeros },
-        ...op.paises.map((p) => ({ valor: `P:${p}`, texto: p, grupo: TEXTOS.grupoPaises })),
+        opcion('NAC', TEXTOS.procedenciaNacionales, TEXTOS.grupoAtajos),
+        opcion('EXT', TEXTOS.procedenciaExtranjeros, TEXTOS.grupoAtajos),
+        ...provincias.map((p) => opcion(`PR:${p}`, p, TEXTOS.grupoProvincias)),
+        ...op.ciudades.map((c) => opcion(`C:${c}`, c, TEXTOS.grupoCiudades)),
+        ...op.paises.map((p) => opcion(`P:${p}`, p, TEXTOS.grupoPaises)),
       ],
-      motivo: [todos, ...op.motivos.map((m) => ({ valor: m, texto: m }))],
-      rangoEdad: [todos, ...RANGOS_EDAD.map((r) => ({ valor: r, texto: r }))],
-      genero: [todos, ...catalogo.generos.map((g) => ({ valor: g, texto: g }))],
-      establecimiento: [{ valor: '', texto: TEXTOS.todosEstablecimientos }, ...establecimientos.map((e) => ({ valor: e, texto: e }))],
-      establecimientos,
+      motivo: op.motivos.map((m) => opcion(m, m)),
+      rangoEdad: RANGOS_EDAD.map((r) => opcion(r, r)),
+      genero: catalogo.generos.map((g) => opcion(g, g)),
+      establecimiento: establecimientos.map((e) => opcion(e, e)),
     };
   }
 
@@ -202,13 +230,13 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
       evolucion: evolucionMensual(baseEvolucion, anioDeReferencia(baseEvolucion, f.anio)),
       motivos: porMotivo(baseMotivos),
       edadGenero: edadGenero(sel, catalogo.generos),
-      mapa: { vista: estado.vistaMapa, procedencia: f.procedencia, ciudades: porCiudad(sel), paises: porPais(sel), provincias: porProvincia(sel), catalogo },
+      mapa: { vista: estado.vistaMapa, procedencia: ultimaProcedencia(f), ciudades: porCiudad(sel), paises: porPais(sel), provincias: porProvincia(sel), catalogo },
       textos: {
         periodo: TEXTOS.periodo(f.anio, f.mes === null ? null : MESES[f.mes]),
         centro: TEXTOS.centroDona(f.anio),
         notaMapa: TEXTOS.notaMapa(f.anio),
       },
-      filtros: { ...f },
+      filtros: copiarFiltros(f),
     };
   }
 
@@ -220,19 +248,20 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function chipsActivos() {
     const f = estado.filtros;
     const chips = [];
-    if (f.establecimiento) chips.push({ campo: 'establecimiento', texto: f.establecimiento });
-    if (f.anio !== null) chips.push({ campo: 'anio', texto: String(f.anio) });
-    if (f.mes !== null) chips.push({ campo: 'mes', texto: MESES[f.mes] });
-    if (f.procedencia) chips.push({ campo: 'procedencia', texto: textoProcedencia(f.procedencia) });
-    if (f.motivo) chips.push({ campo: 'motivo', texto: f.motivo });
-    if (f.rangoEdad) chips.push({ campo: 'rangoEdad', texto: TEXTOS.chipEdad(f.rangoEdad) });
-    if (f.genero) chips.push({ campo: 'genero', texto: f.genero });
+    const agregar = (campo, valor, texto) => chips.push({ campo, valor, texto });
+    f.establecimiento.forEach((e) => agregar('establecimiento', e, e));
+    if (f.anio !== null) agregar('anio', f.anio, String(f.anio));
+    if (f.mes !== null) agregar('mes', f.mes, MESES[f.mes]);
+    f.procedencia.forEach((p) => agregar('procedencia', p, textoProcedencia(p)));
+    f.motivo.forEach((m) => agregar('motivo', m, m));
+    f.rangoEdad.forEach((r) => agregar('rangoEdad', r, TEXTOS.chipEdad(r)));
+    f.genero.forEach((g) => agregar('genero', g, g));
     return chips;
   }
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
-    get estado() { return { ...estado, filtros: { ...estado.filtros } }; },
+    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
+    get estado() { return { ...estado, filtros: copiarFiltros(estado.filtros) }; },
   };
 }

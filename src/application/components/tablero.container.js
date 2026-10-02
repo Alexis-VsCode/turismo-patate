@@ -8,7 +8,7 @@
 import { TEXTOS } from '../../shared/textos.es.js';
 import { numero, fechaHora, hora } from '../../shared/formato.js';
 import { llenarSelect } from './compartidos/select-seguro.js';
-import { crearComboBuscable } from './compartidos/combo-buscable.js';
+import { crearComboMultiple } from './compartidos/combo-multiple.js';
 import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentational/graficos.presentational.js';
 import { crearMapa } from './presentational/mapa.presentational.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
@@ -51,22 +51,24 @@ export function montarTablero(facade, config) {
   let horaDatos = '';
 
   // Paso 1: combos y botones → acciones de la fachada
-  const combo = crearComboBuscable($('combo-establecimiento'), {
-    textoTodos: TEXTOS.todosEstablecimientos,
-    sinCoincidencias: TEXTOS.sinCoincidencias,
-    alCambiar: (valor) => {
-      facade.fijarFiltro('establecimiento', valor);
-      facade.cargar(false);
-    },
-  });
-  const selects = {
-    anio: $('f-anio'), mes: $('f-mes'), procedencia: $('f-procedencia'), motivo: $('f-motivo'),
-    rangoEdad: $('f-edad'), genero: $('f-genero'),
+  const textosCombo = (todos) => ({ todos, elegidas: TEXTOS.opcionesElegidas, sinCoincidencias: TEXTOS.sinCoincidencias });
+  const combos = {
+    establecimiento: crearComboMultiple($('combo-establecimiento'), {
+      textos: textosCombo(TEXTOS.todosEstablecimientos),
+      alCambiar: (lista) => {
+        facade.fijarFiltro('establecimiento', lista);
+        facade.cargar(false);
+      },
+    }),
   };
+  for (const [campo, id] of [['procedencia', 'combo-procedencia'], ['motivo', 'combo-motivo'], ['rangoEdad', 'combo-edad'], ['genero', 'combo-genero']]) {
+    combos[campo] = crearComboMultiple($(id), { textos: textosCombo(TEXTOS.todos), alCambiar: (lista) => facade.fijarFiltro(campo, lista) });
+  }
+  const selects = { anio: $('f-anio'), mes: $('f-mes') };
   for (const [campo, select] of Object.entries(selects)) {
     select.addEventListener('change', (e) => {
       const valor = e.target.value;
-      facade.fijarFiltro(campo, (campo === 'anio' || campo === 'mes') && valor !== '' ? Number(valor) : valor);
+      facade.fijarFiltro(campo, valor !== '' ? Number(valor) : null);
     });
   }
   $('btn-limpiar').addEventListener('click', () => facade.limpiarFiltros());
@@ -80,7 +82,7 @@ export function montarTablero(facade, config) {
 
   // Paso 2: filtrado cruzado desde los gráficos
   graficos.edad.on('click', (p) => facade.alternarFiltro('rangoEdad', p.name));
-  graficos.dona.on('click', (p) => facade.fijarFiltro('procedencia', p.name === TEXTOS.extranjeros ? 'EXT' : 'NAC'));
+  graficos.dona.on('click', (p) => facade.alternarFiltro('procedencia', p.name === TEXTOS.extranjeros ? 'EXT' : 'NAC'));
   graficos.evolucion.on('click', (p) => {
     if (p.seriesType === 'bar') facade.elegirMes(Number(p.seriesName), p.dataIndex);
   });
@@ -92,13 +94,15 @@ export function montarTablero(facade, config) {
     const f = facade.estado.filtros;
     const valor = (campo) => (f[campo] === null ? '' : String(f[campo]));
     for (const [campo, select] of Object.entries(selects)) llenarSelect(select, op[campo], valor(campo));
-    combo.fijarOpciones(op.establecimientos);
-    combo.fijarValor(f.establecimiento);
+    for (const [campo, combo] of Object.entries(combos)) {
+      combo.fijarOpciones(op[campo]);
+      combo.fijarValores(f[campo]);
+    }
     const chips = facade.chipsActivos();
-    pintarChips($('chips'), chips, (campo) => {
-      facade.fijarFiltro(campo, '');
+    pintarChips($('chips'), chips, (campo, valorQuitado) => {
+      facade.quitarFiltro(campo, valorQuitado);
       if (campo === 'establecimiento') facade.cargar(false);
-    });
+    }, () => facade.limpiarFiltros());
     panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 

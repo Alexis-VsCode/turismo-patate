@@ -7,6 +7,7 @@
  */
 import { MESES_CORTOS, ORDEN_GENEROS, TEXTOS } from '../../../shared/textos.es.js';
 import { numero, porcentaje } from '../../../shared/formato.js';
+import { valoresDeFiltro } from '../../../domain/filtros.js';
 
 /** Tooltip común: en canvas (richText) y con los colores del tema, también en modo oscuro. */
 const tooltipBase = (colores) => ({
@@ -68,8 +69,9 @@ const lugarDeGenero = (genero) => {
 };
 
 /** Barras agrupadas por rango de edad, una serie por género: «Total mujeres» primero y «Total hombres» después. */
-export function opcionesEdadGenero(eg, colores, rangoSeleccionado) {
+export function opcionesEdadGenero(eg, colores, rangosElegidos) {
   // Paso 1: las mujeres se leen primero; el orden de los demás géneros se conserva
+  const elegidos = valoresDeFiltro(rangosElegidos);
   const series = [...eg.series].sort((a, b) => lugarDeGenero(a.genero) - lugarDeGenero(b.genero));
   // Paso 2: verde y amarillo para los dos géneros del catálogo; si la hoja suma más, siguen dos tonos verdes.
   // Los tonos claros (posiciones impares) llevan contorno para distinguirse sobre fondo claro
@@ -84,7 +86,7 @@ export function opcionesEdadGenero(eg, colores, rangoSeleccionado) {
     yAxis: { type: 'value', axisLabel: { color: colores.texto, formatter: (v) => numero(v) }, splitLine: { lineStyle: { color: colores.rejilla } } },
     series: series.map((s, i) => ({
       name: TEXTOS.etiquetaGenero(s.genero), type: 'bar', barGap: '6%', itemStyle: estilo(i),
-      data: s.valores.map((v, j) => ({ value: v, itemStyle: { ...estilo(i), opacity: !rangoSeleccionado || eg.rangos[j] === rangoSeleccionado ? 1 : 0.35 } })),
+      data: s.valores.map((v, j) => ({ value: v, itemStyle: { ...estilo(i), opacity: !elegidos.length || elegidos.includes(eg.rangos[j]) ? 1 : 0.35 } })),
     })),
   };
 }

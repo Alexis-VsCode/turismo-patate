@@ -56,3 +56,11 @@ test('un género que no es masculino ni femenino conserva su nombre y va al fina
   const eg = { rangos: ['0-30'], series: [{ genero: 'Otro', valores: [5] }, ...edadGenero.series.map((s) => ({ ...s, valores: [1] }))] };
   assert.deepEqual(opcionesEdadGenero(eg, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres', 'Otro']);
 });
+
+test('el gráfico de edad resalta todos los rangos elegidos y atenúa los demás', () => {
+  const eg = { rangos: ['0-30', '31-45', '46-60', '61+'], series: [{ genero: 'Femenino', valores: [1, 2, 3, 4] }] };
+  const opacidades = (seleccion) => opcionesEdadGenero(eg, colores, seleccion).series[0].data.map((d) => d.itemStyle.opacity);
+  assert.deepEqual(opacidades(['0-30', '46-60']), [1, 0.35, 1, 0.35]);
+  assert.deepEqual(opacidades([]), [1, 1, 1, 1], 'sin selección ninguna barra se atenúa');
+  assert.deepEqual(opacidades(''), [1, 1, 1, 1], 'un vacío del formato anterior tampoco atenúa');
+});

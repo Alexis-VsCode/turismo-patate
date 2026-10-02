@@ -8,6 +8,7 @@
  */
 import { numero, porcentaje } from '../../../shared/formato.js';
 import { claveNormalizada } from '../../../domain/catalogo.js';
+import { valoresDeFiltro } from '../../../domain/filtros.js';
 
 /* Íconos de línea de cada motivo del catálogo. Sus trazos son constantes del código y se crean con la API del DOM. */
 const ESPACIO_SVG = 'http://www.w3.org/2000/svg';
@@ -71,10 +72,11 @@ export function prepararFilasMotivo(lista) {
  * Dibuja las filas dentro de la lista.
  * @param {HTMLElement} lista elemento `<ol>` del panel
  * @param {Array<{ nombre: string, valor: number }>} motivos resultado de porMotivo()
- * @param {string} seleccionado motivo filtrado o cadena vacía
+ * @param {string[]} seleccionados motivos filtrados; una lista vacía no resalta ninguno
  * @param {(nombre: string) => void} alElegir se llama al pulsar una fila
  */
-export function pintarMotivos(lista, motivos, seleccionado, alElegir) {
+export function pintarMotivos(lista, motivos, seleccionados, alElegir) {
+  const elegidos = valoresDeFiltro(seleccionados);
   // Paso 1: se rehace la lista completa; son pocas filas y así nunca queda una fila de un filtro anterior
   lista.replaceChildren();
   for (const fila of prepararFilasMotivo(motivos)) {
@@ -82,8 +84,8 @@ export function pintarMotivos(lista, motivos, seleccionado, alElegir) {
     const boton = document.createElement('button');
     boton.type = 'button';
     boton.className = 'motivo';
-    boton.setAttribute('aria-pressed', String(seleccionado === fila.nombre));
-    boton.classList.toggle('atenuado', Boolean(seleccionado) && seleccionado !== fila.nombre);
+    boton.setAttribute('aria-pressed', String(elegidos.includes(fila.nombre)));
+    boton.classList.toggle('atenuado', elegidos.length > 0 && !elegidos.includes(fila.nombre));
     boton.style.setProperty('--ancho', `${(fila.ancho * 100).toFixed(1)}%`);
     boton.style.setProperty('--rango', String(fila.rango));
 

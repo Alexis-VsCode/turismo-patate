@@ -100,7 +100,7 @@ test('filtros: fijar, alternar, elegir mes y limpiar concilian con el oráculo',
   facade.fijarFiltro('procedencia', 'EXT');
   assert.equal(facade.vista().kpis.total, esperado['solo-extranjeros'].kpis.total);
   facade.alternarFiltro('procedencia', 'EXT');
-  assert.equal(facade.estado.filtros.procedencia, '');
+  assert.deepEqual(facade.estado.filtros.procedencia, []);
   facade.elegirMes(2026, 6);
   assert.equal(facade.vista().kpis.total, esperado['2026-julio'].kpis.total);
   facade.elegirMes(2026, 6);
@@ -118,8 +118,7 @@ test('opciones de los combos incluyen los 100 establecimientos y la procedencia 
   assert.equal(facade.opciones(), null);
   await facade.cargar(true);
   const op = facade.opciones();
-  assert.equal(op.establecimientos.length, 100);
-  assert.equal(op.establecimiento.length, 101);
+  assert.equal(op.establecimiento.length, 100, 'los filtros de varias opciones no llevan la opción «Todos»');
   assert.ok(op.procedencia.some((o) => o.valor === 'C:Ambato'));
   assert.ok(op.procedencia.some((o) => o.valor === 'P:Colombia'));
   assert.ok(op.procedencia.some((o) => o.valor === 'PR:Tungurahua'));
@@ -270,4 +269,66 @@ test('los minutos de publicación salen de la configuración y no del refresco d
   assert.equal(facade.publicacionMinutos(), 15);
   assert.equal(facade.intervaloMinutos(), 5);
   assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).publicacionMinutos(), CONFIG.PUBLICACION_MINUTOS);
+});
+
+test('varias opciones: alternar agrega, quitar saca solo una y cada valor tiene su etiqueta', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const [a, b] = [...new Set(DATOS.filas.filter((x) => !x.nacional).map((x) => x.pais))].sort().slice(0, 2);
+  facade.alternarFiltro('procedencia', `P:${a}`);
+  facade.alternarFiltro('procedencia', `P:${b}`);
+  facade.alternarFiltro('motivo', 'Turismo');
+  assert.deepEqual(facade.estado.filtros.procedencia, [`P:${a}`, `P:${b}`]);
+  assert.deepEqual(facade.chipsActivos().map((c) => [c.campo, c.valor, c.texto]), [
+    ['procedencia', `P:${a}`, a], ['procedencia', `P:${b}`, b], ['motivo', 'Turismo', 'Turismo'],
+  ]);
+  const esperadoTotal = DATOS.filas
+    .filter((x) => [a, b].includes(x.pais) && x.motivo === 'Turismo').reduce((s, x) => s + x.cantidad, 0);
+  assert.equal(facade.vista().kpis.total, esperadoTotal);
+  facade.quitarFiltro('procedencia', `P:${b}`);
+  assert.deepEqual(facade.estado.filtros.procedencia, [`P:${a}`]);
+  facade.quitarFiltro('motivo', 'Turismo');
+  assert.deepEqual(facade.estado.filtros.motivo, []);
+  facade.limpiarFiltros();
+  assert.deepEqual(facade.estado.filtros.procedencia, []);
+});
+
+test('quitar año o mes los deja en null y el estado expuesto no comparte listas con el interno', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('anio', 2025);
+  facade.quitarFiltro('anio');
+  assert.equal(facade.estado.filtros.anio, null);
+  facade.alternarFiltro('motivo', 'Turismo');
+  facade.estado.filtros.motivo.push('Intruso');
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.deepEqual(facade.vista().filtros.motivo, ['Turismo']);
+});
+
+test('la pestaña del mapa sigue a la última opción agregada y no cambia al quitar una', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.alternarFiltro('procedencia', 'P:Colombia');
+  facade.alternarFiltro('procedencia', 'C:Ambato');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.equal(facade.vista().mapa.procedencia, 'C:Ambato');
+  facade.quitarFiltro('procedencia', 'C:Ambato');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.equal(facade.vista().mapa.procedencia, 'P:Colombia');
+  facade.quitarFiltro('procedencia', 'P:Colombia');
+  assert.equal(facade.vista().mapa.procedencia, '');
+});
+
+test('las opciones de varias opciones salen agrupadas y sin la opción «Todos»', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const op = facade.opciones();
+  for (const campo of ['establecimiento', 'procedencia', 'motivo', 'rangoEdad', 'genero']) {
+    assert.ok(op[campo].every((o) => o.valor !== ''), `${campo} no debe ofrecer «Todos»`);
+  }
+  assert.deepEqual(op.rangoEdad.map((o) => o.valor), ['0-30', '31-45', '46-60', '61+']);
+  const grupos = [...new Set(op.procedencia.map((o) => o.grupo))];
+  assert.deepEqual(grupos, ['Atajos', 'Provincias', 'Ciudades de Ecuador', 'Países']);
+  assert.deepEqual(op.procedencia.filter((o) => o.grupo === 'Atajos').map((o) => o.valor), ['NAC', 'EXT']);
+  assert.equal(op.anio[0].valor, '', 'año y mes conservan «Todos»');
 });
