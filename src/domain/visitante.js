@@ -49,6 +49,47 @@ function enteroEn(valor, minimo, maximo) {
   return numero;
 }
 
+/** Año y mes de una fila; devuelve `{ error }` con un motivo legible si alguno no es válido. */
+function leerPeriodo(celda) {
+  const anio = enteroEn(celda('anio'), ANIO_MINIMO, ANIO_MAXIMO);
+  if (anio === null) return { error: `Año no válido: «${limpiarTexto(celda('anio'))}»` };
+  const mes = indiceDeMes(celda('mes'));
+  if (mes < 0) return { error: `Mes no válido: «${limpiarTexto(celda('mes'))}»` };
+  return { anio, mes };
+}
+
+/** País, nacionalidad, provincia y ciudad; solo los nacionales conservan provincia y ciudad. */
+function leerOrigen(celda, catalogo, paisLocal) {
+  // Paso 1: país y nacionalidad; el país decide si aplican provincia y ciudad
+  const paisTexto = limpiarTexto(celda('pais'));
+  if (!paisTexto) return { error: 'País vacío' };
+  const pais = catalogo.paises.length ? canonico(catalogo.paises, paisTexto) : paisTexto;
+  if (!pais) return { error: `País fuera del catálogo: «${paisTexto}»` };
+  const nacional = claveNormalizada(pais) === claveNormalizada(paisLocal);
+  // Paso 2: ciudad y provincia solo para nacionales; la provincia del catálogo manda sobre la escrita
+  let ciudad = '';
+  let provincia = '';
+  if (nacional) {
+    const ciudadTexto = limpiarTexto(celda('ciudad'));
+    const ciudadCat = catalogo.ciudades.get(claveNormalizada(ciudadTexto));
+    if (ciudadTexto && !ciudadCat && catalogo.ciudades.size) {
+      return { error: `Ciudad fuera del catálogo: «${ciudadTexto}»` };
+    }
+    ciudad = ciudadCat ? ciudadCat.nombre : ciudadTexto;
+    const provinciaTexto = limpiarTexto(celda('provincia'));
+    provincia = (catalogo.provincias.length ? canonico(catalogo.provincias, provinciaTexto) : provinciaTexto) || '';
+    if (ciudadCat && ciudadCat.provincia) provincia = ciudadCat.provincia;
+  }
+  return { pais, nacional, ciudad, provincia };
+}
+
+/** Motivo contra el catálogo; si el catálogo no trae motivos se acepta el texto escrito. */
+function leerMotivo(celda, catalogo) {
+  const motivoTexto = limpiarTexto(celda('motivo'));
+  const motivo = catalogo.motivos.length ? canonico(catalogo.motivos, motivoTexto) : motivoTexto;
+  return motivo ? { motivo } : { error: `Motivo fuera del catálogo: «${motivoTexto}»` };
+}
+
 /**
  * Normaliza una fila cruda de una pestaña de establecimiento.
  * @param {Array} cruda celdas de la fila tal como salen de la hoja
@@ -61,11 +102,9 @@ function enteroEn(valor, minimo, maximo) {
 export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const celda = (campo) => (indices[campo] === undefined ? null : cruda[indices[campo]]);
 
-  // Paso 1: año y mes
-  const anio = enteroEn(celda('anio'), ANIO_MINIMO, ANIO_MAXIMO);
-  if (anio === null) return { ok: false, motivo: `Año no válido: «${limpiarTexto(celda('anio'))}»` };
-  const mes = indiceDeMes(celda('mes'));
-  if (mes < 0) return { ok: false, motivo: `Mes no válido: «${limpiarTexto(celda('mes'))}»` };
+  // Paso 1: período
+  const periodo = leerPeriodo(celda);
+  if (periodo.error) return { ok: false, motivo: periodo.error };
 
   // Paso 2: cantidad y edad
   const cantidad = enteroEn(celda('cantidad'), 1, 100000);
@@ -73,41 +112,23 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   const edad = enteroEn(celda('edad'), 0, EDAD_MAXIMA);
   if (edad === null) return { ok: false, motivo: `Edad no válida: «${limpiarTexto(celda('edad'))}»` };
 
-  // Paso 3: país y nacionalidad; el país decide si aplican provincia y ciudad
-  const paisTexto = limpiarTexto(celda('pais'));
-  if (!paisTexto) return { ok: false, motivo: 'País vacío' };
-  const pais = catalogo.paises.length ? canonico(catalogo.paises, paisTexto) : paisTexto;
-  if (!pais) return { ok: false, motivo: `País fuera del catálogo: «${paisTexto}»` };
-  const nacional = claveNormalizada(pais) === claveNormalizada(paisLocal);
-  // Paso 4: ciudad y provincia solo para nacionales; la provincia del catálogo manda sobre la escrita
-  let ciudad = '';
-  let provincia = '';
-  if (nacional) {
-    const ciudadTexto = limpiarTexto(celda('ciudad'));
-    const ciudadCat = catalogo.ciudades.get(claveNormalizada(ciudadTexto));
-    if (ciudadTexto && !ciudadCat && catalogo.ciudades.size) {
-      return { ok: false, motivo: `Ciudad fuera del catálogo: «${ciudadTexto}»` };
-    }
-    ciudad = ciudadCat ? ciudadCat.nombre : ciudadTexto;
-    const provinciaTexto = limpiarTexto(celda('provincia'));
-    provincia = (catalogo.provincias.length ? canonico(catalogo.provincias, provinciaTexto) : provinciaTexto) || '';
-    if (ciudadCat && ciudadCat.provincia) provincia = ciudadCat.provincia;
-  }
+  // Paso 3: origen y motivo
+  const origen = leerOrigen(celda, catalogo, paisLocal);
+  if (origen.error) return { ok: false, motivo: origen.error };
+  const motivo = leerMotivo(celda, catalogo);
+  if (motivo.error) return { ok: false, motivo: motivo.error };
 
-  // Paso 5: motivo y género contra el catálogo
-  const motivoTexto = limpiarTexto(celda('motivo'));
-  const motivo = catalogo.motivos.length ? canonico(catalogo.motivos, motivoTexto) : motivoTexto;
-  if (!motivo) return { ok: false, motivo: `Motivo fuera del catálogo: «${motivoTexto}»` };
+  // Paso 4: género contra el catálogo
   const generoTexto = limpiarTexto(celda('genero'));
   const genero = canonico(catalogo.generos, generoTexto);
   if (!genero) return { ok: false, motivo: `Género fuera del catálogo: «${generoTexto}»` };
 
-  // Paso 6: fila limpia; el rango de edad se deriva de la edad validada
+  // Paso 5: fila limpia; el rango de edad se deriva de la edad validada
   return {
     ok: true,
     fila: {
-      anio, mes, pais, provincia, ciudad, cantidad, motivo,
-      edad, rangoEdad: rangoDeEdad(edad), genero, nacional,
+      anio: periodo.anio, mes: periodo.mes, pais: origen.pais, provincia: origen.provincia, ciudad: origen.ciudad,
+      cantidad, motivo: motivo.motivo, edad, rangoEdad: rangoDeEdad(edad), genero, nacional: origen.nacional,
     },
   };
 }
