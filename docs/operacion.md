@@ -28,7 +28,7 @@ El nombre de la pestaña es el nombre que aparece en el sitio.
 - **Cada fila es un grupo de visitantes** con el mismo mes, procedencia, motivo, edad y género. Una persona
   sola se anota con Cantidad = 1.
 - **Nacional o extranjero no se escribe:** el sitio lo deduce del País (Ecuador = nacional).
-- **Edad** es un número entero de 0 a 110. El sitio la agrupa en 0-17, 18-25, 26-35, 36-45, 46-59 y 60+.
+- **Edad** es un número entero de 0 a 110. El sitio la agrupa en 0-30, 31-45, 46-60 y 61+.
 - **Visitantes extranjeros:** Provincia y Ciudad quedan vacías.
 - **No se escriben datos personales:** ni nombres, ni cédulas, ni teléfonos.
 - **No se mueven ni se renombran las columnas.** El sitio las reconoce por su nombre, con variantes (por
@@ -70,7 +70,7 @@ encabezado distinto, y cada pareja de datos queda pegada:
 |---|---|---|
 | **Año** y **Motivo** | Los visitantes **y** el catálogo | Un año o motivo nuevo aparece al agregarlo en `_Catalogos`, aunque todavía no tenga visitantes. Si se elige uno sin visitantes, el tablero dice «Sin visitantes para los filtros elegidos» |
 | **Ciudad, país y provincia** | Solo los visitantes | El catálogo trae decenas de ciudades sin visitantes; ofrecerlas todas llenaría el combo de opciones vacías |
-| **Mes** y **rango de edad** | Fijos | Siempre son los 12 meses y los rangos 0-17, 18-25, 26-35, 36-45, 46-59 y 60+ |
+| **Mes** y **rango de edad** | Fijos | Siempre son los 12 meses y los rangos 0-30, 31-45, 46-60 y 61+ |
 
 Para abrir un año nuevo basta escribirlo en la columna Año de `_Catalogos`. Los desplegables de las pestañas leen ese
 mismo rango, así que también aparecerá al capturar.

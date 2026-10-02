@@ -12,7 +12,7 @@ export const MESES = Object.freeze([
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ]);
-export const RANGOS_EDAD = Object.freeze(['0-17', '18-25', '26-35', '36-45', '46-59', '60+']);
+export const RANGOS_EDAD = Object.freeze(['0-30', '31-45', '46-60', '61+']);
 const EDAD_MAXIMA = 110;
 const ANIO_MINIMO = 2000;
 const ANIO_MAXIMO = 2100;
@@ -26,12 +26,10 @@ const MESES_ALIAS = new Map([
 
 /** Rango de edad de un entero ya validado. */
 export function rangoDeEdad(edad) {
-  if (edad < 18) return RANGOS_EDAD[0];
-  if (edad < 26) return RANGOS_EDAD[1];
-  if (edad < 36) return RANGOS_EDAD[2];
-  if (edad < 46) return RANGOS_EDAD[3];
-  if (edad < 60) return RANGOS_EDAD[4];
-  return RANGOS_EDAD[5];
+  if (edad <= 30) return RANGOS_EDAD[0];
+  if (edad <= 45) return RANGOS_EDAD[1];
+  if (edad <= 60) return RANGOS_EDAD[2];
+  return RANGOS_EDAD[3];
 }
 
 function indiceDeMes(valor) {

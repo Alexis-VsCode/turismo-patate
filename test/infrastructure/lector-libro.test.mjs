@@ -35,7 +35,7 @@ test('normaliza errores reales de la hoja original: meses mal escritos, espacios
   assert.equal(a.provincia, 'Tungurahua'); assert.equal(a.motivo, 'Turismo'); assert.equal(a.genero, 'Femenino');
   assert.equal(b.mes, 8); assert.equal(b.provincia, 'Chimborazo');
   assert.equal(c.nacional, false); assert.equal(c.ciudad, ''); assert.equal(c.provincia, '');
-  assert.equal(c.motivo, 'Gastronomía'); assert.equal(c.cantidad, 4); assert.equal(c.rangoEdad, '26-35');
+  assert.equal(c.motivo, 'Gastronomía'); assert.equal(c.cantidad, 4); assert.equal(c.rangoEdad, '0-30');
 });
 
 test('rechaza filas inválidas con pestaña, fila y motivo, sin descartarlas en silencio', () => {

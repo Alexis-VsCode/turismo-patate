@@ -17,7 +17,7 @@ import openpyxl
 RAIZ = Path(__file__).resolve().parent.parent
 MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
          "septiembre", "octubre", "noviembre", "diciembre"]
-RANGOS = ["0-17", "18-25", "26-35", "36-45", "46-59", "60+"]
+RANGOS = ["0-30", "31-45", "46-60", "61+"]
 
 
 def sin_tildes(texto):
@@ -25,10 +25,10 @@ def sin_tildes(texto):
 
 
 def rango(edad):
-    for limite, nombre in [(18, "0-17"), (26, "18-25"), (36, "26-35"), (46, "36-45"), (60, "46-59")]:
-        if edad < limite:
+    for limite, nombre in [(30, "0-30"), (45, "31-45"), (60, "46-60")]:
+        if edad <= limite:
             return nombre
-    return "60+"
+    return "61+"
 
 
 def leer(ruta):
