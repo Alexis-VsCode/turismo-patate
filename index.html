@@ -49,7 +49,7 @@
       <span id="frescura-etiqueta" class="frescura-etiqueta" role="status">Sin verificar</span>
       <span id="frescura-detalle" class="frescura-detalle"></span>
     </span>
-    <span id="estado-texto" class="estado-texto"></span>
+    <div id="estado-texto" class="estado-texto"></div>
     <button id="btn-tema" class="boton boton-tema" type="button" aria-label="Modo oscuro" aria-pressed="false">
       <svg class="icono icono-sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <svg class="icono icono-luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
@@ -207,22 +207,32 @@
       <div class="pie-columnas">
         <section>
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>GAD Municipal de Patate</h3>
-          <p>Datos declarados por los establecimientos turísticos del cantón San Cristóbal de Patate.</p>
+          <p>Datos declarados por los establecimientos turísticos del cantón San Cristóbal de Patate, provincia de Tungurahua.</p>
         </section>
         <section>
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Seguridad y datos</h3>
-          <p>Sitio de solo lectura, sin cookies ni rastreo; solo recuerda en tu dispositivo el tema elegido. Librerías con firma de integridad y cifras agregadas, sin datos personales; la discapacidad se publica solo como cifra total.</p>
+          <ul>
+            <li>Sitio de solo lectura, sin cookies ni rastreo.</li>
+            <li>Solo cifras agregadas, sin datos personales.</li>
+            <li>La discapacidad se publica únicamente como cifra total.</li>
+            <li>Librerías externas con firma de integridad.</li>
+          </ul>
         </section>
         <section>
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Fuentes</h3>
-          <p>Mapa © OpenStreetMap · Límites y cantones: geoBoundaries (CC0 y CC BY 3.0 IGO) · Países: mledoze/countries (ODbL) · Foto: «Valle del Patate», DIOHER_PAVAL, CC BY 3.0, vía Wikimedia Commons.</p>
+          <ul>
+            <li>Mapa © OpenStreetMap.</li>
+            <li>Límites y cantones: geoBoundaries (CC0 y CC BY 3.0 IGO).</li>
+            <li>Países: mledoze/countries (ODbL).</li>
+            <li>Foto «Valle del Patate», DIOHER_PAVAL, CC BY 3.0, vía Wikimedia Commons.</li>
+          </ul>
         </section>
       </div>
       <div class="autor">
         <div class="autor-avatar" aria-hidden="true">KB</div>
         <div class="autor-texto">
           <strong>Ing. Kevin Alexis Barrera Llerena</strong>
-          <span>Ingeniero de Software · Diseño y desarrollo · © 2026, todos los derechos reservados</span>
+          <span>Ingeniero de Software · Diseño y desarrollo del tablero</span>
         </div>
         <nav class="autor-redes" aria-label="Redes del autor">
           <a class="red red-linkedin" href="https://www.linkedin.com/in/alexisbarreradesarrolador/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
@@ -235,6 +245,7 @@
           </a>
         </nav>
       </div>
+      <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Todos los derechos reservados</p>
     </div>
   </footer>
 </body>

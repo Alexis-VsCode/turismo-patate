@@ -159,10 +159,23 @@ export function montarTablero(facade, config) {
   function pintarEstado() {
     const { datos, ultimaDescarga } = facade.estado;
     horaDatos = hora(ultimaDescarga);
-    $('estado-texto').textContent = TEXTOS.estado(
-      facade.intervaloMinutos(), fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
+    const nota = document.createElement('span');
+    nota.className = 'estado-nota';
+    nota.textContent = TEXTOS.autoActualiza(facade.intervaloMinutos());
+    const items = TEXTOS.estadoDatos(
+      fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
       numero(datos.establecimientos.length), numero(datos.filas.length),
-    );
+    ).map(({ rotulo, valor }) => {
+      const item = document.createElement('span');
+      item.className = 'estado-dato';
+      const r = document.createElement('small');
+      r.textContent = rotulo;
+      const v = document.createElement('strong');
+      v.textContent = valor;
+      item.append(r, v);
+      return item;
+    });
+    $('estado-texto').replaceChildren(...items, nota);
   }
 
   /** Pinta el chip de frescura con lo que calcula la fachada; se repite con el reloj, no solo con datos nuevos. */

@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.4.1] - 2026-10-02
+
+### Cambiado
+- **Barra de estado:** pasa de una frase larga a una tarjeta con cuatro datos rotulados (actualizado, publicado, establecimientos, registros) y la nota de actualización automática.
+- **Pie de página:** tres columnas separadas con listas (seguridad y fuentes), bloque del autor y una línea legal; en celular se apila con divisores.
+- **Pantallas medianas (860 a 1279 px):** tres columnas con los pies alineados y el panel de discapacidad bajo los filtros.
+
 ## [2.4.0] - 2026-10-02
 
 ### Añadido

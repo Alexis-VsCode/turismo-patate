@@ -37,8 +37,13 @@ export const TEXTOS = Object.freeze({
   frescuraDetalle: (tiempo) => `Última ${tiempo}`,
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
-  estado: (minutos, consulta, publicado, establecimientos, registros) =>
-    `Se actualiza automáticamente ${cadaMinutos(minutos)} · Actualizado el ${consulta} · Datos publicados el ${publicado} · ${establecimientos} establecimientos · ${registros} registros`,
+  autoActualiza: (minutos) => `Se actualiza automáticamente ${cadaMinutos(minutos)}`,
+  estadoDatos: (consulta, publicado, establecimientos, registros) => [
+    { rotulo: 'Actualizado', valor: consulta },
+    { rotulo: 'Publicado', valor: publicado },
+    { rotulo: 'Establecimientos', valor: establecimientos },
+    { rotulo: 'Registros', valor: registros },
+  ],
   sinDatosAun: (minutos) => `Se actualiza automáticamente ${cadaMinutos(minutos)} · Cargando datos por primera vez…`,
   errorDescarga: (hora) => (hora
     ? `No se pudo actualizar. Se muestran los datos de las ${hora}.`

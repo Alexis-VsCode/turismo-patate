@@ -42,10 +42,10 @@ test('la frescura del chip habla de publicación y no de actualización', () => 
 });
 
 test('los avisos del intervalo usan los minutos que reciben, sin cifras escritas a mano', () => {
-  assert.match(TEXTOS.estado(10, 'a', 'b', '1', '2'), /cada 10 minutos/);
+  assert.match(TEXTOS.autoActualiza(10), /cada 10 minutos/);
   assert.match(TEXTOS.sinDatosAun(10), /cada 10 minutos/);
   assert.match(TEXTOS.frescuraAyuda(10), /cada 10 minutos/);
-  assert.match(TEXTOS.estado(1, 'a', 'b', '1', '2'), /cada minuto/);
+  assert.match(TEXTOS.autoActualiza(1), /cada minuto/);
 });
 
 test('ningún archivo de código escribe a mano una cifra de minutos', async () => {
