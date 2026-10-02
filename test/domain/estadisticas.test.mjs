@@ -13,9 +13,10 @@ import { XLSX, RAIZ, leerFixture } from '../helpers.mjs';
 import { leerLibro } from '../../src/infrastructure/lector-libro.js';
 import { CONFIG } from '../../src/infrastructure/config.js';
 import {
-  filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual,
+  kpis, anioDeReferencia, evolucionMensual,
   porMotivo, porCiudad, porProvincia, porPais, edadGenero, variacionInteranual,
 } from '../../src/domain/estadisticas.js';
+import { filtrar, filtrosVacios } from '../../src/domain/filtros.js';
 
 const datos = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
 const escenarios = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/escenarios.json'), 'utf8'));

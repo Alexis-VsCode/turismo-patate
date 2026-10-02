@@ -8,9 +8,10 @@
 import { TEXTOS } from '../shared/textos.es.js';
 import { MESES, RANGOS_EDAD } from '../domain/visitante.js';
 import {
-  filtrar, filtrosVacios, kpis, anioDeReferencia, evolucionMensual, porMotivo,
+  kpis, anioDeReferencia, evolucionMensual, porMotivo,
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
+import { filtrar, filtrosVacios } from '../domain/filtros.js';
 import { estadoFrescura } from '../domain/frescura.js';
 
 /** Texto legible de un valor de procedencia ('NAC', 'EXT', 'C:…', 'P:…', 'PR:…'). */

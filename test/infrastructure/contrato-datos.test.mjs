@@ -13,7 +13,8 @@ import { leerLibro } from '../../src/infrastructure/lector-libro.js';
 import { empaquetar, desempaquetar } from '../../src/infrastructure/contrato-datos.js';
 import { claveNormalizada } from '../../src/domain/catalogo.js';
 import { CONFIG } from '../../src/infrastructure/config.js';
-import { filtrar, filtrosVacios, kpis, porCiudad, porPais, edadGenero } from '../../src/domain/estadisticas.js';
+import { filtrar, filtrosVacios } from '../../src/domain/filtros.js';
+import { kpis, porCiudad, porPais, edadGenero } from '../../src/domain/estadisticas.js';
 
 const original = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
 const json = JSON.parse(JSON.stringify(empaquetar(original, '2026-09-29T13:00:00.000Z', CONFIG.PAIS_LOCAL)));
