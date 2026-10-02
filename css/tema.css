@@ -439,15 +439,25 @@ svg { flex-shrink: 0; }
   .tablero { grid-template-columns: 280px minmax(0, 1fr); }
 }
 
-/* ============ Pantallas medianas (860 a 1279 px): filtros a la izquierda y los paneles en dos columnas ============ */
+/* ============ Pantallas medianas (860 a 1279 px): filtros a la izquierda y los paneles en dos columnas ============
+   Los paneles pasan a ser celdas de una sola cuadrícula de tres columnas: los filtros ocupan las dos primeras filas y el panel de
+   discapacidad queda debajo de ellos, así no queda un hueco bajo los filtros y todos los pies terminan a la misma altura. */
 @media (min-width: 860px) and (max-width: 1279px) {
-  .tablero { grid-template-columns: 230px minmax(0, 1fr); }
-  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .panel, .panel-dona, .panel-edad { grid-column: span 1; }
-  .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
-  /* Con los paneles en dos columnas el contenido es más alto: los filtros miden lo que necesitan */
-  .columna-izquierda { align-self: start; }
-  .filtros { flex: none; }
+  .tablero { grid-template-columns: 230px minmax(0, 1fr) minmax(0, 1fr); }
+  .contenido, .paneles { display: contents; }
+  .columna-izquierda { grid-column: 1; grid-row: 1 / span 2; }
+  .panel-evolucion { grid-column: 2 / 4; grid-row: 1; }
+  .panel-dona { grid-column: 2; grid-row: 2; }
+  .panel-edad { grid-column: 3; grid-row: 2; }
+  .panel-discapacidad { grid-column: 1; grid-row: 3; }
+  .panel-motivo { grid-column: 2; grid-row: 3; }
+  .panel-origen { grid-column: 3; grid-row: 3; }
+  .sin-datos { grid-row: 4; }
+  /* En la columna angosta cada rango ocupa dos líneas: nombre y porcentaje arriba, barra y cifra abajo */
+  .panel-discapacidad .discapacidad-fila { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+  .panel-discapacidad .discapacidad-nombre { grid-column: 1; grid-row: 1; }
+  .panel-discapacidad .discapacidad-pct { grid-column: 2; grid-row: 1; }
+  .panel-discapacidad .discapacidad-pista { grid-column: 1 / -1; grid-row: 2; }
 }
 
 /* ============ Tableta angosta (< 860 px): filtros en panel deslizable ============ */
