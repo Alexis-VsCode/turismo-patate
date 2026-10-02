@@ -1,0 +1,1219 @@
+{
+ "fuente": "Hoja _Catalogos de https://docs.google.com/spreadsheets/d/1n_zCs2SVH5wchDu6IbUQ2Yeb4rhRNtBkIRrtI2w8wQY",
+ "fecha": "2026-10-01",
+ "paises": [
+  {
+   "País": "Ecuador",
+   "Pais_Lat": -1.8312,
+   "Pais_Lon": -78.1834
+  },
+  {
+   "País": "Alemania",
+   "Pais_Lat": 51.1657,
+   "Pais_Lon": 10.4515
+  },
+  {
+   "País": "Argentina",
+   "Pais_Lat": -38.4161,
+   "Pais_Lon": -63.6167
+  },
+  {
+   "País": "Australia",
+   "Pais_Lat": -35.28,
+   "Pais_Lon": 149.13
+  },
+  {
+   "País": "Austria",
+   "Pais_Lat": 48.21,
+   "Pais_Lon": 16.37
+  },
+  {
+   "País": "Bélgica",
+   "Pais_Lat": 50.85,
+   "Pais_Lon": 4.35
+  },
+  {
+   "País": "Belice",
+   "Pais_Lat": 17.25,
+   "Pais_Lon": -88.77
+  },
+  {
+   "País": "Bolivia",
+   "Pais_Lat": -16.49,
+   "Pais_Lon": -68.15
+  },
+  {
+   "País": "Brasil",
+   "Pais_Lat": -15.79,
+   "Pais_Lon": -47.88
+  },
+  {
+   "País": "Canadá",
+   "Pais_Lat": 56.1304,
+   "Pais_Lon": -106.3468
+  },
+  {
+   "País": "Chile",
+   "Pais_Lat": -35.6751,
+   "Pais_Lon": -71.543
+  },
+  {
+   "País": "China",
+   "Pais_Lat": 39.9,
+   "Pais_Lon": 116.41
+  },
+  {
+   "País": "Colombia",
+   "Pais_Lat": 4.5709,
+   "Pais_Lon": -74.2973
+  },
+  {
+   "País": "Corea del Sur",
+   "Pais_Lat": 37.57,
+   "Pais_Lon": 126.98
+  },
+  {
+   "País": "Costa Rica",
+   "Pais_Lat": 9.93,
+   "Pais_Lon": -84.08
+  },
+  {
+   "País": "Croacia",
+   "Pais_Lat": 45.81,
+   "Pais_Lon": 15.98
+  },
+  {
+   "País": "Cuba",
+   "Pais_Lat": 23.13,
+   "Pais_Lon": -82.38
+  },
+  {
+   "País": "Dinamarca",
+   "Pais_Lat": 55.68,
+   "Pais_Lon": 12.57
+  },
+  {
+   "País": "El Salvador",
+   "Pais_Lat": 13.69,
+   "Pais_Lon": -89.19
+  },
+  {
+   "País": "España",
+   "Pais_Lat": 40.4637,
+   "Pais_Lon": -3.7492
+  },
+  {
+   "País": "Estados Unidos",
+   "Pais_Lat": 37.0902,
+   "Pais_Lon": -95.7129
+  },
+  {
+   "País": "Finlandia",
+   "Pais_Lat": 60.17,
+   "Pais_Lon": 24.94
+  },
+  {
+   "País": "Francia",
+   "Pais_Lat": 46.2276,
+   "Pais_Lon": 2.2137
+  },
+  {
+   "País": "Grecia",
+   "Pais_Lat": 37.98,
+   "Pais_Lon": 23.73
+  },
+  {
+   "País": "Guatemala",
+   "Pais_Lat": 14.63,
+   "Pais_Lon": -90.51
+  },
+  {
+   "País": "Guyana",
+   "Pais_Lat": 6.8,
+   "Pais_Lon": -58.16
+  },
+  {
+   "País": "Honduras",
+   "Pais_Lat": 14.07,
+   "Pais_Lon": -87.19
+  },
+  {
+   "País": "Hungría",
+   "Pais_Lat": 47.5,
+   "Pais_Lon": 19.04
+  },
+  {
+   "País": "India",
+   "Pais_Lat": 28.61,
+   "Pais_Lon": 77.21
+  },
+  {
+   "País": "Irlanda",
+   "Pais_Lat": 53.35,
+   "Pais_Lon": -6.26
+  },
+  {
+   "País": "Israel",
+   "Pais_Lat": 31.77,
+   "Pais_Lon": 35.22
+  },
+  {
+   "País": "Italia",
+   "Pais_Lat": 41.9,
+   "Pais_Lon": 12.5
+  },
+  {
+   "País": "Japón",
+   "Pais_Lat": 35.68,
+   "Pais_Lon": 139.69
+  },
+  {
+   "País": "México",
+   "Pais_Lat": 19.43,
+   "Pais_Lon": -99.13
+  },
+  {
+   "País": "Nicaragua",
+   "Pais_Lat": 12.11,
+   "Pais_Lon": -86.24
+  },
+  {
+   "País": "Noruega",
+   "Pais_Lat": 59.91,
+   "Pais_Lon": 10.75
+  },
+  {
+   "País": "Nueva Zelanda",
+   "Pais_Lat": -41.29,
+   "Pais_Lon": 174.78
+  },
+  {
+   "País": "Países Bajos",
+   "Pais_Lat": 52.37,
+   "Pais_Lon": 4.9
+  },
+  {
+   "País": "Panamá",
+   "Pais_Lat": 8.98,
+   "Pais_Lon": -79.52
+  },
+  {
+   "País": "Paraguay",
+   "Pais_Lat": -25.26,
+   "Pais_Lon": -57.58
+  },
+  {
+   "País": "Perú",
+   "Pais_Lat": -9.19,
+   "Pais_Lon": -75.0152
+  },
+  {
+   "País": "Polonia",
+   "Pais_Lat": 52.23,
+   "Pais_Lon": 21.01
+  },
+  {
+   "País": "Portugal",
+   "Pais_Lat": 38.72,
+   "Pais_Lon": -9.14
+  },
+  {
+   "País": "Puerto Rico",
+   "Pais_Lat": 18.47,
+   "Pais_Lon": -66.11
+  },
+  {
+   "País": "Reino Unido",
+   "Pais_Lat": 51.51,
+   "Pais_Lon": -0.13
+  },
+  {
+   "País": "República Checa",
+   "Pais_Lat": 50.08,
+   "Pais_Lon": 14.44
+  },
+  {
+   "País": "República Dominicana",
+   "Pais_Lat": 18.49,
+   "Pais_Lon": -69.93
+  },
+  {
+   "País": "Rumanía",
+   "Pais_Lat": 44.43,
+   "Pais_Lon": 26.1
+  },
+  {
+   "País": "Rusia",
+   "Pais_Lat": 55.76,
+   "Pais_Lon": 37.62
+  },
+  {
+   "País": "Sudáfrica",
+   "Pais_Lat": -25.75,
+   "Pais_Lon": 28.19
+  },
+  {
+   "País": "Suecia",
+   "Pais_Lat": 59.33,
+   "Pais_Lon": 18.07
+  },
+  {
+   "País": "Suiza",
+   "Pais_Lat": 46.95,
+   "Pais_Lon": 7.45
+  },
+  {
+   "País": "Surinam",
+   "Pais_Lat": 5.85,
+   "Pais_Lon": -55.2
+  },
+  {
+   "País": "Turquía",
+   "Pais_Lat": 39.93,
+   "Pais_Lon": 32.86
+  },
+  {
+   "País": "Ucrania",
+   "Pais_Lat": 50.45,
+   "Pais_Lon": 30.52
+  },
+  {
+   "País": "Uruguay",
+   "Pais_Lat": -34.9,
+   "Pais_Lon": -56.16
+  },
+  {
+   "País": "Venezuela",
+   "Pais_Lat": 6.4238,
+   "Pais_Lon": -66.5897
+  }
+ ],
+ "ciudades": [
+  {
+   "Ciudad": "Alausí",
+   "Ciudad_Provincia": "Chimborazo",
+   "Ciudad_Lat": -2.2,
+   "Ciudad_Lon": -78.85
+  },
+  {
+   "Ciudad": "Ambato",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.2491,
+   "Ciudad_Lon": -78.6168
+  },
+  {
+   "Ciudad": "Archidona",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -0.91,
+   "Ciudad_Lon": -77.81
+  },
+  {
+   "Ciudad": "Arenillas",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.55,
+   "Ciudad_Lon": -80.06
+  },
+  {
+   "Ciudad": "Atacames",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.87,
+   "Ciudad_Lon": -79.84
+  },
+  {
+   "Ciudad": "Atuntaqui",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": 0.33,
+   "Ciudad_Lon": -78.22
+  },
+  {
+   "Ciudad": "Ayampe",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -1.68,
+   "Ciudad_Lon": -80.8
+  },
+  {
+   "Ciudad": "Azogues",
+   "Ciudad_Provincia": "Cañar",
+   "Ciudad_Lat": -2.7397,
+   "Ciudad_Lon": -78.8486
+  },
+  {
+   "Ciudad": "Babahoyo",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -1.8022,
+   "Ciudad_Lon": -79.5344
+  },
+  {
+   "Ciudad": "Baeza",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -0.46,
+   "Ciudad_Lon": -77.89
+  },
+  {
+   "Ciudad": "Bahía de Caráquez",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -0.6,
+   "Ciudad_Lon": -80.42
+  },
+  {
+   "Ciudad": "Balzar",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -1.36,
+   "Ciudad_Lon": -79.9
+  },
+  {
+   "Ciudad": "Baños",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.3964,
+   "Ciudad_Lon": -78.4247
+  },
+  {
+   "Ciudad": "Biblián",
+   "Ciudad_Provincia": "Cañar",
+   "Ciudad_Lat": -2.72,
+   "Ciudad_Lon": -78.89
+  },
+  {
+   "Ciudad": "Buena Fe",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -0.89,
+   "Ciudad_Lon": -79.49
+  },
+  {
+   "Ciudad": "Caluma",
+   "Ciudad_Provincia": "Bolívar",
+   "Ciudad_Lat": -1.63,
+   "Ciudad_Lon": -79.25
+  },
+  {
+   "Ciudad": "Cañar",
+   "Ciudad_Provincia": "Cañar",
+   "Ciudad_Lat": -2.56,
+   "Ciudad_Lon": -78.94
+  },
+  {
+   "Ciudad": "Canoa",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -0.46,
+   "Ciudad_Lon": -80.46
+  },
+  {
+   "Ciudad": "Cariamanga",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -4.33,
+   "Ciudad_Lon": -79.55
+  },
+  {
+   "Ciudad": "Catamayo",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -3.99,
+   "Ciudad_Lon": -79.36
+  },
+  {
+   "Ciudad": "Cayambe",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": 0.04,
+   "Ciudad_Lon": -78.15
+  },
+  {
+   "Ciudad": "Cevallos",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.35,
+   "Ciudad_Lon": -78.61
+  },
+  {
+   "Ciudad": "Chambo",
+   "Ciudad_Provincia": "Chimborazo",
+   "Ciudad_Lat": -1.73,
+   "Ciudad_Lon": -78.59
+  },
+  {
+   "Ciudad": "Chillanes",
+   "Ciudad_Provincia": "Bolívar",
+   "Ciudad_Lat": -2.0,
+   "Ciudad_Lon": -79.06
+  },
+  {
+   "Ciudad": "Chone",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -0.68,
+   "Ciudad_Lon": -80.1
+  },
+  {
+   "Ciudad": "Cotacachi",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": 0.3,
+   "Ciudad_Lon": -78.26
+  },
+  {
+   "Ciudad": "Cuenca",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -2.9001,
+   "Ciudad_Lon": -79.0059
+  },
+  {
+   "Ciudad": "Daule",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -1.86,
+   "Ciudad_Lon": -79.98
+  },
+  {
+   "Ciudad": "Durán",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -2.17,
+   "Ciudad_Lon": -79.83
+  },
+  {
+   "Ciudad": "Echeandía",
+   "Ciudad_Provincia": "Bolívar",
+   "Ciudad_Lat": -1.43,
+   "Ciudad_Lon": -79.28
+  },
+  {
+   "Ciudad": "El Ángel",
+   "Ciudad_Provincia": "Carchi",
+   "Ciudad_Lat": 0.63,
+   "Ciudad_Lon": -77.94
+  },
+  {
+   "Ciudad": "El Carmen",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -0.27,
+   "Ciudad_Lon": -79.44
+  },
+  {
+   "Ciudad": "El Chaco",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -0.34,
+   "Ciudad_Lon": -77.81
+  },
+  {
+   "Ciudad": "El Pangui",
+   "Ciudad_Provincia": "Zamora Chinchipe",
+   "Ciudad_Lat": -3.62,
+   "Ciudad_Lon": -78.58
+  },
+  {
+   "Ciudad": "Esmeraldas",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.9682,
+   "Ciudad_Lon": -79.6517
+  },
+  {
+   "Ciudad": "Francisco de Orellana (Coca)",
+   "Ciudad_Provincia": "Orellana",
+   "Ciudad_Lat": -0.47,
+   "Ciudad_Lon": -76.99
+  },
+  {
+   "Ciudad": "Girón",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -3.16,
+   "Ciudad_Lon": -79.15
+  },
+  {
+   "Ciudad": "Gualaceo",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -2.89,
+   "Ciudad_Lon": -78.78
+  },
+  {
+   "Ciudad": "Gualaquiza",
+   "Ciudad_Provincia": "Morona Santiago",
+   "Ciudad_Lat": -3.4,
+   "Ciudad_Lon": -78.58
+  },
+  {
+   "Ciudad": "Guamote",
+   "Ciudad_Provincia": "Chimborazo",
+   "Ciudad_Lat": -1.93,
+   "Ciudad_Lon": -78.72
+  },
+  {
+   "Ciudad": "Guano",
+   "Ciudad_Provincia": "Chimborazo",
+   "Ciudad_Lat": -1.6,
+   "Ciudad_Lon": -78.63
+  },
+  {
+   "Ciudad": "Guaranda",
+   "Ciudad_Provincia": "Bolívar",
+   "Ciudad_Lat": -1.5926,
+   "Ciudad_Lon": -79.001
+  },
+  {
+   "Ciudad": "Guayaquil",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -2.1894,
+   "Ciudad_Lon": -79.8891
+  },
+  {
+   "Ciudad": "Huaquillas",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.48,
+   "Ciudad_Lon": -80.23
+  },
+  {
+   "Ciudad": "Ibarra",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": -0.3517,
+   "Ciudad_Lon": -78.1223
+  },
+  {
+   "Ciudad": "Ingapirca",
+   "Ciudad_Provincia": "Cañar",
+   "Ciudad_Lat": -2.54,
+   "Ciudad_Lon": -78.87
+  },
+  {
+   "Ciudad": "Jipijapa",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -1.35,
+   "Ciudad_Lon": -80.58
+  },
+  {
+   "Ciudad": "La Concordia",
+   "Ciudad_Provincia": "Santo Domingo de los Tsáchilas",
+   "Ciudad_Lat": 0.03,
+   "Ciudad_Lon": -79.37
+  },
+  {
+   "Ciudad": "La Joya de los Sachas",
+   "Ciudad_Provincia": "Orellana",
+   "Ciudad_Lat": -0.3,
+   "Ciudad_Lon": -76.99
+  },
+  {
+   "Ciudad": "La Libertad",
+   "Ciudad_Provincia": "Santa Elena",
+   "Ciudad_Lat": -2.23,
+   "Ciudad_Lon": -80.91
+  },
+  {
+   "Ciudad": "La Maná",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -0.94,
+   "Ciudad_Lon": -79.22
+  },
+  {
+   "Ciudad": "La Troncal",
+   "Ciudad_Provincia": "Cañar",
+   "Ciudad_Lat": -2.42,
+   "Ciudad_Lon": -79.34
+  },
+  {
+   "Ciudad": "Lago Agrio",
+   "Ciudad_Provincia": "Sucumbíos",
+   "Ciudad_Lat": 0.08,
+   "Ciudad_Lon": -76.89
+  },
+  {
+   "Ciudad": "Latacunga",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -0.9352,
+   "Ciudad_Lon": -78.6155
+  },
+  {
+   "Ciudad": "Limón Indanza",
+   "Ciudad_Provincia": "Morona Santiago",
+   "Ciudad_Lat": -3.02,
+   "Ciudad_Lon": -78.42
+  },
+  {
+   "Ciudad": "Loja",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -3.9931,
+   "Ciudad_Lon": -79.2042
+  },
+  {
+   "Ciudad": "Loreto",
+   "Ciudad_Provincia": "Orellana",
+   "Ciudad_Lat": -0.7,
+   "Ciudad_Lon": -77.31
+  },
+  {
+   "Ciudad": "Macará",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -4.38,
+   "Ciudad_Lon": -79.94
+  },
+  {
+   "Ciudad": "Macas",
+   "Ciudad_Provincia": "Morona Santiago",
+   "Ciudad_Lat": -2.3087,
+   "Ciudad_Lon": -78.1114
+  },
+  {
+   "Ciudad": "Machachi",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": -0.51,
+   "Ciudad_Lon": -78.57
+  },
+  {
+   "Ciudad": "Machala",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.2581,
+   "Ciudad_Lon": -79.9554
+  },
+  {
+   "Ciudad": "Manta",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -0.9677,
+   "Ciudad_Lon": -80.7089
+  },
+  {
+   "Ciudad": "Mera",
+   "Ciudad_Provincia": "Pastaza",
+   "Ciudad_Lat": -1.46,
+   "Ciudad_Lon": -78.11
+  },
+  {
+   "Ciudad": "Milagro",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -2.13,
+   "Ciudad_Lon": -79.59
+  },
+  {
+   "Ciudad": "Mindo",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": -0.05,
+   "Ciudad_Lon": -78.77
+  },
+  {
+   "Ciudad": "Mira",
+   "Ciudad_Provincia": "Carchi",
+   "Ciudad_Lat": 0.55,
+   "Ciudad_Lon": -78.05
+  },
+  {
+   "Ciudad": "Misahuallí",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -1.03,
+   "Ciudad_Lon": -77.67
+  },
+  {
+   "Ciudad": "Mocha",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.41,
+   "Ciudad_Lon": -78.67
+  },
+  {
+   "Ciudad": "Mompiche",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.53,
+   "Ciudad_Lon": -80.03
+  },
+  {
+   "Ciudad": "Montalvo",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -1.79,
+   "Ciudad_Lon": -79.29
+  },
+  {
+   "Ciudad": "Montañita",
+   "Ciudad_Provincia": "Santa Elena",
+   "Ciudad_Lat": -1.83,
+   "Ciudad_Lon": -80.75
+  },
+  {
+   "Ciudad": "Montecristi",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -1.05,
+   "Ciudad_Lon": -80.66
+  },
+  {
+   "Ciudad": "Muisne",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.6,
+   "Ciudad_Lon": -80.02
+  },
+  {
+   "Ciudad": "Naranjal",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -2.67,
+   "Ciudad_Lon": -79.62
+  },
+  {
+   "Ciudad": "Nuevo Rocafuerte",
+   "Ciudad_Provincia": "Orellana",
+   "Ciudad_Lat": -0.92,
+   "Ciudad_Lon": -75.4
+  },
+  {
+   "Ciudad": "Olón",
+   "Ciudad_Provincia": "Santa Elena",
+   "Ciudad_Lat": -1.81,
+   "Ciudad_Lon": -80.76
+  },
+  {
+   "Ciudad": "Otavalo",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": 0.23,
+   "Ciudad_Lon": -78.26
+  },
+  {
+   "Ciudad": "Papallacta",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -0.37,
+   "Ciudad_Lon": -78.14
+  },
+  {
+   "Ciudad": "Pasaje",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.33,
+   "Ciudad_Lon": -79.81
+  },
+  {
+   "Ciudad": "Patate",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.315,
+   "Ciudad_Lon": -78.51
+  },
+  {
+   "Ciudad": "Paute",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -2.78,
+   "Ciudad_Lon": -78.76
+  },
+  {
+   "Ciudad": "Pedernales",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": 0.07,
+   "Ciudad_Lon": -80.05
+  },
+  {
+   "Ciudad": "Pedro Vicente Maldonado",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": 0.11,
+   "Ciudad_Lon": -79.05
+  },
+  {
+   "Ciudad": "Pelileo",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.3306,
+   "Ciudad_Lon": -78.5436
+  },
+  {
+   "Ciudad": "Píllaro",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.1667,
+   "Ciudad_Lon": -78.5333
+  },
+  {
+   "Ciudad": "Pimampiro",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": 0.39,
+   "Ciudad_Lon": -77.95
+  },
+  {
+   "Ciudad": "Piñas",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.68,
+   "Ciudad_Lon": -79.68
+  },
+  {
+   "Ciudad": "Playas",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -2.63,
+   "Ciudad_Lon": -80.39
+  },
+  {
+   "Ciudad": "Portoviejo",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -1.0546,
+   "Ciudad_Lon": -80.4545
+  },
+  {
+   "Ciudad": "Puerto Ayora",
+   "Ciudad_Provincia": "Galápagos",
+   "Ciudad_Lat": -0.74,
+   "Ciudad_Lon": -90.31
+  },
+  {
+   "Ciudad": "Puerto Baquerizo Moreno",
+   "Ciudad_Provincia": "Galápagos",
+   "Ciudad_Lat": -0.9,
+   "Ciudad_Lon": -89.61
+  },
+  {
+   "Ciudad": "Puerto López",
+   "Ciudad_Provincia": "Manabí",
+   "Ciudad_Lat": -1.56,
+   "Ciudad_Lon": -80.81
+  },
+  {
+   "Ciudad": "Puerto Quito",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": 0.12,
+   "Ciudad_Lon": -79.27
+  },
+  {
+   "Ciudad": "Puerto Villamil",
+   "Ciudad_Provincia": "Galápagos",
+   "Ciudad_Lat": -0.96,
+   "Ciudad_Lon": -90.97
+  },
+  {
+   "Ciudad": "Pujilí",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -0.96,
+   "Ciudad_Lon": -78.68
+  },
+  {
+   "Ciudad": "Puyo",
+   "Ciudad_Provincia": "Pastaza",
+   "Ciudad_Lat": -1.4924,
+   "Ciudad_Lon": -78.0024
+  },
+  {
+   "Ciudad": "Quero",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.39,
+   "Ciudad_Lon": -78.6
+  },
+  {
+   "Ciudad": "Quevedo",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -1.03,
+   "Ciudad_Lon": -79.46
+  },
+  {
+   "Ciudad": "Quilotoa",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -0.86,
+   "Ciudad_Lon": -78.9
+  },
+  {
+   "Ciudad": "Quinindé",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.32,
+   "Ciudad_Lon": -79.47
+  },
+  {
+   "Ciudad": "Quito",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": -0.1807,
+   "Ciudad_Lon": -78.4678
+  },
+  {
+   "Ciudad": "Riobamba",
+   "Ciudad_Provincia": "Chimborazo",
+   "Ciudad_Lat": -1.6636,
+   "Ciudad_Lon": -78.6546
+  },
+  {
+   "Ciudad": "Salasaca",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.37,
+   "Ciudad_Lon": -78.53
+  },
+  {
+   "Ciudad": "Salcedo",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -1.05,
+   "Ciudad_Lon": -78.59
+  },
+  {
+   "Ciudad": "Salinas",
+   "Ciudad_Provincia": "Santa Elena",
+   "Ciudad_Lat": -2.21,
+   "Ciudad_Lon": -80.96
+  },
+  {
+   "Ciudad": "Samborondón",
+   "Ciudad_Provincia": "Guayas",
+   "Ciudad_Lat": -1.96,
+   "Ciudad_Lon": -79.73
+  },
+  {
+   "Ciudad": "San Gabriel",
+   "Ciudad_Provincia": "Carchi",
+   "Ciudad_Lat": -0.6,
+   "Ciudad_Lon": -77.83
+  },
+  {
+   "Ciudad": "San Lorenzo",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 1.29,
+   "Ciudad_Lon": -78.84
+  },
+  {
+   "Ciudad": "San Miguel",
+   "Ciudad_Provincia": "Bolívar",
+   "Ciudad_Lat": -1.7,
+   "Ciudad_Lon": -79.04
+  },
+  {
+   "Ciudad": "Sangolquí",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": -0.31,
+   "Ciudad_Lon": -78.45
+  },
+  {
+   "Ciudad": "Santa Elena",
+   "Ciudad_Provincia": "Santa Elena",
+   "Ciudad_Lat": -2.23,
+   "Ciudad_Lon": -80.86
+  },
+  {
+   "Ciudad": "Santa Isabel",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -3.27,
+   "Ciudad_Lon": -79.31
+  },
+  {
+   "Ciudad": "Santa Rosa",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.45,
+   "Ciudad_Lon": -79.96
+  },
+  {
+   "Ciudad": "Santiago de Méndez",
+   "Ciudad_Provincia": "Morona Santiago",
+   "Ciudad_Lat": -2.73,
+   "Ciudad_Lon": -78.32
+  },
+  {
+   "Ciudad": "Santo Domingo",
+   "Ciudad_Provincia": "Santo Domingo de los Tsáchilas",
+   "Ciudad_Lat": -0.253,
+   "Ciudad_Lon": -79.1754
+  },
+  {
+   "Ciudad": "Saquisilí",
+   "Ciudad_Provincia": "Cotopaxi",
+   "Ciudad_Lat": -0.84,
+   "Ciudad_Lon": -78.67
+  },
+  {
+   "Ciudad": "Saraguro",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -3.62,
+   "Ciudad_Lon": -79.23
+  },
+  {
+   "Ciudad": "Shell",
+   "Ciudad_Provincia": "Pastaza",
+   "Ciudad_Lat": -1.5,
+   "Ciudad_Lon": -78.06
+  },
+  {
+   "Ciudad": "Shushufindi",
+   "Ciudad_Provincia": "Sucumbíos",
+   "Ciudad_Lat": -0.18,
+   "Ciudad_Lon": -76.65
+  },
+  {
+   "Ciudad": "Sígsig",
+   "Ciudad_Provincia": "Azuay",
+   "Ciudad_Lat": -3.05,
+   "Ciudad_Lon": -78.79
+  },
+  {
+   "Ciudad": "Súa",
+   "Ciudad_Provincia": "Esmeraldas",
+   "Ciudad_Lat": 0.99,
+   "Ciudad_Lon": -79.87
+  },
+  {
+   "Ciudad": "Sucúa",
+   "Ciudad_Provincia": "Morona Santiago",
+   "Ciudad_Lat": -2.46,
+   "Ciudad_Lon": -78.17
+  },
+  {
+   "Ciudad": "Tabacundo",
+   "Ciudad_Provincia": "Pichincha",
+   "Ciudad_Lat": 0.05,
+   "Ciudad_Lon": -78.2
+  },
+  {
+   "Ciudad": "Tena",
+   "Ciudad_Provincia": "Napo",
+   "Ciudad_Lat": -0.9938,
+   "Ciudad_Lon": -77.8129
+  },
+  {
+   "Ciudad": "Tisaleo",
+   "Ciudad_Provincia": "Tungurahua",
+   "Ciudad_Lat": -1.34,
+   "Ciudad_Lon": -78.67
+  },
+  {
+   "Ciudad": "Tulcán",
+   "Ciudad_Provincia": "Carchi",
+   "Ciudad_Lat": 0.8119,
+   "Ciudad_Lon": -77.7173
+  },
+  {
+   "Ciudad": "Urcuquí",
+   "Ciudad_Provincia": "Imbabura",
+   "Ciudad_Lat": 0.42,
+   "Ciudad_Lon": -78.19
+  },
+  {
+   "Ciudad": "Ventanas",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -1.44,
+   "Ciudad_Lon": -79.47
+  },
+  {
+   "Ciudad": "Vilcabamba",
+   "Ciudad_Provincia": "Loja",
+   "Ciudad_Lat": -4.26,
+   "Ciudad_Lon": -79.22
+  },
+  {
+   "Ciudad": "Vinces",
+   "Ciudad_Provincia": "Los Ríos",
+   "Ciudad_Lat": -1.55,
+   "Ciudad_Lon": -79.75
+  },
+  {
+   "Ciudad": "Yantzaza",
+   "Ciudad_Provincia": "Zamora Chinchipe",
+   "Ciudad_Lat": -3.83,
+   "Ciudad_Lon": -78.76
+  },
+  {
+   "Ciudad": "Zamora",
+   "Ciudad_Provincia": "Zamora Chinchipe",
+   "Ciudad_Lat": -4.07,
+   "Ciudad_Lon": -78.95
+  },
+  {
+   "Ciudad": "Zaruma",
+   "Ciudad_Provincia": "El Oro",
+   "Ciudad_Lat": -3.69,
+   "Ciudad_Lon": -79.61
+  },
+  {
+   "Ciudad": "Zumba",
+   "Ciudad_Provincia": "Zamora Chinchipe",
+   "Ciudad_Lat": -4.87,
+   "Ciudad_Lon": -79.11
+  }
+ ],
+ "provincias": [
+  {
+   "Provincia": "Azuay",
+   "Provincia_Lat": -3.02,
+   "Provincia_Lon": -79.15
+  },
+  {
+   "Provincia": "Bolívar",
+   "Provincia_Lat": -1.59,
+   "Provincia_Lon": -79.11
+  },
+  {
+   "Provincia": "Cañar",
+   "Provincia_Lat": -2.54,
+   "Provincia_Lon": -79.02
+  },
+  {
+   "Provincia": "Carchi",
+   "Provincia_Lat": 0.77,
+   "Provincia_Lon": -78.08
+  },
+  {
+   "Provincia": "Chimborazo",
+   "Provincia_Lat": -1.97,
+   "Provincia_Lon": -78.72
+  },
+  {
+   "Provincia": "Cotopaxi",
+   "Provincia_Lat": -0.86,
+   "Provincia_Lon": -78.86
+  },
+  {
+   "Provincia": "El Oro",
+   "Provincia_Lat": -3.51,
+   "Provincia_Lon": -79.83
+  },
+  {
+   "Provincia": "Esmeraldas",
+   "Provincia_Lat": 0.72,
+   "Provincia_Lon": -79.22
+  },
+  {
+   "Provincia": "Galápagos",
+   "Provincia_Lat": -0.56,
+   "Provincia_Lon": -90.91
+  },
+  {
+   "Provincia": "Guayas",
+   "Provincia_Lat": -2.11,
+   "Provincia_Lon": -79.88
+  },
+  {
+   "Provincia": "Imbabura",
+   "Provincia_Lat": 0.41,
+   "Provincia_Lon": -78.37
+  },
+  {
+   "Provincia": "Loja",
+   "Provincia_Lat": -4.09,
+   "Provincia_Lon": -79.65
+  },
+  {
+   "Provincia": "Los Ríos",
+   "Provincia_Lat": -1.35,
+   "Provincia_Lon": -79.49
+  },
+  {
+   "Provincia": "Manabí",
+   "Provincia_Lat": -0.76,
+   "Provincia_Lon": -80.14
+  },
+  {
+   "Provincia": "Morona Santiago",
+   "Provincia_Lat": -2.56,
+   "Provincia_Lon": -78.01
+  },
+  {
+   "Provincia": "Napo",
+   "Provincia_Lat": -0.65,
+   "Provincia_Lon": -77.82
+  },
+  {
+   "Provincia": "Orellana",
+   "Provincia_Lat": -0.78,
+   "Provincia_Lon": -76.36
+  },
+  {
+   "Provincia": "Pastaza",
+   "Provincia_Lat": -1.71,
+   "Provincia_Lon": -76.87
+  },
+  {
+   "Provincia": "Pichincha",
+   "Provincia_Lat": -0.11,
+   "Provincia_Lon": -78.6
+  },
+  {
+   "Provincia": "Santa Elena",
+   "Provincia_Lat": -2.14,
+   "Provincia_Lon": -80.58
+  },
+  {
+   "Provincia": "Santo Domingo de los Tsáchilas",
+   "Provincia_Lat": -0.26,
+   "Provincia_Lon": -79.22
+  },
+  {
+   "Provincia": "Sucumbíos",
+   "Provincia_Lat": -0.01,
+   "Provincia_Lon": -76.57
+  },
+  {
+   "Provincia": "Tungurahua",
+   "Provincia_Lat": -1.29,
+   "Provincia_Lon": -78.51
+  },
+  {
+   "Provincia": "Zamora Chinchipe",
+   "Provincia_Lat": -4.17,
+   "Provincia_Lon": -78.91
+  }
+ ]
+}

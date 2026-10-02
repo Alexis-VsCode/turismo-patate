@@ -1,0 +1,405 @@
+{
+ "fuente": "hoja en línea, 2026-10-01",
+ "establecimientos": [
+  {
+   "nombre": "Heladería Las Orquídeas",
+   "visitantes": 533.0
+  },
+  {
+   "nombre": "Hacienda La Colina",
+   "visitantes": 1351.0
+  },
+  {
+   "nombre": "Hostería Los Guabos",
+   "visitantes": 3052.0
+  },
+  {
+   "nombre": "Hostería Río Patate",
+   "visitantes": 1347.0
+  },
+  {
+   "nombre": "Hostería El Colibrí",
+   "visitantes": 2510.0
+  },
+  {
+   "nombre": "Hostería El Rosal",
+   "visitantes": 1770.0
+  },
+  {
+   "nombre": "Mirador Quinta Aurora",
+   "visitantes": 1326.0
+  },
+  {
+   "nombre": "Hostal El Batán",
+   "visitantes": 603.0
+  },
+  {
+   "nombre": "Hostería Los Nogales",
+   "visitantes": 3407.0
+  },
+  {
+   "nombre": "Mirador La Moya",
+   "visitantes": 2258.0
+  },
+  {
+   "nombre": "Mirador Cumbres",
+   "visitantes": 1374.0
+  },
+  {
+   "nombre": "Hostería Las Mandarinas",
+   "visitantes": 1446.0
+  },
+  {
+   "nombre": "Restaurante Pucará",
+   "visitantes": 2973.0
+  },
+  {
+   "nombre": "Hostería La Colina",
+   "visitantes": 3126.0
+  },
+  {
+   "nombre": "Parque Los Nogales",
+   "visitantes": 2158.0
+  },
+  {
+   "nombre": "Hostería Los Arrayanes",
+   "visitantes": 1276.0
+  },
+  {
+   "nombre": "Hostería El Nogal",
+   "visitantes": 3416.0
+  },
+  {
+   "nombre": "Hacienda Los Guabos",
+   "visitantes": 1020.0
+  },
+  {
+   "nombre": "Cafetería Sol del Valle",
+   "visitantes": 1606.0
+  },
+  {
+   "nombre": "Hostería Sol del Valle",
+   "visitantes": 1025.0
+  },
+  {
+   "nombre": "Restaurante Mama Juana",
+   "visitantes": 1196.0
+  },
+  {
+   "nombre": "Cafetería Los Capulíes",
+   "visitantes": 1623.0
+  },
+  {
+   "nombre": "Heladería Cumbres",
+   "visitantes": 993.0
+  },
+  {
+   "nombre": "Hacienda Cumbres",
+   "visitantes": 823.0
+  },
+  {
+   "nombre": "Restaurante Los Andes",
+   "visitantes": 992.0
+  },
+  {
+   "nombre": "Hostal El Huerto",
+   "visitantes": 1999.0
+  },
+  {
+   "nombre": "Restaurante Las Mandarinas",
+   "visitantes": 522.0
+  },
+  {
+   "nombre": "Restaurante Quinta Aurora",
+   "visitantes": 885.0
+  },
+  {
+   "nombre": "Restaurante El Huerto",
+   "visitantes": 3428.0
+  },
+  {
+   "nombre": "Restaurante El Chaquiñán",
+   "visitantes": 499.0
+  },
+  {
+   "nombre": "Hacienda Sol del Valle",
+   "visitantes": 1377.0
+  },
+  {
+   "nombre": "Restaurante El Colibrí",
+   "visitantes": 1444.0
+  },
+  {
+   "nombre": "Hacienda Las Palmas",
+   "visitantes": 1558.0
+  },
+  {
+   "nombre": "Cafetería La Colina",
+   "visitantes": 1896.0
+  },
+  {
+   "nombre": "Hacienda El Tungurahua",
+   "visitantes": 1512.0
+  },
+  {
+   "nombre": "Hostal El Rosal",
+   "visitantes": 2755.0
+  },
+  {
+   "nombre": "Mirador El Colibrí",
+   "visitantes": 1572.0
+  },
+  {
+   "nombre": "Cafetería La Hacienda Vieja",
+   "visitantes": 960.0
+  },
+  {
+   "nombre": "Restaurante La Moya",
+   "visitantes": 2221.0
+  },
+  {
+   "nombre": "Restaurante Los Capulíes",
+   "visitantes": 1458.0
+  },
+  {
+   "nombre": "Restaurante Tierra Viva",
+   "visitantes": 1415.0
+  },
+  {
+   "nombre": "Restaurante Las Palmas",
+   "visitantes": 1563.0
+  },
+  {
+   "nombre": "Hacienda Mama Juana",
+   "visitantes": 500.0
+  },
+  {
+   "nombre": "Restaurante Los Nogales",
+   "visitantes": 1645.0
+  },
+  {
+   "nombre": "Hostería Las Palmas",
+   "visitantes": 1410.0
+  },
+  {
+   "nombre": "Cafetería Las Nubes",
+   "visitantes": 1346.0
+  },
+  {
+   "nombre": "Parque El Rosal",
+   "visitantes": 659.0
+  },
+  {
+   "nombre": "Restaurante Sucre",
+   "visitantes": 1483.0
+  },
+  {
+   "nombre": "Restaurante La Colina",
+   "visitantes": 1500.0
+  },
+  {
+   "nombre": "Hostería Las Orquídeas",
+   "visitantes": 2499.0
+  },
+  {
+   "nombre": "Hostería La Vertiente",
+   "visitantes": 1479.0
+  },
+  {
+   "nombre": "Cafetería El Colibrí",
+   "visitantes": 1340.0
+  },
+  {
+   "nombre": "Hostal El Mirador",
+   "visitantes": 525.0
+  },
+  {
+   "nombre": "Restaurante Los Guabos",
+   "visitantes": 1575.0
+  },
+  {
+   "nombre": "Heladería Pucará",
+   "visitantes": 2376.0
+  },
+  {
+   "nombre": "Hostería El Huerto",
+   "visitantes": 1502.0
+  },
+  {
+   "nombre": "Restaurante El Trapiche",
+   "visitantes": 2469.0
+  },
+  {
+   "nombre": "Restaurante Valle Dorado",
+   "visitantes": 2116.0
+  },
+  {
+   "nombre": "Cafetería El Chaquiñán",
+   "visitantes": 1591.0
+  },
+  {
+   "nombre": "Hostal El Nogal",
+   "visitantes": 478.0
+  },
+  {
+   "nombre": "Restaurante El Tungurahua",
+   "visitantes": 1451.0
+  },
+  {
+   "nombre": "Hostal San Cristóbal",
+   "visitantes": 1086.0
+  },
+  {
+   "nombre": "Heladería Los Guabos",
+   "visitantes": 1614.0
+  },
+  {
+   "nombre": "Hostería Valle Dorado",
+   "visitantes": 1548.0
+  },
+  {
+   "nombre": "Restaurante El Rosal",
+   "visitantes": 2070.0
+  },
+  {
+   "nombre": "Restaurante Río Patate",
+   "visitantes": 2176.0
+  },
+  {
+   "nombre": "Cafetería Las Palmas",
+   "visitantes": 2410.0
+  },
+  {
+   "nombre": "Hostal Los Capulíes",
+   "visitantes": 1433.0
+  },
+  {
+   "nombre": "Hostería Quinta Aurora",
+   "visitantes": 1744.0
+  },
+  {
+   "nombre": "Hostería La Hacienda Vieja",
+   "visitantes": 1327.0
+  },
+  {
+   "nombre": "Hostería El Chaquiñán",
+   "visitantes": 2115.0
+  },
+  {
+   "nombre": "Hacienda Tierra Viva",
+   "visitantes": 526.0
+  },
+  {
+   "nombre": "Heladería El Rosal",
+   "visitantes": 3231.0
+  },
+  {
+   "nombre": "Heladería Los Nogales",
+   "visitantes": 1492.0
+  },
+  {
+   "nombre": "Restaurante Las Orquídeas",
+   "visitantes": 1626.0
+  },
+  {
+   "nombre": "Heladería Las Palmas",
+   "visitantes": 609.0
+  },
+  {
+   "nombre": "Cafetería La Cascada",
+   "visitantes": 1584.0
+  },
+  {
+   "nombre": "Restaurante La Cascada",
+   "visitantes": 1532.0
+  },
+  {
+   "nombre": "Hacienda Leito",
+   "visitantes": 1139.0
+  },
+  {
+   "nombre": "Hacienda El Mirador",
+   "visitantes": 465.0
+  },
+  {
+   "nombre": "Hostería Pucará",
+   "visitantes": 1104.0
+  },
+  {
+   "nombre": "Hacienda Río Patate",
+   "visitantes": 940.0
+  },
+  {
+   "nombre": "Heladería Los Andes",
+   "visitantes": 551.0
+  },
+  {
+   "nombre": "Parque San Cristóbal",
+   "visitantes": 1456.0
+  },
+  {
+   "nombre": "Parque Los Andes",
+   "visitantes": 1387.0
+  },
+  {
+   "nombre": "Hacienda El Huerto",
+   "visitantes": 1542.0
+  },
+  {
+   "nombre": "Hostería Tierra Viva",
+   "visitantes": 1476.0
+  },
+  {
+   "nombre": "Cafetería El Batán",
+   "visitantes": 2989.0
+  },
+  {
+   "nombre": "Heladería La Moya",
+   "visitantes": 1060.0
+  },
+  {
+   "nombre": "Heladería Las Mandarinas",
+   "visitantes": 1440.0
+  },
+  {
+   "nombre": "Hostería Cumbres",
+   "visitantes": 1852.0
+  },
+  {
+   "nombre": "Restaurante Leito",
+   "visitantes": 1509.0
+  },
+  {
+   "nombre": "Hostería Sucre",
+   "visitantes": 576.0
+  },
+  {
+   "nombre": "Heladería El Mirador",
+   "visitantes": 1356.0
+  },
+  {
+   "nombre": "Parque Río Patate",
+   "visitantes": 3245.0
+  },
+  {
+   "nombre": "Cafetería La Vertiente",
+   "visitantes": 1395.0
+  },
+  {
+   "nombre": "Hacienda Sucre",
+   "visitantes": 1028.0
+  },
+  {
+   "nombre": "Cafetería Las Mandarinas",
+   "visitantes": 2244.0
+  },
+  {
+   "nombre": "Mirador La Colina",
+   "visitantes": 1455.0
+  },
+  {
+   "nombre": "Hostal Los Arrayanes",
+   "visitantes": 3278.0
+  }
+ ]
+}

@@ -1,8 +1,9 @@
 """Oráculo de conciliación: calcula con openpyxl, sin compartir código con el JS,
 los valores que el dashboard debe mostrar en cada escenario de test/fixtures/escenarios.json.
 
-Uso: python tools/oraculo.py test/fixtures/piloto-publicado.xlsx
-Escribe test/fixtures/esperado.json.
+Uso: python tools/oraculo.py test/fixtures/piloto-publicado.xlsx [salida.json]
+Escribe test/fixtures/esperado.json, o la salida indicada. Lee los dos formatos de pestaña: el anterior (Cantidad, Edad
+y Género) y el mensual (mujeres y hombres por rango de edad, más personas con discapacidad).
 
 Autor: Kevin Alexis Barrera Llerena 2026
 """
@@ -31,15 +32,73 @@ def rango(edad):
     return "61+"
 
 
+RANGOS_DISCAPACIDAD = ["1-5", "6-10", "11-15", "16+"]
+COLUMNAS_MENSUALES = [(f"{sexo} {r}", genero, i) for sexo, genero in (("mujeres", "Femenino"), ("hombres", "Masculino"))
+                      for i, r in enumerate(RANGOS)]
+
+
+def rango_discapacidad(personas):
+    return "1-5" if personas <= 5 else "6-10" if personas <= 10 else "11-15" if personas <= 15 else "16+"
+
+
+def numero(valor):
+    return 0 if valor is None or str(valor).strip() == "" else int(valor)
+
+
+def leer_mensual(nombre, encabezado, iterador, filas, discapacidad):
+    """Pestaña del formato mensual: cada número de las ocho columnas es un grupo de visitantes de ese género y rango."""
+    idx = {c: encabezado.index(c) for c in ["ano", "mes", "pais", "ciudad", "motivo de visita", "personas con discapacidad"]}
+    idx_sexo = {col: encabezado.index(col) for col, _, _ in COLUMNAS_MENSUALES}
+    for r in iterador:
+        conteos = [(genero, i, numero(r[idx_sexo[col]])) for col, genero, i in COLUMNAS_MENSUALES]
+        total = sum(n for _, _, n in conteos)
+        personas = numero(r[idx["personas con discapacidad"]])
+        if total == 0 and personas == 0:
+            continue
+        nacional = sin_tildes(r[idx["pais"]]) == "ecuador"
+        ciudad = str(r[idx["ciudad"]] or "").strip() if nacional else ""
+        base = {
+            "establecimiento": " ".join(nombre.split()), "anio": int(r[idx["ano"]]), "mes": MESES.index(sin_tildes(r[idx["mes"]])),
+            "pais": str(r[idx["pais"]]).strip(), "nacional": nacional, "ciudad": ciudad,
+            "provincia": PROVINCIA_DE.get(sin_tildes(ciudad), "") if nacional else "", "motivo": str(r[idx["motivo de visita"]]).strip(),
+        }
+        for genero, i, n in conteos:
+            if n:
+                filas.append({**base, "cantidad": n, "rango": RANGOS[i], "genero": genero})
+        if personas:
+            discapacidad.append({**base, "personas": personas})
+
+
+PROVINCIA_DE = {}
+
+
+def cargar_provincias(libro):
+    """Provincia de cada ciudad según la pestaña _Catalogos del propio libro (columnas Ciudad y Ciudad_Provincia)."""
+    if "_Catalogos" not in libro.sheetnames:
+        return
+    filas = libro["_Catalogos"].iter_rows(values_only=True)
+    enc = [sin_tildes(v or "") for v in next(filas)]
+    ci, cp = enc.index("ciudad"), enc.index("ciudad_provincia")
+    for r in filas:
+        r = tuple(r) + (None,) * (max(ci, cp) + 1 - len(r))      # las filas cortas de la hoja vienen recortadas
+        if r[ci]:
+            PROVINCIA_DE[sin_tildes(r[ci])] = str(r[cp] or "").strip()
+
+
 def leer(ruta):
     libro = openpyxl.load_workbook(ruta, read_only=True, data_only=True)
     filas = []
+    discapacidad = []
+    cargar_provincias(libro)
     for nombre in libro.sheetnames:
         if nombre.startswith("_") or "plantilla" in sin_tildes(nombre):
             continue
         hoja = libro[nombre]
         iterador = hoja.iter_rows(values_only=True)
         encabezado = [sin_tildes(v or "") for v in next(iterador)]
+        if "mujeres 0-30" in encabezado:
+            leer_mensual(nombre, encabezado, iterador, filas, discapacidad)
+            continue
         idx = {c: encabezado.index(c) for c in ["ano", "mes", "pais", "provincia", "ciudad", "cantidad", "motivo de visita", "edad", "genero"]}
         for r in iterador:
             if r is None or all(v is None or str(v).strip() == "" for v in r):
@@ -54,7 +113,7 @@ def leer(ruta):
                 "cantidad": int(r[idx["cantidad"]]), "motivo": str(r[idx["motivo de visita"]]).strip(),
                 "rango": rango(int(r[idx["edad"]])), "genero": str(r[idx["genero"]]).strip(),
             })
-    return filas
+    return filas, discapacidad
 
 
 def cumple(f, filtros, ignorar=()):
@@ -87,7 +146,7 @@ def suma_por(filas, clave):
     return s
 
 
-def escenario(filas, filtros):
+def escenario(filas, discapacidad, filtros):
     sel = [f for f in filas if cumple(f, filtros)]
     total = sum(f["cantidad"] for f in sel)
     nac = sum(f["cantidad"] for f in sel if f["nacional"])
@@ -104,7 +163,7 @@ def escenario(filas, filtros):
     ult = ultimo
     act_v = sum(f["cantidad"] for f in base_evo if f["anio"] == anio and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
     ant_v = sum(f["cantidad"] for f in base_evo if f["anio"] == (anio or 0) - 1 and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
-    return {
+    resultado = {
         "variacion": {"anio": anio, "actual": act_v, "anterior": ant_v},
         "kpis": {"total": total, "nacionales": nac, "extranjeros": total - nac},
         "evolucion": {"anio": anio, "actual": [v if i <= ultimo else None for i, v in enumerate(actual)], "anterior": anterior},
@@ -114,14 +173,27 @@ def escenario(filas, filtros):
         "porPais": ordenado(suma_por([f for f in sel if not f["nacional"]], lambda f: f["pais"])),
         "edadGenero": [{"genero": g, "valores": [eg.get(f"{r}|{g}", 0) for r in RANGOS]} for g in generos],
     }
+    if discapacidad:
+        # La discapacidad no se cruza con la edad ni con el género: sus filas y los visitantes del porcentaje ignoran esos dos filtros
+        ignorar = ("rangoEdad", "genero")
+        regs = [d for d in discapacidad if cumple(d, filtros, ignorar)]
+        visitantes = sum(f["cantidad"] for f in filas if cumple(f, filtros, ignorar))
+        personas = sum(d["personas"] for d in regs)
+        por_rango = {r: sum(1 for d in regs if rango_discapacidad(d["personas"]) == r) for r in RANGOS_DISCAPACIDAD}
+        resultado["discapacidad"] = {
+            "personas": personas, "registros": len(regs), "pctVisitantes": personas / visitantes if visitantes else None,
+            "rangos": {r: n for r, n in por_rango.items()},
+        }
+    return resultado
 
 
 def main():
     ruta = sys.argv[1] if len(sys.argv) > 1 else str(RAIZ / "test/fixtures/piloto-publicado.xlsx")
-    filas = leer(ruta)
+    filas, discapacidad = leer(ruta)
     escenarios = json.loads((RAIZ / "test/fixtures/escenarios.json").read_text(encoding="utf-8"))
-    salida = {e["nombre"]: escenario(filas, e["filtros"]) for e in escenarios}
-    (RAIZ / "test/fixtures/esperado.json").write_text(json.dumps(salida, ensure_ascii=False, indent=1), encoding="utf-8")
+    salida = {e["nombre"]: escenario(filas, discapacidad, e["filtros"]) for e in escenarios}
+    destino = Path(sys.argv[2]) if len(sys.argv) > 2 else RAIZ / "test/fixtures/esperado.json"
+    destino.write_text(json.dumps(salida, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"filas={len(filas)} escenarios={len(salida)} " + " ".join(f"{k}:{v['kpis']['total']}" for k, v in salida.items()))
 
 
