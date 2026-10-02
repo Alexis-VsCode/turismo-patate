@@ -2,772 +2,740 @@
  "todo": {
   "variacion": {
    "anio": 2026,
-   "actual": 5858,
-   "anterior": 5549
+   "actual": 6683,
+   "anterior": 6022
   },
   "kpis": {
-   "total": 13214,
-   "nacionales": 8344,
-   "extranjeros": 4870
+   "total": 14731,
+   "nacionales": 8922,
+   "extranjeros": 5809
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
-    725,
-    533,
-    744,
-    686,
-    697,
-    713,
-    578,
-    441,
-    741,
+    703,
+    954,
+    565,
+    547,
+    613,
+    794,
+    880,
+    995,
+    632,
     null,
     null,
     null
    ],
    "anterior": [
-    639,
-    678,
-    608,
-    641,
-    799,
-    480,
-    731,
-    467,
-    506,
-    638,
+    713,
+    807,
+    674,
+    593,
+    439,
+    661,
+    593,
+    971,
     571,
-    598
+    493,
+    743,
+    790
    ]
   },
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 4573
+    "valor": 4968
    },
    {
     "nombre": "Gastronomía",
-    "valor": 2730
+    "valor": 2926
    },
    {
     "nombre": "Descanso",
-    "valor": 2465
+    "valor": 2918
    },
    {
     "nombre": "Visita familiar",
-    "valor": 1570
+    "valor": 1927
    },
    {
     "nombre": "Evento",
-    "valor": 1049
+    "valor": 1241
    },
    {
     "nombre": "Negocios",
-    "valor": 675
+    "valor": 608
    },
    {
     "nombre": "Ocio",
-    "valor": 152
+    "valor": 143
    }
   ],
   "porCiudad": [
    {
     "nombre": "Ambato",
-    "valor": 1189
+    "valor": 1147
    },
    {
     "nombre": "Quito",
-    "valor": 929
-   },
-   {
-    "nombre": "Riobamba",
-    "valor": 728
+    "valor": 857
    },
    {
     "nombre": "Latacunga",
-    "valor": 700
+    "valor": 699
    },
    {
     "nombre": "Guayaquil",
-    "valor": 672
+    "valor": 683
    },
    {
-    "nombre": "Pelileo",
-    "valor": 610
+    "nombre": "Riobamba",
+    "valor": 657
    },
    {
     "nombre": "Baños",
-    "valor": 574
+    "valor": 650
    },
    {
-    "nombre": "Cuenca",
-    "valor": 427
-   },
-   {
-    "nombre": "Manta",
-    "valor": 302
-   },
-   {
-    "nombre": "Puyo",
-    "valor": 269
-   },
-   {
-    "nombre": "Loja",
-    "valor": 226
-   },
-   {
-    "nombre": "Machala",
-    "valor": 226
+    "nombre": "Pelileo",
+    "valor": 640
    },
    {
     "nombre": "Salcedo",
-    "valor": 195
+    "valor": 447
+   },
+   {
+    "nombre": "Loja",
+    "valor": 390
+   },
+   {
+    "nombre": "Manta",
+    "valor": 329
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 304
    },
    {
     "nombre": "Ibarra",
-    "valor": 88
+    "valor": 256
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 255
+   },
+   {
+    "nombre": "Machala",
+    "valor": 218
    },
    {
     "nombre": "Tena",
-    "valor": 70
+    "valor": 187
    },
    {
-    "nombre": "Tabacundo",
-    "valor": 60
+    "nombre": "Santa Lucía",
+    "valor": 55
    },
    {
-    "nombre": "San Juan Bosco",
-    "valor": 58
-   },
-   {
-    "nombre": "El Triunfo",
-    "valor": 49
-   },
-   {
-    "nombre": "Vinces",
-    "valor": 41
-   },
-   {
-    "nombre": "Balzar",
-    "valor": 34
-   },
-   {
-    "nombre": "Caluma",
-    "valor": 33
-   },
-   {
-    "nombre": "Pasaje",
-    "valor": 33
-   },
-   {
-    "nombre": "Mera",
-    "valor": 32
+    "nombre": "Puerto Quito",
+    "valor": 51
    },
    {
     "nombre": "Cascales",
-    "valor": 31
+    "valor": 47
    },
    {
-    "nombre": "Chilla",
-    "valor": 31
+    "nombre": "Otavalo",
+    "valor": 44
    },
    {
-    "nombre": "Guaranda",
-    "valor": 31
+    "nombre": "Baeza",
+    "valor": 43
    },
    {
-    "nombre": "Huamboya",
-    "valor": 31
+    "nombre": "Zaruma",
+    "valor": 43
    },
    {
-    "nombre": "Jaramijó",
-    "valor": 31
+    "nombre": "Archidona",
+    "valor": 41
    },
    {
-    "nombre": "Las Naves",
-    "valor": 31
-   },
-   {
-    "nombre": "Lago Agrio",
-    "valor": 27
-   },
-   {
-    "nombre": "Santa Elena",
-    "valor": 27
-   },
-   {
-    "nombre": "Alfredo Baquerizo Moreno",
-    "valor": 25
-   },
-   {
-    "nombre": "Cayambe",
-    "valor": 25
-   },
-   {
-    "nombre": "Nuevo Rocafuerte",
-    "valor": 25
-   },
-   {
-    "nombre": "Biblián",
-    "valor": 24
-   },
-   {
-    "nombre": "Olmedo (Manabí)",
-    "valor": 24
-   },
-   {
-    "nombre": "La Joya de los Sachas",
-    "valor": 22
-   },
-   {
-    "nombre": "Palestina",
-    "valor": 22
-   },
-   {
-    "nombre": "Buena Fe",
-    "valor": 19
-   },
-   {
-    "nombre": "Gonzalo Pizarro",
-    "valor": 19
-   },
-   {
-    "nombre": "Jama",
-    "valor": 19
-   },
-   {
-    "nombre": "General Antonio Elizalde",
-    "valor": 18
-   },
-   {
-    "nombre": "Logroño",
-    "valor": 17
-   },
-   {
-    "nombre": "Salasaca",
-    "valor": 17
-   },
-   {
-    "nombre": "Portovelo",
-    "valor": 16
-   },
-   {
-    "nombre": "Zumba",
-    "valor": 16
-   },
-   {
-    "nombre": "Quinindé",
-    "valor": 15
-   },
-   {
-    "nombre": "Montalvo",
-    "valor": 13
-   },
-   {
-    "nombre": "Chunchi",
-    "valor": 12
-   },
-   {
-    "nombre": "Colta",
-    "valor": 12
-   },
-   {
-    "nombre": "Olmedo (Loja)",
-    "valor": 12
-   },
-   {
-    "nombre": "Putumayo",
-    "valor": 12
-   },
-   {
-    "nombre": "Canoa",
-    "valor": 11
-   },
-   {
-    "nombre": "La Libertad",
-    "valor": 11
-   },
-   {
-    "nombre": "Quilanga",
-    "valor": 11
-   },
-   {
-    "nombre": "24 de Mayo",
-    "valor": 9
-   },
-   {
-    "nombre": "Pichincha (Manabí)",
-    "valor": 9
-   },
-   {
-    "nombre": "Puerto Baquerizo Moreno",
-    "valor": 9
-   },
-   {
-    "nombre": "Camilo Ponce Enríquez",
-    "valor": 8
-   },
-   {
-    "nombre": "Gualaquiza",
-    "valor": 8
-   },
-   {
-    "nombre": "Loreto",
-    "valor": 8
-   },
-   {
-    "nombre": "Santa Isabel",
-    "valor": 8
-   },
-   {
-    "nombre": "Shell",
-    "valor": 8
-   },
-   {
-    "nombre": "La Maná",
-    "valor": 7
-   },
-   {
-    "nombre": "Pucará",
-    "valor": 7
-   },
-   {
-    "nombre": "Puerto López",
-    "valor": 7
-   },
-   {
-    "nombre": "Tisaleo",
-    "valor": 7
-   },
-   {
-    "nombre": "Chordeleg",
-    "valor": 6
+    "nombre": "Arajuno",
+    "valor": 39
    },
    {
     "nombre": "Francisco de Orellana (Coca)",
+    "valor": 39
+   },
+   {
+    "nombre": "Limón Indanza",
+    "valor": 38
+   },
+   {
+    "nombre": "El Pangui",
+    "valor": 36
+   },
+   {
+    "nombre": "Jipijapa",
+    "valor": 36
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 34
+   },
+   {
+    "nombre": "Zapotillo",
+    "valor": 33
+   },
+   {
+    "nombre": "Pedro Vicente Maldonado",
+    "valor": 30
+   },
+   {
+    "nombre": "Biblián",
+    "valor": 28
+   },
+   {
+    "nombre": "Montecristi",
+    "valor": 27
+   },
+   {
+    "nombre": "Junín",
+    "valor": 24
+   },
+   {
+    "nombre": "Las Naves",
+    "valor": 24
+   },
+   {
+    "nombre": "General Antonio Elizalde",
+    "valor": 22
+   },
+   {
+    "nombre": "Cuyabeno",
+    "valor": 21
+   },
+   {
+    "nombre": "Rocafuerte",
+    "valor": 20
+   },
+   {
+    "nombre": "Bolívar (Manabí)",
+    "valor": 19
+   },
+   {
+    "nombre": "Tulcán",
+    "valor": 19
+   },
+   {
+    "nombre": "Penipe",
+    "valor": 18
+   },
+   {
+    "nombre": "Mocha",
+    "valor": 16
+   },
+   {
+    "nombre": "Montalvo",
+    "valor": 16
+   },
+   {
+    "nombre": "Santa Ana",
+    "valor": 16
+   },
+   {
+    "nombre": "Mompiche",
+    "valor": 15
+   },
+   {
+    "nombre": "Espíndola",
+    "valor": 14
+   },
+   {
+    "nombre": "Santa Rosa",
+    "valor": 14
+   },
+   {
+    "nombre": "Aguarico",
+    "valor": 13
+   },
+   {
+    "nombre": "Papallacta",
+    "valor": 13
+   },
+   {
+    "nombre": "Pujilí",
+    "valor": 13
+   },
+   {
+    "nombre": "Yantzaza",
+    "valor": 13
+   },
+   {
+    "nombre": "Gualaceo",
+    "valor": 12
+   },
+   {
+    "nombre": "El Ángel",
+    "valor": 11
+   },
+   {
+    "nombre": "Gualaquiza",
+    "valor": 11
+   },
+   {
+    "nombre": "Guamote",
+    "valor": 11
+   },
+   {
+    "nombre": "Puerto Villamil",
+    "valor": 11
+   },
+   {
+    "nombre": "Chambo",
+    "valor": 10
+   },
+   {
+    "nombre": "Chone",
+    "valor": 9
+   },
+   {
+    "nombre": "Milagro",
+    "valor": 9
+   },
+   {
+    "nombre": "Palanda",
+    "valor": 9
+   },
+   {
+    "nombre": "Taisha",
+    "valor": 9
+   },
+   {
+    "nombre": "San Fernando",
+    "valor": 8
+   },
+   {
+    "nombre": "Huaca",
+    "valor": 7
+   },
+   {
+    "nombre": "Ingapirca",
+    "valor": 7
+   },
+   {
+    "nombre": "Atacames",
+    "valor": 6
+   },
+   {
+    "nombre": "Cotacachi",
+    "valor": 6
+   },
+   {
+    "nombre": "Nangaritza",
     "valor": 6
    },
    {
     "nombre": "Paján",
+    "valor": 6
+   },
+   {
+    "nombre": "Pucará",
+    "valor": 6
+   },
+   {
+    "nombre": "Cariamanga",
     "valor": 5
    },
    {
-    "nombre": "San Fernando",
+    "nombre": "El Pan",
     "valor": 5
    },
    {
-    "nombre": "San Miguel",
-    "valor": 5
-   },
-   {
-    "nombre": "Vilcabamba",
-    "valor": 5
-   },
-   {
-    "nombre": "Zapotillo",
-    "valor": 5
-   },
-   {
-    "nombre": "Deleg",
+    "nombre": "Atahualpa",
     "valor": 4
    },
    {
-    "nombre": "Súa",
+    "nombre": "Colimes",
+    "valor": 4
+   },
+   {
+    "nombre": "Pasaje",
+    "valor": 4
+   },
+   {
+    "nombre": "Balsas",
     "valor": 3
    },
    {
-    "nombre": "Bolívar (Manabí)",
+    "nombre": "Olmedo (Loja)",
+    "valor": 3
+   },
+   {
+    "nombre": "Carlos Julio Arosemena Tola",
     "valor": 2
    },
    {
-    "nombre": "Cuyabeno",
+    "nombre": "La Concordia",
+    "valor": 2
+   },
+   {
+    "nombre": "Pichincha (Manabí)",
+    "valor": 2
+   },
+   {
+    "nombre": "Jaramijó",
+    "valor": 1
+   },
+   {
+    "nombre": "San Vicente",
     "valor": 1
    }
   ],
   "porProvincia": [
    {
     "nombre": "Tungurahua",
-    "valor": 2397
-   },
-   {
-    "nombre": "Pichincha",
-    "valor": 1014
+    "valor": 2453
    },
    {
     "nombre": "Cotopaxi",
-    "valor": 902
+    "valor": 1159
+   },
+   {
+    "nombre": "Pichincha",
+    "valor": 938
    },
    {
     "nombre": "Guayas",
-    "valor": 820
+    "valor": 773
    },
    {
     "nombre": "Chimborazo",
-    "valor": 752
-   },
-   {
-    "nombre": "Azuay",
-    "valor": 461
+    "valor": 696
    },
    {
     "nombre": "Manabí",
-    "valor": 419
-   },
-   {
-    "nombre": "Pastaza",
-    "valor": 309
-   },
-   {
-    "nombre": "El Oro",
-    "valor": 306
+    "valor": 490
    },
    {
     "nombre": "Loja",
-    "valor": 259
+    "valor": 445
    },
    {
-    "nombre": "Morona Santiago",
-    "valor": 114
-   },
-   {
-    "nombre": "Bolívar",
-    "valor": 100
-   },
-   {
-    "nombre": "Sucumbíos",
-    "valor": 90
+    "nombre": "Azuay",
+    "valor": 335
    },
    {
     "nombre": "Imbabura",
-    "valor": 88
+    "valor": 306
    },
    {
-    "nombre": "Los Ríos",
-    "valor": 73
+    "nombre": "Pastaza",
+    "valor": 294
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 286
    },
    {
     "nombre": "Napo",
-    "valor": 70
+    "valor": 286
    },
    {
-    "nombre": "Orellana",
-    "valor": 61
-   },
-   {
-    "nombre": "Santa Elena",
-    "valor": 38
-   },
-   {
-    "nombre": "Cañar",
-    "valor": 28
-   },
-   {
-    "nombre": "Esmeraldas",
-    "valor": 18
+    "nombre": "Sucumbíos",
+    "valor": 68
    },
    {
     "nombre": "Zamora Chinchipe",
+    "valor": 64
+   },
+   {
+    "nombre": "Morona Santiago",
+    "valor": 58
+   },
+   {
+    "nombre": "Esmeraldas",
+    "valor": 55
+   },
+   {
+    "nombre": "Orellana",
+    "valor": 52
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 37
+   },
+   {
+    "nombre": "Cañar",
+    "valor": 35
+   },
+   {
+    "nombre": "Bolívar",
+    "valor": 24
+   },
+   {
+    "nombre": "Los Ríos",
     "valor": 16
    },
    {
     "nombre": "Galápagos",
-    "valor": 9
+    "valor": 11
+   },
+   {
+    "nombre": "Santo Domingo de los Tsáchilas",
+    "valor": 2
    }
   ],
   "porPais": [
    {
     "nombre": "Colombia",
-    "valor": 714
-   },
-   {
-    "nombre": "España",
-    "valor": 503
+    "valor": 840
    },
    {
     "nombre": "Estados Unidos",
-    "valor": 372
+    "valor": 780
    },
    {
     "nombre": "Perú",
-    "valor": 342
+    "valor": 506
+   },
+   {
+    "nombre": "España",
+    "valor": 487
    },
    {
     "nombre": "Argentina",
-    "valor": 293
+    "valor": 357
    },
    {
     "nombre": "Reino Unido",
-    "valor": 289
-   },
-   {
-    "nombre": "México",
-    "valor": 273
+    "valor": 328
    },
    {
     "nombre": "Alemania",
-    "valor": 256
-   },
-   {
-    "nombre": "Chile",
-    "valor": 211
-   },
-   {
-    "nombre": "Italia",
-    "valor": 199
-   },
-   {
-    "nombre": "Brasil",
-    "valor": 191
-   },
-   {
-    "nombre": "Canadá",
-    "valor": 164
+    "valor": 294
    },
    {
     "nombre": "Francia",
-    "valor": 127
+    "valor": 265
    },
    {
-    "nombre": "Tanzania",
-    "valor": 57
+    "nombre": "Chile",
+    "valor": 243
    },
    {
-    "nombre": "Bolivia",
+    "nombre": "Canadá",
+    "valor": 215
+   },
+   {
+    "nombre": "Brasil",
+    "valor": 192
+   },
+   {
+    "nombre": "México",
+    "valor": 186
+   },
+   {
+    "nombre": "Italia",
+    "valor": 176
+   },
+   {
+    "nombre": "Micronesia",
     "valor": 52
    },
    {
-    "nombre": "Marruecos",
-    "valor": 49
+    "nombre": "Madagascar",
+    "valor": 48
    },
    {
-    "nombre": "Uzbekistán",
-    "valor": 43
+    "nombre": "Djibouti",
+    "valor": 44
    },
    {
-    "nombre": "Islandia",
+    "nombre": "Ghana",
     "valor": 42
    },
    {
-    "nombre": "Guinea-Bisáu",
+    "nombre": "Túnez",
+    "valor": 40
+   },
+   {
+    "nombre": "Trinidad y Tobago",
     "valor": 39
    },
    {
-    "nombre": "Bosnia y Herzegovina",
+    "nombre": "Mongolia",
+    "valor": 37
+   },
+   {
+    "nombre": "Serbia",
+    "valor": 37
+   },
+   {
+    "nombre": "Cabo Verde",
+    "valor": 36
+   },
+   {
+    "nombre": "Afganistán",
     "valor": 34
    },
    {
-    "nombre": "Hungría",
-    "valor": 30
-   },
-   {
-    "nombre": "Honduras",
-    "valor": 29
-   },
-   {
-    "nombre": "Bangladesh",
-    "valor": 27
-   },
-   {
-    "nombre": "Cuba",
-    "valor": 27
-   },
-   {
-    "nombre": "Timor Oriental",
-    "valor": 25
-   },
-   {
-    "nombre": "Sudáfrica",
-    "valor": 24
-   },
-   {
-    "nombre": "Bahamas",
-    "valor": 23
-   },
-   {
-    "nombre": "Indonesia",
-    "valor": 23
-   },
-   {
-    "nombre": "China",
-    "valor": 21
-   },
-   {
-    "nombre": "San Marino",
-    "valor": 21
-   },
-   {
-    "nombre": "Venezuela",
-    "valor": 21
-   },
-   {
-    "nombre": "Malasia",
-    "valor": 20
-   },
-   {
-    "nombre": "Letonia",
-    "valor": 19
-   },
-   {
-    "nombre": "Uganda",
-    "valor": 19
-   },
-   {
-    "nombre": "Laos",
-    "valor": 18
-   },
-   {
-    "nombre": "República Dominicana",
-    "valor": 18
-   },
-   {
-    "nombre": "Etiopía",
-    "valor": 16
-   },
-   {
-    "nombre": "Turkmenistán",
-    "valor": 16
+    "nombre": "Fiyi",
+    "valor": 33
    },
    {
     "nombre": "Vanuatu",
-    "valor": 16
+    "valor": 33
    },
    {
-    "nombre": "India",
-    "valor": 15
+    "nombre": "Jordania",
+    "valor": 32
    },
    {
-    "nombre": "Suecia",
-    "valor": 15
+    "nombre": "Costa Rica",
+    "valor": 28
    },
    {
-    "nombre": "Burundi",
-    "valor": 13
+    "nombre": "Libia",
+    "valor": 26
    },
    {
-    "nombre": "Bulgaria",
-    "valor": 12
+    "nombre": "Grecia",
+    "valor": 24
    },
    {
-    "nombre": "Islas Marshall",
-    "valor": 12
+    "nombre": "Bolivia",
+    "valor": 23
    },
    {
-    "nombre": "Zambia",
-    "valor": 12
+    "nombre": "Camboya",
+    "valor": 23
    },
    {
-    "nombre": "Bélgica",
-    "valor": 10
+    "nombre": "Costa de Marfil",
+    "valor": 22
    },
    {
-    "nombre": "Ciudad del Vaticano",
-    "valor": 10
+    "nombre": "Croacia",
+    "valor": 22
    },
    {
-    "nombre": "Corea del Sur",
-    "valor": 10
+    "nombre": "Eslovenia",
+    "valor": 22
    },
    {
-    "nombre": "Malawi",
-    "valor": 10
+    "nombre": "Bután",
+    "valor": 21
    },
    {
-    "nombre": "Vietnam",
-    "valor": 10
-   },
-   {
-    "nombre": "Azerbaiyán",
-    "valor": 9
-   },
-   {
-    "nombre": "Madagascar",
-    "valor": 8
-   },
-   {
-    "nombre": "Kuwait",
-    "valor": 6
+    "nombre": "Myanmar",
+    "valor": 20
    },
    {
     "nombre": "Lituania",
-    "valor": 6
+    "valor": 19
    },
    {
-    "nombre": "Sierra Leone",
-    "valor": 6
+    "nombre": "Arabia Saudí",
+    "valor": 17
    },
    {
-    "nombre": "Corea del Norte",
-    "valor": 5
+    "nombre": "Antigua y Barbuda",
+    "valor": 16
    },
    {
-    "nombre": "Finlandia",
-    "valor": 5
+    "nombre": "Seychelles",
+    "valor": 16
    },
    {
-    "nombre": "Santa Lucía",
-    "valor": 5
-   },
-   {
-    "nombre": "Suiza",
-    "valor": 5
-   },
-   {
-    "nombre": "Dominica",
-    "valor": 4
-   },
-   {
-    "nombre": "Kirguizistán",
-    "valor": 4
-   },
-   {
-    "nombre": "Nueva Zelanda",
-    "valor": 4
-   },
-   {
-    "nombre": "Albania",
-    "valor": 3
+    "nombre": "Guinea",
+    "valor": 15
    },
    {
     "nombre": "Nigeria",
-    "valor": 3
+    "valor": 15
+   },
+   {
+    "nombre": "Tayikistán",
+    "valor": 13
+   },
+   {
+    "nombre": "Bielorrusia",
+    "valor": 12
+   },
+   {
+    "nombre": "Israel",
+    "valor": 12
+   },
+   {
+    "nombre": "Rusia",
+    "valor": 12
    },
    {
     "nombre": "Panamá",
+    "valor": 11
+   },
+   {
+    "nombre": "Indonesia",
+    "valor": 9
+   },
+   {
+    "nombre": "Paraguay",
+    "valor": 9
+   },
+   {
+    "nombre": "Armenia",
+    "valor": 8
+   },
+   {
+    "nombre": "Palau",
+    "valor": 6
+   },
+   {
+    "nombre": "Mauricio",
+    "valor": 4
+   },
+   {
+    "nombre": "Rumanía",
+    "valor": 4
+   },
+   {
+    "nombre": "Namibia",
     "valor": 3
    },
    {
-    "nombre": "Nauru",
-    "valor": 2
+    "nombre": "Chad",
+    "valor": 1
    }
   ],
   "edadGenero": [
    {
     "genero": "Masculino",
     "valores": [
-     1962,
-     2227,
-     1678,
-     646
+     2171,
+     2471,
+     1793,
+     778
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     2016,
-     2301,
-     1753,
-     631
+     2216,
+     2659,
+     1902,
+     741
     ]
    }
   ],
   "discapacidad": {
-   "personas": 349,
-   "registros": 101,
-   "pctVisitantes": 0.02641138186771606,
+   "personas": 413,
+   "registros": 120,
+   "pctVisitantes": 0.028036114316746998,
    "rangos": {
-    "1-5": 79,
-    "6-10": 19,
+    "1-5": 96,
+    "6-10": 21,
     "11-15": 3,
     "16+": 0
    }
@@ -776,260 +744,284 @@
  "un-establecimiento": {
   "variacion": {
    "anio": 2026,
-   "actual": 176,
-   "anterior": 140
+   "actual": 239,
+   "anterior": 181
   },
   "kpis": {
-   "total": 372,
-   "nacionales": 214,
-   "extranjeros": 158
+   "total": 525,
+   "nacionales": 360,
+   "extranjeros": 165
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
-    20,
-    13,
-    14,
-    11,
-    31,
-    19,
-    16,
+    29,
+    24,
+    15,
+    21,
+    35,
+    37,
+    35,
     22,
-    30,
+    21,
     null,
     null,
     null
    ],
    "anterior": [
-    20,
-    21,
-    9,
-    17,
-    14,
-    12,
-    28,
-    10,
-    9,
-    28,
+    22,
     19,
-    9
+    20,
+    23,
+    7,
+    20,
+    18,
+    38,
+    14,
+    21,
+    18,
+    66
    ]
   },
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 139
+    "valor": 220
    },
    {
     "nombre": "Gastronomía",
-    "valor": 98
+    "valor": 102
    },
    {
     "nombre": "Visita familiar",
-    "valor": 58
+    "valor": 74
    },
    {
     "nombre": "Descanso",
-    "valor": 36
+    "valor": 67
    },
    {
     "nombre": "Evento",
-    "valor": 28
+    "valor": 44
    },
    {
     "nombre": "Negocios",
-    "valor": 13
+    "valor": 18
    }
   ],
   "porCiudad": [
    {
-    "nombre": "Quito",
-    "valor": 33
-   },
-   {
-    "nombre": "Latacunga",
-    "valor": 28
-   },
-   {
     "nombre": "Ambato",
-    "valor": 27
+    "valor": 69
    },
    {
-    "nombre": "Riobamba",
-    "valor": 22
-   },
-   {
-    "nombre": "Guayaquil",
-    "valor": 21
-   },
-   {
-    "nombre": "Manta",
-    "valor": 14
-   },
-   {
-    "nombre": "Cuenca",
-    "valor": 10
-   },
-   {
-    "nombre": "Puyo",
-    "valor": 10
-   },
-   {
-    "nombre": "Baños",
-    "valor": 9
-   },
-   {
-    "nombre": "Pasaje",
-    "valor": 8
+    "nombre": "Quito",
+    "valor": 58
    },
    {
     "nombre": "Pelileo",
-    "valor": 8
+    "valor": 47
    },
    {
-    "nombre": "Vinces",
-    "valor": 7
-   },
-   {
-    "nombre": "Salcedo",
-    "valor": 6
+    "nombre": "Riobamba",
+    "valor": 19
    },
    {
     "nombre": "Tena",
-    "valor": 6
+    "valor": 19
    },
    {
-    "nombre": "Zapotillo",
-    "valor": 5
+    "nombre": "Ibarra",
+    "valor": 18
+   },
+   {
+    "nombre": "Salcedo",
+    "valor": 18
+   },
+   {
+    "nombre": "Puyo",
+    "valor": 14
+   },
+   {
+    "nombre": "Loja",
+    "valor": 13
+   },
+   {
+    "nombre": "Machala",
+    "valor": 12
+   },
+   {
+    "nombre": "El Ángel",
+    "valor": 11
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 11
+   },
+   {
+    "nombre": "Puerto Villamil",
+    "valor": 11
+   },
+   {
+    "nombre": "Baños",
+    "valor": 10
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 9
+   },
+   {
+    "nombre": "Milagro",
+    "valor": 9
+   },
+   {
+    "nombre": "Huaca",
+    "valor": 7
+   },
+   {
+    "nombre": "Latacunga",
+    "valor": 3
+   },
+   {
+    "nombre": "Carlos Julio Arosemena Tola",
+    "valor": 2
    }
   ],
   "porProvincia": [
    {
     "nombre": "Tungurahua",
-    "valor": 44
-   },
-   {
-    "nombre": "Cotopaxi",
-    "valor": 34
+    "valor": 126
    },
    {
     "nombre": "Pichincha",
-    "valor": 33
+    "valor": 58
    },
    {
-    "nombre": "Chimborazo",
-    "valor": 22
-   },
-   {
-    "nombre": "Guayas",
+    "nombre": "Cotopaxi",
     "valor": 21
    },
    {
-    "nombre": "Manabí",
-    "valor": 14
+    "nombre": "Napo",
+    "valor": 21
    },
    {
-    "nombre": "Azuay",
-    "valor": 10
+    "nombre": "Guayas",
+    "valor": 20
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 19
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 18
+   },
+   {
+    "nombre": "Imbabura",
+    "valor": 18
    },
    {
     "nombre": "Pastaza",
-    "valor": 10
-   },
-   {
-    "nombre": "El Oro",
-    "valor": 8
-   },
-   {
-    "nombre": "Los Ríos",
-    "valor": 7
-   },
-   {
-    "nombre": "Napo",
-    "valor": 6
+    "valor": 14
    },
    {
     "nombre": "Loja",
-    "valor": 5
+    "valor": 13
+   },
+   {
+    "nombre": "El Oro",
+    "valor": 12
+   },
+   {
+    "nombre": "Galápagos",
+    "valor": 11
+   },
+   {
+    "nombre": "Azuay",
+    "valor": 9
    }
   ],
   "porPais": [
    {
-    "nombre": "Alemania",
-    "valor": 33
-   },
-   {
     "nombre": "España",
-    "valor": 24
+    "valor": 34
    },
    {
-    "nombre": "Chile",
-    "valor": 16
-   },
-   {
-    "nombre": "Reino Unido",
-    "valor": 15
-   },
-   {
-    "nombre": "Canadá",
-    "valor": 12
-   },
-   {
-    "nombre": "Colombia",
-    "valor": 11
-   },
-   {
-    "nombre": "Corea del Sur",
-    "valor": 10
-   },
-   {
-    "nombre": "Estados Unidos",
-    "valor": 10
-   },
-   {
-    "nombre": "Indonesia",
-    "valor": 9
-   },
-   {
-    "nombre": "Francia",
-    "valor": 7
-   },
-   {
-    "nombre": "Lituania",
-    "valor": 6
+    "nombre": "Perú",
+    "valor": 27
    },
    {
     "nombre": "Brasil",
-    "valor": 5
+    "valor": 24
+   },
+   {
+    "nombre": "Colombia",
+    "valor": 13
+   },
+   {
+    "nombre": "Chile",
+    "valor": 12
+   },
+   {
+    "nombre": "Estados Unidos",
+    "valor": 11
+   },
+   {
+    "nombre": "Armenia",
+    "valor": 8
+   },
+   {
+    "nombre": "Argentina",
+    "valor": 7
+   },
+   {
+    "nombre": "Canadá",
+    "valor": 7
+   },
+   {
+    "nombre": "Costa de Marfil",
+    "valor": 7
+   },
+   {
+    "nombre": "Nigeria",
+    "valor": 7
+   },
+   {
+    "nombre": "Francia",
+    "valor": 4
+   },
+   {
+    "nombre": "Mauricio",
+    "valor": 4
    }
   ],
   "edadGenero": [
    {
     "genero": "Masculino",
     "valores": [
-     55,
+     77,
+     89,
      71,
-     42,
-     22
+     23
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     71,
-     45,
-     55,
-     11
+     95,
+     94,
+     58,
+     18
     ]
    }
   ],
   "discapacidad": {
-   "personas": 15,
-   "registros": 5,
-   "pctVisitantes": 0.04032258064516129,
+   "personas": 24,
+   "registros": 6,
+   "pctVisitantes": 0.045714285714285714,
    "rangos": {
     "1-5": 4,
-    "6-10": 1,
+    "6-10": 2,
     "11-15": 0,
     "16+": 0
    }
@@ -1038,241 +1030,257 @@
  "2026-julio": {
   "variacion": {
    "anio": 2026,
-   "actual": 578,
-   "anterior": 731
+   "actual": 880,
+   "anterior": 593
   },
   "kpis": {
-   "total": 578,
-   "nacionales": 398,
-   "extranjeros": 180
+   "total": 880,
+   "nacionales": 533,
+   "extranjeros": 347
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
-    725,
-    533,
-    744,
-    686,
-    697,
-    713,
-    578,
-    441,
-    741,
+    703,
+    954,
+    565,
+    547,
+    613,
+    794,
+    880,
+    995,
+    632,
     null,
     null,
     null
    ],
    "anterior": [
-    639,
-    678,
-    608,
-    641,
-    799,
-    480,
-    731,
-    467,
-    506,
-    638,
+    713,
+    807,
+    674,
+    593,
+    439,
+    661,
+    593,
+    971,
     571,
-    598
+    493,
+    743,
+    790
    ]
   },
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 230
+    "valor": 322
    },
    {
     "nombre": "Descanso",
-    "valor": 159
-   },
-   {
-    "nombre": "Visita familiar",
-    "valor": 91
+    "valor": 184
    },
    {
     "nombre": "Gastronomía",
-    "valor": 43
+    "valor": 167
    },
    {
     "nombre": "Evento",
-    "valor": 33
+    "valor": 100
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 42
    },
    {
     "nombre": "Ocio",
-    "valor": 22
+    "valor": 34
+   },
+   {
+    "nombre": "Negocios",
+    "valor": 31
    }
   ],
   "porCiudad": [
    {
-    "nombre": "Ambato",
-    "valor": 75
-   },
-   {
-    "nombre": "Riobamba",
-    "valor": 66
-   },
-   {
     "nombre": "Latacunga",
-    "valor": 64
-   },
-   {
-    "nombre": "Guayaquil",
-    "valor": 42
-   },
-   {
-    "nombre": "Salcedo",
-    "valor": 32
-   },
-   {
-    "nombre": "Cuenca",
-    "valor": 31
-   },
-   {
-    "nombre": "Machala",
-    "valor": 27
-   },
-   {
-    "nombre": "Puyo",
-    "valor": 18
-   },
-   {
-    "nombre": "24 de Mayo",
-    "valor": 9
-   },
-   {
-    "nombre": "Pichincha (Manabí)",
-    "valor": 9
+    "valor": 108
    },
    {
     "nombre": "Pelileo",
-    "valor": 8
+    "valor": 76
+   },
+   {
+    "nombre": "Ambato",
+    "valor": 73
    },
    {
     "nombre": "Baños",
-    "valor": 7
+    "valor": 66
    },
    {
-    "nombre": "Chordeleg",
-    "valor": 6
+    "nombre": "Riobamba",
+    "valor": 55
+   },
+   {
+    "nombre": "Cuenca",
+    "valor": 30
+   },
+   {
+    "nombre": "Salcedo",
+    "valor": 22
+   },
+   {
+    "nombre": "Machala",
+    "valor": 20
+   },
+   {
+    "nombre": "Ibarra",
+    "valor": 19
+   },
+   {
+    "nombre": "Aguarico",
+    "valor": 13
+   },
+   {
+    "nombre": "El Ángel",
+    "valor": 11
    },
    {
     "nombre": "Loja",
-    "valor": 2
+    "valor": 11
    },
    {
     "nombre": "Quito",
-    "valor": 2
+    "valor": 11
+   },
+   {
+    "nombre": "Guayaquil",
+    "valor": 9
+   },
+   {
+    "nombre": "Milagro",
+    "valor": 9
    }
   ],
   "porProvincia": [
    {
-    "nombre": "Cotopaxi",
-    "valor": 96
+    "nombre": "Tungurahua",
+    "valor": 215
    },
    {
-    "nombre": "Tungurahua",
-    "valor": 90
+    "nombre": "Cotopaxi",
+    "valor": 130
    },
    {
     "nombre": "Chimborazo",
-    "valor": 66
-   },
-   {
-    "nombre": "Guayas",
-    "valor": 42
+    "valor": 55
    },
    {
     "nombre": "Azuay",
-    "valor": 37
+    "valor": 30
    },
    {
     "nombre": "El Oro",
-    "valor": 27
+    "valor": 20
    },
    {
-    "nombre": "Manabí",
+    "nombre": "Imbabura",
+    "valor": 19
+   },
+   {
+    "nombre": "Guayas",
     "valor": 18
    },
    {
-    "nombre": "Pastaza",
-    "valor": 18
+    "nombre": "Orellana",
+    "valor": 13
+   },
+   {
+    "nombre": "Carchi",
+    "valor": 11
    },
    {
     "nombre": "Loja",
-    "valor": 2
+    "valor": 11
    },
    {
     "nombre": "Pichincha",
-    "valor": 2
+    "valor": 11
    }
   ],
   "porPais": [
    {
-    "nombre": "Italia",
-    "valor": 32
-   },
-   {
-    "nombre": "España",
-    "valor": 26
+    "nombre": "Colombia",
+    "valor": 69
    },
    {
     "nombre": "Argentina",
-    "valor": 22
+    "valor": 65
    },
    {
-    "nombre": "México",
-    "valor": 21
+    "nombre": "España",
+    "valor": 54
    },
    {
-    "nombre": "Brasil",
-    "valor": 19
-   },
-   {
-    "nombre": "Tanzania",
-    "valor": 18
-   },
-   {
-    "nombre": "Colombia",
-    "valor": 17
+    "nombre": "Djibouti",
+    "valor": 44
    },
    {
     "nombre": "Perú",
+    "valor": 40
+   },
+   {
+    "nombre": "Brasil",
+    "valor": 23
+   },
+   {
+    "nombre": "Seychelles",
     "valor": 16
    },
    {
-    "nombre": "Indonesia",
-    "valor": 9
+    "nombre": "Reino Unido",
+    "valor": 13
+   },
+   {
+    "nombre": "México",
+    "valor": 11
+   },
+   {
+    "nombre": "Panamá",
+    "valor": 11
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 1
    }
   ],
   "edadGenero": [
    {
     "genero": "Masculino",
     "valores": [
+     152,
+     147,
      97,
-     81,
-     78,
-     28
+     39
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     75,
-     107,
-     80,
-     32
+     129,
+     161,
+     116,
+     39
     ]
    }
   ],
   "discapacidad": {
-   "personas": 22,
-   "registros": 5,
-   "pctVisitantes": 0.03806228373702422,
+   "personas": 10,
+   "registros": 4,
+   "pctVisitantes": 0.011363636363636364,
    "rangos": {
     "1-5": 3,
     "6-10": 1,
-    "11-15": 1,
+    "11-15": 0,
     "16+": 0
    }
   }
@@ -1280,187 +1288,163 @@
  "negocios-femenino": {
   "variacion": {
    "anio": 2026,
-   "actual": 117,
-   "anterior": 173
+   "actual": 131,
+   "anterior": 170
   },
   "kpis": {
-   "total": 345,
-   "nacionales": 214,
-   "extranjeros": 131
+   "total": 307,
+   "nacionales": 157,
+   "extranjeros": 150
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
-    12,
-    44,
-    7,
+    1,
+    27,
+    38,
+    18,
+    3,
     0,
-    4,
-    29,
-    0,
-    19,
-    2,
+    17,
+    13,
+    14,
     null,
     null,
     null
    ],
    "anterior": [
-    13,
-    0,
-    20,
-    50,
-    24,
-    32,
-    16,
-    2,
-    16,
+    17,
     10,
-    21,
-    24
+    33,
+    0,
+    44,
+    14,
+    3,
+    39,
+    10,
+    0,
+    6,
+    0
    ]
   },
   "porMotivo": [
    {
     "nombre": "Negocios",
-    "valor": 345
+    "valor": 307
    }
   ],
   "porCiudad": [
    {
-    "nombre": "Riobamba",
-    "valor": 37
-   },
-   {
-    "nombre": "Pelileo",
-    "valor": 35
-   },
-   {
-    "nombre": "Baños",
-    "valor": 24
-   },
-   {
-    "nombre": "Guayaquil",
-    "valor": 23
-   },
-   {
-    "nombre": "Latacunga",
-    "valor": 18
+    "nombre": "Ambato",
+    "valor": 46
    },
    {
     "nombre": "Quito",
+    "valor": 31
+   },
+   {
+    "nombre": "Salcedo",
     "valor": 17
    },
    {
-    "nombre": "Manta",
-    "valor": 12
+    "nombre": "Guayaquil",
+    "valor": 16
    },
    {
-    "nombre": "Ambato",
-    "valor": 11
+    "nombre": "Machala",
+    "valor": 13
    },
    {
-    "nombre": "Cuenca",
-    "valor": 8
+    "nombre": "Riobamba",
+    "valor": 13
    },
    {
-    "nombre": "Canoa",
-    "valor": 7
+    "nombre": "Baños",
+    "valor": 9
    },
    {
-    "nombre": "Logroño",
-    "valor": 7
+    "nombre": "Palanda",
+    "valor": 4
    },
    {
-    "nombre": "Puyo",
-    "valor": 6
-   },
-   {
-    "nombre": "San Juan Bosco",
-    "valor": 6
-   },
-   {
-    "nombre": "San Miguel",
+    "nombre": "Latacunga",
     "valor": 3
+   },
+   {
+    "nombre": "Taisha",
+    "valor": 3
+   },
+   {
+    "nombre": "Guamote",
+    "valor": 2
    }
   ],
   "porProvincia": [
    {
     "nombre": "Tungurahua",
-    "valor": 70
-   },
-   {
-    "nombre": "Chimborazo",
-    "valor": 37
-   },
-   {
-    "nombre": "Guayas",
-    "valor": 23
-   },
-   {
-    "nombre": "Manabí",
-    "valor": 19
-   },
-   {
-    "nombre": "Cotopaxi",
-    "valor": 18
+    "valor": 55
    },
    {
     "nombre": "Pichincha",
-    "valor": 17
+    "valor": 31
    },
    {
-    "nombre": "Morona Santiago",
+    "nombre": "Cotopaxi",
+    "valor": 20
+   },
+   {
+    "nombre": "Guayas",
+    "valor": 16
+   },
+   {
+    "nombre": "Chimborazo",
+    "valor": 15
+   },
+   {
+    "nombre": "El Oro",
     "valor": 13
    },
    {
-    "nombre": "Azuay",
-    "valor": 8
+    "nombre": "Zamora Chinchipe",
+    "valor": 4
    },
    {
-    "nombre": "Pastaza",
-    "valor": 6
-   },
-   {
-    "nombre": "Bolívar",
+    "nombre": "Morona Santiago",
     "valor": 3
    }
   ],
   "porPais": [
    {
-    "nombre": "Argentina",
-    "valor": 30
+    "nombre": "España",
+    "valor": 66
+   },
+   {
+    "nombre": "Alemania",
+    "valor": 27
    },
    {
     "nombre": "Colombia",
-    "valor": 30
+    "valor": 25
    },
    {
-    "nombre": "Perú",
-    "valor": 26
-   },
-   {
-    "nombre": "Cuba",
-    "valor": 16
-   },
-   {
-    "nombre": "México",
-    "valor": 10
+    "nombre": "Mongolia",
+    "valor": 15
    },
    {
     "nombre": "Reino Unido",
-    "valor": 8
+    "valor": 6
    },
    {
-    "nombre": "Estados Unidos",
+    "nombre": "Brasil",
     "valor": 5
    },
    {
-    "nombre": "Italia",
-    "valor": 4
+    "nombre": "Costa de Marfil",
+    "valor": 5
    },
    {
-    "nombre": "Chile",
-    "valor": 2
+    "nombre": "Perú",
+    "valor": 1
    }
   ],
   "edadGenero": [
@@ -1476,20 +1460,20 @@
    {
     "genero": "Femenino",
     "valores": [
-     109,
-     128,
-     79,
-     29
+     98,
+     100,
+     73,
+     36
     ]
    }
   ],
   "discapacidad": {
-   "personas": 17,
-   "registros": 5,
-   "pctVisitantes": 0.025185185185185185,
+   "personas": 7,
+   "registros": 4,
+   "pctVisitantes": 0.011513157894736841,
    "rangos": {
     "1-5": 4,
-    "6-10": 1,
+    "6-10": 0,
     "11-15": 0,
     "16+": 0
    }
@@ -1498,73 +1482,73 @@
  "solo-extranjeros": {
   "variacion": {
    "anio": 2026,
-   "actual": 2245,
-   "anterior": 1925
+   "actual": 2760,
+   "anterior": 2251
   },
   "kpis": {
-   "total": 4870,
+   "total": 5809,
    "nacionales": 0,
-   "extranjeros": 4870
+   "extranjeros": 5809
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
-    318,
-    166,
-    254,
-    256,
-    328,
-    301,
-    180,
-    178,
-    264,
+    255,
+    421,
+    236,
+    206,
+    278,
+    337,
+    347,
+    372,
+    308,
     null,
     null,
     null
    ],
    "anterior": [
-    212,
-    212,
-    148,
-    182,
-    325,
-    186,
-    305,
-    199,
-    156,
-    203,
-    264,
-    233
+    331,
+    360,
+    211,
+    206,
+    167,
+    322,
+    179,
+    274,
+    201,
+    252,
+    345,
+    201
    ]
   },
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 1649
-   },
-   {
-    "nombre": "Gastronomía",
-    "valor": 1076
+    "valor": 1946
    },
    {
     "nombre": "Descanso",
-    "valor": 924
+    "valor": 1128
+   },
+   {
+    "nombre": "Gastronomía",
+    "valor": 1063
    },
    {
     "nombre": "Visita familiar",
-    "valor": 547
+    "valor": 828
    },
    {
     "nombre": "Evento",
-    "valor": 339
+    "valor": 472
    },
    {
     "nombre": "Negocios",
-    "valor": 255
+    "valor": 312
    },
    {
     "nombre": "Ocio",
-    "valor": 80
+    "valor": 60
    }
   ],
   "porCiudad": [],
@@ -1572,296 +1556,252 @@
   "porPais": [
    {
     "nombre": "Colombia",
-    "valor": 714
-   },
-   {
-    "nombre": "España",
-    "valor": 503
+    "valor": 840
    },
    {
     "nombre": "Estados Unidos",
-    "valor": 372
+    "valor": 780
    },
    {
     "nombre": "Perú",
-    "valor": 342
+    "valor": 506
+   },
+   {
+    "nombre": "España",
+    "valor": 487
    },
    {
     "nombre": "Argentina",
-    "valor": 293
+    "valor": 357
    },
    {
     "nombre": "Reino Unido",
-    "valor": 289
-   },
-   {
-    "nombre": "México",
-    "valor": 273
+    "valor": 328
    },
    {
     "nombre": "Alemania",
-    "valor": 256
-   },
-   {
-    "nombre": "Chile",
-    "valor": 211
-   },
-   {
-    "nombre": "Italia",
-    "valor": 199
-   },
-   {
-    "nombre": "Brasil",
-    "valor": 191
-   },
-   {
-    "nombre": "Canadá",
-    "valor": 164
+    "valor": 294
    },
    {
     "nombre": "Francia",
-    "valor": 127
+    "valor": 265
    },
    {
-    "nombre": "Tanzania",
-    "valor": 57
+    "nombre": "Chile",
+    "valor": 243
    },
    {
-    "nombre": "Bolivia",
+    "nombre": "Canadá",
+    "valor": 215
+   },
+   {
+    "nombre": "Brasil",
+    "valor": 192
+   },
+   {
+    "nombre": "México",
+    "valor": 186
+   },
+   {
+    "nombre": "Italia",
+    "valor": 176
+   },
+   {
+    "nombre": "Micronesia",
     "valor": 52
    },
    {
-    "nombre": "Marruecos",
-    "valor": 49
+    "nombre": "Madagascar",
+    "valor": 48
    },
    {
-    "nombre": "Uzbekistán",
-    "valor": 43
+    "nombre": "Djibouti",
+    "valor": 44
    },
    {
-    "nombre": "Islandia",
+    "nombre": "Ghana",
     "valor": 42
    },
    {
-    "nombre": "Guinea-Bisáu",
+    "nombre": "Túnez",
+    "valor": 40
+   },
+   {
+    "nombre": "Trinidad y Tobago",
     "valor": 39
    },
    {
-    "nombre": "Bosnia y Herzegovina",
+    "nombre": "Mongolia",
+    "valor": 37
+   },
+   {
+    "nombre": "Serbia",
+    "valor": 37
+   },
+   {
+    "nombre": "Cabo Verde",
+    "valor": 36
+   },
+   {
+    "nombre": "Afganistán",
     "valor": 34
    },
    {
-    "nombre": "Hungría",
-    "valor": 30
-   },
-   {
-    "nombre": "Honduras",
-    "valor": 29
-   },
-   {
-    "nombre": "Bangladesh",
-    "valor": 27
-   },
-   {
-    "nombre": "Cuba",
-    "valor": 27
-   },
-   {
-    "nombre": "Timor Oriental",
-    "valor": 25
-   },
-   {
-    "nombre": "Sudáfrica",
-    "valor": 24
-   },
-   {
-    "nombre": "Bahamas",
-    "valor": 23
-   },
-   {
-    "nombre": "Indonesia",
-    "valor": 23
-   },
-   {
-    "nombre": "China",
-    "valor": 21
-   },
-   {
-    "nombre": "San Marino",
-    "valor": 21
-   },
-   {
-    "nombre": "Venezuela",
-    "valor": 21
-   },
-   {
-    "nombre": "Malasia",
-    "valor": 20
-   },
-   {
-    "nombre": "Letonia",
-    "valor": 19
-   },
-   {
-    "nombre": "Uganda",
-    "valor": 19
-   },
-   {
-    "nombre": "Laos",
-    "valor": 18
-   },
-   {
-    "nombre": "República Dominicana",
-    "valor": 18
-   },
-   {
-    "nombre": "Etiopía",
-    "valor": 16
-   },
-   {
-    "nombre": "Turkmenistán",
-    "valor": 16
+    "nombre": "Fiyi",
+    "valor": 33
    },
    {
     "nombre": "Vanuatu",
-    "valor": 16
+    "valor": 33
    },
    {
-    "nombre": "India",
-    "valor": 15
+    "nombre": "Jordania",
+    "valor": 32
    },
    {
-    "nombre": "Suecia",
-    "valor": 15
+    "nombre": "Costa Rica",
+    "valor": 28
    },
    {
-    "nombre": "Burundi",
-    "valor": 13
+    "nombre": "Libia",
+    "valor": 26
    },
    {
-    "nombre": "Bulgaria",
-    "valor": 12
+    "nombre": "Grecia",
+    "valor": 24
    },
    {
-    "nombre": "Islas Marshall",
-    "valor": 12
+    "nombre": "Bolivia",
+    "valor": 23
    },
    {
-    "nombre": "Zambia",
-    "valor": 12
+    "nombre": "Camboya",
+    "valor": 23
    },
    {
-    "nombre": "Bélgica",
-    "valor": 10
+    "nombre": "Costa de Marfil",
+    "valor": 22
    },
    {
-    "nombre": "Ciudad del Vaticano",
-    "valor": 10
+    "nombre": "Croacia",
+    "valor": 22
    },
    {
-    "nombre": "Corea del Sur",
-    "valor": 10
+    "nombre": "Eslovenia",
+    "valor": 22
    },
    {
-    "nombre": "Malawi",
-    "valor": 10
+    "nombre": "Bután",
+    "valor": 21
    },
    {
-    "nombre": "Vietnam",
-    "valor": 10
-   },
-   {
-    "nombre": "Azerbaiyán",
-    "valor": 9
-   },
-   {
-    "nombre": "Madagascar",
-    "valor": 8
-   },
-   {
-    "nombre": "Kuwait",
-    "valor": 6
+    "nombre": "Myanmar",
+    "valor": 20
    },
    {
     "nombre": "Lituania",
-    "valor": 6
+    "valor": 19
    },
    {
-    "nombre": "Sierra Leone",
-    "valor": 6
+    "nombre": "Arabia Saudí",
+    "valor": 17
    },
    {
-    "nombre": "Corea del Norte",
-    "valor": 5
+    "nombre": "Antigua y Barbuda",
+    "valor": 16
    },
    {
-    "nombre": "Finlandia",
-    "valor": 5
+    "nombre": "Seychelles",
+    "valor": 16
    },
    {
-    "nombre": "Santa Lucía",
-    "valor": 5
-   },
-   {
-    "nombre": "Suiza",
-    "valor": 5
-   },
-   {
-    "nombre": "Dominica",
-    "valor": 4
-   },
-   {
-    "nombre": "Kirguizistán",
-    "valor": 4
-   },
-   {
-    "nombre": "Nueva Zelanda",
-    "valor": 4
-   },
-   {
-    "nombre": "Albania",
-    "valor": 3
+    "nombre": "Guinea",
+    "valor": 15
    },
    {
     "nombre": "Nigeria",
-    "valor": 3
+    "valor": 15
+   },
+   {
+    "nombre": "Tayikistán",
+    "valor": 13
+   },
+   {
+    "nombre": "Bielorrusia",
+    "valor": 12
+   },
+   {
+    "nombre": "Israel",
+    "valor": 12
+   },
+   {
+    "nombre": "Rusia",
+    "valor": 12
    },
    {
     "nombre": "Panamá",
+    "valor": 11
+   },
+   {
+    "nombre": "Indonesia",
+    "valor": 9
+   },
+   {
+    "nombre": "Paraguay",
+    "valor": 9
+   },
+   {
+    "nombre": "Armenia",
+    "valor": 8
+   },
+   {
+    "nombre": "Palau",
+    "valor": 6
+   },
+   {
+    "nombre": "Mauricio",
+    "valor": 4
+   },
+   {
+    "nombre": "Rumanía",
+    "valor": 4
+   },
+   {
+    "nombre": "Namibia",
     "valor": 3
    },
    {
-    "nombre": "Nauru",
-    "valor": 2
+    "nombre": "Chad",
+    "valor": 1
    }
   ],
   "edadGenero": [
    {
     "genero": "Masculino",
     "valores": [
-     720,
-     833,
-     621,
-     240
+     840,
+     1014,
+     724,
+     297
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     739,
-     860,
-     630,
-     227
+     858,
+     1024,
+     749,
+     303
     ]
    }
   ],
   "discapacidad": {
-   "personas": 165,
-   "registros": 47,
-   "pctVisitantes": 0.033880903490759756,
+   "personas": 158,
+   "registros": 49,
+   "pctVisitantes": 0.027199173695988982,
    "rangos": {
-    "1-5": 38,
-    "6-10": 7,
+    "1-5": 41,
+    "6-10": 6,
     "11-15": 2,
     "16+": 0
    }
@@ -1870,29 +1810,29 @@
  "ciudad-ambato-2025": {
   "variacion": {
    "anio": 2025,
-   "actual": 663,
+   "actual": 624,
    "anterior": 0
   },
   "kpis": {
-   "total": 663,
-   "nacionales": 663,
+   "total": 624,
+   "nacionales": 624,
    "extranjeros": 0
   },
   "evolucion": {
    "anio": 2025,
    "actual": [
-    40,
-    91,
+    20,
+    20,
+    61,
     28,
-    84,
-    33,
-    56,
-    65,
-    35,
-    56,
-    78,
-    25,
-    72
+    24,
+    96,
+    57,
+    130,
+    17,
+    6,
+    59,
+    106
    ],
    "anterior": [
     0,
@@ -1912,39 +1852,39 @@
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 301
-   },
-   {
-    "nombre": "Descanso",
-    "valor": 115
+    "valor": 233
    },
    {
     "nombre": "Gastronomía",
-    "valor": 113
+    "valor": 126
    },
    {
-    "nombre": "Evento",
-    "valor": 72
-   },
-   {
-    "nombre": "Visita familiar",
-    "valor": 50
+    "nombre": "Descanso",
+    "valor": 90
    },
    {
     "nombre": "Negocios",
-    "valor": 12
+    "valor": 79
+   },
+   {
+    "nombre": "Visita familiar",
+    "valor": 77
+   },
+   {
+    "nombre": "Evento",
+    "valor": 19
    }
   ],
   "porCiudad": [
    {
     "nombre": "Ambato",
-    "valor": 663
+    "valor": 624
    }
   ],
   "porProvincia": [
    {
     "nombre": "Tungurahua",
-    "valor": 663
+    "valor": 624
    }
   ],
   "porPais": [],
@@ -1952,29 +1892,29 @@
    {
     "genero": "Masculino",
     "valores": [
-     91,
-     111,
-     77,
-     48
+     90,
+     108,
+     71,
+     29
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     110,
-     102,
-     90,
-     34
+     101,
+     109,
+     81,
+     35
     ]
    }
   ],
   "discapacidad": {
-   "personas": 7,
-   "registros": 3,
-   "pctVisitantes": 0.010558069381598794,
+   "personas": 13,
+   "registros": 2,
+   "pctVisitantes": 0.020833333333333332,
    "rangos": {
-    "1-5": 3,
-    "6-10": 0,
+    "1-5": 1,
+    "6-10": 1,
     "11-15": 0,
     "16+": 0
    }
@@ -1983,73 +1923,73 @@
  "pais-colombia": {
   "variacion": {
    "anio": 2026,
-   "actual": 270,
-   "anterior": 388
+   "actual": 390,
+   "anterior": 425
   },
   "kpis": {
-   "total": 714,
+   "total": 840,
    "nacionales": 0,
-   "extranjeros": 714
+   "extranjeros": 840
   },
   "evolucion": {
    "anio": 2026,
    "actual": [
+    18,
+    35,
     58,
-    50,
-    11,
-    2,
-    24,
-    71,
-    17,
-    8,
-    29,
+    66,
+    34,
+    52,
+    69,
+    52,
+    6,
     null,
     null,
     null
    ],
    "anterior": [
-    54,
-    64,
-    18,
-    5,
-    30,
-    77,
-    96,
-    7,
-    37,
-    18,
-    26,
-    12
+    67,
+    84,
+    45,
+    22,
+    38,
+    98,
+    21,
+    27,
+    23,
+    0,
+    2,
+    23
    ]
   },
   "porMotivo": [
    {
     "nombre": "Turismo",
-    "valor": 270
+    "valor": 346
    },
    {
     "nombre": "Gastronomía",
-    "valor": 151
+    "valor": 217
    },
    {
     "nombre": "Descanso",
-    "valor": 146
-   },
-   {
-    "nombre": "Evento",
-    "valor": 56
+    "valor": 134
    },
    {
     "nombre": "Negocios",
-    "valor": 53
+    "valor": 65
    },
    {
     "nombre": "Visita familiar",
+    "valor": 31
+   },
+   {
+    "nombre": "Evento",
     "valor": 28
    },
    {
     "nombre": "Ocio",
-    "valor": 10
+    "valor": 19
    }
   ],
   "porCiudad": [],
@@ -2057,35 +1997,35 @@
   "porPais": [
    {
     "nombre": "Colombia",
-    "valor": 714
+    "valor": 840
    }
   ],
   "edadGenero": [
    {
     "genero": "Masculino",
     "valores": [
-     105,
-     128,
-     87,
-     42
+     111,
+     149,
+     118,
+     44
     ]
    },
    {
     "genero": "Femenino",
     "valores": [
-     101,
-     123,
-     88,
-     40
+     119,
+     162,
+     95,
+     42
     ]
    }
   ],
   "discapacidad": {
-   "personas": 27,
-   "registros": 8,
-   "pctVisitantes": 0.037815126050420166,
+   "personas": 11,
+   "registros": 4,
+   "pctVisitantes": 0.013095238095238096,
    "rangos": {
-    "1-5": 7,
+    "1-5": 3,
     "6-10": 1,
     "11-15": 0,
     "16+": 0

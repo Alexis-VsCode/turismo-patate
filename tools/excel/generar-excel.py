@@ -41,6 +41,10 @@ CIUDADES_FRECUENTES = {"Ambato": 8, "Quito": 8, "Riobamba": 5, "Baños": 5, "Lat
 PAISES_FRECUENTES = {"Colombia": 10, "Perú": 6, "Estados Unidos": 8, "España": 6, "Alemania": 4, "Argentina": 4,
                      "Francia": 3, "Reino Unido": 3, "Chile": 3, "México": 3, "Canadá": 2, "Brasil": 2, "Italia": 2}
 PESO_RANGO = [0.30, 0.35, 0.25, 0.10]
+# Temporadas del turismo en la sierra: carnaval, vacaciones de agosto y fin de año; 2026 crece un poco contra 2025
+ESTACIONALIDAD = {"Enero": 1.05, "Febrero": 1.25, "Marzo": 0.9, "Abril": 0.95, "Mayo": 0.85, "Junio": 0.95, "Julio": 1.2,
+                  "Agosto": 1.4, "Septiembre": 1.0, "Octubre": 0.9, "Noviembre": 1.0, "Diciembre": 1.3}
+CRECIMIENTO = {2025: 1.0, 2026: 1.08, 2027: 1.15}
 
 
 def sin_tildes(texto):
@@ -75,6 +79,7 @@ def generar_filas(rng, escala, meses, ciudades, paises, filas_por_mes):
     paises_peso = {c: p for c, p in PAISES_FRECUENTES.items() if c in paises}
     filas = []
     for anio, mes in meses:
+        factor = ESTACIONALIDAD[mes] * CRECIMIENTO[anio]
         vistos = set()
         cuantas = max(2, round(rng.gauss(filas_por_mes, 1.5)))
         for _ in range(cuantas):
@@ -86,7 +91,7 @@ def generar_filas(rng, escala, meses, ciudades, paises, filas_por_mes):
             if (pais, ciudad, motivo) in vistos:
                 continue
             vistos.add((pais, ciudad, motivo))
-            total = max(1, int(rng.gauss(14 * escala, 6 * escala)))
+            total = max(1, int(rng.gauss(14 * escala * factor, 6 * escala)))
             conteos = [0] * 8
             for _ in range(total):
                 sexo = 0 if rng.random() < 0.51 else 4
@@ -381,7 +386,7 @@ def escribir_inicio(hoja, fmt, resumen):
     return hoja
 
 
-def construir(salida, modo, semilla):
+def construir(salida, modo, semilla, con_peggy=True):
     rng = random.Random(semilla)
     ciudades, paises, provincias = cargar_catalogos()
     provincia_de = {c["Ciudad"]: c["Ciudad_Provincia"] for c in ciudades}
@@ -411,7 +416,7 @@ def construir(salida, modo, semilla):
         total_filas += len(filas)
         hoja_establecimiento(libro, fmt, nombre, filas, provincia_de)
     if modo != "fixture":
-        for nombre, filas in filas_de_peggy().items():
+        for nombre, filas in (filas_de_peggy().items() if con_peggy else []):
             if sin_tildes(nombre) in usados:
                 resumen.append(f"La hoja «{nombre}» de Peggy ya existía como establecimiento: no se duplicó.")
                 continue
@@ -419,7 +424,8 @@ def construir(salida, modo, semilla):
             usados.add(sin_tildes(nombre))
             total_filas += len(filas)
         hoja_anterior(libro, fmt, "Ejemplo (formato anterior)", rng, ciudades, paises, provincia_de)
-        resumen.insert(0, "Las hojas El Valle, Tu Heladería, La Casta, Patate Gardens y Quinlata vienen del archivo de Peggy: se cargó la columna de nacionales con año 2026; los extranjeros no se cargaron porque ese archivo no dice de qué país son.")
+        if con_peggy:
+            resumen.insert(0, "Las hojas El Valle, Tu Heladería, La Casta, Patate Gardens y Quinlata vienen del archivo de Peggy: se cargó la columna de nacionales con año 2026; los extranjeros no se cargaron porque ese archivo no dice de qué país son.")
         resumen.insert(1, "«Ejemplo (formato anterior)» muestra una pestaña con Cantidad, Edad y Género, que sigue funcionando.")
         resumen.insert(2, "Los demás establecimientos tienen datos ficticios de enero de 2025 a septiembre de 2026.")
     escribir_inicio(inicio, fmt, resumen)
@@ -432,8 +438,9 @@ def main():
     ap.add_argument("--salida", required=True)
     ap.add_argument("--modo", choices=["completo", "fixture"], default="completo")
     ap.add_argument("--semilla", type=int, default=20261001)
+    ap.add_argument("--sin-hojas-peggy", action="store_true", help="no incluye las cinco hojas de Peggy (para capturas con datos homogéneos)")
     a = ap.parse_args()
-    informe = construir(Path(a.salida), a.modo, a.semilla)
+    informe = construir(Path(a.salida), a.modo, a.semilla, not a.sin_hojas_peggy)
     print(json.dumps(informe, ensure_ascii=False))
 
 
