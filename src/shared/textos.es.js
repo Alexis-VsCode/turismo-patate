@@ -72,6 +72,8 @@ export const TEXTOS = Object.freeze({
   discapacidadDeVisitantes: (pct) => `${pct} de los visitantes`,
   rangoDiscapacidad: (rango) => (rango.endsWith('+') ? `${rango.slice(0, -1)} o más personas` : `${rango.replace('-', ' a ')} personas`),
   opcionesElegidas: (n) => `${n} elegidas`,
+  masElegidas: (n) => `+${n} más`,
+  quitarOpcion: (texto) => `Quitar ${texto}`,
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
   variacion: (pct, anio) => `${pct} vs ${anio}`,
   sinComparacion: 'Sin datos del año anterior',

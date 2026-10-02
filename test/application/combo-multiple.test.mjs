@@ -6,7 +6,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { prepararOpciones, resumenSeleccion } from '../../src/application/components/compartidos/combo-multiple.js';
+import { prepararOpciones, resumenSeleccion, etiquetasDeSeleccion } from '../../src/application/components/compartidos/combo-multiple.js';
 
 const OPCIONES = [
   { valor: 'NAC', texto: 'Ecuador (todas las ciudades)', grupo: 'Atajos' },
@@ -46,4 +46,21 @@ test('el resumen dice «todos» sin elección, el nombre con una y la cantidad c
 test('el resumen con una elección que ya no existe en las opciones cuenta como elegida', () => {
   const textos = { todos: 'Todos', elegidas: (n) => `${n} elegidas` };
   assert.equal(resumenSeleccion(OPCIONES, ['C:Nueva'], textos), 'C:Nueva');
+});
+
+test('las etiquetas de lo elegido usan el texto de cada opción y conservan el orden de elección', () => {
+  const r = etiquetasDeSeleccion(OPCIONES, ['P:Perú', 'C:Ambato'], 4);
+  assert.deepEqual(r.visibles, [{ valor: 'P:Perú', texto: 'Perú' }, { valor: 'C:Ambato', texto: 'Ambato' }]);
+  assert.equal(r.ocultas, 0);
+});
+
+test('una opción elegida que ya no existe se muestra con su valor y sin elección no hay etiquetas', () => {
+  assert.deepEqual(etiquetasDeSeleccion(OPCIONES, ['C:Nueva'], 4).visibles, [{ valor: 'C:Nueva', texto: 'C:Nueva' }]);
+  assert.deepEqual(etiquetasDeSeleccion(OPCIONES, [], 4), { visibles: [], ocultas: 0 });
+});
+
+test('pasado el máximo se muestran las primeras y se cuenta cuántas quedan ocultas', () => {
+  const r = etiquetasDeSeleccion(OPCIONES, ['NAC', 'C:Ambato', 'C:Baños', 'P:Perú', 'M:Turismo'], 3);
+  assert.equal(r.visibles.length, 3);
+  assert.equal(r.ocultas, 2);
 });

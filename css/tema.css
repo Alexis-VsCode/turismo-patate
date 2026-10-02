@@ -220,6 +220,7 @@ svg { flex-shrink: 0; }
   border: 1px solid var(--select-borde); border-radius: var(--radio-sm); background: var(--select-fondo); color: var(--select-texto);
 }
 .combo input:focus { border-color: var(--verde-texto); }
+.combo input { text-overflow: ellipsis; }
 .combo-flecha { position: absolute; right: 10px; top: 12px; width: 18px; height: 18px; color: var(--texto-suave); pointer-events: none; }
 .combo ul {
   display: none; position: absolute; z-index: 1000; left: 0; right: 0; top: 46px; margin: 0; padding: 4px;
@@ -236,6 +237,15 @@ svg { flex-shrink: 0; }
 .combo li[role="option"] { display: flex; align-items: center; gap: 8px; }
 .combo-casilla { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: 1.5px solid var(--select-borde); border-radius: 4px; font-size: 12px; line-height: 1; color: var(--texto-sobre-color); }
 .combo li[aria-selected="true"] .combo-casilla { background: var(--verde-texto); border-color: var(--verde-texto); }
+.combo-elegidas { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 6px; }
+.combo-elegidas:empty { display: none; }
+.etiqueta-mini {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%; min-height: 24px; padding: 1px 6px 1px 9px; cursor: pointer;
+  font: 600 12px var(--fuente); color: var(--verde-texto); background: var(--superficie); border: 1px solid var(--borde); border-radius: 999px;
+}
+.etiqueta-mini span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.etiqueta-mini:hover { border-color: var(--verde-texto); }
+.etiqueta-mas { font-size: 12px; font-weight: 600; color: var(--texto-sobre-color); padding: 0 4px; }
 .combo-filtro input { height: 40px; font-size: 13.5px; }
 .combo-filtro .combo-flecha { top: 11px; }
 .combo-filtro ul { top: 44px; }
@@ -269,8 +279,9 @@ svg { flex-shrink: 0; }
 .boton-claro { margin-top: var(--esp-4); width: 100%; background: var(--lima); color: #14330a; }
 .boton-claro:hover { background: #9ccc3f; }
 
-/* Chips de filtros activos */
+/* Chips de filtros activos: una fila propia sobre las dos columnas, para que ambas empiecen a la misma altura */
 .chips { display: flex; flex-wrap: wrap; gap: var(--esp-2); }
+.barra-chips { max-width: 1440px; margin: var(--esp-3) auto 0; padding: 0 var(--esp-4); }
 .chip {
   display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 4px 8px 4px 12px; cursor: pointer;
   font: 600 13px var(--fuente); color: var(--verde-texto);
@@ -291,7 +302,7 @@ svg { flex-shrink: 0; }
 .panel-evolucion { grid-column: span 5; }
 .panel-dona { grid-column: span 3; }
 .panel-edad { grid-column: span 4; }
-.panel-cabecera { display: flex; align-items: center; gap: var(--esp-2); padding: 10px var(--esp-4); background: var(--barra); color: #fff; }
+.panel-cabecera { display: flex; align-items: center; gap: var(--esp-2); min-height: 56px; padding: 10px var(--esp-4); background: var(--barra); color: #fff; }
 .panel-cabecera > svg { width: 22px; height: 22px; color: #fff; }
 .panel h2 { margin: 0; font: 700 14px/1.2 var(--fuente-titulo); text-transform: uppercase; letter-spacing: .03em; color: #fff; }
 .panel-sub { margin: 10px var(--esp-4) 0; font-size: 12.5px; color: var(--texto-suave); }
@@ -328,7 +339,7 @@ svg { flex-shrink: 0; }
 .motivo-nombre { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
 .motivo-pista { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .motivo-barra {
-  flex: 0 0 calc(var(--ancho) * .7); min-width: 4px; height: 24px; border-radius: 4px;
+  flex: 0 1 calc(var(--ancho) * .7); min-width: 4px; height: 24px; border-radius: 4px;
   background: color-mix(in srgb, var(--verde) calc(100% - var(--rango) * 13%), var(--superficie));
   box-shadow: inset 0 0 0 1px var(--verde-texto);
 }
@@ -343,7 +354,7 @@ svg { flex-shrink: 0; }
 .discapacidad-fila { display: grid; grid-template-columns: minmax(96px, 128px) minmax(0, 1fr) 46px; align-items: center; gap: 8px; }
 .discapacidad-nombre { font-size: 13px; font-weight: 600; }
 .discapacidad-pista { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.discapacidad-barra { flex: 0 0 calc(var(--ancho) * .7); min-width: 4px; height: 20px; border-radius: 4px; background: var(--verde); box-shadow: inset 0 0 0 1px var(--verde-texto); }
+.discapacidad-barra { flex: 0 1 calc(var(--ancho) * .7); min-width: 4px; height: 20px; border-radius: 4px; background: var(--verde); box-shadow: inset 0 0 0 1px var(--verde-texto); }
 .discapacidad-valor { font-size: 13px; font-weight: 700; white-space: nowrap; }
 .discapacidad-pct { font-size: 12.5px; text-align: right; color: var(--texto-suave); }
 
@@ -410,19 +421,30 @@ svg { flex-shrink: 0; }
 
 /* ============ Pantallas muy anchas ============ */
 @media (min-width: 1800px) {
-  .cabecera, .barra-estado, .tablero, .pie { max-width: 1680px; }
+  .cabecera, .barra-estado, .barra-chips, .tablero, .pie { max-width: 1680px; }
   .tablero { grid-template-columns: 280px minmax(0, 1fr); }
 }
 
-/* ============ Tableta (< 1100 px): filtros en panel deslizable ============ */
-@media (max-width: 1099px) {
+/* ============ Pantallas medianas (860 a 1279 px): filtros a la izquierda y los paneles en dos columnas ============ */
+@media (min-width: 860px) and (max-width: 1279px) {
+  .tablero { grid-template-columns: 230px minmax(0, 1fr); }
+  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panel, .panel-dona, .panel-edad { grid-column: span 1; }
+  .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
+  /* Con los paneles en dos columnas el contenido es más alto que los filtros: no se estiran para igualarlo */
+  .columna-izquierda { align-self: start; }
+  .filtros { flex: none; justify-content: flex-start; }
+}
+
+/* ============ Tableta angosta (< 860 px): filtros en panel deslizable ============ */
+@media (max-width: 859px) {
   .tablero { grid-template-columns: minmax(0, 1fr); }
   .columna-izquierda { display: grid; grid-template-columns: minmax(0, 1fr); }
   .boton-filtros { display: inline-flex; }
   #lugar-filtros { display: none; }
   .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .panel, .panel-dona, .panel-edad { grid-column: span 1; }
-  .panel-evolucion { grid-column: 1 / -1; }
+  .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
   /* Sin dos columnas lado a lado no hay nada que igualar: los gráficos vuelven a su altura propia */
   .paneles { flex: none; }
   .grafico { flex: none; height: 300px; min-height: 0; }
@@ -445,13 +467,14 @@ svg { flex-shrink: 0; }
   .frescura-detalle { display: none; }
   .boton-actualizar { width: 44px; height: 44px; padding: 0; border-radius: 50%; }
   .boton-actualizar #btn-actualizar-texto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .barra-chips { padding: 0 var(--esp-3); }
   .tablero { padding: var(--esp-3); gap: var(--esp-3); }
   .boton-filtros {
     position: fixed; z-index: 900; left: 50%; bottom: 16px; transform: translateX(-50%);
     min-height: 48px; padding: 0 22px; border-radius: 999px; box-shadow: 0 8px 22px rgba(6, 20, 10, .35);
   }
   .paneles { grid-template-columns: minmax(0, 1fr); gap: var(--esp-3); }
-  .panel, .panel-dona, .panel-edad, .panel-evolucion { grid-column: 1 / -1; }
+  .panel, .panel-dona, .panel-edad, .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
   .grafico { height: 280px; }
   .grafico-alto { height: 300px; }
   .mapa { height: calc(300px - var(--esp-3)); }

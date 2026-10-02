@@ -52,7 +52,9 @@ export function montarTablero(facade, config) {
   let horaDatos = '';
 
   // Paso 1: combos y botones → acciones de la fachada
-  const textosCombo = (todos) => ({ todos, elegidas: TEXTOS.opcionesElegidas, sinCoincidencias: TEXTOS.sinCoincidencias });
+  const textosCombo = (todos) => ({
+    todos, elegidas: TEXTOS.opcionesElegidas, sinCoincidencias: TEXTOS.sinCoincidencias, quitar: TEXTOS.quitarOpcion, masElegidas: TEXTOS.masElegidas,
+  });
   const combos = {
     establecimiento: crearComboMultiple($('combo-establecimiento'), {
       textos: textosCombo(TEXTOS.todosEstablecimientos),

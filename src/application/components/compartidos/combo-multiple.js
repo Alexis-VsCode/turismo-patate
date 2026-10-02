@@ -2,8 +2,8 @@
  * @file combo-multiple.js
  * @description Componente compartido. Combo con búsqueda donde se pueden elegir varias opciones: cada clic en una
  *   opción la agrega o la quita y la lista sigue abierta. Las opciones pueden venir agrupadas. Todo texto de la
- *   hoja se escribe con textContent. Las opciones elegidas se ven como etiquetas removibles en la barra de
- *   filtros activos, no dentro del combo.
+ *   hoja se escribe con textContent. Lo elegido se ve también como etiquetas removibles debajo del combo, además
+ *   de la barra de filtros activos sobre los gráficos.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { claveNormalizada } from '../../../domain/catalogo.js';
@@ -42,11 +42,28 @@ export function resumenSeleccion(opciones, seleccion, textos) {
   return opcion ? opcion.texto : seleccion[0];
 }
 
+/** Cuántas etiquetas se muestran debajo del combo antes de resumir el resto en «+N». */
+const MAXIMO_ETIQUETAS = 4;
+
+/**
+ * Etiquetas que se muestran debajo del combo.
+ * @param {Array<{ valor: string, texto: string }>} opciones todas las opciones
+ * @param {string[]} seleccion valores elegidos, en el orden en que se eligieron
+ * @param {number} maximo cuántas etiquetas se muestran
+ * @returns {{ visibles: Array<{ valor: string, texto: string }>, ocultas: number }} una opción elegida que ya no existe
+ *   se muestra con su valor
+ */
+export function etiquetasDeSeleccion(opciones, seleccion, maximo = MAXIMO_ETIQUETAS) {
+  const textoDe = new Map(opciones.map((o) => [o.valor, o.texto]));
+  const todas = seleccion.map((valor) => ({ valor, texto: textoDe.get(valor) ?? valor }));
+  return { visibles: todas.slice(0, maximo), ocultas: Math.max(0, todas.length - maximo) };
+}
+
 /**
  * Combo accesible de varias opciones (combobox con listbox de WAI-ARIA).
  * @param {HTMLElement} raiz contenedor con un <input> y un <ul>
  * @param {{
- *   textos: { todos: string, elegidas: (n: number) => string, sinCoincidencias: string },
+ *   textos: { todos: string, elegidas: (n: number) => string, sinCoincidencias: string, quitar: (texto: string) => string, masElegidas: (n: number) => string },
  *   alCambiar: (seleccion: string[]) => void,
  * }} dependencias redacción de los casos y aviso con la nueva lista de opciones elegidas
  */
@@ -57,6 +74,10 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
   let seleccion = [];
   let visibles = [];
   let activo = -1;
+
+  const etiquetas = document.createElement('div');
+  etiquetas.className = 'combo-elegidas';
+  raiz.appendChild(etiquetas);
 
   const resumen = () => resumenSeleccion(opciones, seleccion, textos);
   const consulta = () => (entrada.value === resumen() ? '' : entrada.value);
@@ -104,8 +125,38 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
     entrada.setAttribute('aria-activedescendant', activo >= 0 && visibles[activo] ? `${lista.id}-op-${activo}` : '');
   }
 
+  /** Etiquetas de lo elegido debajo del combo; cada una se quita con un clic. */
+  function pintarEtiquetas() {
+    etiquetas.replaceChildren();
+    const { visibles, ocultas } = etiquetasDeSeleccion(opciones, seleccion);
+    for (const { valor, texto } of visibles) {
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'etiqueta-mini';
+      boton.setAttribute('aria-label', textos.quitar(texto));
+      const nombre = document.createElement('span');
+      nombre.textContent = texto;
+      const cruz = document.createElement('span');
+      cruz.setAttribute('aria-hidden', 'true');
+      cruz.textContent = '×';
+      boton.append(nombre, cruz);
+      boton.addEventListener('click', () => {
+        seleccion = quitarValor(seleccion, valor);
+        avisarCambio();
+      });
+      etiquetas.appendChild(boton);
+    }
+    if (ocultas > 0) {
+      const mas = document.createElement('span');
+      mas.className = 'etiqueta-mas';
+      mas.textContent = textos.masElegidas(ocultas);
+      etiquetas.appendChild(mas);
+    }
+  }
+
   function avisarCambio() {
     pintar();
+    pintarEtiquetas();
     alCambiar([...seleccion]);
   }
 
@@ -167,11 +218,13 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
     /** Reemplaza las opciones; las elegidas que ya no existan se conservan hasta que la fachada las cambie. */
     fijarOpciones(nuevas) {
       opciones = [...nuevas];
+      pintarEtiquetas();
       if (!raiz.classList.contains('abierto')) entrada.value = resumen();
     },
     /** Marca lo que ya está elegido en la fachada, sin avisar de ningún cambio. */
     fijarValores(valores) {
       seleccion = [...valores];
+      pintarEtiquetas();
       if (raiz.classList.contains('abierto')) pintar();
       else entrada.value = resumen();
     },

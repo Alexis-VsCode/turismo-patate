@@ -35,7 +35,7 @@ export function crearPanelFiltros({ boton, dialogo, cuerpo, bloque, lugarOrigina
   });
 
   // Paso 3: si la pantalla se agranda con el panel abierto, se cierra y el bloque vuelve
-  const ancho = window.matchMedia('(min-width: 1100px)');
+  const ancho = window.matchMedia('(min-width: 860px)');
   ancho.addEventListener('change', (e) => {
     if (e.matches) cerrarPanel();
   });
