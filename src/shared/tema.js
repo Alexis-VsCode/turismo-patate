@@ -1,7 +1,7 @@
 /**
  * @file tema.js
  * @description Compartido. Reglas puras del tema claro u oscuro: qué tema corresponde según la elección guardada
- *   y el sistema, y cómo alternarlo. No toca el DOM ni el almacenamiento.
+ *   (por defecto el claro, sin mirar el sistema) y cómo alternarlo. No toca el DOM ni el almacenamiento.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 
@@ -11,12 +11,10 @@ export const CLAVE_TEMA = 'tema-patate';
 /**
  * Tema que corresponde aplicar.
  * @param {string|null|undefined} guardado elección guardada del visitante ('light', 'dark' o cualquier otro valor)
- * @param {boolean} sistemaOscuro true si el sistema del visitante prefiere el modo oscuro
- * @returns {'light'|'dark'} la elección guardada si es válida; si no, la del sistema
+ * @returns {'light'|'dark'} la elección guardada si es válida; si no, el claro
  */
-export function resolverTema(guardado, sistemaOscuro) {
-  if (guardado === 'light' || guardado === 'dark') return guardado;
-  return sistemaOscuro ? 'dark' : 'light';
+export function resolverTema(guardado) {
+  return guardado === 'dark' ? 'dark' : 'light';
 }
 
 /**

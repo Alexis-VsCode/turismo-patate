@@ -14,13 +14,13 @@ import { CLAVE_TEMA, resolverTema, alternarTema } from '../../src/shared/tema.js
 
 const SCRIPT = readFileSync(join(RAIZ, 'src/shared/tema-inicial.js'), 'utf8');
 
-test('resolverTema respeta la elección válida y si no, sigue al sistema', () => {
-  assert.equal(resolverTema('dark', false), 'dark');
-  assert.equal(resolverTema('light', true), 'light');
-  assert.equal(resolverTema(null, true), 'dark');
-  assert.equal(resolverTema(undefined, false), 'light');
-  assert.equal(resolverTema('basura', true), 'dark');
-  assert.equal(resolverTema('', false), 'light');
+test('resolverTema respeta la elección válida y si no, usa el claro', () => {
+  assert.equal(resolverTema('dark'), 'dark');
+  assert.equal(resolverTema('light'), 'light');
+  assert.equal(resolverTema(null), 'light');
+  assert.equal(resolverTema(undefined), 'light');
+  assert.equal(resolverTema('basura'), 'light');
+  assert.equal(resolverTema(''), 'light');
 });
 
 test('alternarTema invierte el tema y ante un valor desconocido pasa a oscuro', () => {
@@ -51,18 +51,22 @@ function correrScript({ almacenamiento, sistema }) {
 test('el script clásico coincide con resolverTema en todas las combinaciones', () => {
   for (const guardado of [null, 'light', 'dark', 'basura']) {
     for (const oscuro of [true, false]) {
-      const esperado = resolverTema(guardado, oscuro);
+      const esperado = resolverTema(guardado);
       assert.equal(correrScript({ almacenamiento: guardado, sistema: oscuro }), esperado, `${guardado}/${oscuro}`);
     }
   }
 });
 
-test('el script clásico tolera almacenamiento bloqueado y matchMedia que falla o no existe', () => {
-  assert.equal(correrScript({ almacenamiento: 'lanza-al-leer', sistema: true }), 'dark');
-  assert.equal(correrScript({ almacenamiento: 'lanza-al-acceder', sistema: false }), 'light');
+test('el script clásico tolera almacenamiento bloqueado: sin elección legible queda el claro', () => {
+  assert.equal(correrScript({ almacenamiento: 'lanza-al-leer', sistema: true }), 'light');
+  assert.equal(correrScript({ almacenamiento: 'lanza-al-acceder', sistema: true }), 'light');
   assert.equal(correrScript({ almacenamiento: 'dark', sistema: 'lanza' }), 'dark');
-  assert.equal(correrScript({ almacenamiento: null, sistema: 'lanza' }), 'light');
   assert.equal(correrScript({ almacenamiento: null, sistema: 'ausente' }), 'light');
+});
+
+test('el modo oscuro del sistema del visitante no cambia el tema por defecto', () => {
+  assert.equal(correrScript({ almacenamiento: null, sistema: false }), 'light');
+  assert.equal(correrScript({ almacenamiento: null, sistema: true }), 'light');
 });
 
 test('el script clásico usa la misma clave que tema.js', () => {

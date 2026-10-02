@@ -234,7 +234,7 @@ svg { flex-shrink: 0; }
 .combo ul {
   display: none; position: absolute; z-index: 1000; left: 0; right: 0; top: 42px; margin: 0; padding: 4px;
   list-style: none; background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-sm);
-  max-height: 300px; overflow: auto; box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+  max-height: 300px; overflow: auto; box-shadow: 0 12px 28px rgba(0, 0, 0, .18); color: var(--texto);
 }
 .combo.abierto ul { display: block; }
 .combo li { padding: 9px 10px; cursor: pointer; font-size: 14px; border-radius: 8px; }

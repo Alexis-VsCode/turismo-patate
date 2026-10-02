@@ -14,7 +14,7 @@ Vistas del tablero que usa el `README`. Se regeneran cuando cambia el diseño.
 1. Generar datos recién publicados, para que el chip salga «al día»: `npm run datos`.
 2. Servir sin caché: `npm run servir` y abrir `http://127.0.0.1:8765/`.
 3. En Edge o Chrome, abrir las herramientas de desarrollo y emular el ancho (1440 px o 390 px). Para el modo oscuro,
-   emular `prefers-color-scheme: dark` en *Rendering*.
+   pulsar el botón de la luna (el sitio abre siempre en claro).
 4. Esperar a que carguen las teselas del mapa y ejecutar **Capture full size screenshot** (escritorio) o
    **Capture screenshot** (celular).
 5. Guardar como JPEG y revisar que el chip diga «Publicación al día» y que la franja «DATOS DE PRUEBA» se vea.

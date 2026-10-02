@@ -13,14 +13,8 @@
   } catch (e) {
     guardado = null;
   }
-  // Paso 2: sin elección válida se usa el tema del sistema; si no se puede consultar, claro
-  var oscuro = false;
-  try {
-    oscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  } catch (e) {
-    oscuro = false;
-  }
+  // Paso 2: solo la elección explícita del visitante por el oscuro lo saca del claro, que es el tema por defecto
   // Paso 3: el atributo lo leen los tokens de css/tema.css
-  var tema = guardado === 'dark' || guardado === 'light' ? guardado : (oscuro ? 'dark' : 'light');
+  var tema = guardado === 'dark' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', tema);
 })();

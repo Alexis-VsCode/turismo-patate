@@ -2,7 +2,7 @@
  * @file selector-tema.js
  * @description Componente compartido. Botón que alterna entre modo claro y oscuro: aplica el atributo
  *   `data-theme`, guarda la elección en el dispositivo y avisa para que gráficos y mapa se repinten.
- *   Sin elección guardada sigue el tema del sistema.
+ *   Sin elección guardada el tema es el claro.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { CLAVE_TEMA, resolverTema, alternarTema } from '../../../shared/tema.js';
@@ -14,7 +14,6 @@ import { TEXTOS } from '../../../shared/textos.es.js';
  */
 export function crearSelectorTema(boton, alCambiar) {
   const raiz = document.documentElement;
-  const sistema = window.matchMedia('(prefers-color-scheme: dark)');
   const leer = () => {
     try {
       return window.localStorage.getItem(CLAVE_TEMA);
@@ -36,7 +35,7 @@ export function crearSelectorTema(boton, alCambiar) {
   };
 
   // Paso 1: al montar se respeta el atributo que puso el script inicial; si no cargó, se resuelve aquí
-  aplicar(raiz.getAttribute('data-theme') || resolverTema(leer(), sistema.matches));
+  aplicar(raiz.getAttribute('data-theme') || resolverTema(leer()));
 
   // Paso 2: el botón aplica primero el atributo y guarda después, para que un fallo del almacenamiento no lo frene
   boton.addEventListener('click', () => {
@@ -44,13 +43,5 @@ export function crearSelectorTema(boton, alCambiar) {
     aplicar(nuevo);
     guardar(nuevo);
     alCambiar(nuevo);
-  });
-
-  // Paso 3: sin elección guardada el sitio sigue los cambios del sistema
-  sistema.addEventListener('change', () => {
-    if (leer() !== null) return;
-    const tema = resolverTema(null, sistema.matches);
-    aplicar(tema);
-    alCambiar(tema);
   });
 }
