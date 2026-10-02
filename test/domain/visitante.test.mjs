@@ -82,12 +82,21 @@ test('rechaza números negativos, decimales y texto diciendo qué columna es', (
   }
 });
 
-test('rechaza discapacidad mayor que el total de visitantes de la fila', () => {
-  const r = mensual(2026, 'Abril', 'Ecuador', '', 'Latacunga', 'Descanso', 3, 4, 2, 1, 2, 3, 1, 0, 19);
+test('la discapacidad se acepta hasta el total de la fila y se rechaza desde uno más', () => {
+  const fila = (discapacidad, ...conteos) => mensual(2026, 'Abril', 'Ecuador', '', 'Ambato', 'Turismo', ...conteos, discapacidad);
+  const conteos = [3, 4, 2, 1, 2, 3, 1, 0];
+  assert.equal(fila(16, ...conteos).ok, true, 'igual al total de 16 se acepta');
+  const apenas = fila(17, ...conteos);
+  assert.equal(apenas.ok, false);
+  assert.match(apenas.motivo, /Personas con discapacidad \(17\).*\(16\)/);
+  const mucho = fila(19, ...conteos);
+  assert.match(mucho.motivo, /19/);
+});
+
+test('una fila con discapacidad pero sin visitantes se rechaza por discapacidad, no por otra causa', () => {
+  const r = mensual(2026, 'Abril', 'Ecuador', '', 'Ambato', 'Turismo', 0, 0, 0, 0, 0, 0, 0, 0, 1);
   assert.equal(r.ok, false);
-  assert.match(r.motivo, /19/);
-  assert.match(r.motivo, /16/);
-  assert.equal(mensual(2026, 'Abril', 'Ecuador', '', 'Latacunga', 'Descanso', 0, 0, 0, 0, 0, 0, 0, 0, 1).ok, false);
+  assert.match(r.motivo, /Personas con discapacidad \(1\).*\(0\)/);
 });
 
 test('reutiliza las reglas de período, origen y motivo', () => {
