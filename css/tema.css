@@ -120,6 +120,9 @@ svg { flex-shrink: 0; }
 .icono { width: 16px; height: 16px; }
 ::selection { background: var(--amarillo); color: #14261a; }
 :focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+.saltar { position: absolute; left: 8px; top: -60px; z-index: 2000; padding: 10px 16px; background: var(--bosque); color: #fff; border-radius: 0 0 8px 8px; font-weight: 600; text-decoration: none; }
+.saltar:focus { top: 0; }
+#tablero:focus { outline: none; }
 .cabecera-banner :focus-visible, .filtros :focus-visible, .dialogo-filtros :focus-visible, .pie-bloque :focus-visible,
 .panel-cabecera :focus-visible { outline-color: var(--amarillo); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
@@ -292,6 +295,8 @@ svg { flex-shrink: 0; }
 .chip:hover .chip-cruz { background: color-mix(in srgb, var(--verde) 25%, transparent); }
 .chips-limpiar { min-height: 34px; padding: 4px 10px; font: 600 13px var(--fuente); color: var(--texto-suave); background: none; border: 0; text-decoration: underline; cursor: pointer; }
 .chips-limpiar:hover { color: var(--verde-texto); }
+.chips-enlace { min-height: 34px; margin-left: auto; padding: 4px 14px; font: 600 13px var(--fuente); color: var(--verde-texto); background: var(--superficie); border: 1px solid var(--borde); border-radius: 999px; cursor: pointer; }
+.chips-enlace:hover { border-color: var(--verde-texto); }
 
 /* Paneles: barra verde con título en mayúsculas */
 .paneles { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--esp-4); }
@@ -491,4 +496,15 @@ svg { flex-shrink: 0; }
   .pie-columnas { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .autor-redes { width: 100%; }
   .red { flex: 1 1 96px; min-width: 0; padding: 8px 10px; }
+}
+
+/* ============ Impresión: el tablero filtrado cabe en una hoja, sin controles ============ */
+@media print {
+  body { background: #fff; }
+  .saltar, .boton, .boton-filtros, .boton-actualizar, #btn-tema, #lugar-filtros, .segmentos, .chips-enlace, .chips-limpiar, .combo-tarjeta, .mapa .leaflet-control-zoom { display: none !important; }
+  .tablero { grid-template-columns: minmax(0, 1fr); }
+  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panel, .kpis { break-inside: avoid; box-shadow: none; }
+  .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
+  .grafico, .grafico-alto { min-height: 220px; }
 }

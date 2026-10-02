@@ -12,6 +12,7 @@ import {
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
 import { resumenDiscapacidad } from '../domain/discapacidad.js';
+import { filtrosATexto, textoAFiltros } from '../domain/enlace.js';
 import {
   filtrar, filtrosVacios, CLAVES_MULTIPLES, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros,
 } from '../domain/filtros.js';
@@ -114,6 +115,27 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
       estado.vistaMapa = vistaDeProcedencia(valor) ?? estado.vistaMapa;
     }
     avisar('filtros');
+  }
+
+  /** Reemplaza todos los filtros de una vez (por ejemplo, los de un enlace compartido); lo que no sea un filtro se ignora. */
+  function aplicarFiltros(nuevos) {
+    const filtros = filtrosVacios();
+    for (const campo of CLAVES_MULTIPLES) filtros[campo] = valoresDeFiltro(nuevos[campo]);
+    filtros.anio = nuevos.anio ?? null;
+    filtros.mes = nuevos.mes ?? null;
+    estado.filtros = filtros;
+    estado.vistaMapa = vistaDeProcedencia(ultimaProcedencia(filtros)) ?? estado.vistaMapa;
+    avisar('filtros');
+  }
+
+  /** Texto de URL (lo que va después del #) que describe los filtros puestos; vacío si no hay ninguno. */
+  function enlace() {
+    return filtrosATexto(estado.filtros);
+  }
+
+  /** Aplica los filtros que describe un enlace compartido; lo que no sea válido se descarta. */
+  function aplicarEnlace(texto) {
+    aplicarFiltros(textoAFiltros(texto));
   }
 
   /** Quita una opción de un filtro de varias opciones; en año y mes, vacía el filtro. */
@@ -266,7 +288,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros, enlace, aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: copiarFiltros(estado.filtros) }; },
   };
 }

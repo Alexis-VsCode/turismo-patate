@@ -47,7 +47,7 @@ jobs:
           cp index.html sitio/
           cp -r css src sitio/
           mkdir -p sitio/assets
-          cp assets/logo-patate.png assets/fondo-cabecera.jpg assets/ecu-provincias.geojson sitio/assets/
+          cp assets/logo-patate.png assets/fondo-cabecera.jpg assets/ecu-provincias.geojson assets/og.jpg sitio/assets/
           touch sitio/.nojekyll
 
       - uses: actions/configure-pages@v6

@@ -55,6 +55,9 @@ ejecución (pestaña **Actions**):
 {"evento":"error_construccion","mensaje":"SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)"}
 ```
 
+Si la descarga de la hoja falla por algo pasajero (corte de red, límite de peticiones o error 5xx de Google), el constructor reintenta hasta 3 veces esperando cada vez el doble y deja
+una línea `descarga_reintento` con el intento y el código; un error de cliente o una hoja demasiado grande no se reintentan.
+
 Los logs de Actions son públicos: solo llevan cuentas y duraciones, nunca nombres de pestañas ni la URL de la hoja.
 Si el resumen no se puede escribir, se avisa y la publicación continúa.
 

@@ -2,6 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.4.0] - 2026-10-02
+
+### Añadido
+- **Enlace compartible:** los filtros viajan en la dirección de la página y el botón «Copiar enlace» la copia. El enlace se valida al abrirlo (`src/domain/enlace.js`).
+- **Reintentos en la descarga de la hoja:** ante un corte de red, un 429 o un 5xx de Google el constructor reintenta hasta 3 veces con espera creciente y lo registra en el log.
+- Vista previa al compartir la dirección (Open Graph y Twitter), enlace canónico, enlace para saltar al contenido, anuncio de los cambios de la frase de participación e
+  impresión sin controles.
+
+### Cambiado
+- Tope propio para el xlsx completo de la hoja (50 MB) y tiempo máximo de 120 s: con más de cien pestañas y fórmulas pesa más que el `datos.json` publicado.
+- Diseño compacto: paneles más bajos, nacionales y extranjeros en la columna izquierda y los pies de las dos columnas a la misma altura.
+
 ## [2.3.1] - 2026-10-02
 
 ### Corregido

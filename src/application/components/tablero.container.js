@@ -90,6 +90,22 @@ export function montarTablero(facade, config) {
     if (p.seriesType === 'bar') facade.elegirMes(Number(p.seriesName), p.dataIndex);
   });
 
+  // Paso 2b: el enlace de la página reproduce los filtros; copiarlo no necesita permisos especiales
+  async function copiarEnlace() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  /** Deja en la barra de direcciones el estado de los filtros, sin agregar pasos al historial. */
+  function reflejarEnlace() {
+    const texto = facade.enlace();
+    window.history.replaceState(null, '', texto ? `#${texto}` : window.location.pathname + window.location.search);
+  }
+  window.addEventListener('hashchange', () => facade.aplicarEnlace(window.location.hash));
+
   // Paso 3: funciones de pintado, siempre a partir de la vista que entrega la fachada
   function pintarFiltros() {
     const op = facade.opciones();
@@ -105,7 +121,7 @@ export function montarTablero(facade, config) {
     pintarChips($('chips'), chips, (campo, valorQuitado) => {
       facade.quitarFiltro(campo, valorQuitado);
       if (campo === 'establecimiento') facade.cargar(false);
-    }, () => facade.limpiarFiltros());
+    }, () => facade.limpiarFiltros(), copiarEnlace);
     panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 
@@ -155,8 +171,14 @@ export function montarTablero(facade, config) {
   }
 
   // Paso 4: cada evento de la fachada decide qué zonas se repintan
+  let enlaceInicialAplicado = false;
   facade.suscribir((evento) => {
     if (evento === 'datos') {
+      // Un enlace compartido se aplica una sola vez, cuando ya hay datos contra los que filtrar
+      if (!enlaceInicialAplicado) {
+        enlaceInicialAplicado = true;
+        if (window.location.hash.length > 1) facade.aplicarEnlace(window.location.hash);
+      }
       $('error').hidden = true;
       pintarEstado();
       pintarSalud();
@@ -164,6 +186,7 @@ export function montarTablero(facade, config) {
       pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos);
       pintarPaneles();
     } else if (evento === 'filtros') {
+      reflejarEnlace();
       pintarFiltros();
       pintarPaneles();
     } else if (evento === 'vistaMapa') {

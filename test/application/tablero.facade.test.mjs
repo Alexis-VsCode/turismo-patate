@@ -358,3 +358,49 @@ test('sin datos de discapacidad la vista trae el resumen en cero', async () => {
   assert.equal(facade.vista().discapacidad.personas, 0);
   assert.equal(facade.vista().discapacidad.registros, 0);
 });
+
+test('aplicarFiltros reemplaza todos los filtros de golpe, mueve el mapa y avisa una sola vez', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  facade.alternarFiltro('motivo', 'Turismo');
+  ctx.eventos.length = 0;
+  facade.aplicarFiltros({ establecimiento: [], anio: 2026, mes: 0, procedencia: ['P:Colombia'], motivo: [], rangoEdad: ['0-30'], genero: ['Femenino'] });
+  assert.deepEqual(facade.estado.filtros, {
+    establecimiento: [], anio: 2026, mes: 0, procedencia: ['P:Colombia'], motivo: [], rangoEdad: ['0-30'], genero: ['Femenino'],
+  });
+  assert.equal(facade.vista().mapa.vista, 'paises');
+  assert.deepEqual(ctx.eventos.filter((e) => e === 'filtros'), ['filtros']);
+});
+
+test('aplicarFiltros ignora campos que no son filtros y completa los que faltan', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.aplicarFiltros({ motivo: 'Turismo', intruso: ['x'] });
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.equal(facade.estado.filtros.intruso, undefined);
+  assert.equal(facade.estado.filtros.anio, null);
+});
+
+test('el enlace de la fachada refleja los filtros y al aplicarlo se recuperan igual', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.enlace(), '');
+  facade.alternarFiltro('motivo', 'Turismo');
+  facade.alternarFiltro('procedencia', 'P:Colombia');
+  facade.fijarFiltro('anio', 2025);
+  const texto = facade.enlace();
+  const antes = facade.estado.filtros;
+  facade.limpiarFiltros();
+  assert.equal(facade.enlace(), '');
+  facade.aplicarEnlace(`#${texto}`);
+  assert.deepEqual(facade.estado.filtros, antes);
+});
+
+test('un enlace con basura no rompe nada: se aplica solo lo válido', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.aplicarEnlace('#a=1900&ed=999&p=nada&mo=Turismo');
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.equal(facade.estado.filtros.anio, null);
+  assert.deepEqual(facade.estado.filtros.rangoEdad, []);
+});

@@ -54,6 +54,10 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   - dentro de un filtro las opciones se suman y entre filtros se cruzan;
   - **filtrado cruzado** con clic en los gráficos, en la lista de motivos y en el mapa;
   - **etiquetas de filtros activos** sobre los gráficos, que se quitan una por una o todas a la vez, y que filtran todo el tablero.
+- **Enlace compartible:** la dirección de la página reproduce los filtros puestos (varios países, un año, un motivo...); el botón «Copiar enlace» la copia
+  y quien la abre ve lo mismo. Un enlace editado a mano se valida y lo que no sirve se descarta.
+- **Impresión y accesibilidad:** al imprimir se ocultan los controles y el tablero cabe en una hoja; hay un enlace para saltar al contenido, anuncio de los
+  cambios de la frase de participación y vista previa al compartir la dirección en redes.
 - **Actualización y frescura:** al entrar, con el botón «Actualizar» y de forma automática **cada 5 minutos**. El
   sitio muestra cuándo se actualizó en este navegador y cuándo se publicaron los datos, y un chip indica si la
   publicación está al día, retrasada o detenida.

@@ -25,7 +25,7 @@ flowchart TB
 
 | Capa | Archivos | Qué hace | Qué no hace |
 |---|---|---|---|
-| **Dominio** | `src/domain/catalogo.js`, `visitante.js`, `filtros.js`, `estadisticas.js`, `discapacidad.js`, `frescura.js`, `texto.js` | Normaliza filas, reconoce encabezados, calcula KPI y series, clasifica la frescura de la publicación y limpia texto | No conoce el DOM, la red ni las librerías |
+| **Dominio** | `src/domain/catalogo.js`, `visitante.js`, `filtros.js`, `enlace.js`, `estadisticas.js`, `discapacidad.js`, `frescura.js`, `texto.js` | Normaliza filas, reconoce encabezados, calcula KPI y series, clasifica la frescura de la publicación y limpia texto | No conoce el DOM, la red ni las librerías |
 | **Infraestructura** | `src/infrastructure/config.js`, `seguridad.js`, `contrato-datos.js`, `repositorio-datos.js`, `lector-libro.js` | Configuración, descarga acotada, formato de `datos.json`, lectura del Excel (en Actions) | No tiene reglas de negocio |
 | **Fachada** | `src/application/tablero.facade.js` | Estado de datos y filtros, opciones de los combos (años y motivos unen visitantes y catálogo), pestaña del mapa, política de actualización, frescura, vista calculada (incluidos los textos que dependen del periodo) y suscripción a eventos | No toca el DOM; recibe la descarga, el reloj y la visibilidad inyectados |
 | **Container** | `src/application/components/tablero.container.js` | Traduce eventos del DOM y de los gráficos en acciones de la fachada y pinta su vista | No calcula ni descarga |

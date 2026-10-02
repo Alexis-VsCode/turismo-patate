@@ -10,6 +10,16 @@
   <script src="src/shared/tema-inicial.js"></script>
   <meta name="description" content="Estadísticas de visitantes de los establecimientos turísticos del cantón Patate. GAD Municipal de San Cristóbal de Patate.">
   <meta name="author" content="Kevin Alexis Barrera Llerena">
+  <link rel="canonical" href="https://alexis-vscode.github.io/turismo-patate/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_EC">
+  <meta property="og:title" content="Estadísticas de Visitantes · Cantón Patate">
+  <meta property="og:description" content="Visitantes de los establecimientos turísticos del cantón Patate: de dónde vienen, cuándo y por qué motivo.">
+  <meta property="og:url" content="https://alexis-vscode.github.io/turismo-patate/">
+  <meta property="og:image" content="https://alexis-vscode.github.io/turismo-patate/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Estadísticas de Visitantes · Cantón Patate</title>
   <link rel="icon" href="assets/logo-patate.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -19,6 +29,7 @@
   <script type="module" src="src/main.js"></script>
 </head>
 <body>
+  <a class="saltar" href="#tablero">Saltar al contenido</a>
   <div id="franja-prueba" class="franja-prueba" hidden>DATOS DE PRUEBA · Los establecimientos y cifras son ficticios</div>
 
   <header class="cabecera">
@@ -56,7 +67,7 @@
 
   <div id="chips" class="chips barra-chips" aria-label="Filtros aplicados" hidden></div>
 
-  <main id="tablero" class="tablero">
+  <main id="tablero" class="tablero" tabindex="-1">
     <aside class="columna-izquierda">
       <div class="tarjeta combo-tarjeta">
         <label class="combo-etiqueta" for="combo-entrada">Seleccionar establecimiento</label>
@@ -148,7 +159,7 @@
           <div class="participacion">
             <div id="g-dona" class="grafico grafico-dona"></div>
           </div>
-          <p id="resumen-participacion" class="participacion-resumen"></p>
+          <p id="resumen-participacion" class="participacion-resumen" aria-live="polite"></p>
         </article>
         <article class="panel panel-edad">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><h2>Distribución por edad y género</h2></header>

@@ -11,8 +11,9 @@ import { TEXTOS } from '../../../shared/textos.es.js';
  * @param {Array<{ campo: string, valor: string|number, texto: string }>} chips una etiqueta por cada opción elegida
  * @param {(campo: string, valor: string|number) => void} alQuitar se llama con el campo y el valor del chip que se quita
  * @param {() => void} alQuitarTodos se llama al pulsar «Quitar todos», que solo aparece con dos o más etiquetas
+ * @param {() => Promise<boolean>} alCopiarEnlace copia el enlace con los filtros y dice si pudo; el botón aparece con una o más etiquetas
  */
-export function pintarChips(contenedor, chips, alQuitar, alQuitarTodos) {
+export function pintarChips(contenedor, chips, alQuitar, alQuitarTodos, alCopiarEnlace) {
   // Paso 1: vaciar nodo por nodo y ocultar si no hay filtros
   while (contenedor.firstChild) contenedor.removeChild(contenedor.firstChild);
   contenedor.hidden = chips.length === 0;
@@ -40,5 +41,17 @@ export function pintarChips(contenedor, chips, alQuitar, alQuitarTodos) {
     todos.textContent = TEXTOS.quitarTodos;
     todos.addEventListener('click', alQuitarTodos);
     contenedor.appendChild(todos);
+  }
+  // Paso 4: con cualquier filtro puesto se puede copiar un enlace que lo reproduce
+  if (chips.length > 0) {
+    const copiar = document.createElement('button');
+    copiar.type = 'button';
+    copiar.className = 'chips-enlace';
+    copiar.textContent = TEXTOS.copiarEnlace;
+    copiar.addEventListener('click', async () => {
+      copiar.textContent = (await alCopiarEnlace()) ? TEXTOS.enlaceCopiado : TEXTOS.enlaceNoCopiado;
+      setTimeout(() => { copiar.textContent = TEXTOS.copiarEnlace; }, 2000);
+    });
+    contenedor.appendChild(copiar);
   }
 }

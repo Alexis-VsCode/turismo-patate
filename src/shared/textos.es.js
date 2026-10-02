@@ -66,6 +66,9 @@ export const TEXTOS = Object.freeze({
   etiquetaGenero: (genero) => ETIQUETAS_GENERO[genero] || genero,
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
   quitarTodos: 'Quitar todos',
+  copiarEnlace: 'Copiar enlace',
+  enlaceCopiado: 'Enlace copiado',
+  enlaceNoCopiado: 'No se pudo copiar',
   /** Leyenda del gráfico de edad: el nombre del género con su total y su porcentaje. */
   leyendaGenero: (nombre, total, suma) => `${nombre} ${numero(total)} (${porcentaje(suma ? total / suma : null)})`,
   personasConDiscapacidad: (n) => `${numero(n)} ${n === 1 ? 'persona' : 'personas'}`,

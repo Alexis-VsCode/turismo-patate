@@ -54,6 +54,10 @@ come from, why they come, and their age and gender. The requirements were:
   - options inside one filter are added together and different filters are intersected;
   - **cross-filtering** by clicking the charts, the reasons list and the map;
   - **active-filter tags** above the charts, removed one by one or all at once, which filter the whole dashboard.
+- **Shareable link:** the page address reproduces the filters in use (several countries, a year, a reason...); the "Copiar enlace" button copies it and
+  whoever opens it sees the same thing. A hand-edited link is validated and anything invalid is dropped.
+- **Printing and accessibility:** controls are hidden when printing so the dashboard fits one sheet; there is a skip-to-content link, the participation sentence is
+  announced when it changes, and a preview image is provided when the address is shared.
 - **Refresh and freshness:** on load, with the "Actualizar" button and automatically **every 5 minutes**. The
   site shows when it was refreshed in this browser and when the data was published, and a chip tells whether
   publishing is up to date, delayed or stopped.
