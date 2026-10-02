@@ -64,3 +64,14 @@ test('el gráfico de edad resalta todos los rangos elegidos y atenúa los demás
   assert.deepEqual(opacidades([]), [1, 1, 1, 1], 'sin selección ninguna barra se atenúa');
   assert.deepEqual(opacidades(''), [1, 1, 1, 1], 'un vacío del formato anterior tampoco atenúa');
 });
+
+test('la leyenda del gráfico de edad suma los totales de mujeres y de hombres con su porcentaje', () => {
+  const o = opcionesEdadGenero(edadGenero, colores, '');
+  assert.equal(o.legend.formatter('Total mujeres'), 'Total mujeres 7 (70,0%)');
+  assert.equal(o.legend.formatter('Total hombres'), 'Total hombres 3 (30,0%)');
+});
+
+test('la leyenda no divide entre cero cuando no hay visitantes', () => {
+  const eg = { rangos: ['0-30'], series: [{ genero: 'Femenino', valores: [0] }, { genero: 'Masculino', valores: [0] }] };
+  assert.equal(opcionesEdadGenero(eg, colores, '').legend.formatter('Total mujeres'), 'Total mujeres 0 (—)');
+});

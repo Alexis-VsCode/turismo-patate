@@ -149,6 +149,11 @@
           </div>
           <p id="resumen-participacion" class="participacion-resumen"></p>
         </article>
+        <article class="panel panel-edad">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><h2>Distribución por edad y género</h2></header>
+          <p class="panel-sub">Rangos de edad</p>
+          <div id="g-edad" class="grafico grafico-alto"></div>
+        </article>
         <article class="panel">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><h2>Motivo de visita</h2></header>
           <p class="panel-sub">Toque un motivo para filtrar</p>
@@ -164,10 +169,12 @@
           <div id="g-mapa" class="grafico grafico-alto mapa"></div>
           <p id="nota-mapa" class="panel-nota"></p>
         </article>
-        <article class="panel">
-          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><h2>Distribución por edad y género</h2></header>
-          <p class="panel-sub">Rangos de edad</p>
-          <div id="g-edad" class="grafico grafico-alto"></div>
+        <article class="panel panel-discapacidad">
+          <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="4.5" r="2" fill="currentColor"/><path d="M10 8v6h5l3 5M10 11h5M7 13a5 5 0 1 0 7 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><h2>Personas con discapacidad</h2></header>
+          <p class="panel-sub">Registros mensuales según cuántas personas con discapacidad reportan</p>
+          <div class="discapacidad-resumen"><strong id="k-disc-personas">—</strong><span id="k-disc-pct"></span></div>
+          <ol id="lista-discapacidad" class="discapacidad"></ol>
+          <p class="panel-nota">No se filtra por edad ni por género.</p>
         </article>
         <p id="sin-datos" class="sin-datos" hidden>Sin visitantes para los filtros elegidos. Pulse «Limpiar filtros».</p>
       </div>

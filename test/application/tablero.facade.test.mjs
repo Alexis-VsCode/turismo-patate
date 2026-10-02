@@ -332,3 +332,29 @@ test('las opciones de varias opciones salen agrupadas y sin la opción «Todos»
   assert.deepEqual(op.procedencia.filter((o) => o.grupo === 'Atajos').map((o) => o.valor), ['NAC', 'EXT']);
   assert.equal(op.anio[0].valor, '', 'año y mes conservan «Todos»');
 });
+
+test('la discapacidad de la vista respeta los filtros menos edad y género', async () => {
+  const base = { anio: 2026, mes: 2, pais: 'Ecuador', provincia: 'Tungurahua', ciudad: 'Ambato', nacional: true };
+  const registros = [
+    { ...base, establecimiento: DATOS.establecimientos[0], motivo: 'Turismo', personas: 3 },
+    { ...base, establecimiento: DATOS.establecimientos[1], motivo: 'Gastronomía', personas: 12 },
+  ];
+  const facade = crearTableroFacade({ obtener: async () => ({ ...DATOS, discapacidad: registros }), config: CONFIG });
+  await facade.cargar(true);
+  assert.equal(facade.vista().discapacidad.personas, 15);
+  facade.alternarFiltro('motivo', 'Turismo');
+  assert.equal(facade.vista().discapacidad.personas, 3);
+  facade.alternarFiltro('rangoEdad', '61+');
+  facade.alternarFiltro('genero', 'Masculino');
+  const d = facade.vista().discapacidad;
+  assert.equal(d.personas, 3, 'la edad y el género no se aplican a la discapacidad');
+  const totalTurismo = DATOS.filas.filter((x) => x.motivo === 'Turismo').reduce((s, x) => s + x.cantidad, 0);
+  assert.equal(d.pctVisitantes, 3 / totalTurismo, 'el porcentaje usa los visitantes de la misma selección, sin edad ni género');
+});
+
+test('sin datos de discapacidad la vista trae el resumen en cero', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().discapacidad.personas, 0);
+  assert.equal(facade.vista().discapacidad.registros, 0);
+});

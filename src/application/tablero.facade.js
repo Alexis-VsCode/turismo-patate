@@ -11,6 +11,7 @@ import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo,
   porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
 } from '../domain/estadisticas.js';
+import { resumenDiscapacidad } from '../domain/discapacidad.js';
 import {
   filtrar, filtrosVacios, CLAVES_MULTIPLES, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros,
 } from '../domain/filtros.js';
@@ -216,13 +217,16 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function vista() {
     if (!estado.datos) return null;
     const f = estado.filtros;
-    const { filas, catalogo } = estado.datos;
+    const { filas, catalogo, discapacidad = [] } = estado.datos;
     // Paso 1: la selección con todos los filtros alimenta KPI, motivos, edad y mapa
     const sel = filtrar(filas, f);
     // Paso 2: la evolución ignora año y mes para mostrar los 12 meses del año de referencia
     const baseEvolucion = filtrar(filas, f, ['anio', 'mes']);
     // Paso 3: la lista de motivos ignora su propio filtro para que el visitante pueda pasar de un motivo a otro
     const baseMotivos = filtrar(filas, f, ['motivo']);
+    // La discapacidad no se cruza con la edad ni con el género: sus filas y el total de visitantes ignoran esos dos filtros
+    const sinPerfil = ['rangoEdad', 'genero'];
+    const baseDiscapacidad = filtrar(filas, f, sinPerfil);
     // Paso 4: cada zona de la interfaz recibe su agregación ya calculada por el dominio
     return {
       kpis: kpis(sel),
@@ -230,6 +234,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
       evolucion: evolucionMensual(baseEvolucion, anioDeReferencia(baseEvolucion, f.anio)),
       motivos: porMotivo(baseMotivos),
       edadGenero: edadGenero(sel, catalogo.generos),
+      discapacidad: resumenDiscapacidad(filtrar(discapacidad, f, sinPerfil), kpis(baseDiscapacidad).total),
       mapa: { vista: estado.vistaMapa, procedencia: ultimaProcedencia(f), ciudades: porCiudad(sel), paises: porPais(sel), provincias: porProvincia(sel), catalogo },
       textos: {
         periodo: TEXTOS.periodo(f.anio, f.mes === null ? null : MESES[f.mes]),

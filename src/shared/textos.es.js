@@ -4,7 +4,7 @@
  *   index.html; todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { porcentaje } from './formato.js';
+import { numero, porcentaje } from './formato.js';
 
 /** «cada minuto» o «cada N minutos», para que ningún texto repita a mano la cifra de config.js. */
 const cadaMinutos = (n) => (n === 1 ? 'cada minuto' : `cada ${n} minutos`);
@@ -66,6 +66,11 @@ export const TEXTOS = Object.freeze({
   etiquetaGenero: (genero) => ETIQUETAS_GENERO[genero] || genero,
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
   quitarTodos: 'Quitar todos',
+  /** Leyenda del gráfico de edad: el nombre del género con su total y su porcentaje. */
+  leyendaGenero: (nombre, total, suma) => `${nombre} ${numero(total)} (${porcentaje(suma ? total / suma : null)})`,
+  personasConDiscapacidad: (n) => `${numero(n)} ${n === 1 ? 'persona' : 'personas'}`,
+  discapacidadDeVisitantes: (pct) => `${pct} de los visitantes`,
+  rangoDiscapacidad: (rango) => (rango.endsWith('+') ? `${rango.slice(0, -1)} o más personas` : `${rango.replace('-', ' a ')} personas`),
   opcionesElegidas: (n) => `${n} elegidas`,
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
   variacion: (pct, anio) => `${pct} vs ${anio}`,

@@ -13,6 +13,7 @@ import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentat
 import { crearMapa } from './presentational/mapa.presentational.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
 import { pintarMotivos } from './presentational/motivos.presentational.js';
+import { pintarDiscapacidad } from './presentational/discapacidad.presentational.js';
 import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
@@ -122,6 +123,7 @@ export function montarTablero(facade, config) {
       resumen: $('resumen-participacion'),
     }, v.kpis, v.variacion, TEXTOS.resumenParticipacion(v.kpis, v.textos.periodo));
     pintarMotivos($('lista-motivos'), v.motivos, v.filtros.motivo, (motivo) => facade.alternarFiltro('motivo', motivo));
+    pintarDiscapacidad({ total: $('k-disc-personas'), pct: $('k-disc-pct'), lista: $('lista-discapacidad') }, v.discapacidad);
     $('sub-evolucion').textContent = TEXTOS.subtituloEvolucion(v.evolucion.anio, v.evolucion.anioAnterior);
     pintarGraficos(v);
     $('sin-datos').hidden = v.kpis.total > 0;

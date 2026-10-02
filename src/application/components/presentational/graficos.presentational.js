@@ -73,6 +73,9 @@ export function opcionesEdadGenero(eg, colores, rangosElegidos) {
   // Paso 1: las mujeres se leen primero; el orden de los demás géneros se conserva
   const elegidos = valoresDeFiltro(rangosElegidos);
   const series = [...eg.series].sort((a, b) => lugarDeGenero(a.genero) - lugarDeGenero(b.genero));
+  // La leyenda dice cuántos visitantes hay de cada género y qué parte del total son
+  const totales = new Map(series.map((s) => [TEXTOS.etiquetaGenero(s.genero), s.valores.reduce((suma, v) => suma + v, 0)]));
+  const suma = [...totales.values()].reduce((a, b) => a + b, 0);
   // Paso 2: verde y amarillo para los dos géneros del catálogo; si la hoja suma más, siguen dos tonos verdes.
   // Los tonos claros (posiciones impares) llevan contorno para distinguirse sobre fondo claro
   const paleta = [colores.verde, colores.amarillo, colores.verdeTexto, colores.lima];
@@ -80,7 +83,10 @@ export function opcionesEdadGenero(eg, colores, rangosElegidos) {
   return {
     animationDuration: 400,
     grid: { left: 8, right: 8, top: 36, bottom: 8, containLabel: true },
-    legend: { top: 4, itemWidth: 12, itemHeight: 12, textStyle: { color: colores.texto, fontSize: 12 } },
+    legend: {
+      top: 4, itemWidth: 12, itemHeight: 12, textStyle: { color: colores.texto, fontSize: 12 },
+      formatter: (nombre) => TEXTOS.leyendaGenero(nombre, totales.get(nombre) || 0, suma),
+    },
     tooltip: { ...tooltipBase(colores), trigger: 'axis', valueFormatter: (v) => numero(v) },
     xAxis: { type: 'category', data: eg.rangos, axisLabel: { color: colores.texto }, axisTick: { show: false } },
     yAxis: { type: 'value', axisLabel: { color: colores.texto, formatter: (v) => numero(v) }, splitLine: { lineStyle: { color: colores.rejilla } } },
