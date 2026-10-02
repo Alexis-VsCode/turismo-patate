@@ -212,18 +212,18 @@ svg { flex-shrink: 0; }
 .paneles { flex: 1; }
 
 /* Combo con búsqueda y de varias opciones */
-.combo-tarjeta { padding: var(--esp-3); }
+.combo-tarjeta { padding: 12px var(--esp-3) var(--esp-3); }
 .combo-etiqueta { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); margin-bottom: 6px; }
 .combo { position: relative; }
 .combo input {
-  width: 100%; height: 42px; padding: 0 34px 0 12px; font: 500 14px var(--fuente);
+  width: 100%; height: 38px; padding: 0 34px 0 12px; font: 500 14px var(--fuente);
   border: 1px solid var(--select-borde); border-radius: var(--radio-sm); background: var(--select-fondo); color: var(--select-texto);
 }
 .combo input:focus { border-color: var(--verde-texto); }
 .combo input { text-overflow: ellipsis; }
-.combo-flecha { position: absolute; right: 10px; top: 12px; width: 18px; height: 18px; color: var(--texto-suave); pointer-events: none; }
+.combo-flecha { position: absolute; right: 10px; top: 10px; width: 18px; height: 18px; color: var(--texto-suave); pointer-events: none; }
 .combo ul {
-  display: none; position: absolute; z-index: 1000; left: 0; right: 0; top: 46px; margin: 0; padding: 4px;
+  display: none; position: absolute; z-index: 1000; left: 0; right: 0; top: 42px; margin: 0; padding: 4px;
   list-style: none; background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio-sm);
   max-height: 300px; overflow: auto; box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
 }
@@ -246,9 +246,9 @@ svg { flex-shrink: 0; }
 .etiqueta-mini span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .etiqueta-mini:hover { border-color: var(--verde-texto); }
 .etiqueta-mas { font-size: 12px; font-weight: 600; color: var(--texto-sobre-color); padding: 0 4px; }
-.combo-filtro input { height: 40px; font-size: 13.5px; }
-.combo-filtro .combo-flecha { top: 11px; }
-.combo-filtro ul { top: 44px; }
+.combo-filtro input { height: 36px; font-size: 13px; }
+.combo-filtro .combo-flecha { top: 9px; }
+.combo-filtro ul { top: 40px; }
 
 /* Tarjetas de indicadores */
 .kpis { display: flex; flex-direction: column; gap: var(--esp-3); }
@@ -265,14 +265,14 @@ svg { flex-shrink: 0; }
 .boton-filtros { display: none; background: var(--bosque); }
 .boton-filtros:hover { background: var(--bosque-2); }
 #lugar-filtros { flex: 1 1 auto; display: flex; flex-direction: column; }
-.filtros { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; background: var(--bosque); color: #fff; border-radius: var(--radio); padding: var(--esp-4); box-shadow: var(--sombra); }
-.filtro:last-of-type { margin-bottom: var(--esp-4); }
+.filtros { flex: none; display: flex; flex-direction: column; background: var(--bosque); color: #fff; border-radius: var(--radio); padding: var(--esp-3) var(--esp-4) var(--esp-4); box-shadow: var(--sombra); }
+.filtro:last-of-type { margin-bottom: var(--esp-3); }
 .filtros-titulo { margin: 0 0 var(--esp-1); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #cfe6c9; }
-.filtro { margin-top: var(--esp-3); }
-.filtro label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; }
-.filtro label svg { width: 18px; height: 18px; color: var(--amarillo); }
+.filtro { margin-top: 10px; }
+.filtro label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.filtro label svg { width: 16px; height: 16px; color: var(--amarillo); }
 .filtro select {
-  width: 100%; height: 40px; font: 500 13.5px var(--fuente); color: var(--select-texto); padding: 0 10px;
+  width: 100%; height: 36px; font: 500 13px var(--fuente); color: var(--select-texto); padding: 0 10px;
   background: var(--select-fondo); border: 1px solid var(--select-borde); border-radius: var(--radio-sm);
 }
 .filtro-doble { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6px; }
@@ -419,6 +419,14 @@ svg { flex-shrink: 0; }
 .red-facebook { background: var(--facebook); }
 .red-tiktok { background: var(--tiktok); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28); }
 
+/* Los filtros miden lo que necesitan y acompañan al desplazamiento cuando la pantalla es lo bastante alta */
+@media (min-width: 860px) {
+  .columna-izquierda { align-self: start; }
+}
+@media (min-width: 860px) and (min-height: 860px) {
+  .columna-izquierda { position: sticky; top: var(--esp-3); }
+}
+
 /* ============ Pantallas muy anchas ============ */
 @media (min-width: 1800px) {
   .cabecera, .barra-estado, .barra-chips, .tablero, .pie { max-width: 1680px; }
@@ -431,9 +439,6 @@ svg { flex-shrink: 0; }
   .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .panel, .panel-dona, .panel-edad { grid-column: span 1; }
   .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
-  /* Con los paneles en dos columnas el contenido es más alto que los filtros: no se estiran para igualarlo */
-  .columna-izquierda { align-self: start; }
-  .filtros { flex: none; justify-content: flex-start; }
 }
 
 /* ============ Tableta angosta (< 860 px): filtros en panel deslizable ============ */

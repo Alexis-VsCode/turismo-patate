@@ -8,6 +8,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - **Alineación del tablero:** las cabeceras de los paneles miden lo mismo aunque el título ocupe dos líneas; la barra de filtros activos pasó a una fila
   propia sobre las dos columnas, así que la columna izquierda y los paneles empiezan a la misma altura; la barra de los motivos ya no pisa la cifra
   ni el porcentaje; el panel de discapacidad ocupa el ancho completo cuando los paneles van en dos columnas.
+- **Filtros compactos:** el panel de filtros mide lo que necesita (controles de 36 px y espaciado parejo) en lugar de estirarse hasta igualar la altura de los paneles, y en pantallas altas acompaña al desplazamiento.
 - **Filtros a la izquierda:** lo elegido en cada filtro se ve también como etiquetas removibles debajo de su combo, y el panel de filtros se queda a la
   izquierda hasta los 860 px (antes se convertía en un botón desde los 1100 px). Entre 860 y 1279 px los paneles van en dos columnas.
 
