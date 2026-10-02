@@ -80,3 +80,37 @@ test('los años alterados del catálogo se descartan: texto, decimales y fuera d
   alterado.catalogo.anios = 'no es una lista';
   assert.deepEqual(desempaquetar(alterado, claveNormalizada).catalogo.anios, []);
 });
+
+const REGISTROS = [
+  { establecimiento: original.establecimientos[0], anio: 2026, mes: 2, pais: 'Ecuador', provincia: 'Tungurahua', ciudad: 'Ambato', motivo: original.catalogo.motivos[0], personas: 3, nacional: true },
+  { establecimiento: original.establecimientos[1], anio: 2026, mes: 3, pais: 'Colombia', provincia: '', ciudad: '', motivo: original.catalogo.motivos[0], personas: 7, nacional: false },
+];
+const jsonConDiscapacidad = () => JSON.parse(JSON.stringify(empaquetar({ ...original, discapacidad: REGISTROS }, '2026-09-29T13:00:00.000Z', CONFIG.PAIS_LOCAL)));
+
+test('la discapacidad viaja como filas de ocho números y vuelve con los mismos datos', () => {
+  const paquete = jsonConDiscapacidad();
+  assert.equal(paquete.discapacidad.length, 2);
+  assert.ok(paquete.discapacidad.every((r) => r.length === 8 && r.every(Number.isFinite)));
+  assert.deepEqual(desempaquetar(paquete, claveNormalizada).discapacidad, REGISTROS);
+});
+
+test('sin discapacidad el paquete lleva la lista vacía y las filas de visitantes no cambian', () => {
+  assert.deepEqual(json.discapacidad, []);
+  assert.deepEqual(vuelta.discapacidad, []);
+  assert.ok(json.filas.every((r) => r.length === 10), 'el formato de las filas de visitantes no cambia');
+});
+
+test('un paquete anterior sin la clave de discapacidad sigue siendo válido', () => {
+  const viejo = JSON.parse(JSON.stringify(json));
+  delete viejo.discapacidad;
+  assert.deepEqual(desempaquetar(viejo, claveNormalizada).discapacidad, []);
+});
+
+test('rechaza una discapacidad alterada: forma, índice o personas inválidas', () => {
+  const alterar = (cambio) => { const p = jsonConDiscapacidad(); cambio(p); return p; };
+  assert.throws(() => desempaquetar(alterar((p) => { p.discapacidad = 'x'; }), claveNormalizada), /Discapacidad no válida/);
+  assert.throws(() => desempaquetar(alterar((p) => { p.discapacidad[0].pop(); }), claveNormalizada), /Fila de discapacidad no válida/);
+  assert.throws(() => desempaquetar(alterar((p) => { p.discapacidad[0][3] = 9999; }), claveNormalizada), /Índice fuera de rango/);
+  assert.throws(() => desempaquetar(alterar((p) => { p.discapacidad[0][7] = 0; }), claveNormalizada), /Valor fuera de rango/);
+  assert.throws(() => desempaquetar(alterar((p) => { p.discapacidad[0][2] = 12; }), claveNormalizada), /Valor fuera de rango/);
+});

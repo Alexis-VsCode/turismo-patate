@@ -70,17 +70,18 @@ async function main() {
   const paquete = empaquetar(datos, new Date().toISOString(), CONFIG.PAIS_LOCAL);
   mkdirSync(dirname(salida), { recursive: true });
   const temporal = `${salida}.tmp`;
-  writeFileSync(temporal, JSON.stringify(paquete));
+  const texto = JSON.stringify(paquete);
+  writeFileSync(temporal, texto);
   renameSync(temporal, salida);
   const cuentas = {
-    establecimientos: datos.establecimientos.length, filas: datos.filas.length,
-    rechazos: datos.rechazos.length, avisos: datos.avisos.length,
+    establecimientos: datos.establecimientos.length, filas: datos.filas.length, discapacidad: datos.discapacidad.length,
+    rechazos: datos.rechazos.length, avisos: datos.avisos.length, bytes: Buffer.byteLength(texto),
   };
   const duracionMs = Date.now() - inicio;
   registrar('datos_construidos', { ...cuentas, duracionMs });
   escribirResumen({
-    Resultado: 'Publicado', Establecimientos: cuentas.establecimientos, Filas: cuentas.filas,
-    Rechazos: cuentas.rechazos, Avisos: cuentas.avisos, 'Duración (ms)': duracionMs,
+    Resultado: 'Publicado', Establecimientos: cuentas.establecimientos, Filas: cuentas.filas, 'Registros de discapacidad': cuentas.discapacidad,
+    'Tamaño (bytes)': cuentas.bytes, Rechazos: cuentas.rechazos, Avisos: cuentas.avisos, 'Duración (ms)': duracionMs,
   });
 }
 
