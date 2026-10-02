@@ -5,7 +5,7 @@
  *   ningún texto de la hoja se interpreta como HTML.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { MESES_CORTOS, TEXTOS } from '../../../shared/textos.es.js';
+import { MESES_CORTOS, ORDEN_GENEROS, TEXTOS } from '../../../shared/textos.es.js';
 import { numero, porcentaje } from '../../../shared/formato.js';
 
 /** Tooltip común: en canvas (richText) y con los colores del tema, también en modo oscuro. */
@@ -61,9 +61,17 @@ export function opcionesDona(k, colores, centro) {
   };
 }
 
-/** Barras agrupadas por rango de edad, una serie por género. */
+/** Posición de un género en la lectura del gráfico: los desconocidos van al final, en su orden original. */
+const lugarDeGenero = (genero) => {
+  const lugar = ORDEN_GENEROS.indexOf(genero);
+  return lugar < 0 ? ORDEN_GENEROS.length : lugar;
+};
+
+/** Barras agrupadas por rango de edad, una serie por género: «Total mujeres» primero y «Total hombres» después. */
 export function opcionesEdadGenero(eg, colores, rangoSeleccionado) {
-  // Paso 1: verde y amarillo para los dos géneros del catálogo; si la hoja suma más, siguen dos tonos verdes.
+  // Paso 1: las mujeres se leen primero; el orden de los demás géneros se conserva
+  const series = [...eg.series].sort((a, b) => lugarDeGenero(a.genero) - lugarDeGenero(b.genero));
+  // Paso 2: verde y amarillo para los dos géneros del catálogo; si la hoja suma más, siguen dos tonos verdes.
   // Los tonos claros (posiciones impares) llevan contorno para distinguirse sobre fondo claro
   const paleta = [colores.verde, colores.amarillo, colores.verdeTexto, colores.lima];
   const estilo = (i) => ({ color: paleta[i % paleta.length], borderColor: colores.oliva, borderWidth: i % 2 === 1 ? 1 : 0 });
@@ -74,8 +82,8 @@ export function opcionesEdadGenero(eg, colores, rangoSeleccionado) {
     tooltip: { ...tooltipBase(colores), trigger: 'axis', valueFormatter: (v) => numero(v) },
     xAxis: { type: 'category', data: eg.rangos, axisLabel: { color: colores.texto }, axisTick: { show: false } },
     yAxis: { type: 'value', axisLabel: { color: colores.texto, formatter: (v) => numero(v) }, splitLine: { lineStyle: { color: colores.rejilla } } },
-    series: eg.series.map((s, i) => ({
-      name: s.genero, type: 'bar', barGap: '6%', itemStyle: estilo(i),
+    series: series.map((s, i) => ({
+      name: TEXTOS.etiquetaGenero(s.genero), type: 'bar', barGap: '6%', itemStyle: estilo(i),
       data: s.valores.map((v, j) => ({ value: v, itemStyle: { ...estilo(i), opacity: !rangoSeleccionado || eg.rangos[j] === rangoSeleccionado ? 1 : 0.35 } })),
     })),
   };

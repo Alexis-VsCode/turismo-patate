@@ -9,6 +9,10 @@ import { porcentaje } from './formato.js';
 /** «cada minuto» o «cada N minutos», para que ningún texto repita a mano la cifra de config.js. */
 const cadaMinutos = (n) => (n === 1 ? 'cada minuto' : `cada ${n} minutos`);
 
+/** Orden de lectura del gráfico de edad: primero las mujeres, luego los hombres, luego cualquier otro género. */
+export const ORDEN_GENEROS = Object.freeze(['Femenino', 'Masculino']);
+const ETIQUETAS_GENERO = Object.freeze({ Femenino: 'Total mujeres', Masculino: 'Total hombres' });
+
 export const TEXTOS = Object.freeze({
   todos: 'Todos',
   todosEstablecimientos: 'Todos los establecimientos',
@@ -57,6 +61,8 @@ export const TEXTOS = Object.freeze({
   temaAOscuro: 'Cambiar a modo oscuro',
   temaAClaro: 'Cambiar a modo claro',
   chipEdad: (rango) => `Edad ${rango}`,
+  /** Nombre con que el gráfico de edad muestra cada género del catálogo; los demás conservan el suyo. */
+  etiquetaGenero: (genero) => ETIQUETAS_GENERO[genero] || genero,
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
   filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
   variacion: (pct, anio) => `${pct} vs ${anio}`,

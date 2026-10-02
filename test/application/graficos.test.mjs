@@ -6,7 +6,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { opcionesEvolucion, opcionesDona } from '../../src/application/components/presentational/graficos.presentational.js';
+import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from '../../src/application/components/presentational/graficos.presentational.js';
 import { TEXTOS } from '../../src/shared/textos.es.js';
 
 const colores = {
@@ -38,4 +38,21 @@ test('la dona muestra el total y el periodo al centro y no repite la leyenda', (
   assert.equal(dona.title.text, '96.452');
   assert.equal(dona.title.subtext, 'Visitantes 2025');
   assert.equal(dona.legend, undefined);
+});
+
+const edadGenero = {
+  rangos: ['0-30', '31-45'],
+  series: [{ genero: 'Masculino', valores: [1, 2] }, { genero: 'Femenino', valores: [3, 4] }],
+};
+
+test('el gráfico de edad nombra las series «Total mujeres» y «Total hombres» y pone a las mujeres primero', () => {
+  const series = opcionesEdadGenero(edadGenero, colores, '').series;
+  assert.deepEqual(series.map((s) => s.name), ['Total mujeres', 'Total hombres']);
+  assert.deepEqual(series[0].data.map((d) => d.value), [3, 4]);
+  assert.deepEqual(series[1].data.map((d) => d.value), [1, 2]);
+});
+
+test('un género que no es masculino ni femenino conserva su nombre y va al final', () => {
+  const eg = { rangos: ['0-30'], series: [{ genero: 'Otro', valores: [5] }, ...edadGenero.series.map((s) => ({ ...s, valores: [1] }))] };
+  assert.deepEqual(opcionesEdadGenero(eg, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres', 'Otro']);
 });
