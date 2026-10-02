@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 import { CONFIG } from '../src/infrastructure/config.js';
-import { descargarAcotado } from '../src/infrastructure/seguridad.js';
+import { descargarConReintentos } from '../src/infrastructure/seguridad.js';
 import { leerLibro } from '../src/infrastructure/lector-libro.js';
 import { empaquetar } from '../src/infrastructure/contrato-datos.js';
 
@@ -59,7 +59,9 @@ async function main() {
     if (!url || !/^https:\/\/docs\.google\.com\/spreadsheets\/d\/e\/[\w-]+\/pub\?output=xlsx$/.test(url)) {
       throw new Error('SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)');
     }
-    buffer = new Uint8Array(await descargarAcotado(url, { timeoutMs: CONFIG.TIMEOUT_HOJA_MS, maxBytes: CONFIG.MAX_BYTES }));
+    buffer = new Uint8Array(await descargarConReintentos(url, { timeoutMs: CONFIG.TIMEOUT_HOJA_MS, maxBytes: CONFIG.MAX_BYTES_HOJA }, {
+      alReintentar: (intento, error) => registrar('descarga_reintento', { intento, codigo: error.codigo, detalle: error.detalle }),
+    }));
   }
 
   // Paso 2: leer y validar con las mismas reglas del dashboard

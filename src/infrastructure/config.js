@@ -21,8 +21,10 @@ export const CONFIG = Object.freeze({
   /** Límites de la descarga: una respuesta lenta o gigante produce un aviso, nunca un cuelgue. */
   TIMEOUT_MS: 15 * 1000,
   MAX_BYTES: 20 * 1024 * 1024,
+  /** Tope de la hoja completa en xlsx: con más de cien pestañas y fórmulas pesa bastante más que el datos.json que se publica. */
+  MAX_BYTES_HOJA: 50 * 1024 * 1024,
   /** Tiempo máximo de la descarga de la hoja en el build de Actions (el libro completo pesa más que datos.json). */
-  TIMEOUT_HOJA_MS: 60 * 1000,
+  TIMEOUT_HOJA_MS: 120 * 1000,
   MAX_PESTANAS: 300,
   MAX_FILAS_PESTANA: 5000,
   /** Pestaña con listas y coordenadas. Toda pestaña que empieza por '_' o contiene 'plantilla' no es establecimiento. */
