@@ -75,3 +75,15 @@ test('la leyenda no divide entre cero cuando no hay visitantes', () => {
   const eg = { rangos: ['0-30'], series: [{ genero: 'Femenino', valores: [0] }, { genero: 'Masculino', valores: [0] }] };
   assert.equal(opcionesEdadGenero(eg, colores, '').legend.formatter('Total mujeres'), 'Total mujeres 0 (—)');
 });
+
+test('un género sin visitantes que no es de mujeres ni de hombres no ocupa un lugar en la leyenda', () => {
+  const sinOtro = { rangos: ['0-30'], series: [...edadGenero.series, { genero: 'Otro', valores: [0, 0] }] };
+  assert.deepEqual(opcionesEdadGenero(sinOtro, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres']);
+  const conOtro = { rangos: ['0-30'], series: [...edadGenero.series, { genero: 'Otro', valores: [2, 0] }] };
+  assert.deepEqual(opcionesEdadGenero(conOtro, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres', 'Otro']);
+});
+
+test('mujeres y hombres siempre aparecen, aunque no tengan visitantes', () => {
+  const vacio = { rangos: ['0-30'], series: [{ genero: 'Masculino', valores: [0] }, { genero: 'Femenino', valores: [0] }] };
+  assert.deepEqual(opcionesEdadGenero(vacio, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres']);
+});

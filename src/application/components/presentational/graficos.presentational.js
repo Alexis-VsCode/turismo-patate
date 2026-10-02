@@ -72,9 +72,12 @@ const lugarDeGenero = (genero) => {
 export function opcionesEdadGenero(eg, colores, rangosElegidos) {
   // Paso 1: las mujeres se leen primero; el orden de los demás géneros se conserva
   const elegidos = valoresDeFiltro(rangosElegidos);
-  const series = [...eg.series].sort((a, b) => lugarDeGenero(a.genero) - lugarDeGenero(b.genero));
+  const total = (s) => s.valores.reduce((suma, v) => suma + v, 0);
+  // Mujeres y hombres siempre se muestran; otro género solo si tiene visitantes, para no dejar una entrada vacía en la leyenda
+  const series = eg.series.filter((s) => ORDEN_GENEROS.includes(s.genero) || total(s) > 0)
+    .sort((a, b) => lugarDeGenero(a.genero) - lugarDeGenero(b.genero));
   // La leyenda dice cuántos visitantes hay de cada género y qué parte del total son
-  const totales = new Map(series.map((s) => [TEXTOS.etiquetaGenero(s.genero), s.valores.reduce((suma, v) => suma + v, 0)]));
+  const totales = new Map(series.map((s) => [TEXTOS.etiquetaGenero(s.genero), total(s)]));
   const suma = [...totales.values()].reduce((a, b) => a + b, 0);
   // Paso 2: verde y amarillo para los dos géneros del catálogo; si la hoja suma más, siguen dos tonos verdes.
   // Los tonos claros (posiciones impares) llevan contorno para distinguirse sobre fondo claro
@@ -82,7 +85,7 @@ export function opcionesEdadGenero(eg, colores, rangosElegidos) {
   const estilo = (i) => ({ color: paleta[i % paleta.length], borderColor: colores.oliva, borderWidth: i % 2 === 1 ? 1 : 0 });
   return {
     animationDuration: 400,
-    grid: { left: 8, right: 8, top: 36, bottom: 8, containLabel: true },
+    grid: { left: 8, right: 8, top: 62, bottom: 8, containLabel: true },
     legend: {
       top: 4, itemWidth: 12, itemHeight: 12, textStyle: { color: colores.texto, fontSize: 12 },
       formatter: (nombre) => TEXTOS.leyendaGenero(nombre, totales.get(nombre) || 0, suma),
