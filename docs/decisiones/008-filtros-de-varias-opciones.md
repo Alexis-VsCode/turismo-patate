@@ -26,3 +26,4 @@ Año y mes quedan de una sola opción porque la variación interanual y la evolu
 - El estado de filtros cambió de forma; `filtros.js` acepta también un valor suelto, así que las pruebas y los datos anteriores siguen valiendo.
 - El combo nuevo (`combo-multiple.js`) reemplaza al combo con búsqueda de una sola opción.
 - La discapacidad respeta todos los filtros salvo edad y género.
+- Lo elegido se muestra en dos sitios: etiquetas debajo de cada combo, en el panel izquierdo, y la barra de filtros activos sobre las dos columnas.
