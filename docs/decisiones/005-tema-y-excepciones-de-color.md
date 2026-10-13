@@ -1,16 +1,16 @@
-# ADR 005 — Tema claro y oscuro, y excepciones de color
+# ADR 005: Tema claro y oscuro, y excepciones de color
 
-**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Kevin Alexis Barrera Llerena
+**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 
-El tablero adopta una paleta solo de verde y amarillo (la del logo del GAD) y un botón para pasar de modo claro a
+El dashboard adopta una paleta solo de verde y amarillo (la del logo del GAD) y un botón para pasar de modo claro a
 oscuro. La CSP prohíbe scripts en línea, y aplicar el tema desde un módulo ES provoca un destello del tema
 equivocado al cargar.
 
 ## Decisión
 
-- **Un botón de dos estados** (claro y oscuro). Sin elección guardada, el sitio sigue al dispositivo.
+- **Un botón de dos estados** (claro y oscuro). Sin elección guardada, la decisión original era seguir al dispositivo (reemplazada, ver «Actualización 02/10/2026»).
 - **Script clásico externo** (`src/shared/tema-inicial.js`) en el `<head>`, antes de las hojas de estilo: aplica
   `data-theme` antes del primer pintado y cumple la CSP (`script-src 'self'`). Repite la regla de `tema.js` porque un
   script clásico no puede importar; una prueba lo ejecuta en un contexto aislado y comprueba que ambos coinciden.
@@ -28,3 +28,11 @@ equivocado al cargar.
 - El tema correcto se ve desde el primer pintado, con o sin `localStorage`.
 - Hay una regla duplicada (script inicial y `tema.js`), protegida por una prueba.
 - Un barrido de colores del repositorio permite comprobar que no quedó otro azul.
+
+## Actualización 02/10/2026
+
+- **El sitio abre siempre en modo claro y no sigue al sistema.** Sin elección guardada, o con un valor que no sea `dark`, el tema es el claro,
+  aunque el dispositivo esté en modo oscuro.
+- **El botón de la luna cambia el tema y lo recuerda.** La elección se guarda en `localStorage` con la clave `tema-patate` y se respeta en las
+  visitas siguientes. La regla vive en `src/shared/tema.js` (`resolverTema`) y la repite `src/shared/tema-inicial.js`; la prueba que
+  compara ambos sigue vigente.

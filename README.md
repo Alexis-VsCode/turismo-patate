@@ -49,12 +49,14 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   - motivos de visita con ícono, barra, cifra y porcentaje;
   - distribución por edad (0-30, 31-45, 46-60 y 61+) con **Total mujeres** y **Total hombres**, sus cifras y porcentajes;
   - **personas con discapacidad**: la cifra, su porcentaje sobre los visitantes y cuántos registros mensuales caen en cada
-    rango (1-5, 6-10, 11-15). Se publica solo como cifra agregada y no se cruza con la edad ni con el género.
+    rango (1 a 5, 6 a 10, 11 a 15 y 16 o más; este último aparece solo si hay registros). Se publica solo como cifra agregada y no se cruza con la edad ni con el género.
 - **Mapa real** (OpenStreetMap + Leaflet) con tres pestañas: **Provincias**, **Ciudades** y **Países**. Cada
   pestaña cambia las burbujas, el «Top» y el encuadre, y se sincroniza con el filtro País / Ciudad.
 - **Filtros:**
-  - **varias opciones a la vez** en establecimiento, país / ciudad / provincia, motivo, edad y género, con búsqueda al escribir
-    (más de 450 opciones de procedencia, agrupadas); año y mes son de una sola opción;
+  - **varias opciones a la vez** en establecimiento, país / ciudad / provincia, motivo, edad y género, con búsqueda al escribir;
+    año y mes son de una sola opción;
+  - **procedencia:** los combos muestran solo los orígenes que tienen visitantes en los datos. El catálogo completo
+    (unas 450 entradas) se usa para validar los registros y ubicarlos en el mapa;
   - dentro de un filtro las opciones se suman y entre filtros se cruzan;
   - **filtrado cruzado** con clic en los gráficos, en la lista de motivos y en el mapa;
   - **etiquetas de filtros activos** sobre los gráficos, que se quitan una por una o todas a la vez, y que filtran todo el dashboard.
@@ -65,17 +67,19 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 - **Actualización y frescura:** el sitio se publica cada 30 minutos (`PUBLICACION_MINUTOS`). El navegador consulta
   al entrar, con el botón «Actualizar» y de forma automática cada 10 minutos (`INTERVALO_AUTO_MS`) mientras la
   pestaña está visible. La barra de estado muestra cuatro datos, cada uno con su explicación debajo: **Última publicación** («Datos nuevos cada 30
-  minutos»), **Periodo con datos** («Primer y último mes cargados», p. ej. «ene 2025 – sep 2026»), **Establecimientos con datos** («Con al
+  minutos»), **Periodo con datos** («Primer y último mes cargados», p. ej. «dic 2024 a sep 2026»), **Establecimientos con datos** («Con al
   menos un mes registrado») y **Registros mensuales** («Cada uno: un mes, un origen y un motivo»). La hora de consulta del navegador no se
-  muestra. Un chip indica si la publicación está al día, retrasada o detenida.
+  muestra. Un chip indica si la publicación está al día, retrasada o detenida. En pantallas medianas (de 860 a 1279 px, incluido el modo
+  escritorio del celular, de unos 980 px) la barra se ordena en dos filas: chip y botones arriba, los cuatro datos debajo.
 - **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila.
 - **Encabezado y pie:** el encabezado lleva la identidad institucional y el lugar. El pie, con la columna «Acerca del dashboard», explica qué es el
   dashboard, su privacidad y seguridad y sus fuentes y licencias; agradece al municipio y presenta, con su rol
-  escrito, al contacto del GAD y al autor. Si el enlace de una red del contacto aún no está publicado, su botón
-  dice «Pronto» y abre un aviso con los demás enlaces.
+  escrito, al contacto del GAD y al autor, con sus fotos (y sus iniciales como respaldo si la foto no carga). Si el enlace de una red del
+  contacto aún no está publicado, su botón dice «Pronto» y abre un aviso con los demás enlaces. Al final lleva la línea de derechos:
+  el autor y el año, que los datos son del GAD Municipal de San Cristóbal de Patate y de los establecimientos del cantón, y que las fotos se publican con autorización de cada persona.
 - **Diseño adaptable:** en el celular se ve en una columna, con un botón flotante «Filtros» que abre un panel
   desde abajo; sin scroll horizontal.
-- **Modo claro y oscuro:** un botón cambia el tema; sin elección guardada, sigue el del dispositivo.
+- **Modo claro y oscuro:** el sitio abre en modo claro por defecto, sin seguir el tema del sistema. El botón de la luna cambia a oscuro y esa elección se recuerda en el dispositivo.
 
 ## Cómo funciona
 
@@ -126,7 +130,7 @@ Las decisiones que más me enseñaron:
   publica datos ya validados.
 - **Medir en lugar de suponer.** Cada cifra del dashboard se concilia contra un cálculo independiente en Python,
   así un error de fórmula no llega a producción.
-- **Que el dashboard diga la verdad sobre sus propios datos.** Si la publicación automática se detiene, el sitio no
+- **No afirmar lo que no se verifica.** Si la publicación automática se detiene, el sitio no
   sigue diciendo «en vivo»: un chip lo indica.
 - **Diseñar para el celular primero.** La mayoría de visitas a la web municipal llega desde el teléfono.
 
@@ -212,7 +216,31 @@ publicación programada:
 
 ## Ejecutar en local
 
-Requisitos: Node 22 o superior y Python 3 con `openpyxl` (solo para el oráculo y el generador de datos de prueba).
+Requisitos: Node 22 o superior y Python 3. Las dependencias de Python solo hacen falta para las herramientas que las usan:
+`openpyxl` para el oráculo y el generador de datos de prueba, y `xlsxwriter` para el generador del libro de captura.
+
+```bash
+pip install openpyxl xlsxwriter
+```
+
+Scripts de `package.json`:
+
+| Comando | Qué hace |
+|---|---|
+| `npm test` | Corre todas las pruebas (`node --test "test/**/*.test.mjs"`) |
+| `npm run datos` | Genera `datos/datos.json` desde el libro de prueba `test/fixtures/piloto-publicado.xlsx` |
+| `npm run oraculo` | Corre el oráculo independiente en Python (`tools/oraculo.py`, requiere `openpyxl`) y calcula las cifras esperadas |
+| `npm run servir` | Levanta el servidor local sin caché |
+
+Generadores en Python, que se ejecutan directamente:
+
+| Script | Dependencia | Para qué |
+|---|---|---|
+| `python tools/generar-piloto.py` | `openpyxl` | Libros ficticios de prueba |
+| `python tools/excel/generar-excel.py --salida <archivo.xlsx>` | `xlsxwriter` | Libro de captura (`--modo completo` o `fixture`) |
+| `python tools/catalogos/generar-catalogos.py` | solo biblioteca estándar | Catálogos de cantones y países (ver `tools/catalogos/LEEME.md`) |
+
+Comandos habituales:
 
 ```bash
 npm test
@@ -235,12 +263,23 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 
 ```
 ├── index.html · css/tema.css
-├── src/            domain · infrastructure · application · shared · main.js
-├── assets/         logo, foto de cabecera y límites provinciales
-├── tools/          constructor de datos, oráculo, generador de datos de prueba, servidor local, vendor
-├── test/           pruebas por capa y fixtures
-├── docs/           arquitectura, casos de uso, configuración, operación, observabilidad, seguridad, decisiones y capturas
-└── .github/workflows/publicar.yml
+├── src/                      domain · infrastructure · application · shared · main.js
+├── assets/                   logo, foto de cabecera, imagen para compartir (og.jpg) y límites provinciales
+│   └── personas/             fotos de las personas del proyecto (pie de página)
+├── tools/
+│   ├── construir-datos.mjs   constructor de datos.json (corre en Actions)
+│   ├── destrabar-publicacion.mjs  cancela ejecuciones atascadas
+│   ├── oraculo.py · generar-piloto.py · servir.mjs
+│   ├── excel/                generador del libro de captura (generar-excel.py)
+│   ├── catalogos/            generador y fuentes de los catálogos de cantones y países
+│   └── vendor/               SheetJS, solo para el constructor
+├── test/                     pruebas por capa y fixtures
+├── docs/                     arquitectura, casos de uso, configuración, operación, observabilidad, seguridad,
+│                             manual de usuario (manual-usuario.md), decisiones y capturas
+├── .github/
+│   ├── workflows/            ci.yml y publicar.yml
+│   └── dependabot.yml
+└── LICENSE · CHANGELOG.md · CONTRIBUTING.md · SECURITY.md · THIRD_PARTY_NOTICES.md
 ```
 
 ## Documentación
@@ -248,6 +287,7 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 - [Arquitectura](docs/arquitectura.md)
 - [Casos de uso](docs/casos-de-uso.md)
 - [Configuración: dónde se configura cada cosa y cómo se oculta la URL de la hoja](docs/configuracion.md)
+- [Manual de usuario: cómo leer el dashboard](docs/manual-usuario.md)
 - [Manual de operación](docs/operacion.md)
 - [Observabilidad](docs/observabilidad.md)
 - [Seguridad](docs/seguridad.md) y [política de seguridad](SECURITY.md)
@@ -281,9 +321,9 @@ información de los establecimientos turísticos y acompañar el desarrollo de e
 
 ## Licencia
 
-© 2026 Ing. Kevin Alexis Barrera Llerena. **Todos los derechos reservados.** El código se publica para consulta y
+© 2026 Kevin Alexis Barrera Llerena. **Todos los derechos reservados.** El código se publica para consulta y
 portafolio; su reutilización requiere autorización escrita del autor (ver [LICENSE](LICENSE)). Los componentes
-de terceros conservan sus licencias ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
+de terceros conservan sus licencias ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Los datos y el logo pertenecen al GAD Municipal de San Cristóbal de Patate.
 
 El sitio publica los datos reales que el municipio carga en su hoja (`DATOS_DE_PRUEBA` está en `false`). Los libros de
 [`test/fixtures/`](test/fixtures) y los que genera [`tools/generar-piloto.py`](tools/generar-piloto.py) son **ficticios** y

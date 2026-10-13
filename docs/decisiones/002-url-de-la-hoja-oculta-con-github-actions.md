@@ -1,6 +1,6 @@
-# ADR 002 — URL de la hoja oculta con GitHub Actions
+# ADR 002: URL de la hoja oculta con GitHub Actions
 
-**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Kevin Alexis Barrera Llerena
+**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

@@ -23,7 +23,7 @@
   <title>Estadísticas de Visitantes · Cantón Patate</title>
   <link rel="icon" href="assets/logo-patate.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="css/tema.css?v=2.7.0">
+  <link rel="stylesheet" href="css/tema.css?v=2.8.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js" integrity="sha512-Uyq/AgtqFM4vT+unIGTDr4wMJDTUK9O5w2PXMQeBCSR8koqHpVz+qBmcQ+9Oeo5H+EmvT4pp/5QrsqhIbyjHTQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script type="module" src="src/main.js"></script>
@@ -84,17 +84,17 @@
           <div class="kpi-encabezado"><span>Total visitantes</span>
             <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 12l10-4 12 4 10-4v22l-10 4-12-4-10 4z" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M20 26s-6-6-6-10a6 6 0 0 1 12 0c0 4-6 10-6 10z" fill="#E4E430" stroke="#0f3a1d" stroke-width="1"/><circle cx="20" cy="16" r="2.2" fill="#0f3a1d"/></svg>
           </div>
-          <div id="k-total" class="kpi-valor">—</div>
+          <div id="k-total" class="kpi-valor">…</div>
           <div id="k-variacion" class="kpi-variacion neutra"></div>
         </div>
         <div class="participacion-tarjetas participacion-compacta">
           <div class="participacion-tarjeta participacion-nacionales">
             <svg viewBox="0 0 36 28" aria-hidden="true"><rect x="3" y="3" width="30" height="7" rx="1" fill="#FFD100"/><rect x="3" y="10" width="30" height="7" fill="#034EA2"/><rect x="3" y="17" width="30" height="7" rx="1" fill="#ED1C24"/><circle cx="18" cy="13.5" r="3" fill="#6b4b1f"/></svg>
-            <span>Nacionales</span><strong id="k-nacionales">—</strong><em id="k-nacionales-pct" class="participacion-pct">—</em>
+            <span>Nacionales</span><strong id="k-nacionales">…</strong><em id="k-nacionales-pct" class="participacion-pct">…</em>
           </div>
           <div class="participacion-tarjeta participacion-extranjeros">
             <svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14" fill="#d9f0c6" stroke="#30A848" stroke-width="1.5"/><path d="M10 10c4 1 5 4 3 6s1 5 4 5 2 5 0 7M22 7c-1 3 1 5 4 5s4 3 3 6M8 22c3 0 4 2 4 5" fill="none" stroke="#30A848" stroke-width="3.2" stroke-linecap="round"/></svg>
-            <span>Extranjeros</span><strong id="k-extranjeros">—</strong><em id="k-extranjeros-pct" class="participacion-pct">—</em>
+            <span>Extranjeros</span><strong id="k-extranjeros">…</strong><em id="k-extranjeros-pct" class="participacion-pct">…</em>
           </div>
         </div>
       </section>
@@ -185,7 +185,7 @@
         <article class="panel panel-discapacidad">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="4.5" r="2" fill="currentColor"/><path d="M10 8v6h5l3 5M10 11h5M7 13a5 5 0 1 0 7 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><h2>Personas con discapacidad</h2></header>
           <p class="panel-sub">Registros mensuales según cuántas personas con discapacidad reportan</p>
-          <div class="discapacidad-resumen"><strong id="k-disc-personas">—</strong><span id="k-disc-pct"></span></div>
+          <div class="discapacidad-resumen"><strong id="k-disc-personas">…</strong><span id="k-disc-pct"></span></div>
           <ol id="lista-discapacidad" class="discapacidad"></ol>
           <p class="panel-nota">No se filtra por edad ni por género.</p>
         </article>
@@ -239,7 +239,7 @@
         <section class="tarjeta-persona tarjeta-municipio" aria-labelledby="titulo-municipio">
           <p id="titulo-municipio" class="persona-rol">Contacto del municipio</p>
           <div class="persona">
-            <div class="autor-avatar" aria-hidden="true">VL</div>
+            <div class="autor-avatar"><span aria-hidden="true">VL</span><img class="autor-foto" src="assets/personas/vanessa-lesano.jpg" alt="Foto de la Lic. Vanessa Lesano" width="56" height="56" loading="lazy" decoding="async"></div>
             <div class="autor-texto">
               <strong id="contacto-nombre"></strong>
               <span>Licenciada en Turismo · Contacto y apoyo del GAD Municipal de Patate</span>
@@ -250,7 +250,7 @@
         <section class="tarjeta-persona tarjeta-autor" aria-labelledby="titulo-autor">
           <p id="titulo-autor" class="persona-rol">Diseño y desarrollo</p>
           <div class="persona">
-            <div class="autor-avatar" aria-hidden="true">KB</div>
+            <div class="autor-avatar"><span aria-hidden="true">KB</span><img class="autor-foto" src="assets/personas/kevin-barrera.jpg" alt="Foto del Ing. Kevin Alexis Barrera Llerena" width="56" height="56" loading="lazy" decoding="async"></div>
             <div class="autor-texto">
               <strong>Ing. Kevin Alexis Barrera Llerena</strong>
               <span>Ingeniero de Software · Diseño, desarrollo, publicación y monitoreo del dashboard</span>
@@ -263,7 +263,7 @@
           </nav>
         </section>
       </div>
-      <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Todos los derechos reservados</p>
+      <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Diseño y desarrollo. Todos los derechos reservados.<br>Datos: GAD Municipal de San Cristóbal de Patate y establecimientos turísticos del cantón. Fotos publicadas con autorización de cada persona.</p>
     </div>
   </footer>
   <div id="aviso" class="aviso-region" role="status" aria-live="polite"></div>

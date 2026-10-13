@@ -247,12 +247,6 @@ test('elegir un año del catálogo sin visitantes deja el tablero en cero sin ro
   assert.equal(v.textos.periodo, `durante el ${vacio}`);
 });
 
-test('el intervalo de actualización que se muestra sale de la configuración', async () => {
-  const facade = crearTableroFacade({ obtener: async () => DATOS, config: { ...CONFIG, INTERVALO_AUTO_MS: 10 * 60 * 1000 } });
-  assert.equal(facade.intervaloMinutos(), 10);
-  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).intervaloMinutos(), CONFIG.INTERVALO_AUTO_MS / 60000);
-});
-
 test('un motivo del catálogo escrito sin tilde no se duplica con el que trae el visitante', async () => {
   const conTilde = DATOS.filas.find((f) => /[áéíóú]/i.test(f.motivo));
   assert.ok(conTilde, 'el libro de prueba tiene un motivo con tilde');
@@ -268,7 +262,6 @@ test('los minutos de publicación salen de la configuración y no del refresco d
   const config = { ...CONFIG, INTERVALO_AUTO_MS: 5 * 60 * 1000, PUBLICACION_MINUTOS: 15 };
   const facade = crearTableroFacade({ obtener: async () => DATOS, config });
   assert.equal(facade.publicacionMinutos(), 15);
-  assert.equal(facade.intervaloMinutos(), 5);
   assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).publicacionMinutos(), CONFIG.PUBLICACION_MINUTOS);
 });
 
@@ -404,4 +397,10 @@ test('un enlace con basura no rompe nada: se aplica solo lo válido', async () =
   assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
   assert.equal(facade.estado.filtros.anio, null);
   assert.deepEqual(facade.estado.filtros.rangoEdad, []);
+});
+
+test('el periodo cargado se lee de su primer a su último mes («dic 2024 a sep 2026»)', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.match(facade.carga().periodo, /^[a-z]{3} \d{4} a [a-z]{3} \d{4}$/);
 });

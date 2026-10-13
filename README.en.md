@@ -49,12 +49,14 @@ come from, why they come, and their age and gender. The requirements were:
   - visit reasons with an icon, a bar, a figure and a percentage;
   - distribution by age (0-30, 31-45, 46-60 and 61+) with **Total women** and **Total men**, their figures and percentages;
   - **people with disabilities**: the total, its share of visitors and how many monthly records fall in each range
-    (1-5, 6-10, 11-15). It is published only as an aggregate figure and is not crossed with age or gender.
+    (1 to 5, 6 to 10, 11 to 15 and 16 or more; the last one appears only if there are records). It is published only as an aggregate figure and is not crossed with age or gender.
 - **Real map** (OpenStreetMap + Leaflet) with three tabs: **Provinces**, **Cities** and **Countries**. Each tab
   changes the bubbles, the "Top" list and the framing, and stays in sync with the Country / City filter.
 - **Filters:**
-  - **several options at once** for business, country / city / province, reason, age and gender, with type-ahead search
-    (over 450 grouped origin options); year and month stay single-choice;
+  - **several options at once** for business, country / city / province, reason, age and gender, with type-ahead search;
+    year and month stay single-choice;
+  - **origin:** the combos list only the origins that have visitors in the data. The full catalog (about 450
+    entries) is used to validate records and place them on the map;
   - options inside one filter are added together and different filters are intersected;
   - **cross-filtering** by clicking the charts, the reasons list and the map;
   - **active-filter tags** above the charts, removed one by one or all at once, which filter the whole dashboard.
@@ -65,17 +67,19 @@ come from, why they come, and their age and gender. The requirements were:
 - **Refresh and freshness:** the site is published every 30 minutes (`PUBLICACION_MINUTOS`). The browser fetches
   on load, with the "Actualizar" button and automatically every 10 minutes (`INTERVALO_AUTO_MS`) while the tab is
   visible. The status bar shows four figures, each with a short explanation beneath it: **Última publicación** ("Datos nuevos cada 30
-  minutos", new data every 30 minutes), **Periodo con datos** (the first and last month loaded, e.g. "ene 2025 – sep 2026"), **Establecimientos con
+  minutos", new data every 30 minutes), **Periodo con datos** (the first and last month loaded, e.g. "dic 2024 a sep 2026"), **Establecimientos con
   datos** (businesses with at least one month recorded) and **Registros mensuales** (each one: a month, an origin and a reason). The browser's
-  fetch time is no longer shown. A chip tells whether publishing is up to date, delayed or stopped.
+  fetch time is no longer shown. A chip tells whether publishing is up to date, delayed or stopped. On medium screens (860 to 1279 px, including a
+  phone's desktop mode, around 980 px) the bar is arranged in two rows: chip and buttons on top, the four figures below.
 - **Data quality:** invalid rows are never dropped silently; they are listed with their tab and row.
 - **Header and footer:** the header carries the institutional identity and the place. The footer, with an "Acerca del dashboard" column, explains what
   the dashboard is, its privacy and security, and its sources and licenses; it thanks the municipality and
-  introduces, with their role written out, the municipality's contact and the author. If a social link of the
-  contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the other links.
+  introduces, with their role written out, the municipality's contact and the author, with their photos (initials as a fallback if a photo does not load). If a social link of the
+  contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the other links. The footer ends with the rights line:
+  the author and year, that the data belongs to the GAD Municipal de San Cristóbal de Patate and the canton's establishments, and that the photos are published with each person's permission.
 - **Responsive design:** on phones it is a single column, with a floating "Filtros" button that opens a bottom
   sheet; no horizontal scrolling.
-- **Light and dark mode:** a button switches the theme; with no saved choice it follows the device.
+- **Light and dark mode:** the site opens in light mode by default, without following the system theme. The moon button switches to dark and that choice is remembered on the device.
 
 ## How it works
 
@@ -126,7 +130,7 @@ The decisions that taught me the most:
   only publishes data that has already been validated.
 - **Measuring instead of assuming.** Every figure on the dashboard is reconciled against an independent
   calculation in Python, so a formula error never reaches production.
-- **Making the dashboard tell the truth about its own data.** If automatic publishing stops, the site does not
+- **Not claiming what is not verified.** If automatic publishing stops, the site does not
   keep saying "live": a chip says so.
 - **Designing for phones first.** Most visits to the municipal website come from a phone.
 
@@ -213,7 +217,31 @@ every scheduled publication:
 
 ## Run locally
 
-Requirements: Node 22 or later, and Python 3 with `openpyxl` (only for the oracle and the test-data generator).
+Requirements: Node 22 or later, and Python 3. The Python dependencies are needed only by the tools that use them:
+`openpyxl` for the oracle and the test-data generator, and `xlsxwriter` for the capture workbook generator.
+
+```bash
+pip install openpyxl xlsxwriter
+```
+
+`package.json` scripts:
+
+| Command | What it does |
+|---|---|
+| `npm test` | Runs all tests (`node --test "test/**/*.test.mjs"`) |
+| `npm run datos` | Generates `datos/datos.json` from the test workbook `test/fixtures/piloto-publicado.xlsx` |
+| `npm run oraculo` | Runs the independent Python oracle (`tools/oraculo.py`, needs `openpyxl`) and computes the expected figures |
+| `npm run servir` | Starts the cache-free local server |
+
+Python generators, run directly:
+
+| Script | Dependency | Purpose |
+|---|---|---|
+| `python tools/generar-piloto.py` | `openpyxl` | Fictitious test workbooks |
+| `python tools/excel/generar-excel.py --salida <file.xlsx>` | `xlsxwriter` | Capture workbook (`--modo completo` or `fixture`) |
+| `python tools/catalogos/generar-catalogos.py` | standard library only | Canton and country catalogs (see `tools/catalogos/LEEME.md`) |
+
+Common commands:
 
 ```bash
 npm test
@@ -237,12 +265,23 @@ with new styles. Since automatic publishing does not run locally, the freshness 
 
 ```
 ├── index.html · css/tema.css
-├── src/            domain · infrastructure · application · shared · main.js
-├── assets/         logo, header photo and province limits
-├── tools/          data builder, oracle, test-data generator, local server, vendor
-├── test/           tests per layer and fixtures
-├── docs/           architecture, use cases, configuration, operations, observability, security, decisions and screenshots
-└── .github/workflows/publicar.yml
+├── src/                      domain · infrastructure · application · shared · main.js
+├── assets/                   logo, header photo, share image (og.jpg) and province limits
+│   └── personas/             photos of the people behind the project (footer)
+├── tools/
+│   ├── construir-datos.mjs   datos.json builder (runs in Actions)
+│   ├── destrabar-publicacion.mjs  cancels stuck runs
+│   ├── oraculo.py · generar-piloto.py · servir.mjs
+│   ├── excel/                capture workbook generator (generar-excel.py)
+│   ├── catalogos/            generator and sources of the canton and country catalogs
+│   └── vendor/               SheetJS, only for the builder
+├── test/                     tests per layer and fixtures
+├── docs/                     architecture, use cases, configuration, operations, observability, security,
+│                             user manual (manual-usuario.md), decisions and screenshots
+├── .github/
+│   ├── workflows/            ci.yml and publicar.yml
+│   └── dependabot.yml
+└── LICENSE · CHANGELOG.md · CONTRIBUTING.md · SECURITY.md · THIRD_PARTY_NOTICES.md
 ```
 
 ## Documentation
@@ -252,6 +291,7 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 - [Architecture](docs/arquitectura.md)
 - [Use cases](docs/casos-de-uso.md)
 - [Configuration](docs/configuracion.md)
+- [User manual: how to read the dashboard](docs/manual-usuario.md)
 - [Operations manual](docs/operacion.md)
 - [Observability](docs/observabilidad.md)
 - [Security](docs/seguridad.md) and [security policy](SECURITY.md)
@@ -285,9 +325,9 @@ information from the tourism establishments and supporting the development of th
 
 ## License
 
-© 2026 Ing. Kevin Alexis Barrera Llerena. **All rights reserved.** The code is published for reference and
+© 2026 Kevin Alexis Barrera Llerena. **All rights reserved.** The code is published for reference and
 portfolio purposes; reuse requires the author's written permission (see [LICENSE](LICENSE)). Third-party
-components keep their own licenses ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
+components keep their own licenses ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). The data and the logo belong to the Municipal Government of San Cristóbal de Patate.
 
 The site publishes the real data the municipality loads into its spreadsheet (`DATOS_DE_PRUEBA` is `false`). The
 workbooks in [`test/fixtures/`](test/fixtures) and those generated by [`tools/generar-piloto.py`](tools/generar-piloto.py)

@@ -31,7 +31,7 @@ La barra de estado muestra cuatro datos, cada uno con una explicación visible d
 | Dato | Explicación visible |
 |---|---|
 | Última publicación | Datos nuevos cada 30 minutos |
-| Periodo con datos (p. ej. «ene 2025 – sep 2026») | Primer y último mes cargados |
+| Periodo con datos (p. ej. «ene 2025 a sep 2026») | Primer y último mes cargados |
 | Establecimientos con datos | Con al menos un mes registrado |
 | Registros mensuales | Cada uno: un mes, un origen y un motivo |
 

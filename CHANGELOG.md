@@ -2,19 +2,34 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [Sin publicar]
+
+## [2.8.0] - 2026-10-12
+
+### Cambiado
+- **Barra de estado responsive:** en pantallas medianas (de 860 a 1279 px, incluido el modo escritorio del celular, de unos 980 px) se ordena en dos filas: chip y botones arriba, los cuatro datos en cuatro columnas debajo. Por debajo de 860 px va en dos columnas.
+- **Pie:** las tarjetas de las dos personas muestran su foto, con las iniciales como respaldo si la foto no carga.
+- **Documentación corregida:** tema (claro por defecto; la elección de oscuro se recuerda), árbol de estructura, scripts y dependencias de Python, procedencia (los combos listan solo los orígenes con visitantes), rangos de discapacidad (se agrega 16 o más), derechos y licencias. Se usa «dashboard» de forma uniforme.
+
+### Añadido
+- Línea de derechos en el pie: autor y año, propiedad de los datos (GAD Municipal de San Cristóbal de Patate y establecimientos) y autorización de las fotos.
+- Fotos de las personas del proyecto en `assets/personas/`, incluidas en la publicación.
+- Prueba que impide emojis y guiones largos en el código y en la documentación.
+- Manual de usuario (`docs/manual-usuario.md`).
+
 ## [2.7.0] - 2026-10-12
 
 ### Cambiado
-- **Encabezado:** línea institucional «GAD Municipal de San Cristóbal de Patate», título y lugar. La barra de estado muestra una sola hora, la de la **última publicación**, junto a «Establecimientos con datos», «Registros mensuales» y «Datos nuevos cada 30 minutos». La hora de la consulta del navegador ya no se muestra, porque se confundía con la publicación.
+- **Encabezado:** línea institucional «GAD Municipal de San Cristóbal de Patate», título y lugar. La barra de estado muestra cuatro datos, cada uno con su explicación: **Última publicación**, **Periodo con datos**, **Establecimientos con datos** y **Registros mensuales**. La hora de la consulta del navegador ya no se muestra, porque se confundía con la publicación.
 - **Chip de frescura:** «Datos al día · publicados hace X», «Datos con retraso» y «Publicación detenida».
-- **Pie:** tres columnas («Sobre este tablero», «Privacidad y seguridad», «Fuentes y licencias»), agradecimientos al GAD y a la Lic. Vanessa Lesano, y dos tarjetas con el rol escrito arriba: «Contacto del municipio» y «Diseño y desarrollo». Los íconos de redes salen de un único sprite SVG.
+- **Pie:** tres columnas («Acerca del dashboard», «Privacidad y seguridad», «Fuentes y licencias»), agradecimientos al GAD y a la Lic. Vanessa Lesano, y dos tarjetas con el rol escrito arriba: «Contacto del municipio» y «Diseño y desarrollo». Los íconos de redes salen de un único sprite SVG.
 - **El flujo ya no puede apagarse por inactividad:** GitHub desactiva un flujo entero tras 60 días sin commits (y con él también el disparo de cron-job.org). En cada publicación, `destrabar` lo vuelve a habilitar por la API, lo que reinicia ese plazo (evento `flujo_mantenido`).
 - `destrabar` mide la antigüedad desde que la ejecución arrancó (`run_started_at`) y fuerza la cancelación si sigue viva pasado el doble del límite.
 - **Refuerzo de la publicación:** el `schedule` de GitHub pasa a `15,45 * * * *`, cada 30 minutos desfasado de cron-job.org (:00 y :30); si uno falla, el otro publica en 15 minutos o menos.
 
 ### Añadido
 - Redes de la Lic. Vanessa Lesano (Facebook y TikTok) en `CONTACTO_MUNICIPIO`. Una red sin dirección (LinkedIn) se muestra como botón «Pronto» y abre un aviso con los enlaces disponibles (`src/application/components/compartidos/aviso.js`): se cierra con el botón, con Esc o solo, y acepta únicamente enlaces `https://`.
-- **Periodo con datos** en la barra de estado («dic 2024 – sep 2026»), y cada dato con su explicación visible debajo.
+- **Periodo con datos** en la barra de estado («dic 2024 a sep 2026»), y cada dato con su explicación visible debajo.
 - El aviso no se cierra solo mientras el puntero o el foco están sobre él, y al cerrarlo con × o Esc el foco vuelve al botón que lo abrió. El nombre accesible del botón «Pronto» contiene su texto visible.
 - Documentación: casos de uso (`docs/casos-de-uso.md`), decisión 009 (publicación con doble disparador) y README, manual de operación, parámetros y observabilidad al día.
 
@@ -63,7 +78,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ## [2.3.1] - 2026-10-02
 
 ### Corregido
-- **Alineación del tablero:** las cabeceras de los paneles miden lo mismo aunque el título ocupe dos líneas; la barra de filtros activos pasó a una fila
+- **Alineación del dashboard:** las cabeceras de los paneles miden lo mismo aunque el título ocupe dos líneas; la barra de filtros activos pasó a una fila
   propia sobre las dos columnas, así que la columna izquierda y los paneles empiezan a la misma altura; la barra de los motivos ya no pisa la cifra
   ni el porcentaje; el panel de discapacidad ocupa el ancho completo cuando los paneles van en dos columnas.
 - **Diseño compacto como en la maqueta:** los paneles son más bajos (la página baja de unos 1550 a unos 1300 px a 1440 de ancho), «Nacionales» y «Extranjeros» pasan a la columna izquierda bajo el total, y los pies de las dos columnas quedan a la misma altura.
@@ -211,7 +226,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ## [1.0.0] - 2026-09-29
 
 ### Añadido
-- **Tablero:**
+- **Dashboard:**
   - datos de la Google Sheet compartida, con una pestaña por establecimiento;
   - indicadores, cuatro gráficos y mapa OpenStreetMap con provincias, burbujas y zoom por procedencia;
   - filtros con combo buscable y filtrado cruzado;

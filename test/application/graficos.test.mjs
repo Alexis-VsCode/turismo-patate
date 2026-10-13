@@ -73,7 +73,7 @@ test('la leyenda del gráfico de edad suma los totales de mujeres y de hombres c
 
 test('la leyenda no divide entre cero cuando no hay visitantes', () => {
   const eg = { rangos: ['0-30'], series: [{ genero: 'Femenino', valores: [0] }, { genero: 'Masculino', valores: [0] }] };
-  assert.equal(opcionesEdadGenero(eg, colores, '').legend.formatter('Total mujeres'), 'Total mujeres 0 (—)');
+  assert.equal(opcionesEdadGenero(eg, colores, '').legend.formatter('Total mujeres'), 'Total mujeres 0 (s/d)');
 });
 
 test('un género sin visitantes que no es de mujeres ni de hombres no ocupa un lugar en la leyenda', () => {

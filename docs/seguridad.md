@@ -5,7 +5,7 @@ tanto en GitHub Actions como en el navegador.
 
 ## Librerías
 
-Revisión del 29/09/2026 en NVD y en los avisos de GitHub:
+Revisión del 13/10/2026 en NVD y en los avisos de GitHub:
 
 | Librería | Versión | Dónde | Estado |
 |---|---|---|---|
@@ -29,6 +29,8 @@ font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
 
 - **Scripts:** solo propios y de cdnjs, todos con **SRI**. No hay scripts en línea ni `eval`; se verificó que
   ECharts no necesita `unsafe-eval`.
+- **Imágenes:** solo propias (`img-src 'self'`), `data:` y las teselas de OpenStreetMap. Por eso las fotos de las personas del
+  pie viven en `assets/` y no se enlazan desde Facebook ni LinkedIn: una imagen de otro origen el navegador la bloquearía.
 - **Datos:** solo del mismo sitio (`connect-src 'self'`). El navegador no puede contactar la hoja.
 - **`style-src-attr 'unsafe-inline'`:** es necesario porque Leaflet y ECharts posicionan elementos con estilos
   en línea. No habilita scripts.
@@ -40,11 +42,19 @@ font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'
 | XSS por nombres de pestaña o celdas | Escritura solo con `textContent`/`createElement`; tooltips de ECharts en `richText`; tooltips del mapa como nodos DOM | `src/application/components/**` |
 | Reintroducir APIs peligrosas | Prueba que falla si aparece `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `eval` o `new Function` en `src/` | `test/infrastructure/seguridad.test.mjs` |
 | Contaminación de prototipos | Agrupaciones con `Map` y claves `__proto__`, `constructor` y `prototype` descartadas | `src/domain/texto.js`, `estadisticas.js` |
+| Enlaces del contacto | Solo se aceptan direcciones `https://` sin parámetros; cualquier otra se descarta y el botón queda como «Pronto». Se valida en el dominio y de nuevo al abrir el aviso | `src/domain/enlace.js`, `src/application/components/compartidos/aviso.js` |
+| Aviso flotante | Título y mensaje se escriben con `textContent`; solo se admiten enlaces `https://` | `src/application/components/compartidos/aviso.js` |
 | Íconos de los motivos | Trazos fijos del código, creados con `createElementNS`; el nombre del motivo solo elige cuál usar y nunca se interpreta como HTML | `src/application/components/presentational/motivos.presentational.js` |
 | Caracteres invisibles o de control | `limpiarTexto()` los elimina y acota el largo a 120 caracteres | `src/domain/texto.js` |
 | Excel malicioso | SheetJS en modo restrictivo: sin fórmulas, HTML, estilos ni macros, y con topes de pestañas y filas | `src/infrastructure/lector-libro.js` |
 | `datos.json` alterado | El navegador valida versión, tipos, índices y rangos, y rechaza el paquete entero si algo no cumple | `src/infrastructure/contrato-datos.js` |
 | Respuesta gigante o lenta | Timeout de 15 s y tope de 20 MB leyendo el stream, aunque falte `Content-Length` | `src/infrastructure/seguridad.js` |
+
+## Flujo de publicación
+
+El job `destrabar` de [`publicar.yml`](../.github/workflows/publicar.yml) declara el permiso `actions: write` solo para sí mismo, porque
+cancela ejecuciones atascadas y reactiva el flujo mediante la API de Actions (ver [ADR 009](decisiones/009-publicacion-con-doble-disparador.md)).
+Los demás jobs no lo reciben.
 
 ## Privacidad
 

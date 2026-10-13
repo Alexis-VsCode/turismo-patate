@@ -27,10 +27,10 @@ export function pintarProblemas(elementos, { rechazos, avisos }) {
     const item = document.createElement('li');
     const donde = document.createElement('strong');
     donde.textContent = ubicacion;
-    item.append(donde, document.createTextNode(` — ${mensaje}`));
+    item.append(donde, document.createTextNode(`: ${mensaje}`));
     lista.appendChild(item);
   };
-  avisos.forEach((a) => agregar(a.pestana || '—', a.mensaje));
+  avisos.forEach((a) => agregar(a.pestana || TEXTOS.libroCompleto, a.mensaje));
   rechazos.slice(0, MAX_PROBLEMAS_VISIBLES).forEach((r) => agregar(TEXTOS.filaDe(r.pestana, r.fila), r.motivo));
   if (rechazos.length > MAX_PROBLEMAS_VISIBLES) {
     const item = document.createElement('li');

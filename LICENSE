@@ -7,6 +7,13 @@ Cualquier reutilización, total o parcial, requiere autorización previa y por e
 Los componentes y datos de terceros incluidos o utilizados conservan sus propias licencias; ver
 THIRD_PARTY_NOTICES.md.
 
+Aclaraciones:
+- Los datos de visitantes que muestra el dashboard pertenecen al GAD Municipal de San Cristóbal de Patate y a los
+  establecimientos que los declaran. Esta licencia no los cubre.
+- El logo del GAD es de su propiedad; se muestra solo para identificar a la institución dueña de los datos.
+- Las fotos de las personas (assets/personas/) se publican con la autorización de cada una y no se licencian.
+- El contenido de terceros se rige por THIRD_PARTY_NOTICES.md.
+
 Contacto: https://www.linkedin.com/in/alexisbarreradesarrolador/
 
 ---
@@ -18,3 +25,10 @@ No license is granted to use, copy, modify, distribute or sublicense it. Any reu
 requires the author's prior written permission.
 
 Third-party components and data included or used keep their own licenses; see THIRD_PARTY_NOTICES.md.
+
+Clarifications:
+- The visitor data shown by the dashboard belongs to the GAD Municipal de San Cristóbal de Patate and to the
+  establishments that report it. This license does not cover it.
+- The GAD logo is the GAD's property; it is shown only to identify the institution that owns the data.
+- The photos of people (assets/personas/) are published with each person's permission and are not licensed.
+- Third-party content is governed by THIRD_PARTY_NOTICES.md.

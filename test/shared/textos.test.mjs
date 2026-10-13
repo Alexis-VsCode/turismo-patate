@@ -48,7 +48,7 @@ test('los avisos del intervalo usan los minutos que reciben, sin cifras escritas
 });
 
 test('la barra de estado muestra una sola hora, la de publicación, para no confundirla con la consulta del navegador', () => {
-  const datos = TEXTOS.estadoDatos('12/10/2026 21:35', 30, 'nov 2024 – sep 2026', '17', '39', '38');
+  const datos = TEXTOS.estadoDatos('12/10/2026 21:35', 30, 'nov 2024 a sep 2026', '17', '39', '38');
   assert.deepEqual(datos.map((d) => d.rotulo), ['Última publicación', 'Periodo con datos', 'Establecimientos con datos', 'Registros mensuales']);
   assert.ok(datos.every((d) => d.detalle), 'cada dato trae su explicación visible al lado');
   assert.match(datos[0].detalle, /cada 30 minutos/);
@@ -70,4 +70,13 @@ test('ningún archivo de código escribe a mano una cifra de minutos', async () 
 
 test('la ayuda del chip habla de la publicación con los minutos que recibe', () => {
   assert.match(TEXTOS.frescuraAyuda(15), /se publican solos cada 15 minutos/);
+});
+
+test('textos.es.js no repite claves: una repetida pisa en silencio a la anterior', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { RAIZ } = await import('../helpers.mjs');
+  const fuente = readFileSync(join(RAIZ, 'src/shared/textos.es.js'), 'utf8');
+  const claves = [...fuente.matchAll(/^ {2}(\w+):/gm)].map((m) => m[1]);
+  assert.deepEqual(claves.filter((c, i) => claves.indexOf(c) !== i), []);
 });

@@ -443,6 +443,9 @@ svg { flex-shrink: 0; }
 .tarjeta-autor .persona-rol { color: var(--amarillo); }
 .persona { display: flex; align-items: center; gap: 12px; }
 .tarjeta-municipio .autor-avatar { background: var(--lima); color: #14330a; }
+/* La foto cubre las iniciales; si no carga, las iniciales quedan visibles debajo */
+.tarjeta-persona .autor-avatar { position: relative; overflow: hidden; width: 56px; height: 56px; box-shadow: 0 0 0 2px rgba(255, 255, 255, .25); }
+.autor-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .tarjeta-persona .autor-redes { width: 100%; }
 .tarjeta-persona .red { position: relative; flex: 1 1 0; min-width: 0; min-height: 36px; padding: 6px 8px; gap: 6px; font-size: 13px; }
 .tarjeta-persona .red svg { width: 16px; height: 16px; }
@@ -503,6 +506,12 @@ svg { flex-shrink: 0; }
   .panel-motivo { grid-column: 2; grid-row: 3; }
   .panel-origen { grid-column: 3; grid-row: 3; }
   .sin-datos { grid-row: 4; }
+  /* Barra de estado en dos filas: el chip y los botones arriba, los cuatro datos debajo en columnas iguales */
+  .barra-estado { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; row-gap: 8px; }
+  .estado-texto { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: 8px 16px; padding-top: 8px; border-top: 1px solid var(--borde); }
+  .chip-frescura { justify-self: start; }
+  /* Mientras carga, la barra trae una frase suelta en lugar de los cuatro datos: ocupa todo el ancho */
+  .estado-texto:not(:has(.estado-dato)) { display: block; }
   /* En la columna angosta cada rango ocupa dos líneas: nombre y porcentaje arriba, barra y cifra abajo */
   .panel-discapacidad .discapacidad-fila { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
   .panel-discapacidad .discapacidad-nombre { grid-column: 1; grid-row: 1; }

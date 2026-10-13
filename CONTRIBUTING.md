@@ -1,8 +1,11 @@
 # Guía de contribución
 
-Estas son las reglas con las que mantengo el proyecto. Si una regla choca con el código, **manda el código**: se
-corrige la regla en el mismo cambio. El código es de uso reservado (ver [LICENSE](LICENSE)); las propuestas de
-mejora son bienvenidas por issue antes de abrir un pull request.
+Esta guía explica cómo se trabaja en el proyecto. Si una regla choca con el código, **manda el código**: la regla se
+corrige en el mismo cambio.
+
+**Uso reservado.** El repositorio es de uso reservado (ver [LICENSE](LICENSE)). Se aceptan reportes de problemas por
+issue; las vulnerabilidades siguen [SECURITY.md](SECURITY.md) y no se reportan en público. Las contribuciones de código
+requieren acuerdo previo con el autor: no abras un pull request sin haberlo hablado antes.
 
 ## 1. Lectura inicial, en este orden
 
@@ -59,7 +62,26 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
   - actualizar la tabla de [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) y [`docs/seguridad.md`](docs/seguridad.md).
 - **Cambios en la CSP:** si se agrega un origen, se agrega solo ese, sin comodines amplios.
 
-## 5. Estilo de código
+## 5. SDD y TDD, siempre combinados
+
+1. **Spec con criterio observable.** Antes de programar se escribe qué debe pasar y cómo se demuestra: una prueba con
+   nombre o una medición en el navegador. Es proporcional al riesgo: una línea para un ajuste menor, una tabla para un
+   cambio que cruza capas.
+2. **Prueba roja primero.** Se escribe la prueba y se corre para ver que falla por la razón correcta.
+3. **Código.** Lo mínimo que la pone en verde.
+4. **Verde.** `npm test` completo, no solo la prueba nueva.
+5. **Mutación de prueba restaurada y comprobada.** Para demostrar que una prueba falla de verdad se rompe el código a
+   propósito (se invierte una condición, se cambia un valor) y se vuelve a lo anterior. La restauración se comprueba
+   con el hash, no con la palabra de quien la hizo:
+
+   ```
+   git hash-object --no-filters <ruta>     # antes de mutar
+   git hash-object --no-filters <ruta>     # después de restaurar: debe ser idéntico
+   ```
+
+   `git diff` y `git status` no bastan, porque comparan después de convertir los saltos de línea.
+
+## 6. Estilo de código y de texto
 
 - **Cabecera de archivo:**
   ```js
@@ -71,22 +93,25 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
   ```
 - **Funciones exportadas que cruzan capas:** JSDoc con `@param` y `@returns`. Los ayudantes privados y las
   opciones declarativas de los gráficos quedan exentos.
-- **Comentarios internos:** solo `// Paso N: …`, que explican el porqué. La historia de un cambio va al
+- **Comentarios internos:** solo `// Paso N: ...`, que explican el porqué. La historia de un cambio va al
   commit, nunca al código.
 - **Nombres del negocio en español**, funciones cortas, sin código muerto ni `console.log`.
-- **Sin emojis** en código ni en documentación.
+- **Textos visibles en [`src/shared/textos.es.js`](src/shared/textos.es.js)**, nunca sueltos en el código.
+- **Sin emojis ni guiones largos** (raya y semirraya, U+2014 y U+2013) en código ni en documentación: se usan comas, dos puntos, paréntesis o
+  la palabra «a» en los rangos.
+- **Se dice «dashboard»**, no «tablero», para nombrar el producto.
 
-## 6. Git
+## 7. Git
 
 - `git add` **por ruta explícita**. Nunca `git add -A`, `git add .` ni `git commit -a`.
-- **Asunto del commit:** `tipo(ámbito): descripción`, con `tipo` ∈ `feat`, `fix`, `refactor`, `test`, `docs`,
-  `chore`.
+- **Asunto del commit:** `tipo(ámbito): descripción`, con `tipo` entre `feat`, `fix`, `docs`, `refactor`, `test`,
+  `chore` y `ci`. No lleva SID, porque no es un repositorio institucional.
 - **No mezclar un refactor estructural con un cambio funcional** en el mismo commit.
 - **Sin firmas automáticas de herramientas** en commits ni en archivos: el historial refleja el trabajo del autor.
-- **Una mutación hecha para probar que una prueba falla se restaura y se comprueba** con
-  `git diff --quiet -- <ruta>`, no confiando en la palabra de quien la hizo.
+- **`main` está protegida** contra borrado y force-push. El autor publica directo a `main`; quien colabore con
+  acuerdo previo lo hace por la vía que el autor indique.
 
-## 7. Definición de terminado
+## 8. Definición de terminado
 
 1. `npm test` en verde, con un número de pruebas igual o mayor al anterior.
 2. **Si cambió un cálculo:** oráculo regenerado (`npm run oraculo`) y conciliación en verde.
@@ -95,6 +120,6 @@ número de pruebas, CVE) se escribe sin medirla en el momento.
    - celular sin scroll horizontal;
    - servido con `npm run servir` (sin caché) y con datos recién generados por `npm run datos`; si no, el chip de
      frescura marcará «detenida».
-4. Documentación de `docs/` y `CHANGELOG.md` actualizadas en el mismo cambio.
+4. Documentación de `docs/` y `CHANGELOG.md` actualizadas en el mismo cambio, sin emojis ni guiones largos.
 5. `git status --short` limpio.
 6. Tras el push, la ejecución de GitHub Actions termina en éxito y el sitio publicado funciona.

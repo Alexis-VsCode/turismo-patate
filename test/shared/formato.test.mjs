@@ -6,7 +6,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { numero, porcentaje, textoVariacion, fechaHora, tiempoTranscurrido, hora } from '../../src/shared/formato.js';
+import { numero, porcentaje, textoVariacion, fechaHora, tiempoTranscurrido, hora, SIN_DATO } from '../../src/shared/formato.js';
 
 test('numero usa el separador de miles de Ecuador y redondea', () => {
   assert.equal(numero(96452), '96.452');
@@ -15,11 +15,11 @@ test('numero usa el separador de miles de Ecuador y redondea', () => {
   assert.equal(numero(1234.6), '1.235');
 });
 
-test('porcentaje usa una decimal con coma y «—» sin base', () => {
+test('porcentaje usa una decimal con coma y «s/d» sin base', () => {
   assert.equal(porcentaje(0.821), '82,1%');
   assert.equal(porcentaje(1), '100,0%');
   assert.equal(porcentaje(0), '0,0%');
-  assert.equal(porcentaje(null), '—');
+  assert.equal(porcentaje(null), SIN_DATO);
 });
 
 test('textoVariacion lleva signo y es null sin año anterior', () => {
@@ -30,25 +30,25 @@ test('textoVariacion lleva signo y es null sin año anterior', () => {
   assert.equal(textoVariacion(undefined), null);
 });
 
-test('fechaHora da día, mes, año y hora con segundos en hora de Ecuador, y «—» si no es válida', () => {
+test('fechaHora da día, mes, año y hora con segundos en hora de Ecuador, y «s/d» si no es válida', () => {
   assert.equal(fechaHora(Date.UTC(2026, 8, 29, 17, 31, 5)), '29/09/2026 12:31:05');
   assert.equal(fechaHora('2026-09-29T05:05:09Z'), '29/09/2026 00:05:09');
-  assert.equal(fechaHora(null), '—');
-  assert.equal(fechaHora('no es fecha'), '—');
+  assert.equal(fechaHora(null), SIN_DATO);
+  assert.equal(fechaHora('no es fecha'), SIN_DATO);
 });
 
-test('tiempoTranscurrido usa minutos, horas y días y «—» sin dato', () => {
+test('tiempoTranscurrido usa minutos, horas y días y «s/d» sin dato', () => {
   assert.equal(tiempoTranscurrido(0), 'hace menos de 1 min');
   assert.equal(tiempoTranscurrido(7), 'hace 7 min');
   assert.equal(tiempoTranscurrido(60), 'hace 1 h');
   assert.equal(tiempoTranscurrido(135), 'hace 2 h 15 min');
   assert.equal(tiempoTranscurrido(60 * 24 * 3 + 30), 'hace 3 días');
   assert.equal(tiempoTranscurrido(60 * 24), 'hace 1 día');
-  assert.equal(tiempoTranscurrido(null), '—');
+  assert.equal(tiempoTranscurrido(null), SIN_DATO);
 });
 
-test('hora da solo hora y minutos en hora de Ecuador, y «—» si no es válida', () => {
+test('hora da solo hora y minutos en hora de Ecuador, y «s/d» si no es válida', () => {
   assert.equal(hora(Date.UTC(2026, 8, 29, 17, 31, 5)), '12:31');
   assert.equal(hora('2026-09-29T05:05:09Z'), '00:05');
-  assert.equal(hora(null), '—');
+  assert.equal(hora(null), SIN_DATO);
 });

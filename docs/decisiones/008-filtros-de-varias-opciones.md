@@ -1,6 +1,6 @@
-# ADR 008 — Filtros de varias opciones
+# ADR 008: Filtros de varias opciones
 
-**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Autor:** Kevin Alexis Barrera Llerena
+**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

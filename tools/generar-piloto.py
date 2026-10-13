@@ -119,7 +119,7 @@ def main():
     ins = wb.active
     ins.title = "_Instrucciones"
     for linea in [
-        "INSTRUCCIONES — Estadísticas de visitantes, Cantón Patate (DATOS DE PRUEBA)",
+        "INSTRUCCIONES: Estadísticas de visitantes, Cantón Patate (DATOS DE PRUEBA)",
         "",
         "1. Cada pestaña es un establecimiento. El nombre de la pestaña es el nombre que aparece en el dashboard.",
         "2. Para agregar un establecimiento: clic derecho en 'Plantilla' > Duplicar, y renombre la copia.",

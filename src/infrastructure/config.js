@@ -11,11 +11,15 @@ export const CONFIG = Object.freeze({
   INTERVALO_AUTO_MS: 10 * 60 * 1000,
   /** Cada cuántos minutos se vuelve a publicar el sitio (cron-job.org). Lo usan el aviso del chip y la documentación. */
   PUBLICACION_MINUTOS: 30,
+  /** Cada cuánto el navegador revisa si toca la consulta automática y repinta el chip de frescura. */
+  REVISION_AUTOMATICA_MS: 30 * 1000,
+  /** Límites provinciales del mapa, servidos por el propio sitio. */
+  URL_LIMITES: 'assets/ecu-provincias.geojson',
   /** Al cambiar de establecimiento se reusa la descarga si es más reciente que esto. */
   REUSO_MINIMO_MS: 60 * 1000,
   /**
    * Edad máxima, en minutos, de la publicación para cada estado del chip de frescura: al día cubre un ciclo de
-   * 30 minutos más la demora de Actions; retrasado tolera perder un ciclo entero antes de darla por vencida.
+   * ciclo de publicación más la demora de Actions; retrasado tolera perder un ciclo entero antes de darla por vencida.
    */
   UMBRALES_FRESCURA: Object.freeze({ alDiaMin: 45, retrasadoMin: 100 }),
   /** Límites de la descarga: una respuesta lenta o gigante produce un aviso, nunca un cuelgue. */

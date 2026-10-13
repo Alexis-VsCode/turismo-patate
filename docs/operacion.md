@@ -1,6 +1,24 @@
 # Manual de operación
 
-Guía para quien administra la hoja de cálculo y el dashboard. No hace falta saber programar.
+Guía para quien administra la hoja de cálculo y el dashboard. No hace falta saber programar. Para aprender a leer el dashboard, vea el [manual del usuario](manual-usuario.md).
+
+## Importar el Excel a Google Sheets
+
+Cuando se genera un libro nuevo con [`tools/excel/generar-excel.py`](../tools/excel/generar-excel.py), se sube a Google Sheets así. Su primera
+pestaña, `_Inicio`, trae las instrucciones de uso.
+
+1. Abra la hoja de cálculo de Google que ya usa el municipio.
+2. Menú **Archivo → Importar**.
+3. Pestaña **Subir** y elija el archivo `.xlsx` (o arrástrelo).
+4. En «Ubicación de importación» marque **Reemplazar hoja de cálculo** y pulse **Importar datos**. Con esa opción la hoja conserva su
+   dirección y sus permisos.
+5. Menú **Archivo → Compartir → Publicar en la web**.
+6. En «Vínculo», elija **Documento completo** y, en el segundo desplegable, el formato **Microsoft Excel (.xlsx)**.
+7. Deje marcada la casilla **Volver a publicar automáticamente cuando se hagan cambios** y pulse **Publicar**.
+8. Copie el enlace que aparece. **Ese enlace publicado es el que va en el secreto `SHEET_URL`** del repositorio. Lo configura el autor del dashboard;
+   si el enlace cambió, envíeselo (ver [configuracion.md](configuracion.md#rotar-la-url)).
+
+Si solo reemplazó el contenido y el enlace publicado no cambió, no hay que tocar nada más: la siguiente publicación ya usa los datos nuevos.
 
 ## Cómo llegan los datos al dashboard
 
@@ -23,14 +41,14 @@ La barra muestra cuatro datos y, debajo de cada uno, una explicación visible. L
 | Dato | Explicación visible | Qué cuenta |
 |---|---|---|
 | **Última publicación** | Datos nuevos cada 30 minutos | La hora en que Actions construyó los datos a partir de la hoja. No es la hora en que alguien escribió en el Excel |
-| **Periodo con datos** | Primer y último mes cargados | El primer y el último mes con registros, por ejemplo «ene 2025 – sep 2026» |
+| **Periodo con datos** | Primer y último mes cargados | El primer y el último mes con registros, por ejemplo «ene 2025 a sep 2026» |
 | **Establecimientos con datos** | Con al menos un mes registrado | «17 de 39»: cuántas pestañas de establecimiento tienen al menos un registro válido, sobre el total de pestañas que cuentan como establecimiento |
 | **Registros mensuales** | Cada uno: un mes, un origen y un motivo | Filas de la hoja: cada una es un mes de un origen y un motivo de visita en un establecimiento. No es el número de visitantes |
 
 ## Qué pestañas cuentan como establecimiento
 
 Todas, excepto:
-- las que **empiezan con `_`**, como `_Instrucciones` y `_Catalogos`;
+- las que **empiezan con `_`**, como `_Inicio` y `_Catalogos`;
 - las que **contienen «plantilla»**, como `Plantilla`, `Plantilla (2)` y `Copia de Plantilla`.
 
 El nombre de la pestaña es el nombre que aparece en el dashboard.
@@ -52,8 +70,8 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
 - **Personas con discapacidad** no puede superar el total de visitantes de la fila. La hoja no deja escribir un valor mayor y la fila se pinta de
   rojo; si aun así llegara al dashboard, esa fila se rechaza con su pestaña y su fila.
 - **Estado** dice «OK» o qué corregir («Revisar: discapacidad 19 mayor que el total 16», «Falta la ciudad»). Las filas en rojo no se publican.
-- **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises no se escriben; para que nadie las pise,
-  protéjalas en Google Sheets (*Datos → Proteger hojas y rangos*).
+- **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises tienen fórmulas y **no se escriben**; para que nadie
+  las pise, protéjalas en Google Sheets (*Datos → Proteger hojas y rangos*).
 - **Por qué ocho columnas y no una por género:** así el dashboard puede filtrar por edad y por género a la vez y mostrar «Total mujeres» y
   «Total hombres» por rango de edad con cifras exactas.
 
@@ -77,7 +95,9 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
 
 1. Haga clic derecho en la pestaña `Plantilla` → **Duplicar**.
 2. Renombre la copia con el nombre del establecimiento.
-3. Llene las filas con los desplegables.
+3. Llene las filas con los desplegables. Las columnas grises tienen fórmulas: no se escriben.
+4. Comparta la pestaña solo con quien la va a llenar y protéjala (*Datos → Proteger hojas y rangos*), dejando las columnas grises protegidas
+   para todos menos para los administradores.
 
 Aparece en el dashboard en la siguiente publicación, hasta unos 35 minutos después: en el combo, en los filtros, en las tarjetas y en el mapa.
 
@@ -174,15 +194,18 @@ nombre, y actualice el crédito en `index.html` y en `THIRD_PARTY_NOTICES.md`.
 
 ## Publicar el LinkedIn de la Lic. Vanessa Lesano
 
+Este cambio **lo hace el autor del dashboard**, porque es una edición del código (`config.js`). Quien administra la hoja solo le entrega la
+dirección del perfil.
+
 La Lic. Vanessa Lesano es Licenciada en Turismo. El pie del dashboard, en su columna «Acerca del dashboard», muestra el contacto del municipio con tres redes, siempre en este orden: Facebook, TikTok y LinkedIn. Facebook y TikTok ya
 tienen su enlace (el de Facebook es https://www.facebook.com/vane.lesano.martinez). LinkedIn está vacío: mientras siga así, su botón dice **«Pronto»** y, al pulsarlo, abre un aviso con los otros enlaces.
 
 Para publicarlo:
 
-1. Copie la dirección de su perfil de LinkedIn. Debe empezar con `https://` y tener la forma `https://www.linkedin.com/in/su-usuario`, sin
+1. La Lic. Vanessa Lesano copia la dirección de su perfil de LinkedIn. Debe empezar con `https://` y tener la forma `https://www.linkedin.com/in/su-usuario`, sin
    parámetros de rastreo (nada después de un `?`).
-2. En [`src/infrastructure/config.js`](../src/infrastructure/config.js), péguela entre las comillas de `CONTACTO_MUNICIPIO.enlaces.linkedin`.
-3. Suba el cambio al repositorio. Al llegar a `main`, el dashboard se publica de nuevo con el botón ya convertido en enlace.
+2. El autor, en [`src/infrastructure/config.js`](../src/infrastructure/config.js), la pega entre las comillas de `CONTACTO_MUNICIPIO.enlaces.linkedin`.
+3. El autor sube el cambio al repositorio. Al llegar a `main`, el dashboard se publica de nuevo con el botón ya convertido en enlace.
 
 Una dirección que no cumpla la forma esperada no se muestra: el botón desaparece en lugar de quedar roto. Si no aparece, revise que la dirección esté bien escrita.
 

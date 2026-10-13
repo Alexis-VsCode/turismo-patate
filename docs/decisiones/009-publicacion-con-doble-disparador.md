@@ -1,4 +1,4 @@
-# ADR 009 — Publicación con doble disparador y limpieza de ejecuciones trabadas
+# ADR 009: Publicación con doble disparador y limpieza de ejecuciones trabadas
 
 **Estado:** Aceptada · **Fecha:** 2026-10-12 · **Autor:** Ing. Kevin Alexis Barrera Llerena
 

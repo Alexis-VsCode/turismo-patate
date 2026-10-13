@@ -29,3 +29,9 @@ test('el panel de filtros sigue a la izquierda hasta los 860 px', () => {
 test('entre 860 y 1279 px la columna de filtros se conserva y es más angosta', () => {
   assert.match(css, /@media \(min-width: 860px\) and \(max-width: 1279px\) \{[^}]*\.tablero \{ grid-template-columns: 230px minmax\(0, 1fr\) minmax\(0, 1fr\); \}/);
 });
+
+test('en pantallas medianas (incluido el modo escritorio del celular) la barra de estado pasa a dos filas con los datos en cuatro columnas', () => {
+  const medio = css.slice(css.indexOf('@media (min-width: 860px) and (max-width: 1279px)'));
+  assert.match(medio, /\.barra-estado \{ display: grid;/);
+  assert.match(medio, /\.estado-texto \{[^}]*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+});

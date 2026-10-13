@@ -6,7 +6,7 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { MESES_CORTOS, ORDEN_GENEROS, TEXTOS } from '../../../shared/textos.es.js';
-import { numero, porcentaje } from '../../../shared/formato.js';
+import { numero, porcentaje, SIN_DATO } from '../../../shared/formato.js';
 import { valoresDeFiltro } from '../../../domain/filtros.js';
 
 /** Tooltip común: en canvas (richText) y con los colores del tema, también en modo oscuro. */
@@ -27,7 +27,7 @@ export function opcionesEvolucion(evo, colores, mesResaltado) {
     animationDuration: 400,
     grid: { left: 8, right: 12, top: 36, bottom: 8, containLabel: true },
     legend: { top: 4, left: 8, itemWidth: 12, itemHeight: 12, textStyle: { color: colores.texto, fontSize: 12 } },
-    tooltip: { ...tooltipBase(colores), trigger: 'axis', valueFormatter: (v) => (v === null || v === undefined ? '—' : numero(v)) },
+    tooltip: { ...tooltipBase(colores), trigger: 'axis', valueFormatter: (v) => (v === null || v === undefined ? SIN_DATO : numero(v)) },
     xAxis: { type: 'category', data: MESES_CORTOS, axisLabel: { color: colores.texto, interval: 0, fontSize: 11 }, axisTick: { show: false }, axisLine: { lineStyle: { color: colores.rejilla } } },
     yAxis: { type: 'value', axisLabel: { color: colores.texto, formatter: (v) => numero(v) }, splitLine: { lineStyle: { color: colores.rejilla } } },
     series: [

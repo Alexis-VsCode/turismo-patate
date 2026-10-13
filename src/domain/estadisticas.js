@@ -33,7 +33,7 @@ export function kpis(filas) {
   const todos = total(filas);
   const nacionales = total(filas.filter((f) => f.nacional));
   const extranjeros = todos - nacionales;
-  // Paso 2: sin visitantes los porcentajes son null (se muestran «—»), no 0 %
+  // Paso 2: sin visitantes los porcentajes son null (se muestran como «sin dato»), no 0 %
   return {
     total: todos, nacionales, extranjeros,
     pctNacionales: todos ? nacionales / todos : null,
@@ -152,7 +152,7 @@ export function opcionesDeFiltros(filas, catalogo = {}) {
  *   hasta: ?{ anio: number, mes: number } }} `desde` y `hasta` son el primer y el último mes con datos, o null sin filas
  */
 export function resumenCarga(filas, establecimientos) {
-  const registros = new Set(filas.map((f) => [f.establecimiento, f.anio, f.mes, f.pais, f.provincia, f.ciudad, f.motivo].join('')));
+  const registros = new Set(filas.map((f) => [f.establecimiento, f.anio, f.mes, f.pais, f.provincia, f.ciudad, f.motivo].join('\u0001')));
   // Paso 1: el periodo se mide en meses corridos (año * 12 + mes) para comparar sin fechas
   const meses = filas.map((f) => f.anio * 12 + f.mes);
   const mes = (n) => ({ anio: Math.floor(n / 12), mes: n % 12 });

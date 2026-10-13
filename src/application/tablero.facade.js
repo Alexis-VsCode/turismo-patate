@@ -5,7 +5,8 @@
  *   a la interfaz la vista ya calculada. No toca el DOM: se prueba completa en Node.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { TEXTOS } from '../shared/textos.es.js';
+import { TEXTOS, MESES_CORTOS } from '../shared/textos.es.js';
+import { SIN_DATO } from '../shared/formato.js';
 import { MESES, RANGOS_EDAD } from '../domain/visitante.js';
 import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo,
@@ -191,17 +192,12 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }
 
-  /** Registros de la hoja, establecimientos con datos y periodo cargado («nov 2024 – sep 2026»); null sin datos. */
+  /** Registros de la hoja, establecimientos con datos y periodo cargado («nov 2024 a sep 2026»); null sin datos. */
   function carga() {
     if (!estado.datos) return null;
     const resumen = resumenCarga(estado.datos.filas, estado.datos.establecimientos);
-    const corto = (m) => `${MESES[m.mes].slice(0, 3).toLowerCase()} ${m.anio}`;
-    return { ...resumen, periodo: resumen.desde ? `${corto(resumen.desde)} – ${corto(resumen.hasta)}` : '—' };
-  }
-
-  /** Cada cuántos minutos se actualiza el tablero, tomado de la configuración para que ningún texto repita la cifra. */
-  function intervaloMinutos() {
-    return Math.round(config.INTERVALO_AUTO_MS / 60000);
+    const corto = (m) => `${MESES_CORTOS[m.mes].toLowerCase()} ${m.anio}`;
+    return { ...resumen, periodo: resumen.desde ? TEXTOS.rangoMeses(corto(resumen.desde), corto(resumen.hasta)) : SIN_DATO };
   }
 
   /** Cada cuántos minutos se vuelve a publicar el sitio, tomado de la configuración. */
@@ -296,7 +292,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros, enlace, aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, carga, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros, enlace, aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, carga, tocaActualizar, publicacionMinutos, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: copiarFiltros(estado.filtros) }; },
   };
 }

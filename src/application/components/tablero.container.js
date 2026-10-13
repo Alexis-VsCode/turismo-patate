@@ -22,8 +22,6 @@ import { mostrarAviso } from './compartidos/aviso.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 import { crearSelectorTema } from './compartidos/selector-tema.js';
 
-/** Intervalo con que se revisa si toca la actualización automática. */
-const REVISION_AUTOMATICA_MS = 30 * 1000;
 
 /** Colores del tema leídos de los tokens CSS, para que gráficos y mapa usen la misma paleta. */
 function coloresDelTema() {
@@ -92,7 +90,7 @@ export function montarTablero(facade, config) {
     if (p.seriesType === 'bar') facade.elegirMes(Number(p.seriesName), p.dataIndex);
   });
 
-  // Paso 2b: el enlace de la página reproduce los filtros; copiarlo no necesita permisos especiales
+  // Paso 3: el enlace de la página reproduce los filtros; copiarlo no necesita permisos especiales
   async function copiarEnlace() {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -248,7 +246,7 @@ export function montarTablero(facade, config) {
     pintarSalud();
     if (facade.tocaActualizar()) facade.cargar(true);
   };
-  setInterval(revisar, REVISION_AUTOMATICA_MS);
+  setInterval(revisar, config.REVISION_AUTOMATICA_MS);
   document.addEventListener('visibilitychange', revisar);
   const observador = new ResizeObserver(() => {
     Object.values(graficos).forEach((g) => g.resize());
@@ -262,7 +260,7 @@ export function montarTablero(facade, config) {
   pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO, avisarProximamente);
   $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.publicacionMinutos());
   $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());
-  fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })
+  fetch(config.URL_LIMITES, { credentials: 'omit' })
     .then((r) => r.json())
     .then((geojson) => {
       mapa = crearMapa($('g-mapa'), geojson, colores, config.PROVINCIA_RESALTADA, (p) => facade.alternarFiltro('procedencia', p));

@@ -48,9 +48,9 @@ la regla de dependencias se mantiene.
 | **Fachada** | `src/application/tablero.facade.js` | Estado de datos y filtros, opciones de los combos (años y motivos unen visitantes y catálogo), pestaña del mapa, política de actualización, frescura, vista calculada (incluidos los textos que dependen del periodo) y suscripción a eventos | No toca el DOM; recibe la descarga, el reloj y la visibilidad inyectados |
 | **Container** | `src/application/components/tablero.container.js` | Traduce eventos del DOM y de los gráficos en acciones de la fachada y pinta su vista | No calcula ni descarga |
 | **Presentacionales** | `src/application/components/presentational/*.js` | Dibujan gráficos, mapa por pestañas, motivos con íconos, tarjetas (con variación y cifras animadas), chip de frescura, chips de filtros, problemas de carga y contacto del municipio (`contacto.presentational.js`: enlaces y botones «Pronto») | No guardan estado ni acceden a datos |
-| **Compartidos** | `src/application/components/compartidos/*.js` | Combo de varias opciones con búsqueda accesible (casillas, grupos, teclado), llenado seguro de `<select>`, panel de filtros deslizable para celular y tableta, selector de tema y aviso flotante (`aviso.js`: un solo aviso a la vez, solo enlaces `https://`, se cierra con botón, Escape o temporizador) | — |
-| **Shared** | `src/shared/textos.es.js`, `formato.js`, `tema.js`, `tema-inicial.js` | Textos visibles, formato de números y fechas, y lógica del tema. `tema-inicial.js` es un script clásico que se ejecuta antes del primer pintado (ver [ADR 005](decisiones/005-tema-y-excepciones-de-color.md)) | — |
-| **Raíz** | `src/main.js` | Une la infraestructura con la fachada y monta el container | — |
+| **Compartidos** | `src/application/components/compartidos/*.js` | Combo de varias opciones con búsqueda accesible (casillas, grupos, teclado), llenado seguro de `<select>`, panel de filtros deslizable para celular y tableta, selector de tema y aviso flotante (`aviso.js`: un solo aviso a la vez, solo enlaces `https://`, se cierra con botón, Escape o temporizador) | Ninguna |
+| **Shared** | `src/shared/textos.es.js`, `formato.js`, `tema.js`, `tema-inicial.js` | Textos visibles, formato de números y fechas, y lógica del tema. `tema-inicial.js` es un script clásico que se ejecuta antes del primer pintado (ver [ADR 005](decisiones/005-tema-y-excepciones-de-color.md)) | Ninguna |
+| **Raíz** | `src/main.js` | Une la infraestructura con la fachada y monta el container | Ninguna |
 
 La regla de dependencias está en [`CONTRIBUTING.md`](../CONTRIBUTING.md#3-arquitectura-la-regla-de-dependencias-no-se-rompe),
 y la hace cumplir [`test/arquitectura.test.mjs`](../test/arquitectura.test.mjs).
@@ -142,6 +142,7 @@ El navegador lo implementa [`tablero.facade.js`](../src/application/tablero.faca
 | `test/shared/` | Formato, textos que dependen de los filtros y tema (incluido el script inicial, ejecutado en un contexto aislado) |
 | `test/tema-tokens.test.mjs` | Todo token de color usado existe |
 | `test/arquitectura.test.mjs` | Regla de dependencias |
+| `test/sin-azul.test.mjs` | Ningún azul fuera de las excepciones del ADR 005 |
 
 ## Formato mensual y filtros de varias opciones
 

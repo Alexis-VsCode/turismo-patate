@@ -1,6 +1,6 @@
-# ADR 004 — Capas semihexagonales en JavaScript sin framework
+# ADR 004: Capas semihexagonales en JavaScript sin framework
 
-**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Kevin Alexis Barrera Llerena
+**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 
