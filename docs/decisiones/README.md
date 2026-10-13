@@ -10,3 +10,4 @@
 | [006](006-catalogo-en-bloques-en-una-pestana.md) | Catálogo en bloques dentro de una sola pestaña |
 | [007](007-formato-mensual-de-captura.md) | Formato mensual de captura con totales por rango de edad |
 | [008](008-filtros-de-varias-opciones.md) | Filtros de varias opciones |
+| [009](009-publicacion-con-doble-disparador.md) | Publicación con doble disparador y limpieza de ejecuciones trabadas |

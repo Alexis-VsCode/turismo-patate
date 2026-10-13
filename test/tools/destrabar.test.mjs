@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { RAIZ } from '../helpers.mjs';
-import { ejecucionesTrabadas, MINUTOS_TRABADA } from '../../tools/destrabar-publicacion.mjs';
+import { ejecucionesTrabadas, hayQueForzar, MINUTOS_TRABADA } from '../../tools/destrabar-publicacion.mjs';
 
 const AHORA = Date.parse('2026-10-12T12:00:00Z');
 const hace = (min) => new Date(AHORA - min * 60 * 1000).toISOString();
@@ -37,6 +37,17 @@ test('la ejecución actual nunca se cancela a sí misma', () => {
   assert.deepEqual(ejecucionesTrabadas(runs, AHORA, 7), []);
 });
 
+test('la antigüedad se mide desde que la ejecución arrancó, no desde que se creó (un re-run de una vieja es nuevo)', () => {
+  const rerun = { id: 5, status: 'in_progress', created_at: hace(600), run_started_at: hace(2) };
+  assert.deepEqual(ejecucionesTrabadas([rerun], AHORA, 99), []);
+});
+
+test('se fuerza la cancelación si la ejecución sigue activa pasado el doble del límite', () => {
+  assert.equal(hayQueForzar({ status: 'waiting', run_started_at: hace(2 * MINUTOS_TRABADA + 1) }, AHORA), true);
+  assert.equal(hayQueForzar({ status: 'waiting', run_started_at: hace(MINUTOS_TRABADA + 1) }, AHORA), false);
+  assert.equal(hayQueForzar({ status: 'completed', run_started_at: hace(600) }, AHORA), false);
+});
+
 test('el límite deja margen de sobra a una publicación normal, que tarda un par de minutos', () => {
   assert.ok(MINUTOS_TRABADA >= 20 && MINUTOS_TRABADA < 30);
 });
@@ -56,4 +67,9 @@ test('el despliegue espera a la limpieza, y la limpieza nunca bloquea la publica
   assert.match(destrabar, /actions: write/);
   assert.match(destrabar, /node tools\/destrabar-publicacion\.mjs/);
   assert.match(FLUJO, /needs: \[construir, destrabar\]/);
+});
+
+test('cada publicación mantiene activo el flujo, para que GitHub no lo apague a los 60 días sin commits', () => {
+  const codigo = readFileSync(join(RAIZ, 'tools/destrabar-publicacion.mjs'), 'utf8');
+  assert.match(codigo, /\/actions\/workflows\/\$\{flujo\}\/enable`, 'PUT'/);
 });

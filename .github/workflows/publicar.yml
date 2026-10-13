@@ -1,7 +1,8 @@
 # Publica el dashboard en GitHub Pages con los datos frescos de la hoja.
 # La URL de la hoja vive solo en el secreto SHEET_URL: nunca llega al sitio ni al repositorio.
-# Quién lo arranca: cron-job.org (una sola tarea, cada 30 minutos, vía workflow_dispatch) es el disparador principal.
-# El schedule de abajo es solo un respaldo cada hora, desfasado del principal: GitHub puede retrasarlo o descartarlo bajo carga.
+# Quién lo arranca: cron-job.org (una sola tarea, cada 30 minutos en punto y a la media, vía workflow_dispatch) es el disparador
+# principal. El schedule de abajo es el refuerzo propio de GitHub: también cada 30 minutos, todo el día, desfasado 15 minutos;
+# si uno de los dos falla, el otro publica. GitHub puede retrasar su schedule bajo carga y lo pausa tras 60 días sin commits.
 # Autor: Kevin Alexis Barrera Llerena 2026
 name: Publicar dashboard
 
@@ -9,7 +10,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '15 * * * *'
+    - cron: '15,45 * * * *'
   workflow_dispatch:
 
 permissions:

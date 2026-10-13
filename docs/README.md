@@ -2,7 +2,8 @@
 
 | Documento | Para quién | Contenido |
 |---|---|---|
-| [arquitectura.md](arquitectura.md) | Desarrollo | Capas, regla de dependencias, flujo de datos y ciclo de actualización |
+| [arquitectura.md](arquitectura.md) | Desarrollo | Componentes por capa, secuencia de publicación con sus dos disparadores, regla de dependencias y ciclo de actualización |
+| [casos-de-uso.md](casos-de-uso.md) | Todos | Qué hace cada actor (visitante, establecimiento, municipio, autor y sistema), con un diagrama y una tabla por caso |
 | [configuracion.md](configuracion.md) | Administración y desarrollo | Qué se configura, dónde y cómo se cambia; cómo se oculta la URL de la hoja |
 | [operacion.md](operacion.md) | Administración de la hoja | Agregar establecimientos, columnas, catálogos, permisos y qué hacer si algo falla |
 | [observabilidad.md](observabilidad.md) | Administración y desarrollo | Frescura de los datos, chip de estado, logs y resumen de cada publicación, y sus límites |

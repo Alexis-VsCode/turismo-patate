@@ -52,3 +52,8 @@ test('el respaldo de GitHub no corre más seguido que la publicación', () => {
   assert.equal(horas, '*');
   assert.ok(intervaloCron(minutos) >= CONFIG.PUBLICACION_MINUTOS, `el cron dispara cada ${intervaloCron(minutos)} minutos`);
 });
+
+test('el respaldo de GitHub corre cada media hora desfasado de cron-job.org, que dispara en punto y a la media', () => {
+  const flujo = readFileSync(join(RAIZ, '.github/workflows/publicar.yml'), 'utf8');
+  assert.match(flujo, /cron: '15,45 \* \* \* \*'/);
+});

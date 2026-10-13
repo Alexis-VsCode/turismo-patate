@@ -94,6 +94,10 @@ test('resumenCarga cuenta filas de la hoja (mes, origen y motivo) y establecimie
     { ...base, establecimiento: 'A', motivo: 'Ocio', edad: 0, genero: 'Femenino', cantidad: 1 },
     { ...base, establecimiento: 'B', mes: 1, edad: 46, genero: 'Femenino', cantidad: 4 },
   ];
-  assert.deepEqual(resumenCarga(filas, ['A', 'B', 'C']), { registros: 3, conDatos: 2, establecimientos: 3 });
-  assert.deepEqual(resumenCarga([], ['A']), { registros: 0, conDatos: 0, establecimientos: 1 });
+  assert.deepEqual(resumenCarga(filas, ['A', 'B', 'C']), {
+    registros: 3, conDatos: 2, establecimientos: 3, desde: { anio: 2026, mes: 0 }, hasta: { anio: 2026, mes: 1 },
+  });
+  assert.deepEqual(resumenCarga([], ['A']), { registros: 0, conDatos: 0, establecimientos: 1, desde: null, hasta: null });
+  const viejo = { ...base, establecimiento: 'C', anio: 2024, mes: 10, edad: 0, genero: 'Femenino', cantidad: 1 };
+  assert.deepEqual(resumenCarga([...filas, viejo], ['A']).desde, { anio: 2024, mes: 10 });
 });

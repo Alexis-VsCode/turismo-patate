@@ -148,13 +148,19 @@ export function opcionesDeFiltros(filas, catalogo = {}) {
  * de un establecimiento) se reparte en varias filas internas, una por casilla de edad y género con visitantes.
  * @param {Array<object>} filas filas internas ya validadas
  * @param {string[]} establecimientos todas las pestañas de establecimiento, tengan datos o no
- * @returns {{ registros: number, conDatos: number, establecimientos: number }}
+ * @returns {{ registros: number, conDatos: number, establecimientos: number, desde: ?{ anio: number, mes: number },
+ *   hasta: ?{ anio: number, mes: number } }} `desde` y `hasta` son el primer y el último mes con datos, o null sin filas
  */
 export function resumenCarga(filas, establecimientos) {
   const registros = new Set(filas.map((f) => [f.establecimiento, f.anio, f.mes, f.pais, f.provincia, f.ciudad, f.motivo].join('')));
+  // Paso 1: el periodo se mide en meses corridos (año * 12 + mes) para comparar sin fechas
+  const meses = filas.map((f) => f.anio * 12 + f.mes);
+  const mes = (n) => ({ anio: Math.floor(n / 12), mes: n % 12 });
   return {
     registros: registros.size,
     conDatos: new Set(filas.map((f) => f.establecimiento)).size,
     establecimientos: establecimientos.length,
+    desde: meses.length ? mes(Math.min(...meses)) : null,
+    hasta: meses.length ? mes(Math.max(...meses)) : null,
   };
 }

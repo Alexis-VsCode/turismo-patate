@@ -150,7 +150,8 @@ svg { flex-shrink: 0; }
 }
 .cabecera h1 { margin: 0; font: 700 clamp(21px, 2.4vw, 30px)/1.1 var(--fuente-titulo); letter-spacing: -.01em; }
 .cabecera-titulos { min-width: 0; }
-.cabecera-titulos p { margin: 4px 0 0; font-size: clamp(13px, 1.4vw, 17px); color: #e3f1e0; }
+.cabecera-institucion { margin: 0 0 4px; font-size: clamp(10.5px, 1vw, 12px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--amarillo); }
+.cabecera-lugar { margin: 4px 0 0; font-size: clamp(13px, 1.3vw, 16px); color: #e3f1e0; }
 .cabecera-frase {
   margin: 0; font: italic 600 clamp(15px, 1.7vw, 21px)/1.1 "Segoe Script", "Brush Script MT", cursive;
   text-align: right; transform: rotate(-5deg); white-space: nowrap;
@@ -181,7 +182,7 @@ svg { flex-shrink: 0; }
 .estado-dato { display: flex; flex-direction: column; gap: 1px; line-height: 1.15; }
 .estado-dato small { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); }
 .estado-dato strong { font-size: 13px; font-weight: 700; color: var(--texto); font-variant-numeric: tabular-nums; }
-.estado-nota { margin-left: auto; font-size: 12px; color: var(--texto-suave); }
+.estado-detalle { font-size: 11px; color: var(--texto-suave); }
 
 .boton {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
@@ -430,16 +431,42 @@ svg { flex-shrink: 0; }
 .pie-columnas ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .pie-columnas li { position: relative; padding-left: 14px; line-height: 1.45; }
 .pie-columnas li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--lima); }
-/* Contacto del municipio y autor, lado a lado con el mismo formato */
-.contactos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
-.contactos .autor { margin-top: 0; }
-.autor-municipio .autor-avatar { background: var(--lima); color: #14330a; }
-.autor-municipio .autor-avatar svg { width: 22px; height: 22px; }
-.red-municipio { min-width: 0; flex: 1 1 96px; background: var(--boton); }
-.red-municipio.red-facebook { background: var(--facebook); }
-.contacto-pronto { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px dashed rgba(255, 255, 255, .35); border-radius: 8px; font-size: 12.5px; color: #d3e6d5; }
+/* Agradecimientos y tarjetas de las dos personas del proyecto: cada una con su rol escrito arriba */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.pie-gracias { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 0; padding: 12px 14px; border-radius: 10px; background: rgba(255, 255, 255, .06); line-height: 1.5; }
+.pie-gracias svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--amarillo); }
+.pie-gracias strong { color: #fff; }
+.contactos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.tarjeta-persona { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 12px; background: var(--bosque-2); border: 1px solid rgba(255, 255, 255, .14); border-top: 3px solid var(--lima); }
+.tarjeta-autor { border-top-color: var(--amarillo); }
+.persona-rol { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--lima); }
+.tarjeta-autor .persona-rol { color: var(--amarillo); }
+.persona { display: flex; align-items: center; gap: 12px; }
+.tarjeta-municipio .autor-avatar { background: var(--lima); color: #14330a; }
+.tarjeta-persona .autor-redes { width: 100%; }
+.tarjeta-persona .red { position: relative; flex: 1 1 0; min-width: 0; min-height: 36px; padding: 6px 8px; gap: 6px; font-size: 13px; }
+.tarjeta-persona .red svg { width: 16px; height: 16px; }
+.red-pronto { cursor: pointer; font: inherit; font-weight: 600; background: transparent; color: #e3f1e0; border: 1px dashed rgba(255, 255, 255, .45); }
+.red-pronto:hover { filter: none; background: rgba(255, 255, 255, .08); }
+.red-marca { position: absolute; top: -8px; right: -4px; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; background: var(--amarillo); color: #3d3500; }
+
+/* Aviso flotante («próximamente»): abajo al centro, sin tapar la página fuera del propio aviso */
+.aviso-region { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1000; width: calc(100% - 32px); max-width: 420px; pointer-events: none; }
+.aviso {
+  position: relative; pointer-events: auto; padding: 14px 44px 14px 16px; font-family: var(--fuente);
+  background: var(--superficie); color: var(--texto); border: 1px solid var(--borde); border-left: 4px solid var(--lima);
+  border-radius: var(--radio); box-shadow: var(--sombra); animation: aviso-entrada 220ms ease-out;
+}
+.aviso-titulo { display: block; margin-bottom: 4px; color: var(--verde-texto); font-weight: 700; }
+.aviso-mensaje { margin: 0; color: var(--texto-suave); line-height: 1.45; }
+.aviso-enlaces { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.aviso-enlace { color: var(--verde-texto); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.aviso-cerrar { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: var(--radio); background: transparent; color: var(--texto-suave); font: inherit; font-size: 1.25rem; line-height: 1; cursor: pointer; }
+.aviso-cerrar:hover { color: var(--texto); background: var(--borde); }
+.aviso-cerrar:focus-visible, .aviso-enlace:focus-visible { outline: 2px solid var(--lima); outline-offset: 2px; }
+@keyframes aviso-entrada { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .aviso { animation: none; } }
 .pie-legal { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .14); text-align: center; font-size: 12px; color: #b4cdb8; }
-.autor { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 18px; background: var(--bosque-2); border: 1px solid var(--lima); border-radius: 12px; padding: 12px 14px; }
 .autor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--boton); color: #fff; font-weight: 700; letter-spacing: .03em; }
 .autor-texto { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
 .autor-texto strong { color: #fff; font-size: 15px; }
@@ -511,7 +538,6 @@ svg { flex-shrink: 0; }
   .barra-estado { flex-wrap: wrap; row-gap: var(--esp-2); }
   .estado-texto { order: 3; flex: 1 1 100%; gap: 6px var(--esp-3); padding-top: var(--esp-2); border-top: 1px solid var(--borde); }
   .estado-dato { flex: 1 1 40%; }
-  .estado-nota { flex: 1 1 100%; margin-left: 0; }
   .chip-frescura { margin-right: auto; }
   .frescura-detalle { display: none; }
   .boton-actualizar { width: 44px; height: 44px; padding: 0; border-radius: 50%; }
@@ -529,6 +555,7 @@ svg { flex-shrink: 0; }
   .mapa { height: calc(270px - var(--esp-3)); }
   .pie { padding-bottom: 88px; }
   .pie-columnas { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .aviso-region { bottom: 80px; }
   .contactos { grid-template-columns: minmax(0, 1fr); }
   .pie-columnas > section, .pie-columnas > section:first-child, .pie-columnas > section:last-child { padding: 0; border-left: 0; }
   .pie-columnas > section + section { padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .14); }
@@ -539,7 +566,7 @@ svg { flex-shrink: 0; }
 /* ============ Impresión: el tablero filtrado cabe en una hoja, sin controles ============ */
 @media print {
   body { background: #fff; }
-  .saltar, .boton, .boton-filtros, .boton-actualizar, #btn-tema, #lugar-filtros, .segmentos, .chips-enlace, .chips-limpiar, .combo-tarjeta, .mapa .leaflet-control-zoom { display: none !important; }
+  .saltar, .aviso-region, .boton, .boton-filtros, .boton-actualizar, #btn-tema, #lugar-filtros, .segmentos, .chips-enlace, .chips-limpiar, .combo-tarjeta, .mapa .leaflet-control-zoom { display: none !important; }
   .tablero { grid-template-columns: minmax(0, 1fr); }
   .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .panel, .kpis { break-inside: avoid; box-shadow: none; }

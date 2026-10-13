@@ -32,12 +32,18 @@ export const CONFIG = Object.freeze({
   /** Muestra la franja «DATOS DE PRUEBA». En false desde que la hoja trae los datos reales del municipio. */
   DATOS_DE_PRUEBA: false,
   /**
-   * Contacto del municipio en el pie. Cada enlace vacío no se muestra: para publicarlo basta con escribir su dirección
-   * (sitio y Facebook con https://, correo como dirección simple).
+   * Contacto del municipio en el pie. Un enlace vacío se muestra como «próximamente» y su botón abre un aviso con los
+   * demás enlaces; para publicarlo basta con escribir aquí su dirección https:// sin parámetros de rastreo.
    */
   CONTACTO_MUNICIPIO: Object.freeze({
     nombre: 'Lic. Vanessa Lesano',
-    enlaces: Object.freeze({ sitio: '', facebook: '', correo: '' }),
+    /** Cómo se la nombra dentro de una frase («Facebook de la Lic. …»). */
+    referencia: 'la Lic. Vanessa Lesano',
+    enlaces: Object.freeze({
+      facebook: 'https://www.facebook.com/vane.lesano.martinez',
+      tiktok: 'https://www.tiktok.com/@vanelesano',
+      linkedin: '',
+    }),
   }),
   /** País que define a un visitante como nacional. */
   PAIS_LOCAL: 'Ecuador',

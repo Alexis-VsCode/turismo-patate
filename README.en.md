@@ -10,6 +10,10 @@ Public dashboard for the **Municipal Government of San Cristóbal de Patate (Ecu
 statistics for the canton's tourism businesses. Each business fills in a shared spreadsheet and the dashboard
 refreshes itself, with no servers of its own and no paid licenses.
 
+**Who it is for.** Residents and visitors, who read the open dashboard; the businesses, who only fill in their
+own tab of the spreadsheet; and the municipality's tourism team, which links it from its website and uses it to
+report. Each one's walkthrough is in the [use cases](docs/casos-de-uso.md) (Spanish).
+
 **[Live demo](https://alexis-vscode.github.io/turismo-patate/)** (the interface is in Spanish) ·
 [Documentation](docs/README.md) · [Operations manual](docs/operacion.md) (Spanish)
 
@@ -58,10 +62,17 @@ come from, why they come, and their age and gender. The requirements were:
   whoever opens it sees the same thing. A hand-edited link is validated and anything invalid is dropped.
 - **Printing and accessibility:** controls are hidden when printing so the dashboard fits one sheet; there is a skip-to-content link, the participation sentence is
   announced when it changes, and a preview image is provided when the address is shared.
-- **Refresh and freshness:** on load, with the "Actualizar" button and automatically **every 10 minutes** (the site is published every 30). The
-  site shows when it was refreshed in this browser and when the data was published, and a chip tells whether
-  publishing is up to date, delayed or stopped.
+- **Refresh and freshness:** the site is published every 30 minutes (`PUBLICACION_MINUTOS`). The browser fetches
+  on load, with the "Actualizar" button and automatically every 10 minutes (`INTERVALO_AUTO_MS`) while the tab is
+  visible. The status bar shows four figures, each with a short explanation beneath it: **Última publicación** ("Datos nuevos cada 30
+  minutos", new data every 30 minutes), **Periodo con datos** (the first and last month loaded, e.g. "ene 2025 – sep 2026"), **Establecimientos con
+  datos** (businesses with at least one month recorded) and **Registros mensuales** (each one: a month, an origin and a reason). The browser's
+  fetch time is no longer shown. A chip tells whether publishing is up to date, delayed or stopped.
 - **Data quality:** invalid rows are never dropped silently; they are listed with their tab and row.
+- **Header and footer:** the header carries the institutional identity and the place. The footer, with an "Acerca del dashboard" column, explains what
+  the dashboard is, its privacy and security, and its sources and licenses; it thanks the municipality and
+  introduces, with their role written out, the municipality's contact and the author. If a social link of the
+  contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the other links.
 - **Responsive design:** on phones it is a single column, with a floating "Filtros" button that opens a bottom
   sheet; no horizontal scrolling.
 - **Light and dark mode:** a button switches the theme; with no saved choice it follows the device.
@@ -71,13 +82,38 @@ come from, why they come, and their age and gender. The requirements were:
 ```mermaid
 flowchart LR
     A[Businesses<br/>one tab each] -->|fill in| B[(Google Sheet<br/>published as xlsx)]
-    B -->|every 30 min, URL in SHEET_URL secret| C[GitHub Actions<br/>tests + validation]
-    C -->|datos.json without the URL| D[GitHub Pages]
-    D -->|reads only datos.json| E[Visitor's browser]
+    CJ[cron-job.org<br/>:00 and :30<br/>workflow_dispatch] --> F
+    GS[GitHub schedule<br/>:15 and :45] --> F
+    subgraph F[Publicar dashboard workflow]
+        direction LR
+        X[destrabar<br/>cancels runs stuck<br/>for over 25 min]
+        C[construir<br/>downloads the xlsx with SHEET_URL,<br/>validates and builds datos.json]
+        D[desplegar<br/>GitHub Pages]
+        X --> D
+        C --> D
+    end
+    B -.->|download| C
+    D --> E[Visitor's browser<br/>reads only datos.json]
 ```
 
-The spreadsheet URL **never** reaches the code or the site: it lives as an encrypted GitHub secret and only the
-scheduled job uses it. Details in [docs/configuracion.md](docs/configuracion.md) (Spanish).
+Publishing has two independent triggers, offset by 15 minutes, and both run the same workflow
+(`.github/workflows/publicar.yml`):
+
+| Trigger | When | Purpose |
+|---|---|---|
+| cron-job.org, via `workflow_dispatch` | Every 30 minutes, at minute 00 and 30 | Primary trigger |
+| GitHub `schedule` (`15,45 * * * *`) | Every 30 minutes, at minute 15 and 45 | Backup: if one fails, the other publishes within 15 minutes or less |
+
+The `destrabar` job ("unstick") runs at the start of every run and cancels runs of the workflow that have been
+waiting or in progress for more than 25 minutes, so a stuck Pages deployment cannot hold the concurrency lock and
+stop everything else; if a run is still active after twice that time (50 minutes), it force-cancels it. On every publication it also calls
+`PUT /actions/workflows/{id}/enable`, which keeps the workflow active and resets GitHub's 60-day clock (event `flujo_mantenido`). If it fails,
+publishing carries on anyway. The reasoning is in
+[decision 009](docs/decisiones/009-publicacion-con-doble-disparador.md) (Spanish).
+
+The spreadsheet URL **never** reaches the code or the site: it lives as an encrypted GitHub secret
+(`SHEET_URL`) and only the scheduled job uses it. Details in [docs/configuracion.md](docs/configuracion.md)
+(Spanish).
 
 ## About the project
 
@@ -100,9 +136,18 @@ The alternatives I discarded, and why, are in the [design decisions](docs/decisi
 
 **Basic** observability, sized for a static site:
 - **Data freshness:** the age of the publication is computed by a pure function and shown in a chip with text
-  and color ("Publicación al día", "retrasada" or "detenida", that is, up to date, delayed or stopped).
+  and color. The thresholds are in `UMBRALES_FRESCURA`: **"Datos al día"** (up to date) through minute 45,
+  **"Datos con retraso"** (delayed) from minute 46 to 100, and **"Publicación detenida"** (stopped) from minute 101. They cover one
+  30-minute cycle plus Actions delay, and tolerate losing one full cycle before calling publishing stopped.
+- **Cadence:** publication every 30 minutes (`PUBLICACION_MINUTOS`) and a browser fetch every 10
+  (`INTERVALO_AUTO_MS`).
 - **Every publication leaves a trace:** the data builder writes a JSON log line and a summary in the
   **Actions** tab, with counts and durations, never tab names.
+- **Unsticking and keep-alive:** the `destrabar` job cancels stuck runs (`destrabar_fin`) and keeps the workflow active (`flujo_mantenido`).
+- **If the chip is not green:** first check the repository's **Actions** tab and that the cron-job.org task is
+  still active. After 60 days without activity GitHub disables the whole workflow, so cron-job.org's trigger fails too;
+  `destrabar` prevents this by re-enabling the workflow on every publication. If it still shows as disabled, re-enable it by hand under **Actions →
+  Publicar dashboard → "Enable workflow"**. The step-by-step is in the runbook.
 - **Stated limit:** the chip is seen by visitors; alerting whoever operates the site depends on GitHub's
   notifications for a failed workflow.
 
@@ -117,7 +162,7 @@ Details, thresholds and what to do when the chip is not green: [docs/observabili
 | Charts | Apache ECharts 6.1.0 |
 | Map | Leaflet 1.9.4 + OpenStreetMap tiles + geoBoundaries province limits (CC0); geoBoundaries canton catalog (CC BY 3.0 IGO) and mledoze/countries (ODbL) |
 | Excel reading | SheetJS 0.20.3, only inside GitHub Actions |
-| Publishing | GitHub Actions (every 30 min) + GitHub Pages |
+| Publishing | GitHub Actions (triggered by cron-job.org and by `schedule`, every 30 min) + GitHub Pages |
 | Testing | `node:test` (Node 22) and an independent Python/openpyxl oracle |
 
 ## Architecture
@@ -152,7 +197,8 @@ Details in [docs/seguridad.md](docs/seguridad.md) (Spanish). To report a vulnera
 
 ## Tests
 
-They run on every publication, and a publication with a red test does not ship:
+They run on every `push` to `main` (a step with `if: github.event_name == 'push'`), and a push with a red test is not published. They do not run on
+every scheduled publication:
 
 | Folder | What it tests |
 |---|---|
@@ -160,6 +206,8 @@ They run on every publication, and a publication with a red test does not ship:
 | [`test/infrastructure/`](test/infrastructure) | Normalization of real-world typos (`agosoto`, spaces, accents), rejected rows with their location, the `datos.json` contract, hostile HTML, `__proto__` and bounded download |
 | [`test/application/`](test/application) | Facade with a simulated clock (reuse, automatic refresh, data kept on errors, map tabs, period texts) and the chart options |
 | [`test/shared/`](test/shared) | Number and date formatting, filter-dependent texts and the theme, including the script that prevents flicker |
+| [`test/tools/`](test/tools) | The `destrabar` job: which runs count as stuck and which get cancelled |
+| [`test/sin-azul.test.mjs`](test/sin-azul.test.mjs) | No blue color in styles, HTML or code, except the Ecuador flag and the official LinkedIn and Facebook colors |
 | [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) | Dependency rule between layers |
 | [`test/tema-tokens.test.mjs`](test/tema-tokens.test.mjs) | Every color token in use exists, so no chart falls back to a default palette |
 
@@ -182,7 +230,7 @@ npm run servir
 Then open `http://127.0.0.1:8765/`. `npm run datos` generates `datos/datos.json` from the test workbook in
 [`test/fixtures/`](test/fixtures), and `npm run servir` starts a cache-free server so old modules are never mixed
 with new styles. Since automatic publishing does not run locally, the freshness chip turns to
-"Publicación detenida" (publishing stopped) some time after the data was generated; regenerate it with
+"Publicación detenida" (publishing stopped) 101 minutes after the data was generated; regenerate it with
 `npm run datos`.
 
 ## Structure
@@ -193,7 +241,7 @@ with new styles. Since automatic publishing does not run locally, the freshness 
 ├── assets/         logo, header photo and province limits
 ├── tools/          data builder, oracle, test-data generator, local server, vendor
 ├── test/           tests per layer and fixtures
-├── docs/           architecture, configuration, operations, observability, security, decisions and screenshots
+├── docs/           architecture, use cases, configuration, operations, observability, security, decisions and screenshots
 └── .github/workflows/publicar.yml
 ```
 
@@ -202,26 +250,45 @@ with new styles. Since automatic publishing does not run locally, the freshness 
 The documents in `docs/` are written in Spanish, the language of the project's users.
 
 - [Architecture](docs/arquitectura.md)
+- [Use cases](docs/casos-de-uso.md)
 - [Configuration](docs/configuracion.md)
 - [Operations manual](docs/operacion.md)
 - [Observability](docs/observabilidad.md)
 - [Security](docs/seguridad.md) and [security policy](SECURITY.md)
-- [Design decisions (ADR)](docs/decisiones/)
+- [Design decisions (ADR)](docs/decisiones/), in particular [009, publishing with a double trigger](docs/decisiones/009-publicacion-con-doble-disparador.md)
 - [Contributing guide](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 
-## Author
+## People behind the project
 
-**Ing. Kevin Alexis Barrera Llerena**, Software Engineer. Design, architecture and development.
+| Person | Role |
+|---|---|
+| **Ing. Kevin Alexis Barrera Llerena** | Author. Design, development, publishing and monitoring (observability) of the dashboard. |
+| **Lic. Vanessa Lesano** | Bachelor in Tourism. Contact and support at the Municipal Government of San Cristóbal de Patate. |
+
+**Ing. Kevin Alexis Barrera Llerena**, Software Engineer.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-alexisbarreradesarrolador-0A66C2?logo=linkedin)](https://www.linkedin.com/in/alexisbarreradesarrolador/)
 [![Facebook](https://img.shields.io/badge/Facebook-alexis.barrerallerena1804-1877F2?logo=facebook)](https://www.facebook.com/alexis.barrerallerena1804)
 [![TikTok](https://img.shields.io/badge/TikTok-%40mancogamesam-000000?logo=tiktok)](https://www.tiktok.com/@mancogamesam)
 
+**Lic. Vanessa Lesano**, municipality contact.
+
+[![Facebook](https://img.shields.io/badge/Facebook-Vanessa%20Lesano-1877F2?logo=facebook)](https://www.facebook.com/vane.lesano.martinez)
+[![TikTok](https://img.shields.io/badge/TikTok-%40vanelesano-000000?logo=tiktok)](https://www.tiktok.com/@vanelesano)
+![LinkedIn](https://img.shields.io/badge/LinkedIn-coming%20soon-lightgrey?logo=linkedin)
+
+## Acknowledgments
+
+To the **Municipal Government of San Cristóbal de Patate** and **Lic. Vanessa Lesano**, for providing the
+information from the tourism establishments and supporting the development of this dashboard.
+
 ## License
 
-© 2026 Kevin Alexis Barrera Llerena. **All rights reserved.** The code is published for reference and
+© 2026 Ing. Kevin Alexis Barrera Llerena. **All rights reserved.** The code is published for reference and
 portfolio purposes; reuse requires the author's written permission (see [LICENSE](LICENSE)). Third-party
 components keep their own licenses ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
 
-The pilot data is **fictitious**, generated by [`tools/generar-piloto.py`](tools/generar-piloto.py).
+The site publishes the real data the municipality loads into its spreadsheet (`DATOS_DE_PRUEBA` is `false`). The
+workbooks in [`test/fixtures/`](test/fixtures) and those generated by [`tools/generar-piloto.py`](tools/generar-piloto.py)
+are **fictitious** and serve only for tests and local runs.

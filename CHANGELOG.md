@@ -2,6 +2,22 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.7.0] - 2026-10-12
+
+### Cambiado
+- **Encabezado:** línea institucional «GAD Municipal de San Cristóbal de Patate», título y lugar. La barra de estado muestra una sola hora, la de la **última publicación**, junto a «Establecimientos con datos», «Registros mensuales» y «Datos nuevos cada 30 minutos». La hora de la consulta del navegador ya no se muestra, porque se confundía con la publicación.
+- **Chip de frescura:** «Datos al día · publicados hace X», «Datos con retraso» y «Publicación detenida».
+- **Pie:** tres columnas («Sobre este tablero», «Privacidad y seguridad», «Fuentes y licencias»), agradecimientos al GAD y a la Lic. Vanessa Lesano, y dos tarjetas con el rol escrito arriba: «Contacto del municipio» y «Diseño y desarrollo». Los íconos de redes salen de un único sprite SVG.
+- **El flujo ya no puede apagarse por inactividad:** GitHub desactiva un flujo entero tras 60 días sin commits (y con él también el disparo de cron-job.org). En cada publicación, `destrabar` lo vuelve a habilitar por la API, lo que reinicia ese plazo (evento `flujo_mantenido`).
+- `destrabar` mide la antigüedad desde que la ejecución arrancó (`run_started_at`) y fuerza la cancelación si sigue viva pasado el doble del límite.
+- **Refuerzo de la publicación:** el `schedule` de GitHub pasa a `15,45 * * * *`, cada 30 minutos desfasado de cron-job.org (:00 y :30); si uno falla, el otro publica en 15 minutos o menos.
+
+### Añadido
+- Redes de la Lic. Vanessa Lesano (Facebook y TikTok) en `CONTACTO_MUNICIPIO`. Una red sin dirección (LinkedIn) se muestra como botón «Pronto» y abre un aviso con los enlaces disponibles (`src/application/components/compartidos/aviso.js`): se cierra con el botón, con Esc o solo, y acepta únicamente enlaces `https://`.
+- **Periodo con datos** en la barra de estado («dic 2024 – sep 2026»), y cada dato con su explicación visible debajo.
+- El aviso no se cierra solo mientras el puntero o el foco están sobre él, y al cerrarlo con × o Esc el foco vuelve al botón que lo abrió. El nombre accesible del botón «Pronto» contiene su texto visible.
+- Documentación: casos de uso (`docs/casos-de-uso.md`), decisión 009 (publicación con doble disparador) y README, manual de operación, parámetros y observabilidad al día.
+
 ## [2.6.0] - 2026-10-12
 
 ### Cambiado

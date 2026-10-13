@@ -17,7 +17,8 @@ import { pintarDiscapacidad } from './presentational/discapacidad.presentational
 import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
-import { pintarContacto } from './presentational/contacto.presentational.js';
+import { pintarContacto, prepararEnlacesContacto } from './presentational/contacto.presentational.js';
+import { mostrarAviso } from './compartidos/aviso.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 import { crearSelectorTema } from './compartidos/selector-tema.js';
 
@@ -39,7 +40,7 @@ function coloresDelTema() {
 /**
  * Monta el tablero sobre la página.
  * @param {ReturnType<import('../tablero.facade.js').crearTableroFacade>} facade
- * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, enlaces: object } }} config
+ * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, referencia: string, enlaces: object } }} config
  */
 export function montarTablero(facade, config) {
   const $ = (id) => document.getElementById(id);
@@ -160,25 +161,38 @@ export function montarTablero(facade, config) {
   function pintarEstado() {
     const { datos, ultimaDescarga } = facade.estado;
     horaDatos = hora(ultimaDescarga);
-    const nota = document.createElement('span');
-    nota.className = 'estado-nota';
-    nota.textContent = TEXTOS.autoActualiza(facade.intervaloMinutos());
     const carga = facade.carga();
     const items = TEXTOS.estadoDatos(
-      fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
+      fechaHora(datos.generadoEn), facade.publicacionMinutos(), carga.periodo,
       numero(carga.conDatos), numero(carga.establecimientos), numero(carga.registros),
-    ).map(({ rotulo, valor, ayuda }) => {
+    ).map(({ rotulo, valor, detalle }) => {
       const item = document.createElement('span');
       item.className = 'estado-dato';
       const r = document.createElement('small');
       r.textContent = rotulo;
       const v = document.createElement('strong');
       v.textContent = valor;
-      item.append(r, v);
-      if (ayuda) item.title = ayuda;
+      const d = document.createElement('span');
+      d.className = 'estado-detalle';
+      d.textContent = detalle;
+      item.append(r, v, d);
       return item;
     });
-    $('estado-texto').replaceChildren(...items, nota);
+    $('estado-texto').replaceChildren(...items);
+  }
+
+  /** Aviso de una red del contacto que todavía no tiene dirección, con las redes que sí están para no dejar a nadie sin salida. */
+  function avisarProximamente(tipo, boton) {
+    const { referencia, enlaces } = config.CONTACTO_MUNICIPIO;
+    const t = TEXTOS.avisoPronto;
+    const disponibles = prepararEnlacesContacto(enlaces)
+      .filter((e) => e.href)
+      .map((e) => ({ texto: t.enlace(TEXTOS.contactoEnlace[e.tipo], referencia), href: e.href }));
+    const autor = $('autor-facebook');
+    if (autor) disponibles.push({ texto: t.enlaceAutor(TEXTOS.contactoEnlace.facebook), href: autor.href });
+    mostrarAviso($('aviso'), {
+      titulo: t.titulo(TEXTOS.contactoEnlace[tipo], referencia), mensaje: t.mensaje, enlaces: disponibles,
+    }, { textoCerrar: t.cerrar, devolverFoco: boton });
   }
 
   /** Pinta el chip de frescura con lo que calcula la fachada; se repite con el reloj, no solo con datos nuevos. */
@@ -245,8 +259,8 @@ export function montarTablero(facade, config) {
 
   // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
-  pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO);
-  $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.intervaloMinutos());
+  pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO, avisarProximamente);
+  $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.publicacionMinutos());
   $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })
     .then((r) => r.json())

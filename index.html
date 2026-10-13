@@ -23,7 +23,7 @@
   <title>Estadísticas de Visitantes · Cantón Patate</title>
   <link rel="icon" href="assets/logo-patate.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="css/tema.css?v=2.6.0">
+  <link rel="stylesheet" href="css/tema.css?v=2.7.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js" integrity="sha512-Uyq/AgtqFM4vT+unIGTDr4wMJDTUK9O5w2PXMQeBCSR8koqHpVz+qBmcQ+9Oeo5H+EmvT4pp/5QrsqhIbyjHTQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script type="module" src="src/main.js"></script>
@@ -36,8 +36,9 @@
     <img class="cabecera-logo" src="assets/logo-patate.png" alt="GAD Municipal de San Cristóbal de Patate" width="88" height="88">
     <div class="cabecera-banner">
       <div class="cabecera-titulos">
+        <p class="cabecera-institucion">GAD Municipal de San Cristóbal de Patate</p>
         <h1>Estadísticas de Visitantes</h1>
-        <p>Establecimientos Turísticos - Cantón Patate</p>
+        <p class="cabecera-lugar">Establecimientos turísticos del cantón · Tungurahua, Ecuador</p>
       </div>
       <p class="cabecera-frase">¡Descubre<br>Patate!</p>
     </div>
@@ -203,14 +204,19 @@
   </dialog>
 
   <footer class="pie">
+    <svg class="sprite" aria-hidden="true" focusable="false">
+      <symbol id="ico-linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol>
+      <symbol id="ico-facebook" viewBox="0 0 24 24"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></symbol>
+      <symbol id="ico-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+    </svg>
     <div class="pie-bloque">
       <div class="pie-columnas">
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>GAD Municipal de Patate</h3>
-          <p>Datos declarados por los establecimientos turísticos del cantón San Cristóbal de Patate, provincia de Tungurahua.</p>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Acerca del dashboard</h3>
+          <p>Consolida los visitantes que reportan mensualmente los establecimientos turísticos del cantón San Cristóbal de Patate (Tungurahua). La información se publica de forma automática desde la hoja de registro del GAD Municipal.</p>
         </section>
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Seguridad y datos</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Privacidad y seguridad</h3>
           <ul>
             <li>Sitio de solo lectura, sin cookies ni rastreo.</li>
             <li>Solo cifras agregadas, sin datos personales.</li>
@@ -219,7 +225,7 @@
           </ul>
         </section>
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Fuentes</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Fuentes y licencias</h3>
           <ul>
             <li>Mapa © OpenStreetMap.</li>
             <li>Límites y cantones: geoBoundaries (CC0 y CC BY 3.0 IGO).</li>
@@ -228,35 +234,38 @@
           </ul>
         </section>
       </div>
+      <p class="pie-gracias"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span><strong>Agradecimientos.</strong> Al GAD Municipal de San Cristóbal de Patate y a la Lic. Vanessa Lesano, por facilitar la información de los establecimientos turísticos y acompañar el desarrollo de este dashboard.</span></p>
       <div class="contactos">
-      <div class="autor autor-municipio">
-        <div class="autor-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-        <div class="autor-texto">
-          <strong id="contacto-nombre"></strong>
-          <span>Contacto y apoyo · GAD Municipal de Patate</span>
-        </div>
-        <nav id="contacto-redes" class="autor-redes" aria-label="Enlaces del contacto del municipio"></nav>
-      </div>
-      <div class="autor">
-        <div class="autor-avatar" aria-hidden="true">KB</div>
-        <div class="autor-texto">
-          <strong>Ing. Kevin Alexis Barrera Llerena</strong>
-          <span>Ingeniero de Software · Diseño y desarrollo del tablero</span>
-        </div>
-        <nav class="autor-redes" aria-label="Redes del autor">
-          <a class="red red-linkedin" href="https://www.linkedin.com/in/alexisbarreradesarrolador/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
-          <a class="red red-facebook" href="https://www.facebook.com/alexis.barrerallerena1804" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>Facebook</a>
-          <a class="red red-tiktok" href="https://www.tiktok.com/@mancogamesam" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-            TikTok
-          </a>
-        </nav>
-      </div>
+        <section class="tarjeta-persona tarjeta-municipio" aria-labelledby="titulo-municipio">
+          <p id="titulo-municipio" class="persona-rol">Contacto del municipio</p>
+          <div class="persona">
+            <div class="autor-avatar" aria-hidden="true">VL</div>
+            <div class="autor-texto">
+              <strong id="contacto-nombre"></strong>
+              <span>Licenciada en Turismo · Contacto y apoyo del GAD Municipal de Patate</span>
+            </div>
+          </div>
+          <nav id="contacto-redes" class="autor-redes" aria-label="Redes del contacto del municipio"></nav>
+        </section>
+        <section class="tarjeta-persona tarjeta-autor" aria-labelledby="titulo-autor">
+          <p id="titulo-autor" class="persona-rol">Diseño y desarrollo</p>
+          <div class="persona">
+            <div class="autor-avatar" aria-hidden="true">KB</div>
+            <div class="autor-texto">
+              <strong>Ing. Kevin Alexis Barrera Llerena</strong>
+              <span>Ingeniero de Software · Diseño, desarrollo, publicación y monitoreo del dashboard</span>
+            </div>
+          </div>
+          <nav class="autor-redes" aria-label="Redes del autor">
+            <a class="red red-linkedin" href="https://www.linkedin.com/in/alexisbarreradesarrolador/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn del Ing. Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-linkedin"/></svg><span>LinkedIn</span></a>
+            <a id="autor-facebook" class="red red-facebook" href="https://www.facebook.com/alexis.barrerallerena1804" target="_blank" rel="noopener noreferrer" aria-label="Facebook del Ing. Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-facebook"/></svg><span>Facebook</span></a>
+            <a class="red red-tiktok" href="https://www.tiktok.com/@mancogamesam" target="_blank" rel="noopener noreferrer" aria-label="TikTok del Ing. Kevin Alexis Barrera Llerena (se abre en una pestaña nueva)"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-tiktok"/></svg><span>TikTok</span></a>
+          </nav>
+        </section>
       </div>
       <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Todos los derechos reservados</p>
     </div>
   </footer>
+  <div id="aviso" class="aviso-region" role="status" aria-live="polite"></div>
 </body>
 </html>

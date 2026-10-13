@@ -191,9 +191,12 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }
 
-  /** Registros de la hoja y establecimientos con datos de la última descarga; null si todavía no hay datos. */
+  /** Registros de la hoja, establecimientos con datos y periodo cargado («nov 2024 – sep 2026»); null sin datos. */
   function carga() {
-    return estado.datos ? resumenCarga(estado.datos.filas, estado.datos.establecimientos) : null;
+    if (!estado.datos) return null;
+    const resumen = resumenCarga(estado.datos.filas, estado.datos.establecimientos);
+    const corto = (m) => `${MESES[m.mes].slice(0, 3).toLowerCase()} ${m.anio}`;
+    return { ...resumen, periodo: resumen.desde ? `${corto(resumen.desde)} – ${corto(resumen.hasta)}` : '—' };
   }
 
   /** Cada cuántos minutos se actualiza el tablero, tomado de la configuración para que ningún texto repita la cifra. */

@@ -42,10 +42,16 @@ test('la frescura del chip habla de publicación y no de actualización', () => 
 });
 
 test('los avisos del intervalo usan los minutos que reciben, sin cifras escritas a mano', () => {
-  assert.match(TEXTOS.autoActualiza(10), /cada 10 minutos/);
-  assert.match(TEXTOS.sinDatosAun(10), /cada 10 minutos/);
+  assert.match(TEXTOS.sinDatosAun(30), /cada 30 minutos/);
   assert.match(TEXTOS.frescuraAyuda(10), /cada 10 minutos/);
-  assert.match(TEXTOS.autoActualiza(1), /cada minuto/);
+  assert.match(TEXTOS.estadoDatos('', 1, '', '', '', '')[0].detalle, /cada minuto/);
+});
+
+test('la barra de estado muestra una sola hora, la de publicación, para no confundirla con la consulta del navegador', () => {
+  const datos = TEXTOS.estadoDatos('12/10/2026 21:35', 30, 'nov 2024 – sep 2026', '17', '39', '38');
+  assert.deepEqual(datos.map((d) => d.rotulo), ['Última publicación', 'Periodo con datos', 'Establecimientos con datos', 'Registros mensuales']);
+  assert.ok(datos.every((d) => d.detalle), 'cada dato trae su explicación visible al lado');
+  assert.match(datos[0].detalle, /cada 30 minutos/);
 });
 
 test('ningún archivo de código escribe a mano una cifra de minutos', async () => {
