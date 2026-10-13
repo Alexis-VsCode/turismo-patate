@@ -16,6 +16,7 @@ import {
   kpis, anioDeReferencia, evolucionMensual,
   porMotivo, porCiudad, porProvincia, porPais, edadGenero, variacionInteranual,
 } from '../../src/domain/estadisticas.js';
+import { resumenCarga } from '../../src/domain/estadisticas.js';
 import { filtrar, filtrosVacios } from '../../src/domain/filtros.js';
 
 const datos = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
@@ -83,4 +84,16 @@ test('un establecimiento sin filas produce la misma evolución vacía', () => {
   const evo = evolucionMensual(base, anioDeReferencia(base, filtros.anio));
   assert.equal(evo.anio, null);
   assert.equal(evo.anioAnterior, null);
+});
+
+test('resumenCarga cuenta filas de la hoja (mes, origen y motivo) y establecimientos con datos, no filas internas', () => {
+  const base = { anio: 2026, mes: 0, pais: 'Ecuador', provincia: 'Tungurahua', ciudad: 'Ambato', motivo: 'Turismo' };
+  const filas = [
+    { ...base, establecimiento: 'A', edad: 0, genero: 'Femenino', cantidad: 3 },
+    { ...base, establecimiento: 'A', edad: 31, genero: 'Masculino', cantidad: 2 },
+    { ...base, establecimiento: 'A', motivo: 'Ocio', edad: 0, genero: 'Femenino', cantidad: 1 },
+    { ...base, establecimiento: 'B', mes: 1, edad: 46, genero: 'Femenino', cantidad: 4 },
+  ];
+  assert.deepEqual(resumenCarga(filas, ['A', 'B', 'C']), { registros: 3, conDatos: 2, establecimientos: 3 });
+  assert.deepEqual(resumenCarga([], ['A']), { registros: 0, conDatos: 0, establecimientos: 1 });
 });

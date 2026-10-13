@@ -29,8 +29,16 @@ export const CONFIG = Object.freeze({
   MAX_FILAS_PESTANA: 5000,
   /** Pestaña con listas y coordenadas. Toda pestaña que empieza por '_' o contiene 'plantilla' no es establecimiento. */
   PESTANA_CATALOGOS: '_Catalogos',
-  /** Muestra la franja «DATOS DE PRUEBA». Poner en false al pasar a datos reales. */
-  DATOS_DE_PRUEBA: true,
+  /** Muestra la franja «DATOS DE PRUEBA». En false desde que la hoja trae los datos reales del municipio. */
+  DATOS_DE_PRUEBA: false,
+  /**
+   * Contacto del municipio en el pie. Cada enlace vacío no se muestra: para publicarlo basta con escribir su dirección
+   * (sitio y Facebook con https://, correo como dirección simple).
+   */
+  CONTACTO_MUNICIPIO: Object.freeze({
+    nombre: 'Lic. Vanessa Lesano',
+    enlaces: Object.freeze({ sitio: '', facebook: '', correo: '' }),
+  }),
   /** País que define a un visitante como nacional. */
   PAIS_LOCAL: 'Ecuador',
   /** Provincia que el mapa resalta siempre. */

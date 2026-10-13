@@ -23,7 +23,7 @@
   <title>Estadísticas de Visitantes · Cantón Patate</title>
   <link rel="icon" href="assets/logo-patate.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="css/tema.css?v=2.5.0">
+  <link rel="stylesheet" href="css/tema.css?v=2.6.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js" integrity="sha512-Uyq/AgtqFM4vT+unIGTDr4wMJDTUK9O5w2PXMQeBCSR8koqHpVz+qBmcQ+9Oeo5H+EmvT4pp/5QrsqhIbyjHTQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script type="module" src="src/main.js"></script>
@@ -208,10 +208,6 @@
         <section>
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>GAD Municipal de Patate</h3>
           <p>Datos declarados por los establecimientos turísticos del cantón San Cristóbal de Patate, provincia de Tungurahua.</p>
-          <dl class="pie-contacto">
-            <dt>Contacto y apoyo del municipio</dt>
-            <dd>Lic. Vanessa Lesano</dd>
-          </dl>
         </section>
         <section>
           <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Seguridad y datos</h3>
@@ -232,6 +228,15 @@
           </ul>
         </section>
       </div>
+      <div class="contactos">
+      <div class="autor autor-municipio">
+        <div class="autor-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+        <div class="autor-texto">
+          <strong id="contacto-nombre"></strong>
+          <span>Contacto y apoyo · GAD Municipal de Patate</span>
+        </div>
+        <nav id="contacto-redes" class="autor-redes" aria-label="Enlaces del contacto del municipio"></nav>
+      </div>
       <div class="autor">
         <div class="autor-avatar" aria-hidden="true">KB</div>
         <div class="autor-texto">
@@ -248,6 +253,7 @@
             TikTok
           </a>
         </nav>
+      </div>
       </div>
       <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Todos los derechos reservados</p>
     </div>

@@ -142,3 +142,19 @@ export function opcionesDeFiltros(filas, catalogo = {}) {
     motivos: unir(unicos((f) => f.motivo), catalogo.motivos, claveNormalizada).sort((a, b) => a.localeCompare(b, 'es')),
   };
 }
+
+/**
+ * Resumen de lo cargado, en las unidades de la hoja y no en filas internas: una fila de la hoja (mes, origen y motivo
+ * de un establecimiento) se reparte en varias filas internas, una por casilla de edad y género con visitantes.
+ * @param {Array<object>} filas filas internas ya validadas
+ * @param {string[]} establecimientos todas las pestañas de establecimiento, tengan datos o no
+ * @returns {{ registros: number, conDatos: number, establecimientos: number }}
+ */
+export function resumenCarga(filas, establecimientos) {
+  const registros = new Set(filas.map((f) => [f.establecimiento, f.anio, f.mes, f.pais, f.provincia, f.ciudad, f.motivo].join('')));
+  return {
+    registros: registros.size,
+    conDatos: new Set(filas.map((f) => f.establecimiento)).size,
+    establecimientos: establecimientos.length,
+  };
+}

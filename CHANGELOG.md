@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.6.0] - 2026-10-12
+
+### Cambiado
+- **Barra de estado en unidades de la hoja:** «Registros» mostraba filas internas (una por casilla de edad y género con visitantes). Ahora dice **Registros mensuales** (filas de la hoja: mes, origen y motivo de un establecimiento) y **Establecimientos con datos** («17 de 39»).
+- Franja «DATOS DE PRUEBA» apagada: la hoja ya trae los datos reales del municipio.
+- Contacto del municipio en el pie con el mismo formato que el del autor, lado a lado. Sus enlaces (sitio web, Facebook y correo) se configuran en `CONTACTO_MUNICIPIO`; mientras estén vacíos, el bloque dice «Enlaces disponibles muy pronto».
+
 ## [2.5.0] - 2026-10-12
 
 ### Cambiado

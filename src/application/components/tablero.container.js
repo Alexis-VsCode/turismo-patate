@@ -17,6 +17,7 @@ import { pintarDiscapacidad } from './presentational/discapacidad.presentational
 import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
+import { pintarContacto } from './presentational/contacto.presentational.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 import { crearSelectorTema } from './compartidos/selector-tema.js';
 
@@ -38,7 +39,7 @@ function coloresDelTema() {
 /**
  * Monta el tablero sobre la página.
  * @param {ReturnType<import('../tablero.facade.js').crearTableroFacade>} facade
- * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string }} config
+ * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, enlaces: object } }} config
  */
 export function montarTablero(facade, config) {
   const $ = (id) => document.getElementById(id);
@@ -162,10 +163,11 @@ export function montarTablero(facade, config) {
     const nota = document.createElement('span');
     nota.className = 'estado-nota';
     nota.textContent = TEXTOS.autoActualiza(facade.intervaloMinutos());
+    const carga = facade.carga();
     const items = TEXTOS.estadoDatos(
       fechaHora(ultimaDescarga), fechaHora(datos.generadoEn),
-      numero(datos.establecimientos.length), numero(datos.filas.length),
-    ).map(({ rotulo, valor }) => {
+      numero(carga.conDatos), numero(carga.establecimientos), numero(carga.registros),
+    ).map(({ rotulo, valor, ayuda }) => {
       const item = document.createElement('span');
       item.className = 'estado-dato';
       const r = document.createElement('small');
@@ -173,6 +175,7 @@ export function montarTablero(facade, config) {
       const v = document.createElement('strong');
       v.textContent = valor;
       item.append(r, v);
+      if (ayuda) item.title = ayuda;
       return item;
     });
     $('estado-texto').replaceChildren(...items, nota);
@@ -242,6 +245,7 @@ export function montarTablero(facade, config) {
 
   // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
+  pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO);
   $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.intervaloMinutos());
   $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());
   fetch('assets/ecu-provincias.geojson', { credentials: 'omit' })

@@ -38,12 +38,15 @@ export const TEXTOS = Object.freeze({
   cargando: 'Actualizando datos…',
   actualizar: 'Actualizar',
   autoActualiza: (minutos) => `Se actualiza automáticamente ${cadaMinutos(minutos)}`,
-  estadoDatos: (consulta, publicado, establecimientos, registros) => [
+  estadoDatos: (consulta, publicado, conDatos, establecimientos, registros) => [
     { rotulo: 'Actualizado', valor: consulta },
     { rotulo: 'Publicado', valor: publicado },
-    { rotulo: 'Establecimientos', valor: establecimientos },
-    { rotulo: 'Registros', valor: registros },
+    { rotulo: 'Establecimientos con datos', valor: `${conDatos} de ${establecimientos}` },
+    { rotulo: 'Registros mensuales', valor: registros, ayuda: 'Filas de la hoja: cada una es un mes de un origen y un motivo de visita en un establecimiento.' },
   ],
+  contactoSinEnlaces: 'Enlaces disponibles muy pronto',
+  contactoEnlace: { sitio: 'Sitio web', facebook: 'Facebook', correo: 'Correo' },
+  contactoAria: (tipo, nombre) => `${tipo} de ${nombre} (se abre en una pestaña nueva)`,
   sinDatosAun: (minutos) => `Se actualiza automáticamente ${cadaMinutos(minutos)} · Cargando datos por primera vez…`,
   errorDescarga: (hora) => (hora
     ? `No se pudo actualizar. Se muestran los datos de las ${hora}.`

@@ -67,7 +67,8 @@ Hay que hacerlo si la URL se filtró o si cambió la hoja:
 | `TIMEOUT_MS` / `MAX_BYTES` | 15 s / 20 MB | Límites de la descarga |
 | `MAX_PESTANAS` / `MAX_FILAS_PESTANA` | 300 / 5000 | Límites de lectura de la hoja |
 | `PESTANA_CATALOGOS` | `'_Catalogos'` | Pestaña de listas y coordenadas |
-| `DATOS_DE_PRUEBA` | `true` | Muestra la franja «DATOS DE PRUEBA» |
+| `DATOS_DE_PRUEBA` | `false` | Muestra la franja «DATOS DE PRUEBA» (apagada desde que la hoja trae datos reales) |
+| `CONTACTO_MUNICIPIO` | Lic. Vanessa Lesano, sin enlaces | Contacto del pie. Para publicar un enlace se escribe su dirección en `enlaces` (`sitio` y `facebook` con `https://`, `correo` como dirección simple); los vacíos o inválidos no se muestran |
 | `PAIS_LOCAL` | `'Ecuador'` | País que define a un visitante nacional |
 | `PROVINCIA_RESALTADA` | `'Tungurahua'` | Provincia con borde destacado en el mapa |
 

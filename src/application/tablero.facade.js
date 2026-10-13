@@ -9,7 +9,7 @@ import { TEXTOS } from '../shared/textos.es.js';
 import { MESES, RANGOS_EDAD } from '../domain/visitante.js';
 import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo,
-  porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual,
+  porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual, resumenCarga,
 } from '../domain/estadisticas.js';
 import { resumenDiscapacidad } from '../domain/discapacidad.js';
 import { filtrosATexto, textoAFiltros } from '../domain/enlace.js';
@@ -191,6 +191,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }
 
+  /** Registros de la hoja y establecimientos con datos de la última descarga; null si todavía no hay datos. */
+  function carga() {
+    return estado.datos ? resumenCarga(estado.datos.filas, estado.datos.establecimientos) : null;
+  }
+
   /** Cada cuántos minutos se actualiza el tablero, tomado de la configuración para que ningún texto repita la cifra. */
   function intervaloMinutos() {
     return Math.round(config.INTERVALO_AUTO_MS / 60000);
@@ -288,7 +293,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   return {
     chipsActivos,
-    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros, enlace, aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
+    suscribir, fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros, enlace, aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar, carga, tocaActualizar, intervaloMinutos, publicacionMinutos, frescura, opciones, vista,
     get estado() { return { ...estado, filtros: copiarFiltros(estado.filtros) }; },
   };
 }
