@@ -186,7 +186,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     }
   }
 
-  /** Indica si corresponde la actualización automática: pestaña visible y 5 minutos desde la última descarga. */
+  /** Indica si corresponde la actualización automática: pestaña visible y el intervalo configurado desde la última descarga. */
   function tocaActualizar() {
     return esVisible() && reloj() - estado.ultimaDescarga >= config.INTERVALO_AUTO_MS;
   }

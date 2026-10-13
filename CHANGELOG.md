@@ -2,6 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.5.0] - 2026-10-12
+
+### Cambiado
+- **Cadencia de publicación cada 30 minutos:** cron-job.org dispara la publicación cada media hora y el `schedule` de GitHub queda como respaldo cada hora (minuto 15). El navegador consulta cada 10 minutos y el chip de frescura pasa a «al día» hasta 45 minutos y «retrasado» hasta 100.
+- Pruebas de coherencia de la configuración (`test/infrastructure/config.test.mjs`): la consulta del navegador, los umbrales y el respaldo de GitHub tienen que encajar con la cadencia.
+
+### Corregido
+- **Publicación detenida desde el 06/10:** un despliegue de Pages quedó en «waiting» y retuvo el grupo de concurrencia `pages`, así que todas las ejecuciones siguientes se cancelaron. Ahora la concurrencia vive solo en el job `desplegar` y un job `destrabar` (`tools/destrabar-publicacion.mjs`) cancela al inicio de cada publicación toda ejecución del flujo con más de 25 minutos en `waiting` o `in_progress`; si la limpieza falla, la publicación sigue igual.
+
+### Añadido
+- Contacto del municipio en el pie: Lic. Vanessa Lesano, contacto y apoyo del GAD Municipal de Patate.
+
 ## [2.4.1] - 2026-10-02
 
 ### Corregido

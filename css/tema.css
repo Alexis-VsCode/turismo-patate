@@ -430,6 +430,9 @@ svg { flex-shrink: 0; }
 .pie-columnas ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .pie-columnas li { position: relative; padding-left: 14px; line-height: 1.45; }
 .pie-columnas li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--lima); }
+.pie-contacto { display: flex; flex-direction: column; gap: 2px; margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--lima); background: rgba(255, 255, 255, .06); border-radius: 0 8px 8px 0; }
+.pie-contacto dt { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #b4cdb8; }
+.pie-contacto dd { margin: 0; font-size: 14px; font-weight: 700; color: #fff; }
 .pie-legal { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .14); text-align: center; font-size: 12px; color: #b4cdb8; }
 .autor { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 18px; background: var(--bosque-2); border: 1px solid var(--lima); border-radius: 12px; padding: 12px 14px; }
 .autor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--boton); color: #fff; font-weight: 700; letter-spacing: .03em; }

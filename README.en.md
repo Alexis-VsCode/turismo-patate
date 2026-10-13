@@ -58,7 +58,7 @@ come from, why they come, and their age and gender. The requirements were:
   whoever opens it sees the same thing. A hand-edited link is validated and anything invalid is dropped.
 - **Printing and accessibility:** controls are hidden when printing so the dashboard fits one sheet; there is a skip-to-content link, the participation sentence is
   announced when it changes, and a preview image is provided when the address is shared.
-- **Refresh and freshness:** on load, with the "Actualizar" button and automatically **every 5 minutes**. The
+- **Refresh and freshness:** on load, with the "Actualizar" button and automatically **every 10 minutes** (the site is published every 30). The
   site shows when it was refreshed in this browser and when the data was published, and a chip tells whether
   publishing is up to date, delayed or stopped.
 - **Data quality:** invalid rows are never dropped silently; they are listed with their tab and row.
@@ -71,7 +71,7 @@ come from, why they come, and their age and gender. The requirements were:
 ```mermaid
 flowchart LR
     A[Businesses<br/>one tab each] -->|fill in| B[(Google Sheet<br/>published as xlsx)]
-    B -->|every 5 min, URL in SHEET_URL secret| C[GitHub Actions<br/>tests + validation]
+    B -->|every 30 min, URL in SHEET_URL secret| C[GitHub Actions<br/>tests + validation]
     C -->|datos.json without the URL| D[GitHub Pages]
     D -->|reads only datos.json| E[Visitor's browser]
 ```
@@ -117,7 +117,7 @@ Details, thresholds and what to do when the chip is not green: [docs/observabili
 | Charts | Apache ECharts 6.1.0 |
 | Map | Leaflet 1.9.4 + OpenStreetMap tiles + geoBoundaries province limits (CC0); geoBoundaries canton catalog (CC BY 3.0 IGO) and mledoze/countries (ODbL) |
 | Excel reading | SheetJS 0.20.3, only inside GitHub Actions |
-| Publishing | GitHub Actions (every 5 min) + GitHub Pages |
+| Publishing | GitHub Actions (every 30 min) + GitHub Pages |
 | Testing | `node:test` (Node 22) and an independent Python/openpyxl oracle |
 
 ## Architecture

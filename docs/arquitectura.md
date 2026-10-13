@@ -69,7 +69,7 @@ Lo implementa [`tablero.facade.js`](../src/application/tablero.facade.js):
 |---|---|
 | Entrada a la página y botón «Actualizar» | Descarga forzada |
 | Cambio de establecimiento | Descarga solo si pasaron 60 s o más desde la última |
-| Automático | Cada 5 min, solo con la pestaña visible; se revisa cada 30 s (con la misma revisión se repinta el chip de frescura) |
+| Automático | Cada 10 min (`INTERVALO_AUTO_MS`), solo con la pestaña visible; se revisa cada 30 s (con la misma revisión se repinta el chip de frescura) |
 | Descarga en curso | No se lanza otra en paralelo |
 | Error | Se conservan los últimos datos buenos y se muestra el aviso con la hora de esos datos |
 

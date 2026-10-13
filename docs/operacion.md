@@ -5,11 +5,11 @@ Guía para quien administra la hoja de cálculo y el sitio. No hace falta saber 
 ## Cómo llegan los datos al sitio
 
 1. Cada establecimiento llena **su propia pestaña** en la Google Sheet compartida.
-2. Cada 5 minutos, GitHub Actions descarga la hoja, la valida y publica el sitio con los datos nuevos.
+2. Cada 30 minutos, GitHub Actions descarga la hoja, la valida y publica el sitio con los datos nuevos.
 3. Quien visita el sitio ve cuándo se actualizó en su navegador, cuándo se publicaron los datos y un chip de estado
    («Publicación al día», «retrasada» o «detenida»). Ver [observabilidad.md](observabilidad.md).
 
-**Cuánto tarda un dato nuevo en aparecer:** hasta 10 minutos (la publicación corre cada 5 minutos). Google republica la hoja cada ~5 minutos y
+**Cuánto tarda un dato nuevo en aparecer:** hasta unos 35 minutos al recargar la página y unos 45 con la página abierta (la publicación corre cada 30 minutos y el navegador consulta cada 10). Google republica la hoja cada ~5 minutos y
 GitHub puede retrasar la tarea programada en horas de mucha carga.
 
 ## Qué pestañas cuentan como establecimiento
@@ -112,6 +112,8 @@ con la pestaña y el número de fila.
 - **Opcional:** protege cada pestaña para que solo la edite su establecimiento.
 
 ## Si algo falla
+
+**Publicación trabada.** Si el chip lleva horas en «vencido» y en Actions todas las ejecuciones salen «cancelled», hay una ejecución anterior trabada reteniendo el despliegue. La siguiente publicación la cancela sola (job `destrabar`, límite de 25 minutos); para no esperar, abre la ejecución en «waiting» y pulsa **Cancel workflow**.
 
 | Síntoma | Qué revisar |
 |---|---|

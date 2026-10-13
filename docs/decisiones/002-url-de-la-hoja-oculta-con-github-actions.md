@@ -9,7 +9,7 @@ la URL y descargar el libro completo.
 
 ## Decisión
 
-La URL vive solo en el secreto cifrado `SHEET_URL`. GitHub Actions descarga la hoja (la dispara cron-job.org cada 5 minutos), la valida
+La URL vive solo en el secreto cifrado `SHEET_URL`. GitHub Actions descarga la hoja (la dispara cron-job.org; cadencia vigente en `PUBLICACION_MINUTOS` de `src/infrastructure/config.js`), la valida
 y publica un `datos.json` sin la URL. El navegador solo lee ese archivo (`connect-src 'self'`), y SheetJS sale
 del navegador.
 

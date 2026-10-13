@@ -58,7 +58,7 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   y quien la abre ve lo mismo. Un enlace editado a mano se valida y lo que no sirve se descarta.
 - **Impresión y accesibilidad:** al imprimir se ocultan los controles y el tablero cabe en una hoja; hay un enlace para saltar al contenido, anuncio de los
   cambios de la frase de participación y vista previa al compartir la dirección en redes.
-- **Actualización y frescura:** al entrar, con el botón «Actualizar» y de forma automática **cada 5 minutos**. El
+- **Actualización y frescura:** al entrar, con el botón «Actualizar» y de forma automática **cada 10 minutos** (el sitio se publica cada 30). El
   sitio muestra cuándo se actualizó en este navegador y cuándo se publicaron los datos, y un chip indica si la
   publicación está al día, retrasada o detenida.
 - **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila.
@@ -71,7 +71,7 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 ```mermaid
 flowchart LR
     A[Establecimientos<br/>una pestaña cada uno] -->|llenan| B[(Google Sheet<br/>publicada en xlsx)]
-    B -->|cada 5 min, URL en secreto SHEET_URL| C[GitHub Actions<br/>pruebas + validación]
+    B -->|cada 30 min, URL en secreto SHEET_URL| C[GitHub Actions<br/>pruebas + validación]
     C -->|datos.json sin la URL| D[GitHub Pages]
     D -->|solo lee datos.json| E[Navegador del visitante]
 ```
@@ -117,7 +117,7 @@ Detalle, umbrales y qué hacer cuando el chip no está en verde: [docs/observabi
 | Gráficos | Apache ECharts 6.1.0 |
 | Mapa | Leaflet 1.9.4 + teselas OpenStreetMap + límites provinciales geoBoundaries (CC0); catálogo de cantones geoBoundaries (CC BY 3.0 IGO) y de países mledoze/countries (ODbL) |
 | Lectura del Excel | SheetJS 0.20.3, solo dentro de GitHub Actions |
-| Publicación | GitHub Actions (cada 5 min) + GitHub Pages |
+| Publicación | GitHub Actions (cada 30 min) + GitHub Pages |
 | Pruebas | `node:test` (Node 22) y oráculo independiente en Python/openpyxl |
 
 ## Arquitectura

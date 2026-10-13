@@ -6,7 +6,7 @@
 |---|---|---|
 | URL de la hoja (secreta) | GitHub → **Settings → Secrets and variables → Actions → `SHEET_URL`** | Administrador del repositorio |
 | Publicación del sitio | GitHub → **Settings → Pages → Source: GitHub Actions** | Administrador del repositorio |
-| Frecuencia de publicación | [`.github/workflows/publicar.yml`](../.github/workflows/publicar.yml), `cron: '*/5 * * * *'` | Desarrollo |
+| Frecuencia de publicación | [`.github/workflows/publicar.yml`](../.github/workflows/publicar.yml), cron-job.org cada 30 min; respaldo `cron: '15 * * * *'` | Desarrollo |
 | Intervalos, límites y franja de prueba | [`src/infrastructure/config.js`](../src/infrastructure/config.js) | Desarrollo |
 | Textos visibles | [`src/shared/textos.es.js`](../src/shared/textos.es.js) | Desarrollo |
 | Colores del tema | [`css/tema.css`](../css/tema.css), variables `--verde`, `--lima`, `--amarillo`… | Desarrollo |
@@ -62,7 +62,7 @@ Hay que hacerlo si la URL se filtró o si cambió la hoja:
 | Clave | Valor | Efecto |
 |---|---|---|
 | `URL_DATOS` | `'datos/datos.json'` | Archivo que lee el navegador, siempre del mismo sitio |
-| `INTERVALO_AUTO_MS` | 5 min | Actualización automática con la pestaña visible |
+| `INTERVALO_AUTO_MS` | 10 min | Actualización automática con la pestaña visible |
 | `REUSO_MINIMO_MS` | 60 s | Al cambiar de establecimiento, reusa la descarga si es más reciente |
 | `TIMEOUT_MS` / `MAX_BYTES` | 15 s / 20 MB | Límites de la descarga |
 | `MAX_PESTANAS` / `MAX_FILAS_PESTANA` | 300 / 5000 | Límites de lectura de la hoja |
@@ -77,11 +77,11 @@ El workflow se arranca de tres maneras:
 
 | Disparador | Cuándo | Qué hace |
 |---|---|---|
-| **cron-job.org** (una sola tarea, cada 5 minutos) | Es el que manda. Llama a la API de GitHub (`workflow_dispatch`) con un token de permiso mínimo | Construye los datos y despliega, sin correr las pruebas |
+| **cron-job.org** (una sola tarea, cada 30 minutos) | Es el que manda. Llama a la API de GitHub (`workflow_dispatch`) con un token de permiso mínimo | Construye los datos y despliega, sin correr las pruebas |
 | `push` a `main` | Cada cambio de código | Corre las pruebas, construye y despliega |
-| `schedule` del propio workflow (`*/15`) | Respaldo: GitHub puede retrasarlo o descartarlo bajo carga | Igual que cron-job.org |
+| `schedule` del propio workflow (`15 * * * *`, cada hora) | Respaldo: GitHub puede retrasarlo o descartarlo bajo carga | Igual que cron-job.org |
 
-La cifra de 5 minutos vive en `PUBLICACION_MINUTOS` de [`config.js`](../src/infrastructure/config.js): de ahí salen el texto de ayuda del chip y
+La cifra de 30 minutos vive en `PUBLICACION_MINUTOS` de [`config.js`](../src/infrastructure/config.js): de ahí salen el texto de ayuda del chip y
 esta documentación. El `schedule` del YAML no puede leer esa constante y se cambia a mano.
 
 - **Para cambiar la frecuencia:** edita la tarea en cron-job.org y actualiza `PUBLICACION_MINUTOS`.

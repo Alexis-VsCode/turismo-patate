@@ -64,7 +64,7 @@ test('el botón Actualizar (forzar) ignora el reuso de 60 s', async () => {
   assert.equal(ctx.llamadas, 2);
 });
 
-test('la actualización automática toca a los 5 minutos y solo con la pestaña visible', async () => {
+test('la actualización automática toca al cumplirse el intervalo y solo con la pestaña visible', async () => {
   const { facade, ctx } = montar();
   await facade.cargar(true);
   ctx.ahora += CONFIG.INTERVALO_AUTO_MS - 1;
@@ -144,11 +144,12 @@ test('frescura es «desconocido» sin datos y sigue al reloj con la fecha de pub
   assert.deepEqual(facade.frescura(), { estado: 'desconocido', minutos: null });
   await facade.cargar(true);
   const publicado = Date.parse(DATOS.generadoEn);
+  const { alDiaMin, retrasadoMin } = CONFIG.UMBRALES_FRESCURA;
   ctx.ahora = publicado + 5 * 60 * 1000;
   assert.deepEqual(facade.frescura(), { estado: 'alDia', minutos: 5 });
-  ctx.ahora = publicado + 40 * 60 * 1000;
+  ctx.ahora = publicado + (alDiaMin + 1) * 60 * 1000;
   assert.equal(facade.frescura().estado, 'retrasado');
-  ctx.ahora = publicado + 90 * 60 * 1000;
+  ctx.ahora = publicado + (retrasadoMin + 1) * 60 * 1000;
   assert.equal(facade.frescura().estado, 'vencido');
 });
 
@@ -249,7 +250,7 @@ test('elegir un año del catálogo sin visitantes deja el tablero en cero sin ro
 test('el intervalo de actualización que se muestra sale de la configuración', async () => {
   const facade = crearTableroFacade({ obtener: async () => DATOS, config: { ...CONFIG, INTERVALO_AUTO_MS: 10 * 60 * 1000 } });
   assert.equal(facade.intervaloMinutos(), 10);
-  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).intervaloMinutos(), 5);
+  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).intervaloMinutos(), CONFIG.INTERVALO_AUTO_MS / 60000);
 });
 
 test('un motivo del catálogo escrito sin tilde no se duplica con el que trae el visitante', async () => {
