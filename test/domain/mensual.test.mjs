@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { XLSX, RAIZ, leerFixture } from '../helpers.mjs';
-import { leerLibro } from '../../src/infrastructure/lector-libro.js';
-import { CONFIG } from '../../src/infrastructure/config.js';
+import { leerLibro } from '../../src/publicacion/adaptadores/lector-xlsx.js';
+import { CONFIG_PUBLICACION as CONFIG } from '../../src/publicacion/config-publicacion.js';
 import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo, porCiudad, porProvincia, porPais, edadGenero, variacionInteranual,
 } from '../../src/domain/estadisticas.js';

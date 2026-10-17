@@ -13,7 +13,7 @@ import { RAIZ, CATALOGO, ENCABEZADO } from '../helpers.mjs';
 import { construirCatalogo, mapearEncabezados, claveNormalizada } from '../../src/domain/catalogo.js';
 import { normalizarFila, normalizarFilaMensual } from '../../src/domain/visitante.js';
 import { textoAFiltros } from '../../src/domain/enlace.js';
-import { desempaquetar } from '../../src/infrastructure/contrato-datos.js';
+import { desempaquetar } from '../../src/contrato/contrato-datos.js';
 
 const catalogo = construirCatalogo(CATALOGO);
 const { indices } = mapearEncabezados(ENCABEZADO);
@@ -71,11 +71,11 @@ const archivosDe = (carpeta) => readdirSync(join(RAIZ, 'src', carpeta), { recurs
 
 /** Literales que solo puede escribir catalogo.js, y excepciones con otro significado (milisegundos de espera). */
 const LIMITES = ['2000', '2100', '110', '100000'];
-const OTRO_SIGNIFICADO = new Map([['infrastructure/seguridad.js', new Set(['2000'])]]);
+const OTRO_SIGNIFICADO = new Map([['publicacion/adaptadores/hoja-google.js', new Set(['2000'])]]);
 
 test('los límites de validación se escriben una sola vez, en catalogo.js', () => {
   const mal = [];
-  for (const archivo of [...archivosDe('domain'), ...archivosDe('infrastructure')]) {
+  for (const archivo of [...archivosDe('domain'), ...archivosDe('contrato'), ...archivosDe('publicacion'), ...archivosDe('tablero/infrastructure')]) {
     if (archivo === 'domain/catalogo.js') continue;
     const codigo = readFileSync(join(RAIZ, 'src', archivo), 'utf8');
     for (const literal of LIMITES) {

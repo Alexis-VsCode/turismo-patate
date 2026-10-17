@@ -72,16 +72,6 @@ export function leerProcedencia(valor) {
   return { tipo: valor.slice(0, separador), nombre: valor.slice(separador + 1) };
 }
 
-function cumpleProcedencia(fila, procedencia) {
-  if (procedencia === 'NAC') return fila.nacional;
-  if (procedencia === 'EXT') return !fila.nacional;
-  const { tipo, nombre } = leerProcedencia(procedencia);
-  if (tipo === 'C') return fila.nacional && fila.ciudad === nombre;
-  if (tipo === 'PR') return fila.nacional && fila.provincia === nombre;
-  if (tipo === 'P') return fila.pais === nombre;
-  return false;
-}
-
 /**
  * Aplica los filtros. `ignorar` lista claves de filtro que no se aplican,
  * p. ej. la evolución mensual ignora año y mes para mostrar los 12 meses.
@@ -108,4 +98,14 @@ export function filtrar(filas, filtros, ignorar = []) {
     (!motivos.length || motivos.includes(f.motivo)) &&
     (!rangos.length || rangos.includes(f.rangoEdad)) &&
     (!generos.length || generos.includes(f.genero)));
+}
+
+function cumpleProcedencia(fila, procedencia) {
+  if (procedencia === 'NAC') return fila.nacional;
+  if (procedencia === 'EXT') return !fila.nacional;
+  const { tipo, nombre } = leerProcedencia(procedencia);
+  if (tipo === 'C') return fila.nacional && fila.ciudad === nombre;
+  if (tipo === 'PR') return fila.nacional && fila.provincia === nombre;
+  if (tipo === 'P') return fila.pais === nombre;
+  return false;
 }

@@ -1,0 +1,147 @@
+/**
+ * @file textos.es.js
+ * @description Compartido. Textos visibles que arma el código. Los textos fijos de la página viven en
+ *   index.html; todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
+ * @author Kevin Alexis Barrera Llerena 2026
+ */
+import { numero, porcentaje, SIN_DATO } from './formato.js';
+
+/** «cada minuto» o «cada N minutos», para que ningún texto repita a mano la cifra de config.js. */
+const cadaMinutos = (n) => (n === 1 ? 'cada minuto' : `cada ${n} minutos`);
+
+export const TEXTOS = Object.freeze({
+  todos: 'Todos',
+  todosEstablecimientos: 'Todos los establecimientos',
+  sinCoincidencias: 'Sin coincidencias',
+  procedenciaNacionales: 'Ecuador (todas las ciudades)',
+  procedenciaExtranjeros: 'Extranjeros (todos los países)',
+  grupoAtajos: 'Atajos',
+  grupoProvincias: 'Provincias',
+  grupoCiudades: 'Ciudades de Ecuador',
+  grupoPaises: 'Países',
+  provinciaPrefijo: 'Provincia: ',
+  nacionales: 'Nacionales',
+  extranjeros: 'Extranjeros',
+  visitantes: 'visitantes',
+  frescura: {
+    alDia: 'Datos al día',
+    retrasado: 'Datos con retraso',
+    vencido: 'Publicación detenida',
+    desconocido: 'Sin verificar',
+  },
+  frescuraAyuda: (minutos) => `Actualizar vuelve a descargar lo ya publicado. Los datos de la hoja se publican solos ${cadaMinutos(minutos)}: si la última publicación es antigua, la publicación automática se detuvo.`,
+  frescuraDetalle: (tiempo) => `publicados ${tiempo}`,
+  cargando: 'Actualizando datos…',
+  actualizar: 'Actualizar',
+  estadoDatos: (publicado, minutos, periodo, conDatos, establecimientos, registros) => [
+    { rotulo: 'Última publicación', valor: publicado, detalle: `Datos nuevos ${cadaMinutos(minutos)}` },
+    { rotulo: 'Periodo con datos', valor: periodo, detalle: 'Primer y último mes cargados' },
+    { rotulo: 'Establecimientos con datos', valor: `${conDatos} de ${establecimientos}`, detalle: 'Con al menos un mes registrado' },
+    { rotulo: 'Registros mensuales', valor: registros, detalle: 'Cada uno: un mes, un origen y un motivo' },
+  ],
+  contactoEnlace: { facebook: 'Facebook', tiktok: 'TikTok', linkedin: 'LinkedIn' },
+  agradecimiento: (autoridad, contacto) => `Al GAD Municipal de San Cristóbal de Patate, administración del ${autoridad.nombre} (${autoridad.periodo}), y a ${contacto.referencia}, por facilitar la información de los establecimientos turísticos del cantón y respaldar el desarrollo de este dashboard.`,
+  autoridadCargo: (autoridad) => `${autoridad.cargo} · Administración ${autoridad.periodo}`,
+  autoridadFoto: (autoridad) => `Foto del ${autoridad.cargo.toLowerCase()} ${autoridad.nombre}`,
+  contactoFoto: (contacto) => `Foto de ${contacto.referencia}`,
+  sitioGad: 'Sitio del GAD',
+  sitioGadAria: 'Sitio web del GAD Municipal de San Cristóbal de Patate (se abre en una pestaña nueva)',
+  contactoAria: (red, quien) => `${red} de ${quien} (se abre en una pestaña nueva)`,
+  contactoPronto: (red, quien) => `${red} de ${quien}, pronto. Abre un aviso con los enlaces disponibles`,
+  pronto: 'Pronto',
+  avisoPronto: {
+    titulo: (red, quien) => `${red} de ${quien}: próximamente`,
+    mensaje: 'Mientras tanto, estos enlaces ya están disponibles:',
+    enlace: (red, quien) => `${red} de ${quien}`,
+    enlaceAutor: (red) => `${red} del Ing. Kevin Alexis Barrera Llerena`,
+    cerrar: 'Cerrar aviso',
+  },
+  sinDatosAun: (minutos) => `Datos nuevos ${cadaMinutos(minutos)} · Cargando datos por primera vez…`,
+  errorDescarga: (hora) => (hora
+    ? `No se pudo actualizar. Se muestran los datos de las ${hora}.`
+    : 'No se pudieron cargar los datos. Revise su conexión y pulse «Actualizar».'),
+  errores: {
+    TIEMPO_AGOTADO: 'Los datos tardaron demasiado en responder.',
+    DEMASIADO_GRANDE: 'Los datos publicados superan el tamaño permitido.',
+    HTTP: 'El servidor de datos no respondió correctamente.',
+    RED: 'Sin conexión con el servidor de datos.',
+    FORMATO: 'Los datos publicados no tienen el formato esperado.',
+  },
+  problemas: (n) => `${n} ${n === 1 ? 'fila' : 'filas'} con problemas`,
+  avisosPestanas: (n) => `${n} ${n === 1 ? 'aviso' : 'avisos'} de pestañas`,
+  filaDe: (pestana, fila) => `${pestana} · fila ${fila}`,
+  mostrandoPrimeros: (n, total) => `Se muestran los primeros ${n} de ${total}.`,
+  sinDatos: 'Sin datos para los filtros elegidos',
+  tendencia: (anio) => (anio === null ? 'Tendencia' : `Tendencia ${anio}`),
+  anioAnterior: 'Año anterior',
+  anioActual: 'Año actual',
+  sinDatosCorto: 'Sin datos',
+  libroCompleto: 'Libro completo',
+  transcurrido: {
+    menosDeUnMinuto: 'hace menos de 1 min',
+    minutos: (n) => `hace ${n} min`,
+    horas: (h, m) => `hace ${h} h${m ? ` ${m} min` : ''}`,
+    dias: (n) => `hace ${n} ${n === 1 ? 'día' : 'días'}`,
+  },
+  rangoMeses: (desde, hasta) => `${desde} a ${hasta}`,
+  temaAOscuro: 'Cambiar a modo oscuro',
+  temaAClaro: 'Cambiar a modo claro',
+  chipEdad: (rango) => `Edad ${rango}`,
+  /** Nombre con que el gráfico de edad muestra a las mujeres y a los hombres del catálogo. */
+  totalMujeres: 'Total mujeres',
+  totalHombres: 'Total hombres',
+  quitarFiltro: (texto) => `Quitar filtro ${texto}`,
+  quitarTodos: 'Quitar todos',
+  copiarEnlace: 'Copiar enlace',
+  enlaceCopiado: 'Enlace copiado',
+  enlaceNoCopiado: 'No se pudo copiar',
+  /** Leyenda del gráfico de edad: el nombre del género con su total y su porcentaje. */
+  leyendaGenero: (nombre, total, suma) => `${nombre} ${numero(total)} (${porcentaje(suma ? total / suma : null)})`,
+  personasConDiscapacidad: (n) => `${numero(n)} ${n === 1 ? 'persona' : 'personas'}`,
+  discapacidadDeVisitantes: (pct) => `${pct} de los visitantes`,
+  rangoDiscapacidad: (rango) => (rango.endsWith('+') ? `${rango.slice(0, -1)} o más personas` : `${rango.replace('-', ' a ')} personas`),
+  opcionesElegidas: (n) => `${n} elegidas`,
+  masElegidas: (n) => `+${n} más`,
+  quitarOpcion: (texto) => `Quitar ${texto}`,
+  filtrosConteo: (n) => (n ? `Filtros (${n})` : 'Filtros'),
+  variacion: (pct, anio) => `${pct} vs ${anio}`,
+  sinComparacion: 'Sin datos del año anterior',
+  periodo: (anio, mes) => {
+    if (anio !== null && mes) return `en ${mes.toLowerCase()} de ${anio}`;
+    if (anio !== null) return `durante el ${anio}`;
+    if (mes) return `en ${mes.toLowerCase()} de todos los años`;
+    return 'en todo el período';
+  },
+  resumenParticipacion: (k, periodo) => {
+    if (!k.total) return 'Sin visitantes para los filtros elegidos.';
+    if (k.pctExtranjeros === 0) return `Todos los visitantes son nacionales ${periodo}.`;
+    if (k.pctNacionales === 0) return `Todos los visitantes son extranjeros ${periodo}.`;
+    return `Los visitantes nacionales representan el ${porcentaje(k.pctNacionales)} del total y los extranjeros el ${porcentaje(k.pctExtranjeros)} ${periodo}.`;
+  },
+  centroDona: (anio) => (anio === null ? 'Visitantes' : `Visitantes ${anio}`),
+  notaMapa: (anio) => `Tamaño del círculo proporcional al total de visitantes (${anio === null ? 'todos los años' : anio}).`,
+  topVista: { provincias: 'Top provincias', ciudades: 'Top ciudades', paises: 'Top países' },
+  /** Atribución del mapa. Lleva marcado porque Leaflet la inserta como HTML: es texto fijo del código, nunca de la hoja. */
+  mapaAtribucion: {
+    osm: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    limites: 'Límites: geoBoundaries (CC0)',
+    prefijo: '<a href="https://leafletjs.com" title="Librería de mapas interactivos">Leaflet</a>',
+  },
+  subtituloEvolucion: (anio, anterior) => (anio === null ? TEXTOS.sinDatosCorto : `${anio} vs ${anterior} · por mes`),
+});
+
+export const MESES_CORTOS = Object.freeze(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']);
+
+/**
+ * Tiempo transcurrido en lenguaje natural, p. ej. «hace 2 h 15 min».
+ * @param {number|null|undefined} minutos minutos enteros desde el suceso
+ * @returns {string} el texto, o «s/d» sin dato
+ */
+export function tiempoTranscurrido(minutos) {
+  if (minutos === null || minutos === undefined) return SIN_DATO;
+  const t = TEXTOS.transcurrido;
+  if (minutos < 1) return t.menosDeUnMinuto;
+  if (minutos < 60) return t.minutos(minutos);
+  if (minutos < 60 * 24) return t.horas(Math.floor(minutos / 60), minutos % 60);
+  return t.dias(Math.floor(minutos / (60 * 24)));
+}

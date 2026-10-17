@@ -14,13 +14,6 @@ const MAXIMO_OPCIONES = 20;
 const MAXIMO_LARGO = 80;
 const PROCEDENCIA_VALIDA = /^(NAC|EXT|(C|P|PR):.+)$/;
 
-/** Número entero dentro de un rango, o null. */
-function enteroEn(texto, minimo, maximo) {
-  if (!/^-?\d+$/.test(texto ?? '')) return null;
-  const n = Number(texto);
-  return n >= minimo && n <= maximo ? n : null;
-}
-
 /**
  * Texto de URL para unos filtros, listo para ir después del #.
  * @param {object} filtros estado de filtros (ver filtrosVacios)
@@ -60,4 +53,11 @@ export function textoAFiltros(texto) {
   filtros.anio = enteroEn(parametros.get('a'), ANIO_MINIMO, ANIO_MAXIMO);
   filtros.mes = enteroEn(parametros.get('m'), 0, MESES.length - 1);
   return filtros;
+}
+
+/** Número entero dentro de un rango, o null. */
+function enteroEn(texto, minimo, maximo) {
+  if (!/^-?\d+$/.test(texto ?? '')) return null;
+  const n = Number(texto);
+  return n >= minimo && n <= maximo ? n : null;
 }

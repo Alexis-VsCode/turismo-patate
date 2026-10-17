@@ -1,0 +1,150 @@
+/**
+ * @file lector-xlsx.js
+ * @description Publicación, adaptador del lector. Lectura del libro publicado con SheetJS: cada pestaña que no es de
+ *   sistema es un establecimiento. Devuelve filas normalizadas, rechazos con ubicación y avisos por pestaña; una
+ *   pestaña mal armada se reporta sin tumbar a las demás. Implementa el puerto LectorLibro y carga la copia local de
+ *   SheetJS, aislada en un contexto propio.
+ * @author Kevin Alexis Barrera Llerena 2026
+ */
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { runInNewContext } from 'node:vm';
+import { limpiarTexto } from '../../domain/texto.js';
+import { claveNormalizada, construirCatalogo, mapearEncabezados, etiquetaDeColumna } from '../../domain/catalogo.js';
+import { normalizarFila, normalizarFilaMensual } from '../../domain/visitante.js';
+
+/** Opciones restrictivas de SheetJS para un archivo que editan terceros. */
+const OPCIONES_LECTURA = Object.freeze({
+  type: 'array', dense: true, cellFormula: false, cellHTML: false, cellNF: false,
+  cellStyles: false, cellDates: false, sheetStubs: false, bookVBA: false, WTF: false,
+});
+/** Copia local de SheetJS, versionada junto a las herramientas. */
+const RUTA_SHEETJS = join(dirname(fileURLToPath(import.meta.url)), '../../../tools/vendor/xlsx.mini.min.js');
+
+/**
+ * Indica si una pestaña es de sistema (catálogos, instrucciones, plantilla o su copia).
+ * @param {string} nombre nombre de la pestaña
+ * @returns {boolean} true si empieza por «_» o contiene «plantilla», sin importar tildes ni mayúsculas
+ */
+export function esPestanaDeSistema(nombre) {
+  const clave = claveNormalizada(nombre);
+  return clave.startsWith('_') || clave.includes('plantilla');
+}
+
+/**
+ * Lee el libro y arma el conjunto de datos del dashboard.
+ * @param {ArrayBuffer} buffer libro xlsx descargado
+ * @param {object} XLSX instancia de SheetJS
+ * @param {object} config límites y nombres de CONFIG_PUBLICACION
+ * @returns {{ filas: object[], discapacidad: object[], rechazos: Array<{ pestana: string, fila: number, motivo: string }>,
+ *   avisos: Array<{ pestana: string, mensaje: string }>, establecimientos: string[], catalogo: object }} las filas ya
+ *   normalizadas, lo rechazado con su ubicación, los avisos por pestaña y los establecimientos ordenados por nombre
+ */
+export function leerLibro(buffer, XLSX, config) {
+  const libro = XLSX.read(buffer, { ...OPCIONES_LECTURA, sheetRows: config.MAX_FILAS_PESTANA + 1 });
+  const avisos = [];
+  const rechazos = [];
+  const filas = [];
+  const discapacidad = [];
+  const establecimientos = [];
+
+  // Paso 1: catálogo; si falta, se sigue con uno mínimo y se avisa
+  const hojaCatalogo = libro.Sheets[config.PESTANA_CATALOGOS];
+  const catalogo = construirCatalogo(hojaCatalogo ? filasDeHoja(XLSX, hojaCatalogo) : null);
+  for (const mensaje of catalogo.avisos) avisos.push({ pestana: config.PESTANA_CATALOGOS, mensaje });
+  if (!catalogo.completo) avisos.push({ pestana: config.PESTANA_CATALOGOS, mensaje: 'Catálogo ausente o incompleto: el mapa puede quedar sin ubicaciones' });
+
+  // Paso 2: pestañas de establecimiento, con tope de cantidad; un nombre vacío o repetido se omite y se avisa
+  let nombres = libro.SheetNames.filter((n) => !esPestanaDeSistema(n));
+  if (nombres.length > config.MAX_PESTANAS) {
+    avisos.push({ pestana: '', mensaje: `Hay ${nombres.length} pestañas; se leen solo las primeras ${config.MAX_PESTANAS}` });
+    nombres = nombres.slice(0, config.MAX_PESTANAS);
+  }
+  const vistos = new Set();
+  for (const nombreCrudo of nombres) {
+    const establecimiento = limpiarTexto(nombreCrudo);
+    if (!establecimiento || vistos.has(claveNormalizada(establecimiento))) {
+      avisos.push({ pestana: establecimiento, mensaje: 'Nombre de pestaña vacío o repetido: se omite' });
+      continue;
+    }
+    vistos.add(claveNormalizada(establecimiento));
+
+    // Paso 3: encabezados; si faltan columnas, se reporta la pestaña y se sigue con la siguiente
+    const crudas = filasDeHoja(XLSX, libro.Sheets[nombreCrudo]);
+    if (crudas.length > config.MAX_FILAS_PESTANA + 1) {
+      avisos.push({ pestana: establecimiento, mensaje: `Más de ${config.MAX_FILAS_PESTANA} filas: se leen solo las primeras` });
+    }
+    const { indices, faltantes, formato } = mapearEncabezados(crudas[0]);
+    if (formato === 'mixto') {
+      avisos.push({ pestana: establecimiento, mensaje: 'Mezcla los dos formatos (Cantidad, Edad y Género con Mujeres y Hombres por rango): se omite' });
+      continue;
+    }
+    if (faltantes.length) {
+      avisos.push({ pestana: establecimiento, mensaje: `Faltan columnas: ${faltantes.map(etiquetaDeColumna).join(', ')}` });
+      continue;
+    }
+    establecimientos.push(establecimiento);
+
+    // Paso 4: filas de datos de la pestaña
+    leerFilasDePestana(crudas, establecimiento, { indices, formato }, catalogo, config, { filas, discapacidad, rechazos });
+  }
+  // Paso 5: el resultado sale ordenado por nombre; el orden de los combos depende de esto
+  establecimientos.sort((a, b) => a.localeCompare(b, 'es'));
+  return { filas, discapacidad, rechazos, avisos, establecimientos, catalogo };
+}
+
+/**
+ * Carga la copia local de SheetJS. Es UMD: se evalúa aislada en un contexto propio, igual que en el navegador como
+ * script clásico.
+ * @returns {object} la instancia de SheetJS (`XLSX`)
+ */
+export function cargarSheetJS() {
+  const contexto = {};
+  runInNewContext(readFileSync(RUTA_SHEETJS, 'utf8'), contexto);
+  return contexto.XLSX;
+}
+
+/**
+ * Lector del libro con SheetJS y los límites de la publicación.
+ * @param {object} XLSX instancia de SheetJS
+ * @param {object} config límites y nombres de CONFIG_PUBLICACION
+ * @returns {import('../puertos.js').LectorLibro} el lector que convierte los bytes del libro en el conjunto de datos
+ */
+export function crearLectorXlsx(XLSX, config) {
+  return { leer: (buffer) => leerLibro(buffer, XLSX, config) };
+}
+
+/** Filas de una pestaña como listas de celdas, con las vacías en null. */
+function filasDeHoja(XLSX, hoja) {
+  return XLSX.utils.sheet_to_json(hoja, { header: 1, raw: true, defval: null, blankrows: false });
+}
+
+/**
+ * Normaliza las filas de datos de una pestaña (la fila 1 de la hoja es el encabezado) y deja cada resultado en su
+ * lista: las filas internas, la discapacidad del formato mensual y los rechazos con su fila de la hoja.
+ * @param {Array<Array>} crudas filas de la pestaña, encabezado incluido
+ * @param {string} establecimiento nombre limpio de la pestaña
+ * @param {{ indices: object, formato: 'anterior'|'mensual' }} encabezados resultado de mapearEncabezados()
+ * @param {object} catalogo catálogo de la hoja (ver construirCatalogo)
+ * @param {{ MAX_FILAS_PESTANA: number, PAIS_LOCAL: string }} config tope de filas y país local
+ * @param {{ filas: object[], discapacidad: object[], rechazos: object[] }} destino listas del libro que reciben lo leído
+ */
+function leerFilasDePestana(crudas, establecimiento, { indices, formato }, catalogo, config, destino) {
+  crudas.slice(1, config.MAX_FILAS_PESTANA + 1).forEach((cruda, i) => {
+    if (!cruda || cruda.every((v) => limpiarTexto(v) === '')) return;
+    if (formato === 'mensual') {
+      const resultado = normalizarFilaMensual(cruda, indices, catalogo, config.PAIS_LOCAL);
+      if (!resultado.ok) {
+        destino.rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
+        return;
+      }
+      for (const f of resultado.filas) destino.filas.push({ ...f, establecimiento });
+      if (resultado.discapacidad) destino.discapacidad.push({ ...resultado.discapacidad, establecimiento });
+      return;
+    }
+    const resultado = normalizarFila(cruda, indices, catalogo, config.PAIS_LOCAL);
+    if (resultado.ok) destino.filas.push({ ...resultado.fila, establecimiento });
+    else destino.rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
+  });
+}

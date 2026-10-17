@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { XLSX, leerFixture } from '../helpers.mjs';
 import { ESCENARIOS, conciliarEscenario, leerJson } from '../conciliacion.mjs';
-import { leerLibro } from '../../src/infrastructure/lector-libro.js';
-import { CONFIG } from '../../src/infrastructure/config.js';
+import { leerLibro } from '../../src/publicacion/adaptadores/lector-xlsx.js';
+import { CONFIG_PUBLICACION as CONFIG } from '../../src/publicacion/config-publicacion.js';
 import { kpis, anioDeReferencia, evolucionMensual, variacionInteranual, resumenCarga } from '../../src/domain/estadisticas.js';
 import { filtrar, filtrosVacios } from '../../src/domain/filtros.js';
 

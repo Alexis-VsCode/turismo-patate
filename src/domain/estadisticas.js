@@ -26,8 +26,6 @@ export function sumaPor(filas, claveDe) {
   return acumulado;
 }
 
-const total = (filas) => filas.reduce((suma, f) => suma + f.cantidad, 0);
-
 /**
  * Tarjetas: total, nacionales y extranjeros; los porcentajes son null sin visitantes.
  * @param {Array<object>} filas filas ya filtradas
@@ -107,11 +105,6 @@ export function variacionInteranual(filas, filtros) {
     else if (f.anio === anio - 1) anterior += f.cantidad;
   }
   return { anio, anioAnterior: anio - 1, actual, anterior, variacion: anterior ? (actual - anterior) / anterior : null };
-}
-
-/** Lista ordenada de mayor a menor a partir de un Map de sumas. */
-function ordenar(mapa) {
-  return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));
 }
 
 /**
@@ -204,4 +197,11 @@ export function resumenCarga(filas, establecimientos) {
     desde: meses.length ? mes(Math.min(...meses)) : null,
     hasta: meses.length ? mes(Math.max(...meses)) : null,
   };
+}
+
+const total = (filas) => filas.reduce((suma, f) => suma + f.cantidad, 0);
+
+/** Lista ordenada de mayor a menor a partir de un Map de sumas. */
+function ordenar(mapa) {
+  return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));
 }

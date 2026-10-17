@@ -1,0 +1,525 @@
+/**
+ * @file tablero.facade.test.mjs
+ * @description Pruebas de la fachada del tablero con reloj, visibilidad y descarga simulados:
+ *   política de actualización, conservación de datos ante errores, filtros y vista calculada.
+ * @author Kevin Alexis Barrera Llerena 2026
+ */
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { XLSX, RAIZ, leerFixture } from '../../helpers.mjs';
+import { leerLibro } from '../../../src/publicacion/adaptadores/lector-xlsx.js';
+import { empaquetar, desempaquetar } from '../../../src/contrato/contrato-datos.js';
+import { claveNormalizada } from '../../../src/domain/catalogo.js';
+import { CONFIG } from '../../../src/tablero/infrastructure/config.js';
+import { CONFIG_PUBLICACION } from '../../../src/publicacion/config-publicacion.js';
+import { crearTableroFacade } from '../../../src/tablero/application/tablero.facade.js';
+import {
+  kpis, porMotivo, edadGenero, evolucionMensual, anioDeReferencia, variacionInteranual, porCiudad, porPais, porProvincia,
+} from '../../../src/domain/estadisticas.js';
+import { resumenDiscapacidad } from '../../../src/domain/discapacidad.js';
+import { filtrosVacios } from '../../../src/domain/filtros.js';
+
+const DATOS = desempaquetar(
+  JSON.parse(JSON.stringify(empaquetar(leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG_PUBLICACION), '2026-09-29T13:00:00.000Z', 'Ecuador'))),
+  claveNormalizada,
+);
+const esperado = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/esperado.json'), 'utf8'));
+const DATOS_MENSUAL = desempaquetar(
+  JSON.parse(JSON.stringify(empaquetar(leerLibro(leerFixture('test/fixtures/piloto-mensual.xlsx'), XLSX, CONFIG_PUBLICACION), '2026-09-29T13:00:00.000Z', 'Ecuador'))),
+  claveNormalizada,
+);
+
+/** Deja correr la descarga que haya quedado en curso antes de seguir. */
+const terminarCarga = () => new Promise((listo) => setImmediate(listo));
+
+/** Fachada con reloj manual, visibilidad controlable y una descarga que cuenta sus llamadas. */
+function montar({ falla = false, datos = DATOS } = {}) {
+  const ctx = { ahora: 1_000_000, visible: true, llamadas: 0, falla, eventos: [] };
+  const facade = crearTableroFacade({
+    obtener: async () => {
+      ctx.llamadas += 1;
+      if (ctx.falla) throw Object.assign(new Error('sin red'), { codigo: 'RED' });
+      return datos;
+    },
+    config: CONFIG,
+    reloj: () => ctx.ahora,
+    esVisible: () => ctx.visible,
+  });
+  facade.suscribir((e) => ctx.eventos.push(e));
+  return { facade, ctx };
+}
+
+test('carga inicial forzada trae los datos y avisa en orden', async () => {
+  const { facade, ctx } = montar();
+  assert.equal(await facade.cargar(true), 'cargado');
+  assert.equal(ctx.llamadas, 1);
+  assert.deepEqual(ctx.eventos, ['cargando', 'datos', 'cargando']);
+  assert.equal(facade.vista().kpis.total, esperado.todo.kpis.total);
+});
+
+test('cargar sin forzar reusa la descarga si no pasó el tiempo mínimo de reuso', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  ctx.ahora += CONFIG.REUSO_MINIMO_MS - 1;
+  assert.equal(await facade.cargar(false), 'reusado');
+  ctx.ahora += 1;
+  assert.equal(await facade.cargar(false), 'cargado');
+  assert.equal(ctx.llamadas, 2);
+});
+
+test('el botón Actualizar (forzar) ignora el tiempo mínimo de reuso', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  ctx.ahora += 1000;
+  assert.equal(await facade.cargar(true), 'cargado');
+  assert.equal(ctx.llamadas, 2);
+});
+
+test('la actualización automática toca al cumplirse el intervalo y solo con la pestaña visible', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  ctx.ahora += CONFIG.INTERVALO_AUTO_MS - 1;
+  assert.equal(facade.tocaActualizar(), false);
+  ctx.ahora += 1;
+  assert.equal(facade.tocaActualizar(), true);
+  ctx.visible = false;
+  assert.equal(facade.tocaActualizar(), false);
+});
+
+test('no lanza dos descargas a la vez', async () => {
+  const { facade } = montar();
+  const primera = facade.cargar(true);
+  assert.equal(await facade.cargar(true), 'ocupado');
+  assert.equal(await primera, 'cargado');
+});
+
+test('un error conserva los últimos datos buenos y expone el código', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  ctx.falla = true;
+  assert.equal(await facade.cargar(true), 'error');
+  assert.equal(facade.estado.error.codigo, 'RED');
+  assert.equal(facade.vista().kpis.total, esperado.todo.kpis.total);
+  ctx.falla = false;
+  await facade.cargar(true);
+  assert.equal(facade.estado.error, null);
+});
+
+test('filtros: fijar, alternar, elegir mes y limpiar concilian con el oráculo', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('procedencia', 'EXT');
+  assert.equal(facade.vista().kpis.total, esperado['solo-extranjeros'].kpis.total);
+  facade.alternarFiltro('procedencia', 'EXT');
+  assert.deepEqual(facade.estado.filtros.procedencia, []);
+  facade.elegirMes(2026, 6);
+  assert.equal(facade.vista().kpis.total, esperado['2026-julio'].kpis.total);
+  facade.elegirMes(2026, 6);
+  assert.equal(facade.estado.filtros.mes, null);
+  facade.fijarFiltro('anio', '');
+  assert.equal(facade.estado.filtros.anio, null);
+  facade.fijarFiltro('establecimiento', 'Heladería Las Orquídeas');
+  assert.equal(facade.vista().kpis.total, esperado['un-establecimiento'].kpis.total);
+  facade.limpiarFiltros();
+  assert.equal(facade.vista().kpis.total, esperado.todo.kpis.total);
+});
+
+test('opciones de los combos incluyen los 100 establecimientos y la procedencia agrupada', async () => {
+  const { facade } = montar();
+  assert.equal(facade.opciones(), null);
+  await facade.cargar(true);
+  const op = facade.opciones();
+  assert.equal(op.establecimiento.length, 100, 'los filtros de varias opciones no llevan la opción «Todos»');
+  assert.ok(op.procedencia.some((o) => o.valor === 'C:Ambato'));
+  assert.ok(op.procedencia.some((o) => o.valor === 'P:Colombia'));
+  assert.ok(op.procedencia.some((o) => o.valor === 'PR:Tungurahua'));
+});
+
+test('un suscriptor que lanza no convierte una carga correcta en error ni oculta el evento a los demás', async () => {
+  const errores = [];
+  const eventos = [];
+  const facade = crearTableroFacade({
+    obtener: async () => DATOS, config: CONFIG, reloj: () => 1_000_000, reportarError: (e) => errores.push(e),
+  });
+  facade.suscribir((e) => { if (e === 'datos') throw new Error('falla del pintado'); });
+  facade.suscribir((e) => eventos.push(e));
+  assert.equal(await facade.cargar(true), 'cargado');
+  assert.equal(facade.estado.error, null);
+  assert.deepEqual(eventos, ['cargando', 'datos', 'cargando']);
+  assert.equal(errores.length, 1);
+  assert.match(errores[0].message, /falla del pintado/);
+});
+
+test('frescura es «desconocido» sin datos y sigue al reloj con la fecha de publicación', async () => {
+  const { facade, ctx } = montar();
+  assert.deepEqual(facade.frescura(), { estado: 'desconocido', minutos: null });
+  await facade.cargar(true);
+  const publicado = Date.parse(DATOS.generadoEn);
+  const { alDiaMin, retrasadoMin } = CONFIG.UMBRALES_FRESCURA;
+  ctx.ahora = publicado + 5 * 60 * 1000;
+  assert.deepEqual(facade.frescura(), { estado: 'alDia', minutos: 5 });
+  ctx.ahora = publicado + (alDiaMin + 1) * 60 * 1000;
+  assert.equal(facade.frescura().estado, 'retrasado');
+  ctx.ahora = publicado + (retrasadoMin + 1) * 60 * 1000;
+  assert.equal(facade.frescura().estado, 'vencido');
+});
+
+test('la vista trae los textos del periodo según año y mes elegidos', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().textos.periodo, 'en todo el período');
+  assert.equal(facade.vista().textos.centro, 'Visitantes');
+  facade.fijarFiltro('anio', 2025);
+  assert.equal(facade.vista().textos.periodo, 'durante el 2025');
+  assert.equal(facade.vista().textos.centro, 'Visitantes 2025');
+  assert.match(facade.vista().textos.notaMapa, /\(2025\)/);
+  facade.fijarFiltro('mes', 2);
+  assert.equal(facade.vista().textos.periodo, 'en marzo de 2025');
+});
+
+test('la vista del mapa empieza en provincias, acepta solo modos conocidos y avisa con su propio evento', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().mapa.vista, 'provincias');
+  ctx.eventos.length = 0;
+  facade.fijarVistaMapa('ciudades');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.deepEqual(ctx.eventos, ['vistaMapa']);
+  facade.fijarVistaMapa('galaxias');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  facade.fijarVistaMapa('ciudades');
+  assert.deepEqual(ctx.eventos, ['vistaMapa'], 'repetir el mismo modo no vuelve a avisar');
+});
+
+test('la pestaña del mapa sigue al filtro de procedencia y conserva la elegida con «todos» o «nacionales»', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const vistaTras = (procedencia) => { facade.fijarFiltro('procedencia', procedencia); return facade.vista().mapa.vista; };
+  assert.equal(vistaTras('P:Colombia'), 'paises');
+  assert.equal(vistaTras('C:Ambato'), 'ciudades');
+  assert.equal(vistaTras('PR:Tungurahua'), 'provincias');
+  facade.fijarVistaMapa('paises');
+  assert.equal(vistaTras('NAC'), 'paises');
+  assert.equal(vistaTras(''), 'paises');
+  assert.equal(vistaTras('EXT'), 'paises');
+  facade.fijarVistaMapa('ciudades');
+  facade.limpiarFiltros();
+  assert.equal(facade.vista().mapa.vista, 'ciudades', 'limpiar filtros no cambia la pestaña elegida');
+});
+
+test('la lista de motivos no se reduce al motivo elegido, para poder cambiar de uno a otro', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const completa = facade.vista().motivos;
+  assert.ok(completa.length > 1);
+  facade.fijarFiltro('motivo', completa[0].nombre);
+  const filtrada = facade.vista().motivos;
+  assert.deepEqual(filtrada, completa);
+  assert.equal(facade.vista().kpis.total, completa[0].valor, 'el resto del tablero sí queda filtrado');
+  facade.fijarFiltro('anio', 2025);
+  assert.ok(facade.vista().motivos.length > 1, 'los demás filtros siguen aplicándose a la lista');
+  assert.ok(facade.vista().motivos.reduce((s, m) => s + m.valor, 0) < completa.reduce((s, m) => s + m.valor, 0));
+});
+
+test('el combo de años une los años con visitantes y los del catálogo, de mayor a menor', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const anios = facade.opciones().anio.filter((o) => o.valor !== '').map((o) => o.valor);
+  assert.deepEqual(anios, [...DATOS.catalogo.anios, ...DATOS.filas.map((f) => f.anio)]
+    .filter((a, i, l) => l.indexOf(a) === i).sort((a, b) => b - a).map(String));
+  assert.ok(DATOS.catalogo.anios.some((a) => !DATOS.filas.some((f) => f.anio === a)), 'el libro de prueba tiene un año del catálogo sin visitantes');
+});
+
+test('un año con visitantes que el catálogo no lista también aparece en el combo', async () => {
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, anios: [] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const anios = facade.opciones().anio.filter((o) => o.valor !== '').map((o) => o.valor);
+  assert.deepEqual(anios, [...new Set(DATOS.filas.map((f) => f.anio))].sort((a, b) => b - a).map(String));
+});
+
+test('un motivo del catálogo sin visitantes aparece en el combo de motivos', async () => {
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, motivos: [...DATOS.catalogo.motivos, 'Motivo nuevo de la hoja'] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const motivos = facade.opciones().motivo.map((o) => o.valor);
+  assert.ok(motivos.includes('Motivo nuevo de la hoja'));
+  assert.equal(new Set(motivos).size, motivos.length, 'sin motivos repetidos');
+});
+
+test('elegir un año del catálogo sin visitantes deja el tablero en cero sin romper nada', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const vacio = Math.max(...DATOS.catalogo.anios);
+  facade.fijarFiltro('anio', vacio);
+  const v = facade.vista();
+  assert.equal(v.kpis.total, 0);
+  assert.equal(v.kpis.pctNacionales, null);
+  assert.equal(v.textos.periodo, `durante el ${vacio}`);
+});
+
+test('un motivo del catálogo escrito sin tilde no se duplica con el que trae el visitante', async () => {
+  const conTilde = DATOS.filas.find((f) => /[áéíóú]/i.test(f.motivo));
+  assert.ok(conTilde, 'el libro de prueba tiene un motivo con tilde');
+  const sinTilde = conTilde.motivo.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const datos = { ...DATOS, catalogo: { ...DATOS.catalogo, motivos: [...DATOS.catalogo.motivos, sinTilde] } };
+  const facade = crearTableroFacade({ obtener: async () => datos, config: CONFIG });
+  await facade.cargar(true);
+  const motivos = facade.opciones().motivo.map((o) => o.valor).filter((v) => v !== '');
+  assert.equal(motivos.filter((m) => m.normalize('NFD').replace(/[̀-ͯ]/g, '') === sinTilde).length, 1);
+});
+
+test('los minutos de publicación salen de la configuración y no del refresco del navegador', () => {
+  const config = { ...CONFIG, INTERVALO_AUTO_MS: 5 * 60 * 1000, PUBLICACION_MINUTOS: 15 };
+  const facade = crearTableroFacade({ obtener: async () => DATOS, config });
+  assert.equal(facade.publicacionMinutos(), 15);
+  assert.equal(crearTableroFacade({ obtener: async () => DATOS, config: CONFIG }).publicacionMinutos(), CONFIG.PUBLICACION_MINUTOS);
+});
+
+test('varias opciones: alternar agrega, quitar saca solo una y cada valor tiene su etiqueta', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const [a, b] = [...new Set(DATOS.filas.filter((x) => !x.nacional).map((x) => x.pais))].sort().slice(0, 2);
+  facade.alternarFiltro('procedencia', `P:${a}`);
+  facade.alternarFiltro('procedencia', `P:${b}`);
+  facade.alternarFiltro('motivo', 'Turismo');
+  assert.deepEqual(facade.estado.filtros.procedencia, [`P:${a}`, `P:${b}`]);
+  assert.deepEqual(facade.chipsActivos().map((c) => [c.campo, c.valor, c.texto]), [
+    ['procedencia', `P:${a}`, a], ['procedencia', `P:${b}`, b], ['motivo', 'Turismo', 'Turismo'],
+  ]);
+  const esperadoTotal = DATOS.filas
+    .filter((x) => [a, b].includes(x.pais) && x.motivo === 'Turismo').reduce((s, x) => s + x.cantidad, 0);
+  assert.equal(facade.vista().kpis.total, esperadoTotal);
+  facade.quitarFiltro('procedencia', `P:${b}`);
+  assert.deepEqual(facade.estado.filtros.procedencia, [`P:${a}`]);
+  facade.quitarFiltro('motivo', 'Turismo');
+  assert.deepEqual(facade.estado.filtros.motivo, []);
+  facade.limpiarFiltros();
+  assert.deepEqual(facade.estado.filtros.procedencia, []);
+});
+
+test('quitar año o mes los deja en null y el estado expuesto no comparte listas con el interno', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('anio', 2025);
+  facade.quitarFiltro('anio');
+  assert.equal(facade.estado.filtros.anio, null);
+  facade.alternarFiltro('motivo', 'Turismo');
+  facade.estado.filtros.motivo.push('Intruso');
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.deepEqual(facade.vista().filtros.motivo, ['Turismo']);
+});
+
+test('la pestaña del mapa sigue a la última opción agregada y no cambia al quitar una', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.alternarFiltro('procedencia', 'P:Colombia');
+  facade.alternarFiltro('procedencia', 'C:Ambato');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.equal(facade.vista().mapa.procedencia, 'C:Ambato');
+  facade.quitarFiltro('procedencia', 'C:Ambato');
+  assert.equal(facade.vista().mapa.vista, 'ciudades');
+  assert.equal(facade.vista().mapa.procedencia, 'P:Colombia');
+  facade.quitarFiltro('procedencia', 'P:Colombia');
+  assert.equal(facade.vista().mapa.procedencia, '');
+});
+
+test('las opciones de varias opciones salen agrupadas y sin la opción «Todos»', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  const op = facade.opciones();
+  for (const campo of ['establecimiento', 'procedencia', 'motivo', 'rangoEdad', 'genero']) {
+    assert.ok(op[campo].every((o) => o.valor !== ''), `${campo} no debe ofrecer «Todos»`);
+  }
+  assert.deepEqual(op.rangoEdad.map((o) => o.valor), ['0-30', '31-45', '46-60', '61+']);
+  const grupos = [...new Set(op.procedencia.map((o) => o.grupo))];
+  assert.deepEqual(grupos, ['Atajos', 'Provincias', 'Ciudades de Ecuador', 'Países']);
+  assert.deepEqual(op.procedencia.filter((o) => o.grupo === 'Atajos').map((o) => o.valor), ['NAC', 'EXT']);
+  assert.equal(op.anio[0].valor, '', 'año y mes conservan «Todos»');
+});
+
+test('la discapacidad de la vista respeta los filtros menos edad y género', async () => {
+  const base = { anio: 2026, mes: 2, pais: 'Ecuador', provincia: 'Tungurahua', ciudad: 'Ambato', nacional: true };
+  const registros = [
+    { ...base, establecimiento: DATOS.establecimientos[0], motivo: 'Turismo', personas: 3 },
+    { ...base, establecimiento: DATOS.establecimientos[1], motivo: 'Gastronomía', personas: 12 },
+  ];
+  const facade = crearTableroFacade({ obtener: async () => ({ ...DATOS, discapacidad: registros }), config: CONFIG });
+  await facade.cargar(true);
+  assert.equal(facade.vista().discapacidad.personas, 15);
+  facade.alternarFiltro('motivo', 'Turismo');
+  assert.equal(facade.vista().discapacidad.personas, 3);
+  facade.alternarFiltro('rangoEdad', '61+');
+  facade.alternarFiltro('genero', 'Masculino');
+  const d = facade.vista().discapacidad;
+  assert.equal(d.personas, 3, 'la edad y el género no se aplican a la discapacidad');
+  const totalTurismo = DATOS.filas.filter((x) => x.motivo === 'Turismo').reduce((s, x) => s + x.cantidad, 0);
+  assert.equal(d.pctVisitantes, 3 / totalTurismo, 'el porcentaje usa los visitantes de la misma selección, sin edad ni género');
+});
+
+test('sin datos de discapacidad la vista trae el resumen en cero', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.vista().discapacidad.personas, 0);
+  assert.equal(facade.vista().discapacidad.registros, 0);
+});
+
+test('aplicarFiltros reemplaza todos los filtros de golpe, mueve el mapa y avisa una sola vez', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  facade.alternarFiltro('motivo', 'Turismo');
+  ctx.eventos.length = 0;
+  facade.aplicarFiltros({ establecimiento: [], anio: 2026, mes: 0, procedencia: ['P:Colombia'], motivo: [], rangoEdad: ['0-30'], genero: ['Femenino'] });
+  assert.deepEqual(facade.estado.filtros, {
+    establecimiento: [], anio: 2026, mes: 0, procedencia: ['P:Colombia'], motivo: [], rangoEdad: ['0-30'], genero: ['Femenino'],
+  });
+  assert.equal(facade.vista().mapa.vista, 'paises');
+  assert.deepEqual(ctx.eventos.filter((e) => e === 'filtros'), ['filtros']);
+});
+
+test('aplicarFiltros ignora campos que no son filtros y completa los que faltan', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.aplicarFiltros({ motivo: 'Turismo', intruso: ['x'] });
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.equal(facade.estado.filtros.intruso, undefined);
+  assert.equal(facade.estado.filtros.anio, null);
+});
+
+test('el enlace de la fachada refleja los filtros y al aplicarlo se recuperan igual', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.enlace(), '');
+  facade.alternarFiltro('motivo', 'Turismo');
+  facade.alternarFiltro('procedencia', 'P:Colombia');
+  facade.fijarFiltro('anio', 2025);
+  const texto = facade.enlace();
+  const antes = facade.estado.filtros;
+  facade.limpiarFiltros();
+  assert.equal(facade.enlace(), '');
+  facade.aplicarEnlace(`#${texto}`);
+  assert.deepEqual(facade.estado.filtros, antes);
+});
+
+test('un enlace con basura no rompe nada: se aplica solo lo válido', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.aplicarEnlace('#a=1900&ed=999&p=nada&mo=Turismo');
+  assert.deepEqual(facade.estado.filtros.motivo, ['Turismo']);
+  assert.equal(facade.estado.filtros.anio, null);
+  assert.deepEqual(facade.estado.filtros.rangoEdad, []);
+});
+
+test('el periodo cargado se lee de su primer a su último mes («ene 2025 a sep 2026» en el libro de prueba)', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  assert.equal(facade.carga().periodo, 'ene 2025 a sep 2026');
+});
+
+test('cambiar o quitar un establecimiento vuelve a descargar solo si pasó el tiempo mínimo de reuso', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  const [a, b] = DATOS.establecimientos;
+  ctx.eventos.length = 0;
+  facade.fijarFiltro('establecimiento', [a]);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 1, 'antes del plazo se reusa la descarga');
+  assert.deepEqual(ctx.eventos, ['filtros']);
+  ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+  ctx.eventos.length = 0;
+  facade.fijarFiltro('establecimiento', [a, b]);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 2, 'cumplido el plazo, cambiar de establecimiento descarga');
+  assert.deepEqual(ctx.eventos, ['filtros', 'cargando', 'datos', 'cargando'], 'primero se pintan los filtros y después la descarga');
+  facade.quitarFiltro('establecimiento', b);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 2, 'quitarlo antes del plazo también reusa');
+  ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+  facade.quitarFiltro('establecimiento', a);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 3, 'cumplido el plazo, quitar un establecimiento descarga');
+  assert.deepEqual(facade.estado.filtros.establecimiento, []);
+});
+
+test('alternar, aplicar, limpiar, elegir mes, el enlace y los demás filtros nunca vuelven a descargar', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  const [a] = DATOS.establecimientos;
+  const acciones = [
+    () => facade.alternarFiltro('establecimiento', a),
+    () => facade.aplicarFiltros({ establecimiento: [a] }),
+    () => facade.aplicarEnlace(`#e=${encodeURIComponent(a)}`),
+    () => facade.limpiarFiltros(),
+    () => facade.elegirMes(2026, 1),
+    () => facade.fijarFiltro('motivo', ['Turismo']),
+    () => facade.quitarFiltro('motivo', 'Turismo'),
+    () => facade.fijarFiltro('anio', 2025),
+    () => facade.quitarFiltro('anio'),
+    () => facade.alternarFiltro('procedencia', 'EXT'),
+  ];
+  for (const accion of acciones) {
+    ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+    accion();
+    await terminarCarga();
+  }
+  assert.equal(ctx.llamadas, 1);
+});
+
+/** Los dos establecimientos con más filas de discapacidad y, después, con más visitantes: así el caso no es trivial. */
+function dosEstablecimientos(datos) {
+  const cuenta = (lista, e) => lista.filter((r) => r.establecimiento === e).length;
+  return [...datos.establecimientos]
+    .sort((x, y) => cuenta(datos.discapacidad, y) - cuenta(datos.discapacidad, x) || cuenta(datos.filas, y) - cuenta(datos.filas, x))
+    .slice(0, 2);
+}
+
+for (const [libro, datos] of [['piloto-publicado', DATOS], ['piloto-mensual', DATOS_MENSUAL]]) {
+  test(`al elegir un establecimiento, cada panel de la vista sale solo de sus filas (${libro})`, async () => {
+    const { facade } = montar({ datos });
+    await facade.cargar(true);
+    const opcionesSinFiltro = facade.opciones();
+    const [a, b] = dosEstablecimientos(datos);
+    for (const elegidos of [[a], [b], [a, b]]) {
+      facade.fijarFiltro('establecimiento', elegidos);
+      // Paso 1: las filas se separan a mano, sin pasar por filtrar(), para no validar la fachada con su propio código
+      const filas = datos.filas.filter((r) => elegidos.includes(r.establecimiento));
+      const discapacidad = datos.discapacidad.filter((r) => elegidos.includes(r.establecimiento));
+      assert.ok(filas.length > 0, `${elegidos} tiene visitantes en el libro`);
+      const v = facade.vista();
+      const k = kpis(filas);
+      assert.deepEqual(
+        { total: v.kpis.total, nacionales: v.kpis.nacionales, extranjeros: v.kpis.extranjeros },
+        { total: k.total, nacionales: k.nacionales, extranjeros: k.extranjeros },
+        `KPI de ${elegidos}`,
+      );
+      assert.deepEqual(v.kpis, k);
+      assert.deepEqual(v.variacion, variacionInteranual(filas, filtrosVacios()), `variación de ${elegidos}`);
+      assert.deepEqual(v.motivos, porMotivo(filas), `motivos de ${elegidos}`);
+      assert.deepEqual(v.edadGenero, edadGenero(filas, datos.catalogo.generos), `edad y género de ${elegidos}`);
+      assert.deepEqual(v.discapacidad, resumenDiscapacidad(discapacidad, k.total), `discapacidad de ${elegidos}`);
+      assert.deepEqual(v.evolucion, evolucionMensual(filas, anioDeReferencia(filas, null)), `evolución de ${elegidos}`);
+      assert.deepEqual(
+        { ciudades: v.mapa.ciudades, paises: v.mapa.paises, provincias: v.mapa.provincias },
+        { ciudades: porCiudad(filas), paises: porPais(filas), provincias: porProvincia(filas) },
+        `mapa de ${elegidos}`,
+      );
+      assert.deepEqual(v.filtros.establecimiento, elegidos);
+      // Paso 2: las opciones de los combos no se reducen al establecimiento: siguen saliendo de todo el libro y del catálogo
+      assert.deepEqual(facade.opciones(), opcionesSinFiltro, `opciones con ${elegidos}`);
+      assert.deepEqual(facade.opciones().establecimiento.map((o) => o.valor), datos.establecimientos);
+    }
+    const unoYOtro = [[a], [b]].map((e) => { facade.fijarFiltro('establecimiento', e); return facade.vista().kpis.total; });
+    assert.notEqual(unoYOtro[0], unoYOtro[1], 'los dos establecimientos elegidos dan totales distintos');
+    facade.fijarFiltro('establecimiento', [a, b]);
+    assert.equal(facade.vista().kpis.total, unoYOtro[0] + unoYOtro[1], 'dos establecimientos a la vez suman los dos');
+  });
+}
+
+test('cada chip de procedencia se lee en lenguaje natural según su tipo', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('procedencia', ['NAC', 'EXT', 'PR:Tungurahua', 'C:Ambato', 'P:Colombia']);
+  assert.deepEqual(facade.chipsActivos().map((c) => c.texto), ['Nacionales', 'Extranjeros', 'Provincia: Tungurahua', 'Ambato', 'Colombia']);
+});

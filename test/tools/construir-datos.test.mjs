@@ -12,7 +12,7 @@ import { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { RAIZ, CATALOGO, libroEnMemoria } from '../helpers.mjs';
-import { VERSION_PAQUETE } from '../../src/infrastructure/contrato-datos.js';
+import { VERSION_PAQUETE } from '../../src/contrato/contrato-datos.js';
 import { validarUrlHoja, leerArgumentos } from '../../tools/construir-datos.mjs';
 
 const URL_BUENA = 'https://docs.google.com/spreadsheets/d/e/2PACX-falso/pub?output=xlsx';

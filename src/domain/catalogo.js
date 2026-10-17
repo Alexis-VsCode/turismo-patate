@@ -102,33 +102,6 @@ export function canonico(lista, valor) {
 }
 
 /**
- * Acepta cada ciudad si no se repite y cae dentro de Ecuador; una provincia ajena a la lista solo avisa.
- * @param {Array<{ nombre: string, provincia: string, lat: number, lon: number }>} ciudadesCrudas ciudades de la hoja, en
- *   su orden
- * @param {{ provincias: string[], ciudades: Map<string, object>, avisos: string[] }} catalogo catálogo en construcción:
- *   recibe las ciudades aceptadas y los avisos para quien llena la hoja
- */
-function aceptarCiudades(ciudadesCrudas, catalogo) {
-  const claveProvincias = new Set(catalogo.provincias.map(claveNormalizada));
-  for (const ciudad of ciudadesCrudas) {
-    const clave = claveNormalizada(ciudad.nombre);
-    if (catalogo.ciudades.has(clave)) {
-      catalogo.avisos.push(`Ciudad repetida en el catálogo: «${ciudad.nombre}» (se conserva la primera)`);
-      continue;
-    }
-    const { latMin, latMax, lonMin, lonMax } = LIMITES_ECUADOR;
-    if (ciudad.lat < latMin || ciudad.lat > latMax || ciudad.lon < lonMin || ciudad.lon > lonMax) {
-      catalogo.avisos.push(`Ciudad fuera de Ecuador por sus coordenadas: «${ciudad.nombre}» (se omite)`);
-      continue;
-    }
-    if (claveProvincias.size && ciudad.provincia && !claveProvincias.has(claveNormalizada(ciudad.provincia))) {
-      catalogo.avisos.push(`La provincia «${ciudad.provincia}» de la ciudad «${ciudad.nombre}» no está en la lista de provincias`);
-    }
-    catalogo.ciudades.set(clave, ciudad);
-  }
-}
-
-/**
  * Construye el catálogo a partir de las filas de `_Catalogos` (primera fila = encabezados).
  * Si la pestaña falta o viene vacía, devuelve un catálogo mínimo y `completo: false`,
  * para que el dashboard siga funcionando y avise.
@@ -188,4 +161,31 @@ export function construirCatalogo(filasCatalogo) {
   if (generos.length) catalogo.generos = generos;
   catalogo.completo = catalogo.paises.length > 0 && catalogo.motivos.length > 0 && catalogo.ciudades.size > 0;
   return catalogo;
+}
+
+/**
+ * Acepta cada ciudad si no se repite y cae dentro de Ecuador; una provincia ajena a la lista solo avisa.
+ * @param {Array<{ nombre: string, provincia: string, lat: number, lon: number }>} ciudadesCrudas ciudades de la hoja, en
+ *   su orden
+ * @param {{ provincias: string[], ciudades: Map<string, object>, avisos: string[] }} catalogo catálogo en construcción:
+ *   recibe las ciudades aceptadas y los avisos para quien llena la hoja
+ */
+function aceptarCiudades(ciudadesCrudas, catalogo) {
+  const claveProvincias = new Set(catalogo.provincias.map(claveNormalizada));
+  for (const ciudad of ciudadesCrudas) {
+    const clave = claveNormalizada(ciudad.nombre);
+    if (catalogo.ciudades.has(clave)) {
+      catalogo.avisos.push(`Ciudad repetida en el catálogo: «${ciudad.nombre}» (se conserva la primera)`);
+      continue;
+    }
+    const { latMin, latMax, lonMin, lonMax } = LIMITES_ECUADOR;
+    if (ciudad.lat < latMin || ciudad.lat > latMax || ciudad.lon < lonMin || ciudad.lon > lonMax) {
+      catalogo.avisos.push(`Ciudad fuera de Ecuador por sus coordenadas: «${ciudad.nombre}» (se omite)`);
+      continue;
+    }
+    if (claveProvincias.size && ciudad.provincia && !claveProvincias.has(claveNormalizada(ciudad.provincia))) {
+      catalogo.avisos.push(`La provincia «${ciudad.provincia}» de la ciudad «${ciudad.nombre}» no está en la lista de provincias`);
+    }
+    catalogo.ciudades.set(clave, ciudad);
+  }
 }

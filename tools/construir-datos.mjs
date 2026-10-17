@@ -1,7 +1,8 @@
 /**
  * @file construir-datos.mjs
- * @description Constructor de datos para GitHub Actions: descarga la hoja publicada desde la URL guardada en el
- *   secreto SHEET_URL, la valida con las mismas reglas del dashboard y escribe `datos/datos.json`.
+ * @description Punto de entrada del constructor de datos para GitHub Actions: lee los argumentos y el entorno, arma
+ *   los adaptadores de src/publicacion/ y llama al caso de uso, que descarga la hoja publicada desde la URL guardada
+ *   en el secreto SHEET_URL, la valida con las mismas reglas del dashboard y escribe `datos/datos.json`.
  *   La URL de la hoja nunca se escribe en el sitio. Emite una línea de log JSON por ejecución y un resumen
  *   en Actions. Si algo falla, sale con error y no toca el archivo anterior, así el sitio sigue mostrando los
  *   últimos datos buenos. La salida se resuelve desde la raíz del repositorio; el libro local, desde el
@@ -11,17 +12,16 @@
  *     node tools/construir-datos.mjs --desde-archivo libro.xlsx [salida]
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { readFileSync, writeFileSync, appendFileSync, mkdirSync, renameSync } from 'node:fs';
+import { readFileSync, appendFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { runInNewContext } from 'node:vm';
-import { CONFIG } from '../src/infrastructure/config.js';
-import { descargarConReintentos } from '../src/infrastructure/seguridad.js';
-import { leerLibro } from '../src/infrastructure/lector-libro.js';
-import { empaquetar } from '../src/infrastructure/contrato-datos.js';
+import { CONFIG_PUBLICACION } from '../src/publicacion/config-publicacion.js';
+import { construirDatos } from '../src/publicacion/aplicacion/construir-datos.js';
+import { crearFuenteHojaGoogle } from '../src/publicacion/adaptadores/hoja-google.js';
+import { cargarSheetJS, crearLectorXlsx } from '../src/publicacion/adaptadores/lector-xlsx.js';
+import { crearDestinoArchivo } from '../src/publicacion/adaptadores/destino-archivo.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
-const MINIMO_ESTABLECIMIENTOS = 1;
 const URL_HOJA_PUBLICADA = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/e\/[\w-]+\/pub\?output=xlsx$/;
 
 /**
@@ -44,12 +44,6 @@ export function leerArgumentos(args) {
   return { desdeArchivo, salida: resolve(RAIZ, (desdeArchivo ? args[2] : args[0]) || 'datos/datos.json') };
 }
 
-function cargarSheetJS() {
-  const contexto = {};
-  runInNewContext(readFileSync(join(RAIZ, 'tools/vendor/xlsx.mini.min.js'), 'utf8'), contexto);
-  return contexto.XLSX;
-}
-
 /** Una línea de log JSON por evento. Solo cuentas y duraciones: los logs de Actions son públicos. */
 function registrar(evento, campos) {
   console.log(JSON.stringify({ evento, ...campos }));
@@ -67,39 +61,36 @@ function escribirResumen(filas) {
   }
 }
 
+/**
+ * Fuente del libro según los argumentos: un archivo local de prueba o la hoja publicada del secreto SHEET_URL.
+ * @param {string|null} desdeArchivo ruta del libro local; null para descargar la hoja
+ * @returns {import('../src/publicacion/puertos.js').FuenteHoja}
+ * @throws {Error} si no hay libro local y SHEET_URL falta o no es la de una hoja publicada en xlsx
+ */
+function elegirFuente(desdeArchivo) {
+  if (desdeArchivo) return { obtener: async () => new Uint8Array(readFileSync(desdeArchivo)) };
+  const url = process.env.SHEET_URL;
+  if (!validarUrlHoja(url)) {
+    throw new Error('SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)');
+  }
+  return crearFuenteHojaGoogle(url, { timeoutMs: CONFIG_PUBLICACION.TIMEOUT_HOJA_MS, maxBytes: CONFIG_PUBLICACION.MAX_BYTES_HOJA }, {
+    alReintentar: (intento, error) => registrar('descarga_reintento', { intento, codigo: error.codigo, detalle: error.detalle }),
+  });
+}
+
 async function main() {
   const inicio = Date.now();
   const { desdeArchivo, salida } = leerArgumentos(process.argv.slice(2));
 
-  // Paso 1: obtener el libro, desde el secreto o desde un archivo local de prueba
-  let buffer;
-  if (desdeArchivo) {
-    buffer = new Uint8Array(readFileSync(desdeArchivo));
-  } else {
-    const url = process.env.SHEET_URL;
-    if (!validarUrlHoja(url)) {
-      throw new Error('SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)');
-    }
-    buffer = new Uint8Array(await descargarConReintentos(url, { timeoutMs: CONFIG.TIMEOUT_HOJA_MS, maxBytes: CONFIG.MAX_BYTES_HOJA }, {
-      alReintentar: (intento, error) => registrar('descarga_reintento', { intento, codigo: error.codigo, detalle: error.detalle }),
-    }));
-  }
+  // Paso 1: armar los adaptadores; la URL se valida antes de descargar nada
+  const fuente = elegirFuente(desdeArchivo);
+  const lector = crearLectorXlsx(cargarSheetJS(), CONFIG_PUBLICACION);
+  const destino = crearDestinoArchivo(salida);
 
-  // Paso 2: leer y validar con las mismas reglas del dashboard
-  const datos = leerLibro(buffer, cargarSheetJS(), CONFIG);
-  if (datos.establecimientos.length < MINIMO_ESTABLECIMIENTOS) throw new Error('La hoja no tiene establecimientos válidos');
+  // Paso 2: el caso de uso lee, valida, empaqueta y escribe de forma atómica
+  const cuentas = await construirDatos({ fuente, lector, destino, config: CONFIG_PUBLICACION });
 
-  // Paso 3: escritura atómica (archivo temporal y renombrado)
-  const paquete = empaquetar(datos, new Date().toISOString(), CONFIG.PAIS_LOCAL);
-  mkdirSync(dirname(salida), { recursive: true });
-  const temporal = `${salida}.tmp`;
-  const texto = JSON.stringify(paquete);
-  writeFileSync(temporal, texto);
-  renameSync(temporal, salida);
-  const cuentas = {
-    establecimientos: datos.establecimientos.length, filas: datos.filas.length, discapacidad: datos.discapacidad.length,
-    rechazos: datos.rechazos.length, avisos: datos.avisos.length, bytes: Buffer.byteLength(texto),
-  };
+  // Paso 3: registro de una línea y resumen de Actions, solo con cuentas y duraciones
   const duracionMs = Date.now() - inicio;
   registrar('datos_construidos', { ...cuentas, duracionMs });
   escribirResumen({
