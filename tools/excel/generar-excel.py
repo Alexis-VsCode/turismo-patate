@@ -45,6 +45,8 @@ PESO_RANGO = [0.30, 0.35, 0.25, 0.10]
 ESTACIONALIDAD = {"Enero": 1.05, "Febrero": 1.25, "Marzo": 0.9, "Abril": 0.95, "Mayo": 0.85, "Junio": 0.95, "Julio": 1.2,
                   "Agosto": 1.4, "Septiembre": 1.0, "Octubre": 0.9, "Noviembre": 1.0, "Diciembre": 1.3}
 CRECIMIENTO = {2025: 1.0, 2026: 1.08, 2027: 1.15}
+# Lo mínimo para operar en una hoja protegida: seleccionar, ordenar, filtrar y ajustar el ancho de columnas
+PERMISOS_HOJA = {"select_locked_cells": True, "select_unlocked_cells": True, "sort": True, "autofilter": True, "format_columns": True}
 MES_FINAL = (2026, 9)        # los datos de ejemplo van de enero de 2025 a este mes, en los dos modos
 
 
@@ -142,8 +144,9 @@ class Formatos:
         self.hombres = libro.add_format({**encabezado, "bg_color": "#8A6D00"})
         self.gris_enc = libro.add_format({**encabezado, "bg_color": "#6B7A6B"})
         self.lima = libro.add_format({**encabezado, "bg_color": "#6B8F2A"})
-        self.dato = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0"})
-        self.numero = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0", "num_format": "0", "align": "center"})
+        # Celdas de entrada: desbloqueadas, para que la protección de la hoja solo deje escribir aquí
+        self.dato = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0", "locked": False})
+        self.numero = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0", "num_format": "0", "align": "center", "locked": False})
         self.calculado = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0", "bg_color": "#EEF0EC", "font_color": "#4A5A4A", "align": "center"})
         self.calculado_texto = libro.add_format({**base, "border": 1, "border_color": "#D5DDD0", "bg_color": "#EEF0EC", "font_color": "#4A5A4A"})
         self.rojo = libro.add_format({"bg_color": "#FBD5D0", "font_color": "#8A1C10"})
@@ -229,6 +232,9 @@ def hoja_establecimiento(libro, fmt, nombre, filas, provincia_de, vacia=False):
                                            "error_title": "Personas con discapacidad",
                                            "error_message": "Escriba un número entero que no supere el total de visitantes de la fila. Llene primero las columnas de mujeres y hombres."})
     hoja.conditional_format(f"A2:U{ultima}", {"type": "formula", "criteria": '=AND($U2<>"",$U2<>"OK")', "format": fmt.rojo})
+    # Protección contra errores, no contra mala fe: sin contraseña (en un repositorio público no protegería nada).
+    # Quedan bloqueados encabezados y columnas grises; solo se escriben las celdas de entrada.
+    hoja.protect("", PERMISOS_HOJA)
     return hoja
 
 
@@ -369,7 +375,7 @@ def escribir_inicio(hoja, fmt, resumen):
         "No cambie ni mueva los encabezados de las columnas.",
         "Use siempre los desplegables. Extranjeros: deje vacía la ciudad.",
         "No escriba datos personales: ni nombres, ni cédulas, ni teléfonos. La discapacidad se publica solo como cifra agregada.",
-        "Para que nadie escriba sobre las columnas grises, protéjalas en Google Sheets: Datos > Proteger hojas y rangos.",
+        "Las columnas grises y los encabezados vienen bloqueados (hoja protegida sin contraseña, contra errores). Si al importar a Google Sheets la protección no se conserva, vuelva a aplicarla: Datos > Proteger hojas y rangos.",
         "Las pestañas que todavía usan el formato anterior (Cantidad, Edad y Género) siguen funcionando. No mezcle los dos formatos en una misma pestaña.",
     ]
     for t in reglas:
