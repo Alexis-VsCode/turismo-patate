@@ -1,26 +1,27 @@
 /**
  * @file contrato-datos.test.mjs
  * @description Infraestructura. T-Paquete: datos.json conserva exactamente los números (ida y vuelta contra el
- *   oráculo) y el navegador rechaza un paquete alterado.
+ *   oráculo, en el formato anterior y en el mensual con su discapacidad, por el mismo camino que producción: libro,
+ *   leerLibro, empaquetar, JSON, desempaquetar y estadísticas) y el navegador rechaza un paquete alterado.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { XLSX, RAIZ, leerFixture } from '../helpers.mjs';
+import { XLSX, leerFixture } from '../helpers.mjs';
+import { ESCENARIOS, conciliarEscenario, leerJson } from '../conciliacion.mjs';
 import { leerLibro } from '../../src/infrastructure/lector-libro.js';
 import { empaquetar, desempaquetar } from '../../src/infrastructure/contrato-datos.js';
 import { claveNormalizada } from '../../src/domain/catalogo.js';
 import { CONFIG } from '../../src/infrastructure/config.js';
-import { filtrar, filtrosVacios } from '../../src/domain/filtros.js';
-import { kpis, porCiudad, porPais, edadGenero } from '../../src/domain/estadisticas.js';
 
 const original = leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG);
 const json = JSON.parse(JSON.stringify(empaquetar(original, '2026-09-29T13:00:00.000Z', CONFIG.PAIS_LOCAL)));
 const vuelta = desempaquetar(json, claveNormalizada);
-const esperado = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/esperado.json'), 'utf8'));
-const escenarios = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/escenarios.json'), 'utf8'));
+const esperado = leerJson('test/fixtures/esperado.json');
+
+const mensual = leerLibro(leerFixture('test/fixtures/piloto-mensual.xlsx'), XLSX, CONFIG);
+const vueltaMensual = desempaquetar(JSON.parse(JSON.stringify(empaquetar(mensual, '2026-09-29T13:00:00.000Z', CONFIG.PAIS_LOCAL))), claveNormalizada);
+const esperadoMensual = leerJson('test/fixtures/esperado-mensual.json');
 
 test('el paquete no incluye la URL de la hoja', () => {
   assert.equal(JSON.stringify(json).includes('docs.google.com'), false);
@@ -34,14 +35,25 @@ test('ida y vuelta: mismas filas, establecimientos y catálogo del mapa', () => 
   assert.equal(vuelta.generadoEn, '2026-09-29T13:00:00.000Z');
 });
 
-for (const { nombre, filtros } of escenarios) {
+for (const { nombre, filtros } of ESCENARIOS) {
   test(`escenario ${nombre} concilia con el oráculo después del paquete`, () => {
-    const sel = filtrar(vuelta.filas, { ...filtrosVacios(), ...filtros });
-    const k = kpis(sel);
-    assert.deepEqual({ total: k.total, nacionales: k.nacionales, extranjeros: k.extranjeros }, esperado[nombre].kpis);
-    assert.deepEqual(porCiudad(sel), esperado[nombre].porCiudad);
-    assert.deepEqual(porPais(sel), esperado[nombre].porPais);
-    assert.deepEqual(edadGenero(sel, ['Masculino', 'Femenino']).series, esperado[nombre].edadGenero);
+    conciliarEscenario(vuelta, filtros, esperado[nombre]);
+  });
+}
+
+test('ida y vuelta del formato mensual: mismas filas, discapacidad, establecimientos y catálogo', () => {
+  assert.ok(mensual.discapacidad.length > 0, 'el libro mensual de prueba trae discapacidad');
+  assert.deepEqual(vueltaMensual.filas, mensual.filas);
+  assert.deepEqual(vueltaMensual.discapacidad, mensual.discapacidad);
+  assert.deepEqual(vueltaMensual.establecimientos, mensual.establecimientos);
+  assert.equal(vueltaMensual.catalogo.ciudades.size, mensual.catalogo.ciudades.size);
+  assert.deepEqual(vueltaMensual.catalogo.anios, mensual.catalogo.anios);
+  assert.deepEqual(vueltaMensual.catalogo.motivos, mensual.catalogo.motivos);
+});
+
+for (const { nombre, filtros } of ESCENARIOS) {
+  test(`escenario ${nombre} del formato mensual concilia con el oráculo después del paquete, con discapacidad`, () => {
+    conciliarEscenario(vueltaMensual, filtros, esperadoMensual[nombre], { conDiscapacidad: true });
   });
 }
 

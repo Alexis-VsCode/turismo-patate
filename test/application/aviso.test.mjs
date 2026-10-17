@@ -1,66 +1,14 @@
 /**
  * @file aviso.test.mjs
  * @description Compartido. Aviso flotante: filtro de enlaces seguros, estructura pintada con textContent, reemplazo
- *   de un aviso por otro y cierre por botón, por Escape y por tiempo. El DOM se simula con un documento mínimo en
- *   memoria, suficiente para lo que el componente usa.
+ *   de un aviso por otro y cierre por botón, por Escape y por tiempo. El DOM se simula con el documento mínimo en
+ *   memoria de test/dom-falso.mjs.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test, mock, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { prepararAviso, mostrarAviso } from '../../src/application/components/compartidos/aviso.js';
-
-/** Elemento mínimo: hijos, atributos, clase, textContent y oyentes. */
-class Nodo {
-  constructor(etiqueta) {
-    this.tagName = etiqueta.toUpperCase();
-    this.children = [];
-    this.atributos = new Map();
-    this.oyentes = new Map();
-    this.className = '';
-    this.texto = '';
-  }
-  get textContent() {
-    return this.texto + this.children.map((h) => h.textContent).join('');
-  }
-  set textContent(valor) {
-    this.children = [];
-    this.texto = String(valor);
-  }
-  set innerHTML(_) {
-    throw new Error('innerHTML no está permitido');
-  }
-  get type() { return this.getAttribute('type'); }
-  set type(v) { this.setAttribute('type', v); }
-  get href() { return this.getAttribute('href'); }
-  set href(v) { this.setAttribute('href', v); }
-  get target() { return this.getAttribute('target'); }
-  set target(v) { this.setAttribute('target', v); }
-  get rel() { return this.getAttribute('rel'); }
-  set rel(v) { this.setAttribute('rel', v); }
-  setAttribute(n, v) { this.atributos.set(n, String(v)); }
-  getAttribute(n) { return this.atributos.has(n) ? this.atributos.get(n) : null; }
-  append(...nodos) { for (const n of nodos) this.appendChild(n); }
-  appendChild(n) { this.children.push(n); return n; }
-  replaceChildren(...nodos) { this.children = []; this.texto = ''; this.append(...nodos); }
-  addEventListener(tipo, fn) { (this.oyentes.get(tipo) ?? this.oyentes.set(tipo, new Set()).get(tipo)).add(fn); }
-  removeEventListener(tipo, fn) { this.oyentes.get(tipo)?.delete(fn); }
-  emitir(tipo, evento = {}) { for (const fn of [...(this.oyentes.get(tipo) ?? [])]) fn({ type: tipo, ...evento }); }
-  cuantosOyentes(tipo) { return this.oyentes.get(tipo)?.size ?? 0; }
-  /** Todos los descendientes con esa clase, en orden de documento. */
-  buscar(clase) {
-    const hallados = [];
-    for (const h of this.children) {
-      if (h.className.split(' ').includes(clase)) hallados.push(h);
-      hallados.push(...h.buscar(clase));
-    }
-    return hallados;
-  }
-}
-
-class DocumentoFalso extends Nodo {
-  constructor() { super('#document'); }
-  createElement(etiqueta) { return new Nodo(etiqueta); }
-}
+import { Nodo, DocumentoFalso } from '../dom-falso.mjs';
 
 let documentoOriginal;
 let contenedor;
