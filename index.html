@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0f3a1d">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js; style-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css; style-src-attr 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <script src="src/shared/tema-inicial.js"></script>
   <meta name="description" content="Estadísticas de visitantes de los establecimientos turísticos del cantón Patate. GAD Municipal de San Cristóbal de Patate.">
@@ -23,7 +23,7 @@
   <title>Estadísticas de Visitantes · Cantón Patate</title>
   <link rel="icon" href="assets/logo-patate.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="css/tema.css?v=2.8.0">
+  <link rel="stylesheet" href="css/tema.css?v=2.9.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js" integrity="sha512-Uyq/AgtqFM4vT+unIGTDr4wMJDTUK9O5w2PXMQeBCSR8koqHpVz+qBmcQ+9Oeo5H+EmvT4pp/5QrsqhIbyjHTQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script type="module" src="src/main.js"></script>
@@ -234,12 +234,24 @@
           </ul>
         </section>
       </div>
-      <p class="pie-gracias"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span><strong>Agradecimientos.</strong> Al GAD Municipal de San Cristóbal de Patate y a la Lic. Vanessa Lesano, por facilitar la información de los establecimientos turísticos y acompañar el desarrollo de este dashboard.</span></p>
+      <section class="gad-franja" aria-labelledby="gad-rol">
+        <div class="gad-sellos">
+          <img class="gad-logo" src="assets/logo-patate.png" alt="Escudo del GAD Municipal de San Cristóbal de Patate" width="64" height="64" loading="lazy" decoding="async">
+          <div class="autor-avatar gad-alcalde"><span aria-hidden="true">EM</span><img id="autoridad-foto" class="autor-foto" src="assets/personas/emerson-medina.jpg" alt="Foto del alcalde de Patate" width="64" height="64" loading="lazy" decoding="async"></div>
+        </div>
+        <div class="gad-texto">
+          <p id="gad-rol" class="persona-rol">Con el respaldo del GAD Municipal de San Cristóbal de Patate</p>
+          <p class="gad-nombre" id="autoridad-nombre"></p>
+          <p class="gad-cargo" id="autoridad-cargo"></p>
+          <p class="gad-gracias"><strong>Agradecimientos.</strong> <span id="autoridad-gracias"></span></p>
+        </div>
+        <a id="autoridad-enlace" class="red red-gad" href="https://patate.gob.ec/" target="_blank" rel="noopener noreferrer" aria-label="Sitio web del GAD Municipal de San Cristóbal de Patate (se abre en una pestaña nueva)"><span>Sitio del GAD</span></a>
+      </section>
       <div class="contactos">
         <section class="tarjeta-persona tarjeta-municipio" aria-labelledby="titulo-municipio">
           <p id="titulo-municipio" class="persona-rol">Contacto del municipio</p>
           <div class="persona">
-            <div class="autor-avatar"><span aria-hidden="true">VL</span><img class="autor-foto" src="assets/personas/vanessa-lesano.jpg" alt="Foto de la Lic. Vanessa Lesano" width="56" height="56" loading="lazy" decoding="async"></div>
+            <div class="autor-avatar"><span aria-hidden="true">VL</span><img id="contacto-foto" class="autor-foto" src="assets/personas/vanessa-lesano.jpg" alt="Foto del contacto del municipio" width="56" height="56" loading="lazy" decoding="async"></div>
             <div class="autor-texto">
               <strong id="contacto-nombre"></strong>
               <span>Licenciada en Turismo · Contacto y apoyo del GAD Municipal de Patate</span>
@@ -263,7 +275,7 @@
           </nav>
         </section>
       </div>
-      <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Diseño y desarrollo. Todos los derechos reservados.<br>Datos: GAD Municipal de San Cristóbal de Patate y establecimientos turísticos del cantón. Fotos publicadas con autorización de cada persona.</p>
+      <p class="pie-legal">© 2026 Kevin Alexis Barrera Llerena · Diseño y desarrollo. Todos los derechos reservados.<br>Datos: GAD Municipal de San Cristóbal de Patate y establecimientos turísticos del cantón. Foto del alcalde: sitio oficial del GAD; las demás, publicadas con autorización de cada persona.</p>
     </div>
   </footer>
   <div id="aviso" class="aviso-region" role="status" aria-live="polite"></div>

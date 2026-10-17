@@ -16,7 +16,8 @@ Este proyecto usa los siguientes componentes y datos de terceros. Cada uno conse
 | «VALLE DEL PATATE», DIOHER_PAVAL | Sin versión fija | Foto de la cabecera (`assets/fondo-cabecera.jpg`), recortada | CC BY 3.0 | Wikimedia Commons |
 | «VALLE DEL PATATE», DIOHER_PAVAL (obra derivada) | Sin versión fija | Imagen de vista previa al compartir (`assets/og.jpg`), elaborada a partir de la foto de cabecera; con la misma atribución | CC BY 3.0 | Wikimedia Commons |
 | Logo del GAD Municipal de San Cristóbal de Patate | Sin versión fija | Logo del encabezado y del sitio (`assets/logo-patate.png`) | Propiedad del GAD; se muestra solo para identificar a la institución dueña de los datos y no se licencia | GAD Municipal de San Cristóbal de Patate |
-| Fotos de las personas del pie | Sin versión fija | Retratos de la Lic. Vanessa Lesano (contacto del municipio) y del autor (`assets/personas/`) | Se publican con la autorización de cada persona; no se licencian | Perfiles públicos de las propias personas |
+| Fotos de las personas del pie | Sin versión fija | Retratos de la Lic. Vanessa Lesano Martínez (contacto del municipio) y del autor (`assets/personas/`) | Se publican con la autorización de cada persona y no se licencian | Cada persona retratada |
+| Foto oficial del alcalde | Sin versión fija | Retrato del Ing. Emerson Hernán Medina Castro (`assets/personas/emerson-medina.jpg`), recortado y reducido | Foto oficial publicada por el GAD en patate.gob.ec; no se licencia | GAD Municipal de San Cristóbal de Patate |
 
 El logo del GAD Municipal de San Cristóbal de Patate pertenece a su titular y se usa con fines de
 identificación institucional del proyecto. Los datos de visitantes que muestra el dashboard pertenecen al GAD y a los

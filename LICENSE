@@ -11,7 +11,8 @@ Aclaraciones:
 - Los datos de visitantes que muestra el dashboard pertenecen al GAD Municipal de San Cristóbal de Patate y a los
   establecimientos que los declaran. Esta licencia no los cubre.
 - El logo del GAD es de su propiedad; se muestra solo para identificar a la institución dueña de los datos.
-- Las fotos de las personas (assets/personas/) se publican con la autorización de cada una y no se licencian.
+- Las fotos de las personas (assets/personas/) no se licencian. La del alcalde es la foto oficial que publica el GAD en su
+  sitio web; las demás se publican con la autorización de cada persona.
 - El contenido de terceros se rige por THIRD_PARTY_NOTICES.md.
 
 Contacto: https://www.linkedin.com/in/alexisbarreradesarrolador/
@@ -30,5 +31,6 @@ Clarifications:
 - The visitor data shown by the dashboard belongs to the GAD Municipal de San Cristóbal de Patate and to the
   establishments that report it. This license does not cover it.
 - The GAD logo is the GAD's property; it is shown only to identify the institution that owns the data.
-- The photos of people (assets/personas/) are published with each person's permission and are not licensed.
+- The photos of people (assets/personas/) are not licensed. The mayor's photo is the official one the GAD publishes on its
+  website; the others are published with each person's permission.
 - Third-party content is governed by THIRD_PARTY_NOTICES.md.

@@ -17,7 +17,7 @@ import { pintarDiscapacidad } from './presentational/discapacidad.presentational
 import { pintarFrescura } from './presentational/frescura.presentational.js';
 import { pintarProblemas } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
-import { pintarContacto, prepararEnlacesContacto } from './presentational/contacto.presentational.js';
+import { pintarContacto, pintarAutoridad, prepararEnlacesContacto } from './presentational/contacto.presentational.js';
 import { mostrarAviso } from './compartidos/aviso.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 import { crearSelectorTema } from './compartidos/selector-tema.js';
@@ -38,7 +38,7 @@ function coloresDelTema() {
 /**
  * Monta el tablero sobre la página.
  * @param {ReturnType<import('../tablero.facade.js').crearTableroFacade>} facade
- * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, referencia: string, enlaces: object } }} config
+ * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, referencia: string, enlaces: object }, AUTORIDAD_MUNICIPIO: { nombre: string, cargo: string, periodo: string, enlace: string } }} config
  */
 export function montarTablero(facade, config) {
   const $ = (id) => document.getElementById(id);
@@ -257,6 +257,10 @@ export function montarTablero(facade, config) {
 
   // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
+  pintarAutoridad({
+    nombre: $('autoridad-nombre'), cargo: $('autoridad-cargo'), gracias: $('autoridad-gracias'),
+    enlace: $('autoridad-enlace'), foto: $('autoridad-foto'), fotoContacto: $('contacto-foto'),
+  }, config.AUTORIDAD_MUNICIPIO, config.CONTACTO_MUNICIPIO);
   pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO, avisarProximamente);
   $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.publicacionMinutos());
   $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());

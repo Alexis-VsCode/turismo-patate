@@ -1,8 +1,9 @@
 /**
  * @file contacto.presentational.js
- * @description Presentacional. Bloque del contacto del municipio en el pie: nombre y sus redes (Facebook, TikTok y
- *   LinkedIn). Una red con dirección válida es un enlace; una sin dirección es un botón «pronto» que abre un aviso.
- *   Todo texto se escribe con textContent y los íconos salen del sprite del HTML.
+ * @description Presentacional. Personas del pie: la franja de la autoridad del cantón (nombre, cargo, agradecimiento y
+ *   enlace al sitio del GAD) y el bloque del contacto del municipio con sus redes (Facebook, TikTok y LinkedIn). Una red
+ *   con dirección válida es un enlace; una sin dirección es un botón «pronto» que abre un aviso. Todo texto se escribe
+ *   con textContent y los íconos salen del sprite del HTML.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { TEXTOS } from '../../../shared/textos.es.js';
@@ -13,6 +14,33 @@ const TIPOS = [
   { tipo: 'tiktok', valida: (v) => /^https:\/\/(www\.)?tiktok\.com\/@[\w.]+\/?$/i.test(v) },
   { tipo: 'linkedin', valida: (v) => /^https:\/\/(www\.|[a-z]{2}\.)?linkedin\.com\/in\/[\w%-]+\/?$/i.test(v) },
 ];
+
+/**
+ * Dirección web segura para un enlace del pie.
+ * @param {string} valor dirección de la configuración
+ * @returns {string|null} la misma dirección si es https:// a un dominio, o null
+ */
+export function enlaceSeguro(valor) {
+  const v = typeof valor === 'string' ? valor.trim() : '';
+  return /^https:\/\/[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(v) ? v : null;
+}
+
+/**
+ * Pinta la franja de la autoridad: nombre, cargo, agradecimiento, texto alternativo de las fotos y enlace al GAD.
+ * @param {{ nombre: HTMLElement, cargo: HTMLElement, gracias: HTMLElement, enlace: HTMLAnchorElement, foto: HTMLImageElement, fotoContacto: HTMLImageElement }} elementos nodos del pie
+ * @param {{ nombre: string, cargo: string, periodo: string, enlace: string }} autoridad autoridad de la configuración
+ * @param {{ nombre: string, referencia: string }} contacto contacto del municipio de la configuración
+ */
+export function pintarAutoridad(elementos, autoridad, contacto) {
+  elementos.nombre.textContent = autoridad.nombre;
+  elementos.cargo.textContent = TEXTOS.autoridadCargo(autoridad);
+  elementos.gracias.textContent = TEXTOS.agradecimiento(autoridad, contacto);
+  elementos.foto.alt = TEXTOS.autoridadFoto(autoridad);
+  elementos.fotoContacto.alt = TEXTOS.contactoFoto(contacto);
+  const href = enlaceSeguro(autoridad.enlace);
+  elementos.enlace.hidden = !href;
+  if (href) elementos.enlace.href = href;
+}
 
 /**
  * Enlaces del contacto.

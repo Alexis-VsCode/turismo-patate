@@ -40,14 +40,21 @@ export const CONFIG = Object.freeze({
    * demás enlaces; para publicarlo basta con escribir aquí su dirección https:// sin parámetros de rastreo.
    */
   CONTACTO_MUNICIPIO: Object.freeze({
-    nombre: 'Lic. Vanessa Lesano',
+    nombre: 'Lic. Vanessa Lesano Martínez',
     /** Cómo se la nombra dentro de una frase («Facebook de la Lic. …»). */
-    referencia: 'la Lic. Vanessa Lesano',
+    referencia: 'la Lic. Vanessa Lesano Martínez',
     enlaces: Object.freeze({
       facebook: 'https://www.facebook.com/vane.lesano.martinez',
       tiktok: 'https://www.tiktok.com/@vanelesano',
       linkedin: '',
     }),
+  }),
+  /** Autoridad del cantón que el pie presenta junto al agradecimiento; el enlace se usa solo si es https. */
+  AUTORIDAD_MUNICIPIO: Object.freeze({
+    nombre: 'Ing. Emerson Hernán Medina Castro',
+    cargo: 'Alcalde',
+    periodo: '2023 a 2027',
+    enlace: 'https://patate.gob.ec/',
   }),
   /** País que define a un visitante como nacional. */
   PAIS_LOCAL: 'Ecuador',
