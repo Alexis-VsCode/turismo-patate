@@ -1,9 +1,12 @@
 """Oráculo de conciliación: calcula con openpyxl, sin compartir código con el JS,
 los valores que el dashboard debe mostrar en cada escenario de test/fixtures/escenarios.json.
 
-Uso: python tools/oraculo.py test/fixtures/piloto-publicado.xlsx [salida.json]
-Escribe test/fixtures/esperado.json, o la salida indicada. Lee los dos formatos de pestaña: el anterior (Cantidad, Edad
-y Género) y el mensual (mujeres y hombres por rango de edad, más personas con discapacidad).
+Uso: python tools/oraculo.py [libro.xlsx] [salida.json]
+Sin argumentos lee test/fixtures/piloto-publicado.xlsx y escribe test/fixtures/esperado.json. Lee los dos formatos de
+pestaña: el anterior (Cantidad, Edad y Género) y el mensual (mujeres y hombres por rango de edad, más personas con
+discapacidad). `npm run oraculo` regenera los dos oráculos de las pruebas y corre su conciliación:
+    python tools/oraculo.py test/fixtures/piloto-publicado.xlsx test/fixtures/esperado.json
+    python tools/oraculo.py test/fixtures/piloto-mensual.xlsx test/fixtures/esperado-mensual.json
 
 Autor: Kevin Alexis Barrera Llerena 2026
 """
@@ -160,9 +163,8 @@ def escenario(filas, discapacidad, filtros):
     generos = ["Masculino", "Femenino"]
     eg = suma_por(sel, lambda f: f"{f['rango']}|{f['genero']}")
     mes_f = filtros.get("mes")
-    ult = ultimo
-    act_v = sum(f["cantidad"] for f in base_evo if f["anio"] == anio and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
-    ant_v = sum(f["cantidad"] for f in base_evo if f["anio"] == (anio or 0) - 1 and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ult))
+    act_v = sum(f["cantidad"] for f in base_evo if f["anio"] == anio and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ultimo))
+    ant_v = sum(f["cantidad"] for f in base_evo if f["anio"] == (anio or 0) - 1 and (f["mes"] == mes_f if mes_f is not None else f["mes"] <= ultimo))
     resultado = {
         "variacion": {"anio": anio, "actual": act_v, "anterior": ant_v},
         "kpis": {"total": total, "nacionales": nac, "extranjeros": total - nac},
@@ -182,7 +184,7 @@ def escenario(filas, discapacidad, filtros):
         por_rango = {r: sum(1 for d in regs if rango_discapacidad(d["personas"]) == r) for r in RANGOS_DISCAPACIDAD}
         resultado["discapacidad"] = {
             "personas": personas, "registros": len(regs), "pctVisitantes": personas / visitantes if visitantes else None,
-            "rangos": {r: n for r, n in por_rango.items()},
+            "rangos": por_rango,
         }
     return resultado
 
@@ -193,7 +195,7 @@ def main():
     escenarios = json.loads((RAIZ / "test/fixtures/escenarios.json").read_text(encoding="utf-8"))
     salida = {e["nombre"]: escenario(filas, discapacidad, e["filtros"]) for e in escenarios}
     destino = Path(sys.argv[2]) if len(sys.argv) > 2 else RAIZ / "test/fixtures/esperado.json"
-    destino.write_text(json.dumps(salida, ensure_ascii=False, indent=1), encoding="utf-8")
+    destino.write_text(json.dumps(salida, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(f"filas={len(filas)} escenarios={len(salida)} " + " ".join(f"{k}:{v['kpis']['total']}" for k, v in salida.items()))
 
 

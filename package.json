@@ -17,7 +17,9 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.mjs\"",
     "datos": "node tools/construir-datos.mjs --desde-archivo test/fixtures/piloto-publicado.xlsx",
-    "oraculo": "python tools/oraculo.py",
+    "oraculo": "npm run oraculo:anterior && npm run oraculo:mensual && node --test test/domain/estadisticas.test.mjs test/domain/mensual.test.mjs",
+    "oraculo:anterior": "python tools/oraculo.py test/fixtures/piloto-publicado.xlsx test/fixtures/esperado.json",
+    "oraculo:mensual": "python tools/oraculo.py test/fixtures/piloto-mensual.xlsx test/fixtures/esperado-mensual.json",
     "servir": "node tools/servir.mjs"
   }
 }

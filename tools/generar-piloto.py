@@ -1,9 +1,13 @@
-"""Genera Turismo-piloto.xlsx: 100 establecimientos ficticios con datos de prueba.
+"""Genera Turismo-piloto.xlsx: 100 establecimientos ficticios con datos de prueba, en el formato anterior de pestaña.
 
 Estructura fija de cada pestaña de establecimiento:
 Año | Mes | País | Provincia | Ciudad | Cantidad | Motivo de visita | Edad | Género
 Pestañas de sistema (el dashboard las ignora): _Instrucciones, _Catalogos, Plantilla.
 Semilla fija: mismos datos en cada ejecución.
+
+Uso: python tools/generar-piloto.py    (escribe Turismo-piloto.xlsx en el directorio actual)
+
+Autor: Kevin Alexis Barrera Llerena 2026
 """
 import random
 from openpyxl import Workbook

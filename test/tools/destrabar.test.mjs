@@ -1,7 +1,8 @@
 /**
  * @file destrabar.test.mjs
- * @description Pruebas de la regla que decide qué ejecuciones de la publicación están trabadas, y del flujo de
- *   Actions que la aplica antes de desplegar.
+ * @description Pruebas de la regla que decide qué ejecuciones de la publicación están trabadas, del recorrido contra
+ *   la API de GitHub (simulada: un error de la API o del mantenimiento termina en error, nunca en un fin exitoso) y
+ *   del flujo de Actions que la aplica antes de desplegar.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { test } from 'node:test';
@@ -9,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { RAIZ } from '../helpers.mjs';
-import { ejecucionesTrabadas, hayQueForzar, MINUTOS_TRABADA } from '../../tools/destrabar-publicacion.mjs';
+import { ejecucionesTrabadas, hayQueForzar, principal, MINUTOS_TRABADA } from '../../tools/destrabar-publicacion.mjs';
 
 const AHORA = Date.parse('2026-10-12T12:00:00Z');
 const hace = (min) => new Date(AHORA - min * 60 * 1000).toISOString();
@@ -50,6 +51,82 @@ test('se fuerza la cancelación si la ejecución sigue activa pasado el doble de
 
 test('el límite deja margen de sobra a una publicación normal, que tarda un par de minutos', () => {
   assert.ok(MINUTOS_TRABADA >= 20 && MINUTOS_TRABADA < 30);
+});
+
+/**
+ * Corre principal() contra una API de GitHub simulada y devuelve los eventos registrados y las llamadas hechas.
+ * @param {(ruta: string, metodo: string) => { status: number, cuerpo?: object }} responder respuesta de cada llamada
+ */
+async function conApiSimulada(responder) {
+  const VARIABLES = { GITHUB_REPOSITORY: 'autor/repo', GITHUB_RUN_ID: '7', GITHUB_TOKEN: 'token-de-prueba' };
+  const original = { fetch: globalThis.fetch, log: console.log, env: Object.keys(VARIABLES).map((k) => [k, process.env[k]]) };
+  const eventos = [];
+  const llamadas = [];
+  globalThis.fetch = async (url, { method }) => {
+    const ruta = url.replace('https://api.github.com/repos/autor/repo', '');
+    llamadas.push(`${method} ${ruta}`);
+    const { status, cuerpo } = responder(ruta, method);
+    return new Response(cuerpo === undefined ? null : JSON.stringify(cuerpo), { status });
+  };
+  console.log = (linea) => eventos.push(JSON.parse(linea));
+  Object.assign(process.env, VARIABLES);
+  try {
+    const error = await principal().then(() => null, (e) => e);
+    return { error, eventos, llamadas };
+  } finally {
+    globalThis.fetch = original.fetch;
+    console.log = original.log;
+    for (const [k, v] of original.env) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+}
+
+/** API sana: la ejecución actual pertenece al flujo 42, `ejecuciones` son las activas y enable responde `enable`. */
+const apiSana = (ejecuciones = [], enable = 204) => (ruta, metodo) => {
+  if (ruta === '/actions/runs/7') return { status: 200, cuerpo: { workflow_id: 42 } };
+  if (ruta.startsWith('/actions/workflows/42/runs')) {
+    const estado = new URLSearchParams(ruta.split('?')[1]).get('status');
+    return { status: 200, cuerpo: { workflow_runs: ejecuciones.filter((e) => e.status === estado) } };
+  }
+  if (ruta === '/actions/workflows/42/enable' && metodo === 'PUT') return { status: enable };
+  if (ruta.endsWith('/cancel')) return { status: 409, cuerpo: { message: 'no se puede cancelar' } };
+  if (ruta.endsWith('/force-cancel')) return { status: 202, cuerpo: {} };
+  return { status: 404, cuerpo: { message: 'Not Found' } };
+};
+
+test('con la API en orden, la limpieza registra el fin y mantiene activo el flujo', async () => {
+  const { error, eventos, llamadas } = await conApiSimulada(apiSana());
+  assert.equal(error, null);
+  assert.deepEqual(eventos.map((e) => e.evento), ['destrabar_fin', 'flujo_mantenido']);
+  assert.equal(eventos[1].http, 204);
+  assert.ok(llamadas.includes('PUT /actions/workflows/42/enable'));
+});
+
+test('una cancelación rechazada no detiene la limpieza: se fuerza y se sigue', async () => {
+  // Paso 1: trabada hace 30 minutos, más que el límite pero menos que el doble: solo el rechazo del cancel obliga a forzar
+  const hace30 = new Date(Date.now() - 30 * 60000).toISOString();
+  const trabada = { id: 3, status: 'waiting', created_at: hace30, run_started_at: hace30 };
+  const { error, eventos, llamadas } = await conApiSimulada(apiSana([trabada]));
+  assert.equal(error, null);
+  assert.ok(llamadas.includes('POST /actions/runs/3/force-cancel'));
+  assert.deepEqual(eventos.find((e) => e.evento === 'ejecucion_destrabada'), { evento: 'ejecucion_destrabada', id: 3, http: 202 });
+});
+
+test('si la API de GitHub responde con error, la limpieza falla y nunca registra un fin exitoso', async () => {
+  for (const status of [401, 403, 404]) {
+    const { error, eventos } = await conApiSimulada(() => ({ status, cuerpo: { message: 'Resource not accessible' } }));
+    assert.match(String(error?.message), new RegExp(`HTTP ${status}`));
+    assert.deepEqual(eventos, [], `con HTTP ${status} no se registra destrabar_fin ni flujo_mantenido`);
+  }
+});
+
+test('si falla el mantenimiento del flujo, el job termina con error aunque la limpieza haya ido bien', async () => {
+  const { error, eventos } = await conApiSimulada(apiSana([], 403));
+  assert.match(String(error?.message), /HTTP 403/);
+  assert.deepEqual(eventos.map((e) => e.evento), ['destrabar_fin', 'flujo_mantenido']);
+  assert.equal(eventos[1].http, 403);
 });
 
 const FLUJO = readFileSync(join(RAIZ, '.github/workflows/publicar.yml'), 'utf8');

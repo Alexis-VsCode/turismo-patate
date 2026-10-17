@@ -25,7 +25,15 @@ python tools/catalogos/generar-catalogos.py
 
 Solo biblioteca estandar. Tarda unos 2 minutos (geometria en Python puro). La primera vez descarga
 ~50 MB a `tools/catalogos/_cache/` (ignorada por git). La foto base solo se rehace a proposito con
-`--crear-foto` (requiere `openpyxl`).
+`--crear-foto`, que requiere `openpyxl` y la variable de entorno `HOJA_CATALOGOS_URL` con el enlace de
+exportacion xlsx de la hoja (`.../spreadsheets/d/<id>/export?format=xlsx`):
+
+```
+HOJA_CATALOGOS_URL=... python tools/catalogos/generar-catalogos.py --crear-foto
+```
+
+Ese enlace no se versiona: vive solo en el entorno de quien rehace la foto. Sin la variable, el modo se detiene
+sin tocar nada.
 
 ## Fuentes, licencias y atribucion
 

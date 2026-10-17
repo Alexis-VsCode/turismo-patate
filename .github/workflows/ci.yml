@@ -1,4 +1,5 @@
-# Valida un cambio antes de publicarlo: corre todas las pruebas, sin construir datos ni desplegar.
+# Valida un cambio antes de publicarlo: corre todas las pruebas y el constructor con el libro de prueba, sin leer la
+# hoja ni desplegar.
 # Se ejecuta en pull requests y a mano; en main las pruebas ya corren dentro de la publicación.
 # Autor: Kevin Alexis Barrera Llerena 2026
 name: Validar cambios
@@ -23,3 +24,6 @@ jobs:
 
       - name: Pruebas
         run: node --test "test/**/*.test.mjs"
+
+      - name: Construir datos con el libro de prueba (humo del constructor)
+        run: npm run datos

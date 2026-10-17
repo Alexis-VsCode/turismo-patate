@@ -23,9 +23,11 @@ Que hace
 
 Uso
     python tools/catalogos/generar-catalogos.py                 # genera todo
-    python tools/catalogos/generar-catalogos.py --crear-foto    # (re)crea la foto base desde la hoja
+    HOJA_CATALOGOS_URL=... python tools/catalogos/generar-catalogos.py --crear-foto
+                                                                # (re)crea la foto base desde la hoja
     Solo biblioteca estandar; las descargas grandes se guardan en tools/catalogos/_cache/
-    (la foto base solo se crea con --crear-foto y ese modo requiere openpyxl).
+    (la foto base solo se crea con --crear-foto, que requiere openpyxl y la variable de entorno
+    HOJA_CATALOGOS_URL con el enlace de exportacion xlsx de la hoja; ese enlace nunca se versiona).
 
 Autor: Kevin Alexis Barrera Llerena 2026
 """
@@ -34,6 +36,7 @@ import csv
 import io
 import json
 import math
+import os
 import re
 import sys
 import unicodedata
@@ -47,8 +50,6 @@ CACHE = AQUI / "_cache"
 FOTO = AQUI / "base-actual-2026-10-01.json"
 PROVINCIAS_GEOJSON = RAIZ / "assets" / "ecu-provincias.geojson"
 
-URL_HOJA = ("https://docs.google.com/spreadsheets/d/1n_zCs2SVH5wchDu6IbUQ2Yeb4rhRNtBkIRrtI2w8wQY/"
-            "export?format=xlsx")
 URL_ADM2_API = "https://www.geoboundaries.org/api/current/gbOpen/ECU/ADM2/"
 URL_PAISES = "https://raw.githubusercontent.com/mledoze/countries/master/countries.json"
 URL_GEONAMES = "https://download.geonames.org/export/dump/EC.zip"
@@ -99,10 +100,6 @@ CABECERA_DE = {
     "Tabacundo": "Pedro Moncayo", "Bahía de Caráquez": "Sucre", "Zumba": "Chinchipe",
 }
 
-# Alias de paises actuales (nombre del catalogo -> nombre en mledoze) cuando difieren.
-ALIAS_PAIS = {}
-
-
 # --------------------------------------------------------------------------------------
 # Utilidades de texto
 # --------------------------------------------------------------------------------------
@@ -147,9 +144,17 @@ def con_cache(nombre, url):
 # --------------------------------------------------------------------------------------
 # Foto base (hoja en linea)
 # --------------------------------------------------------------------------------------
+def url_hoja():
+    """Enlace de exportacion xlsx de la hoja, desde HOJA_CATALOGOS_URL: nunca se escribe en el repositorio."""
+    url = os.environ.get("HOJA_CATALOGOS_URL", "")
+    if not re.fullmatch(r"https://docs\.google\.com/spreadsheets/d/[\w-]+/export\?format=xlsx", url):
+        raise SystemExit("Falta HOJA_CATALOGOS_URL o no es https://docs.google.com/spreadsheets/d/<id>/export?format=xlsx")
+    return url
+
+
 def crear_foto():
     import openpyxl  # solo para este modo
-    datos = descargar(URL_HOJA)
+    datos = descargar(url_hoja())
     ws = openpyxl.load_workbook(io.BytesIO(datos), data_only=True)["_Catalogos"]
     filas = list(ws.iter_rows(values_only=True))
     enc = list(filas[0])
@@ -164,13 +169,13 @@ def crear_foto():
         return salida
 
     foto = {
-        "fuente": "Hoja _Catalogos de " + URL_HOJA.split("/export")[0],
+        "fuente": "Hoja _Catalogos del libro de captura, 2026-10-01",
         "fecha": "2026-10-01",
         "paises": bloque(["País", "Pais_Lat", "Pais_Lon"]),
         "ciudades": bloque(["Ciudad", "Ciudad_Provincia", "Ciudad_Lat", "Ciudad_Lon"]),
         "provincias": bloque(["Provincia", "Provincia_Lat", "Provincia_Lon"]),
     }
-    FOTO.write_text(json.dumps(foto, ensure_ascii=False, indent=1), encoding="utf-8")
+    FOTO.write_text(json.dumps(foto, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     print("Foto base escrita:", FOTO, {k: len(v) for k, v in foto.items() if isinstance(v, list)})
 
 
@@ -300,7 +305,7 @@ def punto_interior(geom):
 # --------------------------------------------------------------------------------------
 def cargar_geonames():
     z = zipfile.ZipFile(io.BytesIO(con_cache("EC.zip", URL_GEONAMES)))
-    ppla2, amplio, ppla2_filas = {}, set(), []
+    ppla2, amplio = {}, set()
     for linea in z.read("EC.txt").decode("utf-8").splitlines():
         c = linea.split("\t")
         if len(c) < 11:
@@ -310,10 +315,8 @@ def cargar_geonames():
                 amplio.add(clave(n))
                 amplio.add(sin_espacios(n))
         if c[7] == "PPLA2":
-            fila = (c[1], float(c[4]), float(c[5]), c[10])
-            ppla2.setdefault(clave(c[1]), []).append(fila)
-            ppla2_filas.append(fila)
-    return ppla2, amplio, ppla2_filas
+            ppla2.setdefault(clave(c[1]), []).append((c[1], float(c[4]), float(c[5]), c[10]))
+    return ppla2, amplio
 
 
 # --------------------------------------------------------------------------------------
@@ -347,7 +350,7 @@ def construir_ciudades(foto, informe):
     adm2 = json.loads(_adm2_bytes().decode("utf-8"))
     informe["adm2_total"] = len(adm2["features"])
 
-    ppla2, amplio, ppla2_filas = cargar_geonames()
+    ppla2, amplio = cargar_geonames()
     # Codigo admin1 de GeoNames -> provincia (derivado del propio catalogo actual)
     cod_prov = {}
     for c in foto["ciudades"]:
@@ -420,8 +423,6 @@ def construir_ciudades(foto, informe):
         elif k in prov_names:
             nombre = "%s (%s)" % (nombre, "cantón" if clave(prov_names[k]) == clave(c["prov"]) else c["prov"])
             informe["homonimos"].append((c["nombre"], nombre))
-        elif k in clave_actual:  # no ocurre (cubierto arriba), por seguridad
-            nombre = "%s (%s)" % (nombre, c["prov"])
         if clave(nombre) in usadas:
             raise SystemExit("Duplicado inesperado: " + nombre)
         usadas.add(clave(nombre))
@@ -456,7 +457,7 @@ def construir_paises(foto, informe):
     filas = [dict(**{"País": p["País"]}, Pais_Lat=p["Pais_Lat"], Pais_Lon=p["Pais_Lon"], Origen="actual") for p in actuales]
     cubiertos = set()
     for p in actuales:
-        k = clave(ALIAS_PAIS.get(p["País"], p["País"]))
+        k = clave(p["País"])
         c = por_clave.get(k)
         if c:
             cubiertos.add(c["cca2"])
@@ -494,7 +495,7 @@ def escribir_csv(ruta, columnas, filas, campo_orden):
     return filas
 
 
-def verificar(foto, ciudades, paises, provincias, informe):
+def verificar(foto, ciudades, paises, provincias):
     errores = []
     # 1) Ninguna fila actual cambio
     def igual(a, b):
@@ -551,7 +552,7 @@ def main():
     provincias = [dict(Provincia=p["Provincia"], Provincia_Lat=p["Provincia_Lat"], Provincia_Lon=p["Provincia_Lon"])
                   for p in foto["provincias"]]
 
-    errores = verificar(foto, ciudades, paises, provincias, informe)
+    errores = verificar(foto, ciudades, paises, provincias)
     ciudades = escribir_csv(AQUI / "ciudades-ecuador.csv",
                             ["Ciudad", "Ciudad_Provincia", "Ciudad_Lat", "Ciudad_Lon", "Origen"], ciudades, "Ciudad")
     paises = escribir_csv(AQUI / "paises.csv", ["País", "Pais_Lat", "Pais_Lon", "Origen"], paises, "País")

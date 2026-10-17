@@ -45,6 +45,7 @@ PESO_RANGO = [0.30, 0.35, 0.25, 0.10]
 ESTACIONALIDAD = {"Enero": 1.05, "Febrero": 1.25, "Marzo": 0.9, "Abril": 0.95, "Mayo": 0.85, "Junio": 0.95, "Julio": 1.2,
                   "Agosto": 1.4, "Septiembre": 1.0, "Octubre": 0.9, "Noviembre": 1.0, "Diciembre": 1.3}
 CRECIMIENTO = {2025: 1.0, 2026: 1.08, 2027: 1.15}
+MES_FINAL = (2026, 9)        # los datos de ejemplo van de enero de 2025 a este mes, en los dos modos
 
 
 def sin_tildes(texto):
@@ -155,9 +156,8 @@ class Formatos:
         self.encabezado_tabla = libro.add_format({**encabezado, "bg_color": "#1A7A32", "align": "left"})
 
 
-def formulas_fila(r):
-    """Fórmulas de la fila `r` (base 1) de una pestaña de establecimiento, en el orden D, P..U."""
-    f = r
+def formulas_fila(f):
+    """Fórmulas de la fila `f` (base 1) de una pestaña de establecimiento, en el orden D, P..U."""
     return {
         "D": f'=IF(E{f}="","",IFERROR(VLOOKUP(E{f},\'_Catalogos\'!$J$2:$K${FILA_FINAL_LISTAS},2,FALSE),""))',
         "P": f'=IF(COUNT(G{f}:O{f})=0,"",SUM(G{f}:J{f}))',
@@ -232,7 +232,7 @@ def hoja_establecimiento(libro, fmt, nombre, filas, provincia_de, vacia=False):
     return hoja
 
 
-def hoja_anterior(libro, fmt, nombre, rng, ciudades, paises, provincia_de):
+def hoja_anterior(libro, fmt, nombre, rng, provincia_de):
     """Pestaña de ejemplo en el formato anterior: una fila por grupo de visitantes con edad y género."""
     hoja = libro.add_worksheet(nombre)
     hoja.freeze_panes(1, 0)
@@ -394,10 +394,10 @@ def construir(salida, modo, semilla, con_peggy=True):
     nombres_pais = {p["País"] for p in paises}
     base = json.loads((RAIZ / "tools" / "excel" / "establecimientos-base.json").read_text(encoding="utf-8"))["establecimientos"]
     if modo == "fixture":
-        base, meses_fin, filas_por_mes = base[:14], (2026, 9), 3
+        base, filas_por_mes = base[:14], 3
     else:
-        meses_fin, filas_por_mes = (2026, 9), 8
-    meses = [(a, MESES[m]) for a in (2025, 2026) for m in range(12) if (a, m + 1) <= meses_fin]
+        filas_por_mes = 8
+    meses = [(a, MESES[m]) for a in (2025, 2026) for m in range(12) if (a, m + 1) <= MES_FINAL]
     promedio = sum(b["visitantes"] for b in base) / len(base)
 
     libro = xlsxwriter.Workbook(str(salida), {"strings_to_numbers": False})
@@ -423,7 +423,7 @@ def construir(salida, modo, semilla, con_peggy=True):
             hoja_establecimiento(libro, fmt, nombre, filas, provincia_de)
             usados.add(sin_tildes(nombre))
             total_filas += len(filas)
-        hoja_anterior(libro, fmt, "Ejemplo (formato anterior)", rng, ciudades, paises, provincia_de)
+        hoja_anterior(libro, fmt, "Ejemplo (formato anterior)", rng, provincia_de)
         if con_peggy:
             resumen.insert(0, "Las hojas El Valle, Tu Heladería, La Casta, Patate Gardens y Quinlata vienen del archivo de Peggy: se cargó la columna de nacionales con año 2026; los extranjeros no se cargaron porque ese archivo no dice de qué país son.")
         resumen.insert(1, "«Ejemplo (formato anterior)» muestra una pestaña con Cantidad, Edad y Género, que sigue funcionando.")

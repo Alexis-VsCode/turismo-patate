@@ -43,7 +43,10 @@ export function ejecucionesTrabadas(ejecuciones, ahora, actual) {
     .map((e) => e.id);
 }
 
-/** Llama a la API de GitHub con el token del flujo. */
+/**
+ * Llama a la API de GitHub con el token del flujo. Una lectura con error lanza: sin ella no hay nada que revisar.
+ * Las escrituras devuelven la respuesta tal cual, porque quien llama decide qué hacer si fallan.
+ */
 async function api(ruta, metodo = 'GET') {
   const respuesta = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}${ruta}`, {
     method: metodo,
@@ -53,10 +56,15 @@ async function api(ruta, metodo = 'GET') {
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
+  if (metodo === 'GET' && !respuesta.ok) throw new Error(`GitHub API ${ruta}: HTTP ${respuesta.status}`);
   return respuesta;
 }
 
-async function principal() {
+/**
+ * Cancela las ejecuciones trabadas del flujo actual y lo mantiene activo.
+ * @returns {Promise<void>} se rechaza si la API responde con error o si no se pudo mantener activo el flujo
+ */
+export async function principal() {
   // Paso 1: ejecuciones sin terminar del mismo flujo
   const actual = Number(process.env.GITHUB_RUN_ID);
   const { workflow_id: flujo } = await (await api(`/actions/runs/${actual}`)).json();
@@ -78,6 +86,7 @@ async function principal() {
   // Paso 3: habilitar el flujo reinicia el plazo de 60 días sin actividad tras el que GitHub lo apaga
   const mantenido = await api(`/actions/workflows/${flujo}/enable`, 'PUT');
   console.log(JSON.stringify({ evento: 'flujo_mantenido', http: mantenido.status }));
+  if (!mantenido.ok) throw new Error(`No se pudo mantener activo el flujo: HTTP ${mantenido.status}`);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {

@@ -13,10 +13,9 @@ on:
     - cron: '15,45 * * * *'
   workflow_dispatch:
 
+# Cada job declara solo los permisos que usa; el de nivel de flujo es el mínimo para cualquier job nuevo.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # La concurrencia de Pages vive solo en el despliegue: así la limpieza corre siempre, aunque otra ejecución esté trabada.
 jobs:
@@ -44,6 +43,9 @@ jobs:
   construir:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@v7
 
@@ -64,9 +66,7 @@ jobs:
         run: |
           mkdir -p sitio
           cp index.html sitio/
-          cp -r css src sitio/
-          mkdir -p sitio/assets
-          cp assets/logo-patate.png assets/fondo-cabecera.jpg assets/ecu-provincias.geojson assets/og.jpg sitio/assets/
+          cp -r css src assets sitio/
           cp -r assets/personas sitio/assets/
           touch sitio/.nojekyll
 
@@ -81,6 +81,9 @@ jobs:
     needs: [construir, destrabar]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     concurrency:
       group: pages
       cancel-in-progress: false
