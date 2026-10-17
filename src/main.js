@@ -15,7 +15,7 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { CONFIG } from './infrastructure/config.js';
-import { obtenerDatos } from './infrastructure/repositorio-datos.js';
+import { obtenerDatos, obtenerLimites } from './infrastructure/repositorio-datos.js';
 import { crearTableroFacade } from './application/tablero.facade.js';
 import { montarTablero } from './application/components/tablero.container.js';
 
@@ -26,5 +26,7 @@ const facade = crearTableroFacade({
   esVisible: () => document.visibilityState === 'visible',
 });
 
-// Paso 2: el container es el único que toca el DOM; recibe la fachada ya armada
-montarTablero(facade, CONFIG);
+// Paso 2: el container es el único que toca el DOM; recibe la fachada ya armada y la descarga de los límites del mapa
+montarTablero(facade, CONFIG, {
+  obtenerLimites: () => obtenerLimites({ url: CONFIG.URL_LIMITES, timeoutMs: CONFIG.TIMEOUT_MS, maxBytes: CONFIG.MAX_BYTES }),
+});

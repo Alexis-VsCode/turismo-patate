@@ -1,6 +1,6 @@
 /**
  * @file filtros.js
- * @description Dominio. Estado de los filtros del tablero y su aplicación sobre las filas normalizadas, como
+ * @description Dominio. Estado de los filtros del dashboard y su aplicación sobre las filas normalizadas, como
  *   funciones puras. Cinco filtros admiten varias opciones (establecimiento, procedencia, motivo, rango de edad
  *   y género); año y mes siguen siendo de una sola, porque la variación y la evolución comparan dos años.
  *   Dentro de un filtro las opciones se suman (O); entre filtros distintos se cruzan (Y). No conoce la
@@ -14,41 +14,71 @@ export const CLAVES_MULTIPLES = Object.freeze(['establecimiento', 'procedencia',
 /**
  * Estado de filtros vacío. Cada opción de `procedencia` es 'NAC', 'EXT', 'C:<ciudad>', 'P:<país>' o
  * 'PR:<provincia>'. Año y mes son null cuando no hay filtro (enero es 0).
+ * @returns {{ establecimiento: string[], anio: null, mes: null, procedencia: string[], motivo: string[],
+ *   rangoEdad: string[], genero: string[] }} un estado nuevo, sin listas compartidas
  */
 export function filtrosVacios() {
   return { establecimiento: [], anio: null, mes: null, procedencia: [], motivo: [], rangoEdad: [], genero: [] };
 }
 
-/** Lista de opciones de un filtro múltiple. Acepta una lista, un valor suelto o un vacío; sin repetidos. */
+/**
+ * Lista de opciones de un filtro múltiple. Acepta una lista, un valor suelto o un vacío; sin repetidos.
+ * @param {*} valor lista, valor suelto, '' , null o undefined
+ * @returns {Array} lista nueva sin repetidos, en el orden recibido; vacía si no hay valor
+ */
 export function valoresDeFiltro(valor) {
   if (Array.isArray(valor)) return [...new Set(valor)];
   return valor === '' || valor === null || valor === undefined ? [] : [valor];
 }
 
-/** Agrega la opción si no estaba y la quita si estaba. No modifica la lista recibida. */
+/**
+ * Agrega la opción si no estaba y la quita si estaba. No modifica la lista recibida.
+ * @param {Array} lista opciones elegidas
+ * @param {*} valor opción que se alterna
+ * @returns {Array} lista nueva con la opción al final, o sin ella
+ */
 export function alternarValor(lista, valor) {
   return lista.includes(valor) ? lista.filter((v) => v !== valor) : [...lista, valor];
 }
 
-/** Quita una opción de la lista. No modifica la lista recibida ni falla si la opción no estaba. */
+/**
+ * Quita una opción de la lista. No modifica la lista recibida ni falla si la opción no estaba.
+ * @param {Array} lista opciones elegidas
+ * @param {*} valor opción que se quita
+ * @returns {Array} lista nueva sin esa opción
+ */
 export function quitarValor(lista, valor) {
   return lista.filter((v) => v !== valor);
 }
 
-/** Copia del estado de filtros que no comparte listas con el original. */
+/**
+ * Copia del estado de filtros que no comparte listas con el original.
+ * @param {object} filtros estado de filtros (ver filtrosVacios)
+ * @returns {object} copia con listas nuevas; año y mes se copian tal cual
+ */
 export function copiarFiltros(filtros) {
   return Object.fromEntries(Object.entries(filtros).map(([clave, valor]) => [clave, Array.isArray(valor) ? [...valor] : valor]));
+}
+
+/**
+ * Tipo y nombre de una opción de procedencia ('C:<ciudad>', 'P:<país>' o 'PR:<provincia>'). Corta en el primer «:», así
+ * un nombre que lleva «:» se conserva entero. Los atajos 'NAC' y 'EXT' no llevan «:» y salen sin tipo.
+ * @param {string} valor opción de procedencia
+ * @returns {{ tipo: string, nombre: string }} `tipo` vacío si no hay «:»; entonces `nombre` es el valor entero
+ */
+export function leerProcedencia(valor) {
+  const separador = valor.indexOf(':');
+  if (separador < 0) return { tipo: '', nombre: valor };
+  return { tipo: valor.slice(0, separador), nombre: valor.slice(separador + 1) };
 }
 
 function cumpleProcedencia(fila, procedencia) {
   if (procedencia === 'NAC') return fila.nacional;
   if (procedencia === 'EXT') return !fila.nacional;
-  const separador = procedencia.indexOf(':');
-  const tipo = procedencia.slice(0, separador);
-  const valor = procedencia.slice(separador + 1);
-  if (tipo === 'C') return fila.nacional && fila.ciudad === valor;
-  if (tipo === 'PR') return fila.nacional && fila.provincia === valor;
-  if (tipo === 'P') return fila.pais === valor;
+  const { tipo, nombre } = leerProcedencia(procedencia);
+  if (tipo === 'C') return fila.nacional && fila.ciudad === nombre;
+  if (tipo === 'PR') return fila.nacional && fila.provincia === nombre;
+  if (tipo === 'P') return fila.pais === nombre;
   return false;
 }
 

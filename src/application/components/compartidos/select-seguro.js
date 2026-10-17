@@ -6,8 +6,11 @@
  */
 
 /**
- * Reemplaza las opciones de un <select>. `opciones` = [{ valor, texto, grupo? }].
- * Conserva el valor actual si sigue existiendo; si no, vuelve a la primera opción.
+ * Reemplaza las opciones de un <select>. Conserva el valor actual si sigue existiendo; si no, vuelve a la primera opción.
+ * @param {HTMLSelectElement} select lista que se llena
+ * @param {Array<{ valor: string, texto: string, grupo?: string }>} opciones opciones en orden; las de un mismo grupo
+ *   van juntas en su optgroup
+ * @param {string} valorActual valor que se quiere conservar elegido
  */
 export function llenarSelect(select, opciones, valorActual) {
   // Paso 1: vaciar nodo por nodo, sin reinterpretar marcado

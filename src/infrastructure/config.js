@@ -15,11 +15,13 @@ export const CONFIG = Object.freeze({
   REVISION_AUTOMATICA_MS: 30 * 1000,
   /** Límites provinciales del mapa, servidos por el propio sitio. */
   URL_LIMITES: 'assets/ecu-provincias.geojson',
+  /** Teselas del fondo del mapa. Su origen tiene que estar en img-src de la CSP de index.html (una prueba lo vigila). */
+  URL_TESELAS: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   /** Al cambiar de establecimiento se reusa la descarga si es más reciente que esto. */
   REUSO_MINIMO_MS: 60 * 1000,
   /**
    * Edad máxima, en minutos, de la publicación para cada estado del chip de frescura: al día cubre un ciclo de
-   * ciclo de publicación más la demora de Actions; retrasado tolera perder un ciclo entero antes de darla por vencida.
+   * publicación más la demora de Actions; retrasado tolera perder un ciclo entero antes de darla por vencida.
    */
   UMBRALES_FRESCURA: Object.freeze({ alDiaMin: 45, retrasadoMin: 100 }),
   /** Límites de la descarga: una respuesta lenta o gigante produce un aviso, nunca un cuelgue. */

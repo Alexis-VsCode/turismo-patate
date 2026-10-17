@@ -5,7 +5,8 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { filtrosVacios, valoresDeFiltro } from './filtros.js';
-import { RANGOS_EDAD } from './visitante.js';
+import { RANGOS_EDAD, MESES } from './visitante.js';
+import { ANIO_MINIMO, ANIO_MAXIMO } from './catalogo.js';
 
 /** Clave corta de cada filtro de varias opciones en la URL. */
 const CLAVES = Object.freeze({ establecimiento: 'e', procedencia: 'p', motivo: 'mo', rangoEdad: 'ed', genero: 'g' });
@@ -56,7 +57,7 @@ export function textoAFiltros(texto) {
     filtros[campo] = [...new Set(validos)].slice(0, MAXIMO_OPCIONES);
   }
   // Paso 2: año y mes, de una sola opción
-  filtros.anio = enteroEn(parametros.get('a'), 2000, 2100);
-  filtros.mes = enteroEn(parametros.get('m'), 0, 11);
+  filtros.anio = enteroEn(parametros.get('a'), ANIO_MINIMO, ANIO_MAXIMO);
+  filtros.mes = enteroEn(parametros.get('m'), 0, MESES.length - 1);
   return filtros;
 }

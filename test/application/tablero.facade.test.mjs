@@ -14,21 +14,33 @@ import { empaquetar, desempaquetar } from '../../src/infrastructure/contrato-dat
 import { claveNormalizada } from '../../src/domain/catalogo.js';
 import { CONFIG } from '../../src/infrastructure/config.js';
 import { crearTableroFacade } from '../../src/application/tablero.facade.js';
+import {
+  kpis, porMotivo, edadGenero, evolucionMensual, anioDeReferencia, variacionInteranual, porCiudad, porPais, porProvincia,
+} from '../../src/domain/estadisticas.js';
+import { resumenDiscapacidad } from '../../src/domain/discapacidad.js';
+import { filtrosVacios } from '../../src/domain/filtros.js';
 
 const DATOS = desempaquetar(
   JSON.parse(JSON.stringify(empaquetar(leerLibro(leerFixture('test/fixtures/piloto-publicado.xlsx'), XLSX, CONFIG), '2026-09-29T13:00:00.000Z', 'Ecuador'))),
   claveNormalizada,
 );
 const esperado = JSON.parse(readFileSync(join(RAIZ, 'test/fixtures/esperado.json'), 'utf8'));
+const DATOS_MENSUAL = desempaquetar(
+  JSON.parse(JSON.stringify(empaquetar(leerLibro(leerFixture('test/fixtures/piloto-mensual.xlsx'), XLSX, CONFIG), '2026-09-29T13:00:00.000Z', 'Ecuador'))),
+  claveNormalizada,
+);
+
+/** Deja correr la descarga que haya quedado en curso antes de seguir. */
+const terminarCarga = () => new Promise((listo) => setImmediate(listo));
 
 /** Fachada con reloj manual, visibilidad controlable y una descarga que cuenta sus llamadas. */
-function montar({ falla = false } = {}) {
+function montar({ falla = false, datos = DATOS } = {}) {
   const ctx = { ahora: 1_000_000, visible: true, llamadas: 0, falla, eventos: [] };
   const facade = crearTableroFacade({
     obtener: async () => {
       ctx.llamadas += 1;
       if (ctx.falla) throw Object.assign(new Error('sin red'), { codigo: 'RED' });
-      return DATOS;
+      return datos;
     },
     config: CONFIG,
     reloj: () => ctx.ahora,
@@ -46,7 +58,7 @@ test('carga inicial forzada trae los datos y avisa en orden', async () => {
   assert.equal(facade.vista().kpis.total, esperado.todo.kpis.total);
 });
 
-test('cambio de establecimiento reusa la descarga si pasaron menos de 60 s', async () => {
+test('cargar sin forzar reusa la descarga si no pasó el tiempo mínimo de reuso', async () => {
   const { facade, ctx } = montar();
   await facade.cargar(true);
   ctx.ahora += CONFIG.REUSO_MINIMO_MS - 1;
@@ -56,7 +68,7 @@ test('cambio de establecimiento reusa la descarga si pasaron menos de 60 s', asy
   assert.equal(ctx.llamadas, 2);
 });
 
-test('el botón Actualizar (forzar) ignora el reuso de 60 s', async () => {
+test('el botón Actualizar (forzar) ignora el tiempo mínimo de reuso', async () => {
   const { facade, ctx } = montar();
   await facade.cargar(true);
   ctx.ahora += 1000;
@@ -399,8 +411,114 @@ test('un enlace con basura no rompe nada: se aplica solo lo válido', async () =
   assert.deepEqual(facade.estado.filtros.rangoEdad, []);
 });
 
-test('el periodo cargado se lee de su primer a su último mes («dic 2024 a sep 2026»)', async () => {
+test('el periodo cargado se lee de su primer a su último mes («ene 2025 a sep 2026» en el libro de prueba)', async () => {
   const { facade } = montar();
   await facade.cargar(true);
-  assert.match(facade.carga().periodo, /^[a-z]{3} \d{4} a [a-z]{3} \d{4}$/);
+  assert.equal(facade.carga().periodo, 'ene 2025 a sep 2026');
+});
+
+test('cambiar o quitar un establecimiento vuelve a descargar solo si pasó el tiempo mínimo de reuso', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  const [a, b] = DATOS.establecimientos;
+  ctx.eventos.length = 0;
+  facade.fijarFiltro('establecimiento', [a]);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 1, 'antes del plazo se reusa la descarga');
+  assert.deepEqual(ctx.eventos, ['filtros']);
+  ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+  ctx.eventos.length = 0;
+  facade.fijarFiltro('establecimiento', [a, b]);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 2, 'cumplido el plazo, cambiar de establecimiento descarga');
+  assert.deepEqual(ctx.eventos, ['filtros', 'cargando', 'datos', 'cargando'], 'primero se pintan los filtros y después la descarga');
+  facade.quitarFiltro('establecimiento', b);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 2, 'quitarlo antes del plazo también reusa');
+  ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+  facade.quitarFiltro('establecimiento', a);
+  await terminarCarga();
+  assert.equal(ctx.llamadas, 3, 'cumplido el plazo, quitar un establecimiento descarga');
+  assert.deepEqual(facade.estado.filtros.establecimiento, []);
+});
+
+test('alternar, aplicar, limpiar, elegir mes, el enlace y los demás filtros nunca vuelven a descargar', async () => {
+  const { facade, ctx } = montar();
+  await facade.cargar(true);
+  const [a] = DATOS.establecimientos;
+  const acciones = [
+    () => facade.alternarFiltro('establecimiento', a),
+    () => facade.aplicarFiltros({ establecimiento: [a] }),
+    () => facade.aplicarEnlace(`#e=${encodeURIComponent(a)}`),
+    () => facade.limpiarFiltros(),
+    () => facade.elegirMes(2026, 1),
+    () => facade.fijarFiltro('motivo', ['Turismo']),
+    () => facade.quitarFiltro('motivo', 'Turismo'),
+    () => facade.fijarFiltro('anio', 2025),
+    () => facade.quitarFiltro('anio'),
+    () => facade.alternarFiltro('procedencia', 'EXT'),
+  ];
+  for (const accion of acciones) {
+    ctx.ahora += CONFIG.REUSO_MINIMO_MS;
+    accion();
+    await terminarCarga();
+  }
+  assert.equal(ctx.llamadas, 1);
+});
+
+/** Los dos establecimientos con más filas de discapacidad y, después, con más visitantes: así el caso no es trivial. */
+function dosEstablecimientos(datos) {
+  const cuenta = (lista, e) => lista.filter((r) => r.establecimiento === e).length;
+  return [...datos.establecimientos]
+    .sort((x, y) => cuenta(datos.discapacidad, y) - cuenta(datos.discapacidad, x) || cuenta(datos.filas, y) - cuenta(datos.filas, x))
+    .slice(0, 2);
+}
+
+for (const [libro, datos] of [['piloto-publicado', DATOS], ['piloto-mensual', DATOS_MENSUAL]]) {
+  test(`al elegir un establecimiento, cada panel de la vista sale solo de sus filas (${libro})`, async () => {
+    const { facade } = montar({ datos });
+    await facade.cargar(true);
+    const opcionesSinFiltro = facade.opciones();
+    const [a, b] = dosEstablecimientos(datos);
+    for (const elegidos of [[a], [b], [a, b]]) {
+      facade.fijarFiltro('establecimiento', elegidos);
+      // Paso 1: las filas se separan a mano, sin pasar por filtrar(), para no validar la fachada con su propio código
+      const filas = datos.filas.filter((r) => elegidos.includes(r.establecimiento));
+      const discapacidad = datos.discapacidad.filter((r) => elegidos.includes(r.establecimiento));
+      assert.ok(filas.length > 0, `${elegidos} tiene visitantes en el libro`);
+      const v = facade.vista();
+      const k = kpis(filas);
+      assert.deepEqual(
+        { total: v.kpis.total, nacionales: v.kpis.nacionales, extranjeros: v.kpis.extranjeros },
+        { total: k.total, nacionales: k.nacionales, extranjeros: k.extranjeros },
+        `KPI de ${elegidos}`,
+      );
+      assert.deepEqual(v.kpis, k);
+      assert.deepEqual(v.variacion, variacionInteranual(filas, filtrosVacios()), `variación de ${elegidos}`);
+      assert.deepEqual(v.motivos, porMotivo(filas), `motivos de ${elegidos}`);
+      assert.deepEqual(v.edadGenero, edadGenero(filas, datos.catalogo.generos), `edad y género de ${elegidos}`);
+      assert.deepEqual(v.discapacidad, resumenDiscapacidad(discapacidad, k.total), `discapacidad de ${elegidos}`);
+      assert.deepEqual(v.evolucion, evolucionMensual(filas, anioDeReferencia(filas, null)), `evolución de ${elegidos}`);
+      assert.deepEqual(
+        { ciudades: v.mapa.ciudades, paises: v.mapa.paises, provincias: v.mapa.provincias },
+        { ciudades: porCiudad(filas), paises: porPais(filas), provincias: porProvincia(filas) },
+        `mapa de ${elegidos}`,
+      );
+      assert.deepEqual(v.filtros.establecimiento, elegidos);
+      // Paso 2: las opciones de los combos no se reducen al establecimiento: siguen saliendo de todo el libro y del catálogo
+      assert.deepEqual(facade.opciones(), opcionesSinFiltro, `opciones con ${elegidos}`);
+      assert.deepEqual(facade.opciones().establecimiento.map((o) => o.valor), datos.establecimientos);
+    }
+    const unoYOtro = [[a], [b]].map((e) => { facade.fijarFiltro('establecimiento', e); return facade.vista().kpis.total; });
+    assert.notEqual(unoYOtro[0], unoYOtro[1], 'los dos establecimientos elegidos dan totales distintos');
+    facade.fijarFiltro('establecimiento', [a, b]);
+    assert.equal(facade.vista().kpis.total, unoYOtro[0] + unoYOtro[1], 'dos establecimientos a la vez suman los dos');
+  });
+}
+
+test('cada chip de procedencia se lee en lenguaje natural según su tipo', async () => {
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('procedencia', ['NAC', 'EXT', 'PR:Tungurahua', 'C:Ambato', 'P:Colombia']);
+  assert.deepEqual(facade.chipsActivos().map((c) => c.texto), ['Nacionales', 'Extranjeros', 'Provincia: Tungurahua', 'Ambato', 'Colombia']);
 });

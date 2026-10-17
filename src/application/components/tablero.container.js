@@ -1,8 +1,8 @@
 /**
  * @file tablero.container.js
  * @description Container. Conecta la página con la fachada: traduce eventos del DOM y de los gráficos
- *   en acciones de la fachada y pinta la vista que ella entrega mediante los presentacionales.
- *   No calcula ni descarga los datos por su cuenta: solo lee el GeoJSON local del mapa.
+ *   en acciones de la fachada y pinta la vista que ella entrega mediante los presentacionales y los compartidos.
+ *   No calcula ni descarga: los datos los pide la fachada y los límites del mapa llegan por una función inyectada.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { TEXTOS } from '../../shared/textos.es.js';
@@ -10,8 +10,9 @@ import { numero, fechaHora, hora } from '../../shared/formato.js';
 import { llenarSelect } from './compartidos/select-seguro.js';
 import { crearComboMultiple } from './compartidos/combo-multiple.js';
 import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentational/graficos.presentational.js';
-import { crearMapa } from './presentational/mapa.presentational.js';
+import { crearMapa } from './compartidos/mapa.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
+import { pintarEstadoDatos } from './presentational/estado.presentational.js';
 import { pintarMotivos } from './presentational/motivos.presentational.js';
 import { pintarDiscapacidad } from './presentational/discapacidad.presentational.js';
 import { pintarFrescura } from './presentational/frescura.presentational.js';
@@ -21,7 +22,6 @@ import { pintarContacto, pintarAutoridad, prepararEnlacesContacto } from './pres
 import { mostrarAviso } from './compartidos/aviso.js';
 import { crearPanelFiltros } from './compartidos/panel-filtros.js';
 import { crearSelectorTema } from './compartidos/selector-tema.js';
-
 
 /** Colores del tema leídos de los tokens CSS, para que gráficos y mapa usen la misma paleta. */
 function coloresDelTema() {
@@ -36,11 +36,14 @@ function coloresDelTema() {
 }
 
 /**
- * Monta el tablero sobre la página.
- * @param {ReturnType<import('../tablero.facade.js').crearTableroFacade>} facade
- * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, CONTACTO_MUNICIPIO: { nombre: string, referencia: string, enlaces: object }, AUTORIDAD_MUNICIPIO: { nombre: string, cargo: string, periodo: string, enlace: string } }} config
+ * Monta el dashboard sobre la página.
+ * @param {ReturnType<import('../tablero.facade.js').crearTableroFacade>} facade fachada ya armada por main.js
+ * @param {{ DATOS_DE_PRUEBA: boolean, PROVINCIA_RESALTADA: string, REVISION_AUTOMATICA_MS: number, URL_TESELAS: string,
+ *   CONTACTO_MUNICIPIO: { nombre: string, referencia: string, enlaces: object },
+ *   AUTORIDAD_MUNICIPIO: { nombre: string, cargo: string, periodo: string, enlace: string } }} config configuración
+ * @param {{ obtenerLimites: () => Promise<object> }} dependencias descarga de los límites provinciales del mapa
  */
-export function montarTablero(facade, config) {
+export function montarTablero(facade, config, { obtenerLimites }) {
   const $ = (id) => document.getElementById(id);
   const colores = coloresDelTema();
   const graficos = {
@@ -58,10 +61,7 @@ export function montarTablero(facade, config) {
   const combos = {
     establecimiento: crearComboMultiple($('combo-establecimiento'), {
       textos: textosCombo(TEXTOS.todosEstablecimientos),
-      alCambiar: (lista) => {
-        facade.fijarFiltro('establecimiento', lista);
-        facade.cargar(false);
-      },
+      alCambiar: (lista) => facade.fijarFiltro('establecimiento', lista),
     }),
   };
   for (const [campo, id] of [['procedencia', 'combo-procedencia'], ['motivo', 'combo-motivo'], ['rangoEdad', 'combo-edad'], ['genero', 'combo-genero']]) {
@@ -106,7 +106,7 @@ export function montarTablero(facade, config) {
   }
   window.addEventListener('hashchange', () => facade.aplicarEnlace(window.location.hash));
 
-  // Paso 3: funciones de pintado, siempre a partir de la vista que entrega la fachada
+  // Paso 4: funciones de pintado, siempre a partir de la vista que entrega la fachada
   function pintarFiltros() {
     const op = facade.opciones();
     if (!op) return;
@@ -118,10 +118,7 @@ export function montarTablero(facade, config) {
       combo.fijarValores(f[campo]);
     }
     const chips = facade.chipsActivos();
-    pintarChips($('chips'), chips, (campo, valorQuitado) => {
-      facade.quitarFiltro(campo, valorQuitado);
-      if (campo === 'establecimiento') facade.cargar(false);
-    }, () => facade.limpiarFiltros(), copiarEnlace);
+    pintarChips($('chips'), chips, (campo, valorQuitado) => facade.quitarFiltro(campo, valorQuitado), () => facade.limpiarFiltros(), copiarEnlace);
     panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 
@@ -155,28 +152,18 @@ export function montarTablero(facade, config) {
     if (mapa) mapa.actualizar(v.mapa);
   }
 
-  /** «Actualizado» es la última descarga; «publicados» es el build de Actions, que solo cambia con datos nuevos. */
+  /**
+   * Barra de estado con la publicación del build de Actions, que solo cambia con datos nuevos. `horaDatos` guarda la
+   * hora de la última descarga, que el aviso de error nombra si una actualización falla.
+   */
   function pintarEstado() {
     const { datos, ultimaDescarga } = facade.estado;
     horaDatos = hora(ultimaDescarga);
     const carga = facade.carga();
-    const items = TEXTOS.estadoDatos(
+    pintarEstadoDatos($('estado-texto'), TEXTOS.estadoDatos(
       fechaHora(datos.generadoEn), facade.publicacionMinutos(), carga.periodo,
       numero(carga.conDatos), numero(carga.establecimientos), numero(carga.registros),
-    ).map(({ rotulo, valor, detalle }) => {
-      const item = document.createElement('span');
-      item.className = 'estado-dato';
-      const r = document.createElement('small');
-      r.textContent = rotulo;
-      const v = document.createElement('strong');
-      v.textContent = valor;
-      const d = document.createElement('span');
-      d.className = 'estado-detalle';
-      d.textContent = detalle;
-      item.append(r, v, d);
-      return item;
-    });
-    $('estado-texto').replaceChildren(...items);
+    ));
   }
 
   /** Aviso de una red del contacto que todavía no tiene dirección, con las redes que sí están para no dejar a nadie sin salida. */
@@ -198,50 +185,57 @@ export function montarTablero(facade, config) {
     pintarFrescura({ chip: $('chip-frescura'), etiqueta: $('frescura-etiqueta'), detalle: $('frescura-detalle') }, facade.frescura());
   }
 
-  // Paso 4: cada evento de la fachada decide qué zonas se repintan
+  // Paso 5: cada evento de la fachada decide qué zonas se repintan; un enlace compartido se aplica una sola vez, con
+  // los primeros datos, porque antes no hay contra qué filtrar
   let enlaceInicialAplicado = false;
-  facade.suscribir((evento) => {
-    if (evento === 'datos') {
-      // Un enlace compartido se aplica una sola vez, cuando ya hay datos contra los que filtrar
-      if (!enlaceInicialAplicado) {
-        enlaceInicialAplicado = true;
-        if (window.location.hash.length > 1) facade.aplicarEnlace(window.location.hash);
-      }
-      $('error').hidden = true;
-      pintarEstado();
-      pintarSalud();
-      pintarFiltros();
-      pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos);
-      pintarPaneles();
-    } else if (evento === 'filtros') {
-      reflejarEnlace();
-      pintarFiltros();
-      pintarPaneles();
-    } else if (evento === 'vistaMapa') {
-      const v = facade.vista();
-      if (v) pintarMapa(v);
-    } else if (evento === 'cargando') {
-      const { cargando } = facade.estado;
-      document.body.classList.toggle('cargando', cargando);
-      $('btn-actualizar').disabled = cargando;
-      $('btn-actualizar-texto').textContent = cargando ? TEXTOS.cargando : TEXTOS.actualizar;
-    } else if (evento === 'error') {
-      const { error } = facade.estado;
-      const detalle = (error && TEXTOS.errores[error.codigo]) || TEXTOS.errores.FORMATO;
-      $('error').textContent = `${TEXTOS.errorDescarga(horaDatos)} ${detalle}`.trim();
-      $('error').hidden = false;
+  function alLlegarDatos() {
+    if (!enlaceInicialAplicado) {
+      enlaceInicialAplicado = true;
+      if (window.location.hash.length > 1) facade.aplicarEnlace(window.location.hash);
     }
-  });
+    $('error').hidden = true;
+    pintarEstado();
+    pintarSalud();
+    pintarFiltros();
+    pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos);
+    pintarPaneles();
+  }
+  function alCambiarFiltros() {
+    reflejarEnlace();
+    pintarFiltros();
+    pintarPaneles();
+  }
+  function alCambiarVistaMapa() {
+    const v = facade.vista();
+    if (v) pintarMapa(v);
+  }
+  function alCambiarCarga() {
+    const { cargando } = facade.estado;
+    document.body.classList.toggle('cargando', cargando);
+    $('btn-actualizar').disabled = cargando;
+    $('btn-actualizar-texto').textContent = cargando ? TEXTOS.cargando : TEXTOS.actualizar;
+  }
+  function alFallarDescarga() {
+    const { error } = facade.estado;
+    const detalle = (error && TEXTOS.errores[error.codigo]) || TEXTOS.errores.FORMATO;
+    $('error').textContent = `${TEXTOS.errorDescarga(horaDatos)} ${detalle}`.trim();
+    $('error').hidden = false;
+  }
+  const alEvento = new Map([
+    ['datos', alLlegarDatos], ['filtros', alCambiarFiltros], ['vistaMapa', alCambiarVistaMapa],
+    ['cargando', alCambiarCarga], ['error', alFallarDescarga],
+  ]);
+  facade.suscribir((evento) => alEvento.get(evento)?.());
 
-  // Paso 5: al cambiar de tema los gráficos releen los colores de los tokens y se repintan sin recalcular
+  // Paso 6: al cambiar de tema los gráficos y el mapa releen los colores de los tokens y se repintan sin recalcular
   crearSelectorTema($('btn-tema'), () => {
     Object.assign(colores, coloresDelTema());
     const v = facade.vista();
     if (v) pintarGraficos(v);
-    if (mapa) mapa.repintar();
+    if (v && mapa) mapa.repintar(v.mapa);
   });
 
-  // Paso 6: actualización automática y ajuste de tamaño de gráficos y mapa
+  // Paso 7: actualización automática y ajuste de tamaño de gráficos y mapa
   const revisar = () => {
     pintarSalud();
     if (facade.tocaActualizar()) facade.cargar(true);
@@ -255,7 +249,7 @@ export function montarTablero(facade, config) {
   observador.observe($('tablero'));
   document.querySelectorAll('.grafico').forEach((zona) => observador.observe(zona));
 
-  // Paso 7: arranque; el mapa se crea cuando llega el GeoJSON local, sin bloquear los datos
+  // Paso 8: arranque; el mapa se crea cuando llegan sus límites provinciales, sin bloquear los datos
   $('franja-prueba').hidden = !config.DATOS_DE_PRUEBA;
   pintarAutoridad({
     nombre: $('autoridad-nombre'), cargo: $('autoridad-cargo'), gracias: $('autoridad-gracias'),
@@ -264,10 +258,9 @@ export function montarTablero(facade, config) {
   pintarContacto({ nombre: $('contacto-nombre'), redes: $('contacto-redes') }, config.CONTACTO_MUNICIPIO, avisarProximamente);
   $('estado-texto').textContent = TEXTOS.sinDatosAun(facade.publicacionMinutos());
   $('chip-frescura').title = TEXTOS.frescuraAyuda(facade.publicacionMinutos());
-  fetch(config.URL_LIMITES, { credentials: 'omit' })
-    .then((r) => r.json())
+  obtenerLimites()
     .then((geojson) => {
-      mapa = crearMapa($('g-mapa'), geojson, colores, config.PROVINCIA_RESALTADA, (p) => facade.alternarFiltro('procedencia', p));
+      mapa = crearMapa($('g-mapa'), geojson, colores, config.PROVINCIA_RESALTADA, (p) => facade.alternarFiltro('procedencia', p), config.URL_TESELAS);
       pintarPaneles();
     })
     .catch(() => { $('g-mapa').textContent = TEXTOS.sinDatos; });

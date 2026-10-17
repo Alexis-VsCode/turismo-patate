@@ -10,10 +10,13 @@ import { numero, porcentaje } from '../../../shared/formato.js';
 import { claveNormalizada } from '../../../domain/catalogo.js';
 import { valoresDeFiltro } from '../../../domain/filtros.js';
 
-/* Íconos de línea de cada motivo del catálogo. Sus trazos son constantes del código y se crean con la API del DOM. */
+/** Espacio de nombres con que se crean los nodos SVG de los íconos. */
 const ESPACIO_SVG = 'http://www.w3.org/2000/svg';
 
-/** Elementos de cada ícono en un lienzo de 24 x 24: [etiqueta, atributos]. */
+/**
+ * Íconos de línea de cada motivo del catálogo: los elementos de cada uno en un lienzo de 24 x 24, como
+ * [etiqueta, atributos]. Sus trazos son constantes del código y se crean con la API del DOM.
+ */
 const ICONOS = Object.freeze({
   turismo: [['path', { d: 'M4 8h3l2-3h6l2 3h3v11H4z' }], ['circle', { cx: 12, cy: 13, r: 3.5 }]],
   gastronomia: [['path', { d: 'M7 3v18M4 3v5a3 3 0 0 0 6 0V3M17 21V3c-2.5 1.5-3.5 4.5-3.5 8H17' }]],
@@ -24,14 +27,18 @@ const ICONOS = Object.freeze({
   generico: [['path', { d: 'M4 12V5h7l9 9-7 7z' }], ['circle', { cx: 8, cy: 9, r: 1.4 }]],
 });
 
-/** Nombre del ícono que corresponde a un motivo; «generico» si no está en el catálogo de íconos. */
+/**
+ * Nombre del ícono que corresponde a un motivo.
+ * @param {string} motivo motivo de visita tal como viene de la hoja
+ * @returns {string} la clave del ícono; «generico» si el motivo no tiene uno propio
+ */
 export function claveIconoMotivo(motivo) {
   const clave = claveNormalizada(motivo);
   return Object.hasOwn(ICONOS, clave) ? clave : 'generico';
 }
 
 /** Crea el SVG del motivo, decorativo (`aria-hidden`), del color del texto que lo rodea. */
-export function crearIconoMotivo(motivo) {
+function crearIconoMotivo(motivo) {
   const svg = document.createElementNS(ESPACIO_SVG, 'svg');
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('aria-hidden', 'true');

@@ -13,8 +13,8 @@
   } catch (e) {
     guardado = null;
   }
-  // Paso 2: solo la elección explícita del visitante por el oscuro lo saca del claro, que es el tema por defecto
-  // Paso 3: el atributo lo leen los tokens de css/tema.css
+  // Paso 2: solo la elección explícita del visitante por el oscuro lo saca del claro, que es el tema por defecto;
+  // el atributo lo leen los tokens de css/tema.css
   var tema = guardado === 'dark' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', tema);
 })();

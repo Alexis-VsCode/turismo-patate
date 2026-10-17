@@ -6,7 +6,10 @@
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { limpiarTexto } from './texto.js';
-import { claveNormalizada, canonico, COLUMNAS_MENSUALES, etiquetaDeColumna } from './catalogo.js';
+import {
+  claveNormalizada, canonico, COLUMNAS_MENSUALES, etiquetaDeColumna,
+  GENERO_MUJERES, GENERO_HOMBRES, ANIO_MINIMO, ANIO_MAXIMO, EDAD_MAXIMA, CANTIDAD_MAXIMA,
+} from './catalogo.js';
 
 export const MESES = Object.freeze([
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -15,12 +18,6 @@ export const MESES = Object.freeze([
 export const RANGOS_EDAD = Object.freeze(['0-30', '31-45', '46-60', '61+']);
 /** Edad con que se representa cada rango cuando la hoja trae totales por rango y no edades sueltas: su límite inferior. */
 export const EDAD_BASE_RANGO = Object.freeze([0, 31, 46, 61]);
-const CANTIDAD_MAXIMA = 100000;
-const GENERO_MUJERES = 'Femenino';
-const GENERO_HOMBRES = 'Masculino';
-const EDAD_MAXIMA = 110;
-const ANIO_MINIMO = 2000;
-const ANIO_MAXIMO = 2100;
 
 /** Errores de escritura frecuentes de meses, ya normalizados, hacia el índice de mes (0-11). */
 const MESES_ALIAS = new Map([
@@ -29,7 +26,11 @@ const MESES_ALIAS = new Map([
   ['jul', 6], ['ago', 7], ['sep', 8], ['sept', 8], ['oct', 9], ['nov', 10], ['dic', 11],
 ]);
 
-/** Rango de edad de un entero ya validado. */
+/**
+ * Rango de edad de un entero ya validado.
+ * @param {number} edad edad entera, de 0 a EDAD_MAXIMA
+ * @returns {string} uno de RANGOS_EDAD
+ */
 export function rangoDeEdad(edad) {
   if (edad <= 30) return RANGOS_EDAD[0];
   if (edad <= 45) return RANGOS_EDAD[1];
@@ -112,7 +113,7 @@ export function normalizarFila(cruda, indices, catalogo, paisLocal) {
   if (periodo.error) return { ok: false, motivo: periodo.error };
 
   // Paso 2: cantidad y edad
-  const cantidad = enteroEn(celda('cantidad'), 1, 100000);
+  const cantidad = enteroEn(celda('cantidad'), 1, CANTIDAD_MAXIMA);
   if (cantidad === null) return { ok: false, motivo: `Cantidad no válida: «${limpiarTexto(celda('cantidad'))}»` };
   const edad = enteroEn(celda('edad'), 0, EDAD_MAXIMA);
   if (edad === null) return { ok: false, motivo: `Edad no válida: «${limpiarTexto(celda('edad'))}»` };
@@ -147,7 +148,7 @@ function leerConteo(valor, nombre) {
 
 /**
  * Normaliza una fila del formato mensual: un mes de un origen y un motivo, con mujeres y hombres por rango de edad.
- * Cada número mayor que cero se vuelve una fila interna con la edad base de su rango, así el resto del tablero
+ * Cada número mayor que cero se vuelve una fila interna con la edad base de su rango, así el resto del dashboard
  * sigue trabajando con la misma forma de fila. Las personas con discapacidad salen aparte porque no se cruzan con
  * la edad ni con el género.
  * @param {Array} cruda celdas de la fila tal como salen de la hoja
@@ -171,7 +172,7 @@ export function normalizarFilaMensual(cruda, indices, catalogo, paisLocal) {
   if (personas.error) return { ok: false, motivo: personas.error };
   const total = conteos.reduce((suma, n) => suma + n, 0);
 
-  // Paso 2: sin visitantes ni discapacidad la fila está en blanco para el tablero y se ignora, no se rechaza
+  // Paso 2: sin visitantes ni discapacidad la fila está en blanco para el dashboard y se ignora, no se rechaza
   if (total === 0 && personas.n === 0) return { ok: true, filas: [], discapacidad: null };
   if (personas.n > total) {
     return { ok: false, motivo: `Personas con discapacidad (${personas.n}) mayor que el total de visitantes de la fila (${total})` };

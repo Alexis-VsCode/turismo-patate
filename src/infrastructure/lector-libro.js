@@ -15,7 +15,11 @@ const OPCIONES_LECTURA = Object.freeze({
   cellStyles: false, cellDates: false, sheetStubs: false, bookVBA: false, WTF: false,
 });
 
-/** Indica si una pestaña es de sistema (catálogos, instrucciones, plantilla o su copia). */
+/**
+ * Indica si una pestaña es de sistema (catálogos, instrucciones, plantilla o su copia).
+ * @param {string} nombre nombre de la pestaña
+ * @returns {boolean} true si empieza por «_» o contiene «plantilla», sin importar tildes ni mayúsculas
+ */
 export function esPestanaDeSistema(nombre) {
   const clave = claveNormalizada(nombre);
   return clave.startsWith('_') || clave.includes('plantilla');
@@ -26,11 +30,42 @@ function filasDeHoja(XLSX, hoja) {
 }
 
 /**
+ * Normaliza las filas de datos de una pestaña (la fila 1 de la hoja es el encabezado) y deja cada resultado en su
+ * lista: las filas internas, la discapacidad del formato mensual y los rechazos con su fila de la hoja.
+ * @param {Array<Array>} crudas filas de la pestaña, encabezado incluido
+ * @param {string} establecimiento nombre limpio de la pestaña
+ * @param {{ indices: object, formato: 'anterior'|'mensual' }} encabezados resultado de mapearEncabezados()
+ * @param {object} catalogo catálogo de la hoja (ver construirCatalogo)
+ * @param {{ MAX_FILAS_PESTANA: number, PAIS_LOCAL: string }} config tope de filas y país local
+ * @param {{ filas: object[], discapacidad: object[], rechazos: object[] }} destino listas del libro que reciben lo leído
+ */
+function leerFilasDePestana(crudas, establecimiento, { indices, formato }, catalogo, config, destino) {
+  crudas.slice(1, config.MAX_FILAS_PESTANA + 1).forEach((cruda, i) => {
+    if (!cruda || cruda.every((v) => limpiarTexto(v) === '')) return;
+    if (formato === 'mensual') {
+      const resultado = normalizarFilaMensual(cruda, indices, catalogo, config.PAIS_LOCAL);
+      if (!resultado.ok) {
+        destino.rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
+        return;
+      }
+      for (const f of resultado.filas) destino.filas.push({ ...f, establecimiento });
+      if (resultado.discapacidad) destino.discapacidad.push({ ...resultado.discapacidad, establecimiento });
+      return;
+    }
+    const resultado = normalizarFila(cruda, indices, catalogo, config.PAIS_LOCAL);
+    if (resultado.ok) destino.filas.push({ ...resultado.fila, establecimiento });
+    else destino.rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
+  });
+}
+
+/**
  * Lee el libro y arma el conjunto de datos del dashboard.
  * @param {ArrayBuffer} buffer libro xlsx descargado
  * @param {object} XLSX instancia de SheetJS
  * @param {object} config límites y nombres de CONFIG
- * @returns {{filas, discapacidad, rechazos, avisos, establecimientos, catalogo}}
+ * @returns {{ filas: object[], discapacidad: object[], rechazos: Array<{ pestana: string, fila: number, motivo: string }>,
+ *   avisos: Array<{ pestana: string, mensaje: string }>, establecimientos: string[], catalogo: object }} las filas ya
+ *   normalizadas, lo rechazado con su ubicación, los avisos por pestaña y los establecimientos ordenados por nombre
  */
 export function leerLibro(buffer, XLSX, config) {
   const libro = XLSX.read(buffer, { ...OPCIONES_LECTURA, sheetRows: config.MAX_FILAS_PESTANA + 1 });
@@ -77,23 +112,8 @@ export function leerLibro(buffer, XLSX, config) {
     }
     establecimientos.push(establecimiento);
 
-    // Paso 4: filas de datos; la fila 1 de la hoja es el encabezado
-    crudas.slice(1, config.MAX_FILAS_PESTANA + 1).forEach((cruda, i) => {
-      if (!cruda || cruda.every((v) => limpiarTexto(v) === '')) return;
-      if (formato === 'mensual') {
-        const resultado = normalizarFilaMensual(cruda, indices, catalogo, config.PAIS_LOCAL);
-        if (!resultado.ok) {
-          rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
-          return;
-        }
-        for (const f of resultado.filas) filas.push({ ...f, establecimiento });
-        if (resultado.discapacidad) discapacidad.push({ ...resultado.discapacidad, establecimiento });
-        return;
-      }
-      const resultado = normalizarFila(cruda, indices, catalogo, config.PAIS_LOCAL);
-      if (resultado.ok) filas.push({ ...resultado.fila, establecimiento });
-      else rechazos.push({ pestana: establecimiento, fila: i + 2, motivo: resultado.motivo });
-    });
+    // Paso 4: filas de datos de la pestaña
+    leerFilasDePestana(crudas, establecimiento, { indices, formato }, catalogo, config, { filas, discapacidad, rechazos });
   }
   // Paso 5: el resultado sale ordenado por nombre; el orden de los combos depende de esto
   establecimientos.sort((a, b) => a.localeCompare(b, 'es'));

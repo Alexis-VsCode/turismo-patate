@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  filtrar, filtrosVacios, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros,
+  filtrar, filtrosVacios, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros, leerProcedencia,
 } from '../../src/domain/filtros.js';
 
 const fila = (extra) => ({
@@ -101,4 +101,22 @@ test('copiarFiltros no comparte las listas con el original', () => {
   const copia = copiarFiltros(original);
   copia.motivo.push('Descanso');
   assert.deepEqual(original.motivo, ['Turismo']);
+});
+
+test('leerProcedencia separa el tipo del nombre en el primer «:», y los atajos no tienen tipo', () => {
+  assert.deepEqual(leerProcedencia('C:Ambato'), { tipo: 'C', nombre: 'Ambato' });
+  assert.deepEqual(leerProcedencia('PR:Santo Domingo de los Tsáchilas'), { tipo: 'PR', nombre: 'Santo Domingo de los Tsáchilas' });
+  assert.deepEqual(leerProcedencia('P:Reino: Unido'), { tipo: 'P', nombre: 'Reino: Unido' }, 'un «:» del nombre se conserva');
+  assert.deepEqual(leerProcedencia('P:'), { tipo: 'P', nombre: '' });
+  assert.deepEqual(leerProcedencia('NAC'), { tipo: '', nombre: 'NAC' });
+  assert.deepEqual(leerProcedencia('EXT'), { tipo: '', nombre: 'EXT' });
+  assert.deepEqual(leerProcedencia(''), { tipo: '', nombre: '' });
+});
+
+test('la provincia elegida filtra solo a los nacionales de esa provincia', () => {
+  const filas = [...FILAS, fila({ nacional: false, pais: 'Colombia', provincia: 'Tungurahua', ciudad: '' })];
+  const sel = filtrar(filas, { ...filtrosVacios(), procedencia: ['PR:Tungurahua'] });
+  assert.equal(sel.length, 4);
+  assert.ok(sel.every((f) => f.nacional && f.provincia === 'Tungurahua'));
+  assert.equal(filtrar(filas, { ...filtrosVacios(), procedencia: ['X:Tungurahua'] }).length, 0, 'un tipo desconocido no deja pasar nada');
 });

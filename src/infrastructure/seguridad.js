@@ -1,7 +1,8 @@
 /**
  * @file seguridad.js
- * @description Infraestructura. Utilidades de seguridad para datos que vienen de una hoja editable por
- *   terceros: descarga acotada en tiempo y tamaño, limpieza de texto y claves seguras para agrupar.
+ * @description Infraestructura. Descargas seguras para datos que vienen de una hoja editable por terceros:
+ *   descarga acotada en tiempo y tamaño, con reintentos ante fallos pasajeros. La limpieza de texto y las claves
+ *   seguras para agrupar son reglas del dominio y viven en domain/texto.js.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 
@@ -15,23 +16,24 @@ export class ErrorDescarga extends Error {
 }
 
 /**
- * Descarga una URL como ArrayBuffer sin credenciales ni caché, cortando si supera
+ * Descarga una URL como ArrayBuffer sin credenciales y, salvo que se pida otra cosa, sin caché, cortando si supera
  * `timeoutMs` o `maxBytes`. El tamaño se controla leyendo el stream, porque
  * Content-Length puede faltar o mentir.
  * @param {string} url dirección a descargar
- * @param {{ timeoutMs: number, maxBytes: number, fetchImpl?: Function }} opciones límites y `fetch` inyectable
+ * @param {{ timeoutMs: number, maxBytes: number, fetchImpl?: Function, cache?: RequestCache }} opciones límites,
+ *   `fetch` inyectable y modo de caché ('no-store' por defecto; un archivo fijo del sitio puede usar 'default')
  * @returns {Promise<ArrayBuffer>} el contenido completo, dentro de los límites
  * @throws {ErrorDescarga} con código TIEMPO_AGOTADO, DEMASIADO_GRANDE, HTTP o RED
  */
-export async function descargarAcotado(url, { timeoutMs, maxBytes, fetchImpl = globalThis.fetch }) {
+export async function descargarAcotado(url, { timeoutMs, maxBytes, fetchImpl = globalThis.fetch, cache = 'no-store' }) {
   const control = new AbortController();
   const temporizador = setTimeout(() => control.abort(), timeoutMs);
   try {
-    // Paso 1: petición anónima y sin caché; el redirect a googleusercontent se sigue solo
+    // Paso 1: petición anónima y, por defecto, sin caché; el redirect a googleusercontent se sigue solo
     let respuesta;
     try {
       respuesta = await fetchImpl(url, {
-        cache: 'no-store', credentials: 'omit', redirect: 'follow',
+        cache, credentials: 'omit', redirect: 'follow',
         referrerPolicy: 'no-referrer', signal: control.signal,
       });
     } catch (e) {

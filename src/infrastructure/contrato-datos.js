@@ -6,10 +6,14 @@
  *   entrada.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { rangoDeEdad } from '../domain/visitante.js';
+import { rangoDeEdad, MESES } from '../domain/visitante.js';
+import { ANIO_MINIMO, ANIO_MAXIMO, EDAD_MAXIMA } from '../domain/catalogo.js';
 import { limpiarTexto, esClaveSegura } from '../domain/texto.js';
 
+/** Versión del formato de datos.json: un paquete de otra versión se rechaza entero. */
 export const VERSION_PAQUETE = 1;
+/** Último índice de mes válido (diciembre). */
+const MES_MAXIMO = MESES.length - 1;
 const DICCIONARIOS = ['establecimientos', 'paises', 'provincias', 'ciudades', 'motivos', 'generos'];
 
 /**
@@ -70,6 +74,39 @@ const esTexto = (v) => typeof v === 'string';
 const esNumero = (v) => typeof v === 'number' && Number.isFinite(v);
 
 /**
+ * Catálogo del mapa que trae el paquete, validado: solo quedan los textos, las coordenadas numéricas y los años dentro
+ * del rango aceptado.
+ * @param {object} cat clave `catalogo` de datos.json (un objeto vacío si falta)
+ * @param {(texto: string) => string} claveNormalizada comparación sin tildes ni mayúsculas
+ * @returns {{ completo: boolean, anios: number[], provincias: string[], generos: string[], paises: string[],
+ *   motivos: string[], ciudades: Map<string, object>, coordPaises: Map<string, object> }} un paquete anterior que no
+ *   trae años ni motivos da listas vacías
+ */
+function leerCatalogoDelPaquete(cat, claveNormalizada) {
+  // Paso 1: ciudades y países con coordenadas numéricas; lo que no cumple se descarta
+  const textos = (lista) => (Array.isArray(lista) ? lista.filter(esTexto).map(limpiarTexto) : []);
+  const ciudades = new Map();
+  for (const x of cat.ciudades || []) {
+    if (Array.isArray(x) && esTexto(x[0]) && esNumero(x[2]) && esNumero(x[3])) {
+      ciudades.set(claveNormalizada(x[0]), { nombre: limpiarTexto(x[0]), provincia: limpiarTexto(x[1]), lat: x[2], lon: x[3] });
+    }
+  }
+  const coordPaises = new Map();
+  for (const x of cat.paises || []) {
+    if (Array.isArray(x) && esTexto(x[0]) && esNumero(x[1]) && esNumero(x[2])) {
+      coordPaises.set(claveNormalizada(x[0]), { nombre: limpiarTexto(x[0]), lat: x[1], lon: x[2] });
+    }
+  }
+  // Paso 2: años enteros dentro del rango aceptado, sin repetir y de mayor a menor
+  const anios = [...new Set((Array.isArray(cat.anios) ? cat.anios : []).filter((a) => Number.isInteger(a) && a >= ANIO_MINIMO && a <= ANIO_MAXIMO))]
+    .sort((a, b) => b - a);
+  return {
+    completo: Boolean(cat.completo), anios, provincias: textos(cat.provincias), generos: textos(cat.generos),
+    paises: [...coordPaises.values()].map((p) => p.nombre), motivos: textos(cat.motivos), ciudades, coordPaises,
+  };
+}
+
+/**
  * Reconstruye { filas, discapacidad, rechazos, avisos, establecimientos, catalogo, generadoEn } a partir de datos.json.
  * Lanza Error si la estructura no es la esperada; nunca devuelve datos a medias.
  * @param {object} json contenido de datos.json ya convertido a objeto
@@ -97,7 +134,7 @@ export function desempaquetar(json, claveNormalizada) {
   for (const r of json.filas) {
     if (!Array.isArray(r) || r.length !== 10 || !r.every(esNumero)) throw new Error('Fila no válida');
     const [e, anio, mes, pais, prov, ciudad, cantidad, motivo, edad, genero] = r;
-    if (mes < 0 || mes > 11 || cantidad < 1 || edad < 0 || edad > 110) throw new Error('Valor fuera de rango');
+    if (mes < 0 || mes > MES_MAXIMO || cantidad < 1 || edad < 0 || edad > EDAD_MAXIMA) throw new Error('Valor fuera de rango');
     const establecimiento = valor('establecimientos', e);
     if (!esClaveSegura(establecimiento)) continue;
     filas.push({
@@ -114,7 +151,7 @@ export function desempaquetar(json, claveNormalizada) {
   for (const r of bruto) {
     if (!Array.isArray(r) || r.length !== 8 || !r.every(esNumero)) throw new Error('Fila de discapacidad no válida');
     const [e, anio, mes, pais, prov, ciudad, motivo, personas] = r;
-    if (mes < 0 || mes > 11 || !Number.isInteger(personas) || personas < 1) throw new Error('Valor fuera de rango');
+    if (mes < 0 || mes > MES_MAXIMO || !Number.isInteger(personas) || personas < 1) throw new Error('Valor fuera de rango');
     const establecimiento = valor('establecimientos', e);
     if (!esClaveSegura(establecimiento)) continue;
     discapacidad.push({
@@ -122,25 +159,9 @@ export function desempaquetar(json, claveNormalizada) {
       ciudad: valor('ciudades', ciudad), motivo: valor('motivos', motivo), personas, nacional: nacionalPorPais[pais],
     });
   }
-  // Paso 4: catálogo del mapa
-  const cat = json.catalogo || {};
-  const textos = (lista) => (Array.isArray(lista) ? lista.filter(esTexto).map(limpiarTexto) : []);
-  const ciudades = new Map();
-  for (const x of cat.ciudades || []) {
-    if (Array.isArray(x) && esTexto(x[0]) && esNumero(x[2]) && esNumero(x[3])) {
-      ciudades.set(claveNormalizada(x[0]), { nombre: limpiarTexto(x[0]), provincia: limpiarTexto(x[1]), lat: x[2], lon: x[3] });
-    }
-  }
-  const coordPaises = new Map();
-  for (const x of cat.paises || []) {
-    if (Array.isArray(x) && esTexto(x[0]) && esNumero(x[1]) && esNumero(x[2])) {
-      coordPaises.set(claveNormalizada(x[0]), { nombre: limpiarTexto(x[0]), lat: x[1], lon: x[2] });
-    }
-  }
-  // Paso 5: años y motivos del catálogo; un paquete anterior que no los trae da listas vacías
-  const anios = [...new Set((Array.isArray(cat.anios) ? cat.anios : []).filter((a) => Number.isInteger(a) && a >= 2000 && a <= 2100))]
-    .sort((a, b) => b - a);
-  // Paso 6: rechazos y avisos se limpian como texto; el resultado tiene la forma de leerLibro() más generadoEn
+  // Paso 4: catálogo del mapa, con sus años y motivos
+  const catalogo = leerCatalogoDelPaquete(json.catalogo || {}, claveNormalizada);
+  // Paso 5: rechazos y avisos se limpian como texto; el resultado tiene la forma de leerLibro() más generadoEn
   const limpiarAviso = (a) => ({
     pestana: limpiarTexto(a && a.pestana), fila: esNumero(a && a.fila) ? a.fila : undefined, motivo: limpiarTexto(a && a.motivo), mensaje: limpiarTexto(a && a.mensaje),
   });
@@ -149,10 +170,7 @@ export function desempaquetar(json, claveNormalizada) {
     filas,
     discapacidad,
     establecimientos: dic.establecimientos.filter(esClaveSegura),
-    catalogo: {
-      completo: Boolean(cat.completo), anios, provincias: textos(cat.provincias), generos: textos(cat.generos),
-      paises: [...coordPaises.values()].map((p) => p.nombre), motivos: textos(cat.motivos), ciudades, coordPaises,
-    },
+    catalogo,
     rechazos: (Array.isArray(json.rechazos) ? json.rechazos : []).map(limpiarAviso),
     avisos: (Array.isArray(json.avisos) ? json.avisos : []).map(limpiarAviso),
   };

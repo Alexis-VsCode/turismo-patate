@@ -75,6 +75,16 @@ test('descarga normal devuelve el buffer completo', async () => {
   assert.equal(buf.byteLength, 3000);
 });
 
+test('la descarga es anónima y sin caché salvo que se pida la caché del navegador', async () => {
+  const pedidas = [];
+  const fetchImpl = async (url, opciones) => { pedidas.push(opciones); return respuestaSimulada({ bytes: 10 }); };
+  await descargarAcotado('x', { timeoutMs: 5000, maxBytes: 1000, fetchImpl });
+  await descargarAcotado('x', { timeoutMs: 5000, maxBytes: 1000, fetchImpl, cache: 'default' });
+  assert.deepEqual(pedidas.map((o) => [o.cache, o.credentials, o.redirect, o.referrerPolicy]), [
+    ['no-store', 'omit', 'follow', 'no-referrer'], ['default', 'omit', 'follow', 'no-referrer'],
+  ]);
+});
+
 const respuestaConEstado = (status) => ({ ok: false, status, headers: new Headers(), body: null });
 const sinEsperar = () => {
   const esperas = [];

@@ -1,12 +1,15 @@
 /**
- * @file mapa.presentational.js
- * @description Presentacional. Mapa de origen de visitantes con Leaflet sobre teselas de OpenStreetMap:
+ * @file mapa.js
+ * @description Componente compartido. Mapa de origen de visitantes con Leaflet sobre teselas de OpenStreetMap:
  *   provincias de Ecuador (GeoJSON local) coloreadas por visitantes nacionales, burbujas por provincia,
  *   ciudad o país según la pestaña activa, lista «Top» del mismo nivel y encuadre automático según la
- *   pestaña y el filtro País / Ciudad. Todo contenido de la hoja se inserta como nodo de texto, nunca como HTML.
+ *   pestaña y el filtro País / Ciudad. Guarda solo lo que exige Leaflet (el mapa y sus capas, los nombres del
+ *   catálogo de cada provincia y si ya hubo un primer encuadre); qué pintar y adónde ir lo deciden funciones puras
+ *   exportadas. Todo contenido de la hoja se inserta como nodo de texto, nunca como HTML.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { claveNormalizada } from '../../../domain/catalogo.js';
+import { leerProcedencia } from '../../../domain/filtros.js';
 import { numero } from '../../../shared/formato.js';
 import { TEXTOS } from '../../../shared/textos.es.js';
 
@@ -16,6 +19,8 @@ const ZOOM_CIUDAD = 10;
 const ZOOM_PAIS = 5;
 const RADIO_MIN = 6;
 const RADIO_MAX = 24;
+/** Estado de las provincias antes de recibir los primeros datos: todas sin visitantes y ninguna elegida. */
+const SIN_DATOS_PROVINCIAS = Object.freeze({ valores: new Map(), maximo: 0, elegida: '', nombresCatalogo: new Map() });
 
 function nodoTooltip(titulo, valor) {
   const caja = document.createElement('div');
@@ -27,39 +32,117 @@ function nodoTooltip(titulo, valor) {
   return caja;
 }
 
-/** Radio de burbuja proporcional al área (raíz cuadrada), acotado entre RADIO_MIN y RADIO_MAX. */
+/**
+ * Radio de burbuja proporcional al área (raíz cuadrada), acotado entre RADIO_MIN y RADIO_MAX.
+ * @param {number} valor visitantes de la burbuja
+ * @param {number} maximo visitantes de la burbuja mayor de la misma pestaña
+ * @returns {number} radio en píxeles; RADIO_MIN sin visitantes o sin máximo
+ */
 export function radioDeBurbuja(valor, maximo) {
   if (!maximo || valor <= 0) return RADIO_MIN;
   return RADIO_MIN + Math.sqrt(valor / maximo) * (RADIO_MAX - RADIO_MIN);
 }
 
 /**
- * Crea el mapa. `alElegir(procedencia)` se llama al pulsar una burbuja o una provincia.
- * Devuelve { actualizar(datosMapa), repintar(), redimensionar() } donde datosMapa = { vista, procedencia, ciudades,
- * paises, provincias, catalogo } y vista es 'provincias', 'ciudades' o 'paises'.
+ * Provincia que el mapa resalta según la procedencia elegida: la provincia misma o la de la ciudad elegida.
+ * @param {string} procedencia última opción de procedencia elegida ('' si no hay ninguna)
+ * @param {{ ciudades: Map<string, { provincia: string }> }} catalogo catálogo con las ciudades y su provincia
+ * @returns {string} clave normalizada de la provincia; '' si la procedencia no apunta a ninguna
  */
-export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResaltada, alElegir) {
+export function provinciaElegidaDe(procedencia, catalogo) {
+  const { tipo, nombre } = leerProcedencia(procedencia);
+  if (tipo === 'PR') return claveNormalizada(nombre);
+  if (tipo === 'C') {
+    const ciudad = catalogo.ciudades.get(claveNormalizada(nombre));
+    if (ciudad) return claveNormalizada(ciudad.provincia);
+  }
+  return '';
+}
+
+/**
+ * Con qué se colorea cada provincia en la pestaña activa.
+ * @param {{ vista: string, procedencia: string, provincias: Array<{ nombre: string, valor: number }>,
+ *   catalogo: { provincias: string[], ciudades: Map<string, object> } }} datosMapa datos del mapa de la fachada
+ * @returns {{ valores: Map<string, number>, maximo: number, elegida: string, nombresCatalogo: Map<string, string> }}
+ *   visitantes por clave de provincia (ninguno en la pestaña de países, donde quedan como contorno), el mayor de
+ *   ellos, la provincia resaltada y el nombre que el catálogo da a cada clave (el primero si se repite)
+ */
+export function estadoProvincias({ vista, procedencia, provincias, catalogo }) {
+  const nombresCatalogo = new Map();
+  for (const nombre of catalogo.provincias) {
+    const clave = claveNormalizada(nombre);
+    if (!nombresCatalogo.has(clave)) nombresCatalogo.set(clave, nombre);
+  }
+  return {
+    valores: new Map(vista === 'paises' ? [] : provincias.map((p) => [claveNormalizada(p.nombre), p.valor])),
+    maximo: provincias.reduce((m, p) => Math.max(m, p.valor), 0),
+    elegida: provinciaElegidaDe(procedencia, catalogo),
+    nombresCatalogo,
+  };
+}
+
+/**
+ * Adónde va el encuadre: depende de la pestaña, y la procedencia elegida solo lo acerca si es del mismo nivel.
+ * @param {{ vista: string, procedencia: string, catalogo: { ciudades: Map<string, object>, coordPaises: Map<string, object> } }} datosMapa
+ *   datos del mapa de la fachada
+ * @param {(clave: string) => boolean} tieneProvincia indica si el GeoJSON trae la provincia de esa clave
+ * @param {boolean} hayPuntos si la pestaña pintó al menos una burbuja
+ * @returns {{ destino: 'ciudad'|'pais', lat: number, lon: number } | { destino: 'provincia', clave: string }
+ *   | { destino: 'puntos'|'mundo'|'ecuador' }} `ecuador` es el Ecuador continental
+ */
+export function elegirEncuadre({ vista, procedencia, catalogo }, tieneProvincia, hayPuntos) {
+  const { tipo, nombre } = leerProcedencia(procedencia);
+  if (vista === 'ciudades' && tipo === 'C') {
+    const ciudad = catalogo.ciudades.get(claveNormalizada(nombre));
+    if (ciudad) return { destino: 'ciudad', lat: ciudad.lat, lon: ciudad.lon };
+  }
+  if (vista === 'provincias' && tipo === 'PR') {
+    const clave = claveNormalizada(nombre);
+    if (tieneProvincia(clave)) return { destino: 'provincia', clave };
+  }
+  if (vista === 'paises') {
+    if (tipo === 'P') {
+      const pais = catalogo.coordPaises.get(claveNormalizada(nombre));
+      if (pais) return { destino: 'pais', lat: pais.lat, lon: pais.lon };
+    }
+    return { destino: hayPuntos ? 'puntos' : 'mundo' };
+  }
+  return { destino: 'ecuador' };
+}
+
+/**
+ * Crea el mapa. `alElegir(procedencia)` se llama al pulsar una burbuja, una provincia o una fila de la lista «Top».
+ * @param {HTMLElement} contenedor elemento donde se dibuja el mapa
+ * @param {object} geojsonProvincias límites provinciales, con el nombre en `properties.nombre`
+ * @param {object} colores colores del tema; se leen en cada pintado, así un cambio de tema se ve al repintar
+ * @param {string} provinciaResaltada provincia que siempre lleva borde marcado
+ * @param {(procedencia: string) => void} alElegir recibe la procedencia pulsada ('PR:…', 'C:…' o 'P:…')
+ * @param {string} urlTeselas plantilla de las teselas del fondo ({z}, {x} y {y})
+ * @returns {{ actualizar: (datosMapa: object) => void, repintar: (datosMapa: object) => void, redimensionar: () => void }}
+ *   `datosMapa` = { vista, procedencia, ciudades, paises, provincias, catalogo }, con vista 'provincias',
+ *   'ciudades' o 'paises'
+ */
+export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResaltada, alElegir, urlTeselas) {
   const L = globalThis.L;
+  // Paso 1: fondo y atribución; el prefijo propio reemplaza al de Leaflet, cuya bandera la hoja de estilos de la
+  // librería fuerza con !important
   const mapa = L.map(contenedor, { center: [-1.6, -78.4], zoom: 6, zoomSnap: 0.25, worldCopyJump: true, scrollWheelZoom: false, attributionControl: true });
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer(urlTeselas, {
     maxZoom: 18, referrerPolicy: 'strict-origin-when-cross-origin', crossOrigin: false,
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    attribution: TEXTOS.mapaAtribucion.osm,
   }).addTo(mapa);
-  mapa.attributionControl.addAttribution('Límites: geoBoundaries (CC0)');
-  // El prefijo por defecto de Leaflet incluye una bandera que la hoja de estilos de la librería fuerza con !important
-  mapa.attributionControl.setPrefix('<a href="https://leafletjs.com" title="Librería de mapas interactivos">Leaflet</a>');
+  mapa.attributionControl.addAttribution(TEXTOS.mapaAtribucion.limites);
+  mapa.attributionControl.setPrefix(TEXTOS.mapaAtribucion.prefijo);
   let primeraVez = true;
 
-  // Paso 1: capa de provincias con índice por nombre normalizado
+  // Paso 2: capa de provincias con índice por nombre normalizado; al pulsarla se elige con el nombre del catálogo
   const capasProvincia = new Map();
-  let valoresProvincia = new Map();
-  let maxProvincia = 0;
-  let provinciaElegida = '';
+  const nombresCatalogo = new Map();
   const resaltada = claveNormalizada(provinciaResaltada);
-  const estiloProvincia = (feature) => {
+  const estiloProvincia = ({ valores, maximo, elegida: provinciaElegida }) => (feature) => {
     const clave = claveNormalizada(feature.properties.nombre);
-    const valor = valoresProvincia.get(clave) || 0;
-    const intensidad = maxProvincia ? 0.12 + 0.5 * Math.sqrt(valor / maxProvincia) : 0.08;
+    const valor = valores.get(clave) || 0;
+    const intensidad = maximo ? 0.12 + 0.5 * Math.sqrt(valor / maximo) : 0.08;
     const elegida = clave === provinciaElegida;
     return {
       color: elegida || clave === resaltada ? colores.bosque : colores.verdeTexto,
@@ -69,15 +152,16 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     };
   };
   const capaProvincias = L.geoJSON(geojsonProvincias, {
-    style: estiloProvincia,
+    style: estiloProvincia(SIN_DATOS_PROVINCIAS),
     onEachFeature: (feature, capa) => {
-      capasProvincia.set(claveNormalizada(feature.properties.nombre), capa);
-      capa.on('click', () => alElegir(`PR:${feature.properties.nombreCatalogo || feature.properties.nombre}`));
+      const clave = claveNormalizada(feature.properties.nombre);
+      capasProvincia.set(clave, capa);
+      capa.on('click', () => alElegir(`PR:${nombresCatalogo.get(clave) || feature.properties.nombre}`));
     },
   }).addTo(mapa);
   const capaBurbujas = L.layerGroup().addTo(mapa);
 
-  // Paso 2: lista «Top» del modo activo, como control del mapa
+  // Paso 3: lista «Top» del modo activo, como control del mapa
   const ControlTop = L.Control.extend({
     onAdd() {
       const caja = L.DomUtil.create('div', 'mapa-top');
@@ -122,24 +206,13 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     return marca;
   }
 
-  let ultimosDatos = null;
-
   /** Estilo de provincias, burbujas y lista «Top» según la pestaña activa. No mueve el encuadre del mapa. */
-  function pintarCapas({ vista, procedencia, ciudades, paises, provincias, catalogo }) {
+  function pintarCapas(datosMapa) {
+    const { vista, ciudades, paises, provincias, catalogo } = datosMapa;
     // Paso 1: las provincias solo se colorean con los nacionales; en la pestaña de países quedan como contorno
-    valoresProvincia = new Map(vista === 'paises' ? [] : provincias.map((p) => [claveNormalizada(p.nombre), p.valor]));
-    maxProvincia = provincias.reduce((m, p) => Math.max(m, p.valor), 0);
-    provinciaElegida = '';
-    if (procedencia.startsWith('PR:')) provinciaElegida = claveNormalizada(procedencia.slice(3));
-    if (procedencia.startsWith('C:')) {
-      const ciudad = catalogo.ciudades.get(claveNormalizada(procedencia.slice(2)));
-      if (ciudad) provinciaElegida = claveNormalizada(ciudad.provincia);
-    }
-    for (const [clave, capa] of capasProvincia) {
-      const nombreCatalogo = catalogo.provincias.find((p) => claveNormalizada(p) === clave);
-      if (nombreCatalogo) capa.feature.properties.nombreCatalogo = nombreCatalogo;
-    }
-    capaProvincias.setStyle(estiloProvincia);
+    const estado = estadoProvincias(datosMapa);
+    for (const [clave, nombre] of estado.nombresCatalogo) if (nombre) nombresCatalogo.set(clave, nombre);
+    capaProvincias.setStyle(estiloProvincia(estado));
 
     // Paso 2: burbujas del nivel de la pestaña: centro de cada provincia, ciudades o países
     capaBurbujas.clearLayers();
@@ -147,21 +220,21 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
     if (vista === 'paises') {
       const maximo = paises.reduce((m, p) => Math.max(m, p.valor), 0);
       for (const p of paises) {
-        const c = catalogo.coordPaises.get(claveNormalizada(p.nombre));
-        if (c) puntos.push(burbuja(c.lat, c.lon, p.nombre, p.valor, maximo, colores.amarillo, colores.bosque, `P:${p.nombre}`).getLatLng());
+        const coordenada = catalogo.coordPaises.get(claveNormalizada(p.nombre));
+        if (coordenada) puntos.push(burbuja(coordenada.lat, coordenada.lon, p.nombre, p.valor, maximo, colores.amarillo, colores.bosque, `P:${p.nombre}`).getLatLng());
       }
     } else if (vista === 'ciudades') {
       const maximo = ciudades.reduce((m, c) => Math.max(m, c.valor), 0);
-      for (const c of ciudades) {
-        const k = catalogo.ciudades.get(claveNormalizada(c.nombre));
-        if (k) puntos.push(burbuja(k.lat, k.lon, c.nombre, c.valor, maximo, colores.verdeTexto, colores.superficie, `C:${c.nombre}`).getLatLng());
+      for (const fila of ciudades) {
+        const ciudadCatalogo = catalogo.ciudades.get(claveNormalizada(fila.nombre));
+        if (ciudadCatalogo) puntos.push(burbuja(ciudadCatalogo.lat, ciudadCatalogo.lon, fila.nombre, fila.valor, maximo, colores.verdeTexto, colores.superficie, `C:${fila.nombre}`).getLatLng());
       }
     } else {
       for (const p of provincias) {
         const capa = capasProvincia.get(claveNormalizada(p.nombre));
         if (!capa || p.valor <= 0) continue;
         const centro = capa.getBounds().getCenter();
-        puntos.push(burbuja(centro.lat, centro.lng, p.nombre, p.valor, maxProvincia, colores.verdeTexto, colores.superficie, `PR:${p.nombre}`).getLatLng());
+        puntos.push(burbuja(centro.lat, centro.lng, p.nombre, p.valor, estado.maximo, colores.verdeTexto, colores.superficie, `PR:${p.nombre}`).getLatLng());
       }
     }
 
@@ -173,38 +246,28 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
   }
 
   /** Aplica los datos del mapa: pinta las capas y encuadra según la pestaña y la procedencia elegida. */
-  function actualizar(datos) {
-    ultimosDatos = datos;
-    const { vista, procedencia, catalogo } = datos;
+  function actualizar(datosMapa) {
     // Paso 1: primero se pintan las capas, que no mueven el encuadre
-    const { puntos } = pintarCapas(datos);
+    const { puntos } = pintarCapas(datosMapa);
 
-    // Paso 2: el encuadre depende de la pestaña; la procedencia solo lo acerca si es del mismo nivel
+    // Paso 2: el encuadre depende de la pestaña; el primero es instantáneo y los siguientes, animados
     mapa.invalidateSize();
     const opciones = { duration: primeraVez ? 0 : 0.6, animate: !primeraVez };
     primeraVez = false;
-    if (vista === 'ciudades' && procedencia.startsWith('C:')) {
-      const c = catalogo.ciudades.get(claveNormalizada(procedencia.slice(2)));
-      if (c) return mapa.flyTo([c.lat, c.lon], ZOOM_CIUDAD, opciones);
+    const encuadre = elegirEncuadre(datosMapa, (clave) => capasProvincia.has(clave), puntos.length > 0);
+    if (encuadre.destino === 'ciudad') return mapa.flyTo([encuadre.lat, encuadre.lon], ZOOM_CIUDAD, opciones);
+    if (encuadre.destino === 'provincia') {
+      return mapa.flyToBounds(capasProvincia.get(encuadre.clave).getBounds(), { ...opciones, padding: [12, 12] });
     }
-    if (vista === 'provincias' && procedencia.startsWith('PR:')) {
-      const capa = capasProvincia.get(claveNormalizada(procedencia.slice(3)));
-      if (capa) return mapa.flyToBounds(capa.getBounds(), { ...opciones, padding: [12, 12] });
-    }
-    if (vista === 'paises') {
-      if (procedencia.startsWith('P:')) {
-        const c = catalogo.coordPaises.get(claveNormalizada(procedencia.slice(2)));
-        if (c) return mapa.flyTo([c.lat, c.lon], ZOOM_PAIS, opciones);
-      }
-      if (puntos.length) return mapa.flyToBounds(L.latLngBounds(puntos), { ...opciones, padding: [24, 24], maxZoom: 4 });
-      return mapa.flyTo(VISTA_MUNDO.centro, VISTA_MUNDO.zoom, opciones);
-    }
+    if (encuadre.destino === 'pais') return mapa.flyTo([encuadre.lat, encuadre.lon], ZOOM_PAIS, opciones);
+    if (encuadre.destino === 'puntos') return mapa.flyToBounds(L.latLngBounds(puntos), { ...opciones, padding: [24, 24], maxZoom: 4 });
+    if (encuadre.destino === 'mundo') return mapa.flyTo(VISTA_MUNDO.centro, VISTA_MUNDO.zoom, opciones);
     return mapa.flyToBounds(ECUADOR_CONTINENTAL, opciones);
   }
 
   /** Repinta con los colores vigentes tras un cambio de tema, conservando el encuadre que eligió el visitante. */
-  function repintar() {
-    if (ultimosDatos) pintarCapas(ultimosDatos);
+  function repintar(datosMapa) {
+    pintarCapas(datosMapa);
   }
 
   return { actualizar, repintar, redimensionar: () => mapa.invalidateSize() };

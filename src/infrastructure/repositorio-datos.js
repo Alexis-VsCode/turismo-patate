@@ -1,7 +1,8 @@
 /**
  * @file repositorio-datos.js
  * @description Infraestructura. Obtiene el conjunto de datos publicado (`datos/datos.json`) con la
- *   descarga acotada en tiempo y tamaño, y lo reconstruye validado con el contrato de datos.
+ *   descarga acotada en tiempo y tamaño, y lo reconstruye validado con el contrato de datos. También trae los
+ *   límites provinciales del mapa con los mismos topes.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { descargarAcotado } from './seguridad.js';
@@ -9,7 +10,7 @@ import { desempaquetar } from './contrato-datos.js';
 import { claveNormalizada } from '../domain/catalogo.js';
 
 /**
- * Descarga y valida los datos del tablero.
+ * Descarga y valida los datos del dashboard.
  * @param {{ url: string, timeoutMs: number, maxBytes: number, ahora?: () => number, fetchImpl?: Function }} opciones
  * @returns {Promise<object>} datos desempaquetados: filas, establecimientos, catálogo, rechazos, avisos y generadoEn
  * @throws {ErrorDescarga} si la red falla, tarda o excede el tamaño; {Error} si el contenido no cumple el contrato
@@ -19,4 +20,16 @@ export async function obtenerDatos({ url, timeoutMs, maxBytes, ahora = Date.now,
   const buffer = await descargarAcotado(`${url}?t=${ahora()}`, { timeoutMs, maxBytes, fetchImpl });
   // Paso 2: el contenido se trata como entrada no confiable y se valida al reconstruirlo
   return desempaquetar(JSON.parse(new TextDecoder().decode(buffer)), claveNormalizada);
+}
+
+/**
+ * Descarga los límites provinciales del mapa (GeoJSON del propio sitio) con los topes de tiempo y tamaño de las demás
+ * descargas. Es un archivo fijo, así que conserva la caché del navegador y no lleva parámetro anti-caché.
+ * @param {{ url: string, timeoutMs: number, maxBytes: number, fetchImpl?: Function }} opciones
+ * @returns {Promise<object>} el GeoJSON ya convertido a objeto
+ * @throws {ErrorDescarga} si la red falla, tarda o excede el tamaño; {SyntaxError} si el contenido no es JSON
+ */
+export async function obtenerLimites({ url, timeoutMs, maxBytes, fetchImpl }) {
+  const buffer = await descargarAcotado(url, { timeoutMs, maxBytes, fetchImpl, cache: 'default' });
+  return JSON.parse(new TextDecoder().decode(buffer));
 }

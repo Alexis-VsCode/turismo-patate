@@ -80,3 +80,12 @@ test('textos.es.js no repite claves: una repetida pisa en silencio a la anterior
   const claves = [...fuente.matchAll(/^ {2}(\w+):/gm)].map((m) => m[1]);
   assert.deepEqual(claves.filter((c, i) => claves.indexOf(c) !== i), []);
 });
+
+test('«Sin datos» se escribe una sola vez: el subtítulo de la evolución usa la misma clave', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { RAIZ } = await import('../helpers.mjs');
+  const fuente = readFileSync(join(RAIZ, 'src/shared/textos.es.js'), 'utf8');
+  assert.equal(fuente.split("'Sin datos'").length - 1, 1);
+  assert.equal(TEXTOS.subtituloEvolucion(null, null), 'Sin datos');
+});

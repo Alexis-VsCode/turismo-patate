@@ -34,6 +34,8 @@ export function prepararOpciones(opciones, consulta) {
  * @param {Array<{ valor: string, texto: string }>} opciones todas las opciones
  * @param {string[]} seleccion valores elegidos
  * @param {{ todos: string, elegidas: (n: number) => string }} textos redacción de cada caso
+ * @returns {string} «todos» sin elección, el texto de la opción con una (o su valor si ya no existe) y la cantidad
+ *   con varias
  */
 export function resumenSeleccion(opciones, seleccion, textos) {
   if (!seleccion.length) return textos.todos;
@@ -66,6 +68,8 @@ export function etiquetasDeSeleccion(opciones, seleccion, maximo = MAXIMO_ETIQUE
  *   textos: { todos: string, elegidas: (n: number) => string, sinCoincidencias: string, quitar: (texto: string) => string, masElegidas: (n: number) => string },
  *   alCambiar: (seleccion: string[]) => void,
  * }} dependencias redacción de los casos y aviso con la nueva lista de opciones elegidas
+ * @returns {{ fijarOpciones: (nuevas: Array<{ valor: string, texto: string, grupo?: string }>) => void,
+ *   fijarValores: (valores: string[]) => void }} reemplazar las opciones y marcar lo elegido sin avisar de un cambio
  */
 export function crearComboMultiple(raiz, { textos, alCambiar }) {
   const entrada = raiz.querySelector('input');
@@ -128,8 +132,8 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
   /** Etiquetas de lo elegido debajo del combo; cada una se quita con un clic. */
   function pintarEtiquetas() {
     etiquetas.replaceChildren();
-    const { visibles, ocultas } = etiquetasDeSeleccion(opciones, seleccion);
-    for (const { valor, texto } of visibles) {
+    const { visibles: etiquetasVisibles, ocultas } = etiquetasDeSeleccion(opciones, seleccion);
+    for (const { valor, texto } of etiquetasVisibles) {
       const boton = document.createElement('button');
       boton.type = 'button';
       boton.className = 'etiqueta-mini';
@@ -187,6 +191,8 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
     abrir();
   });
   entrada.addEventListener('blur', cerrar);
+  // Paso 1: teclado: las flechas mueven la opción activa, Enter la alterna, Retroceso sin texto escrito quita la
+  // última opción elegida y Escape cierra la lista
   entrada.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
@@ -200,7 +206,6 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
       e.preventDefault();
       if (activo >= 0 && visibles[activo]) alternar(visibles[activo].valor);
     } else if (e.key === 'Backspace' && consulta() === '' && seleccion.length) {
-      // Retroceso sin texto escrito quita la última opción elegida
       e.preventDefault();
       seleccion = quitarValor(seleccion, seleccion[seleccion.length - 1]);
       avisarCambio();

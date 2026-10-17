@@ -7,6 +7,7 @@
  *   aceptan enlaces https://.
  * @author Kevin Alexis Barrera Llerena 2026
  */
+import { TEXTOS } from '../../../shared/textos.es.js';
 
 /** Único esquema de enlace que el aviso acepta. */
 const PREFIJO_SEGURO = 'https://';
@@ -31,27 +32,16 @@ export function prepararAviso({ titulo, mensaje, enlaces = [] }) {
 }
 
 /**
- * Muestra un aviso flotante (toast) dentro de `contenedor` (un elemento que el HTML ya trae con role="status"
- * aria-live="polite"). Uno a la vez: reemplaza el anterior. Estructura: div.aviso > [strong.aviso-titulo,
- * p.aviso-mensaje, ul.aviso-enlaces > li > a.aviso-enlace (target _blank, rel "noopener noreferrer"),
- * button.aviso-cerrar (type button, aria-label = textoCerrar, contenido '×')].
- * Se cierra con el botón, con Escape (keydown en document) y solo a los duracionMs. Al cerrar vacía el contenedor y
- * quita el listener.
- * @param {HTMLElement} contenedor región viva donde se pinta el aviso
- * @param {{ titulo: string, mensaje: string, enlaces?: Array<{ texto: string, href: string }> }} aviso contenido
- * @param {{ duracionMs?: number, textoCerrar?: string, devolverFoco?: { focus: () => void } }} [opciones] tiempo
- *   visible, nombre accesible del botón y elemento que recupera el foco al cerrar con el botón o con Escape
- * @returns {{ cerrar: () => void }}
+ * Arma la caja del aviso: título y mensaje como texto plano, la lista de enlaces externos (en pestaña nueva y solo si
+ * queda alguno aceptado) y el botón de cerrar.
+ * @param {{ titulo: string, mensaje: string, enlaces: Array<{ texto: string, href: string }> }} aviso contenido ya
+ *   preparado (ver prepararAviso)
+ * @param {string} textoCerrar nombre accesible del botón de cerrar
+ * @returns {{ caja: HTMLElement, boton: HTMLButtonElement }} la caja lista para pintar y su botón de cerrar
  */
-export function mostrarAviso(contenedor, aviso, { duracionMs = 10000, textoCerrar = 'Cerrar aviso', devolverFoco = null } = {}) {
-  // Paso 1: el aviso anterior se cierra del todo, con su temporizador y su oyente
-  vigentes.get(contenedor)?.();
-
-  const { titulo, mensaje, enlaces } = prepararAviso(aviso);
+function armarCaja({ titulo, mensaje, enlaces }, textoCerrar) {
   const caja = document.createElement('div');
   caja.className = 'aviso';
-
-  // Paso 2: título y mensaje como texto plano
   const nodoTitulo = document.createElement('strong');
   nodoTitulo.className = 'aviso-titulo';
   nodoTitulo.textContent = titulo;
@@ -59,8 +49,6 @@ export function mostrarAviso(contenedor, aviso, { duracionMs = 10000, textoCerra
   nodoMensaje.className = 'aviso-mensaje';
   nodoMensaje.textContent = mensaje;
   caja.append(nodoTitulo, nodoMensaje);
-
-  // Paso 3: enlaces externos en pestaña nueva, solo si queda alguno aceptado
   if (enlaces.length) {
     const lista = document.createElement('ul');
     lista.className = 'aviso-enlaces';
@@ -77,15 +65,37 @@ export function mostrarAviso(contenedor, aviso, { duracionMs = 10000, textoCerra
     }
     caja.appendChild(lista);
   }
-
   const boton = document.createElement('button');
   boton.type = 'button';
   boton.className = 'aviso-cerrar';
   boton.setAttribute('aria-label', textoCerrar);
   boton.textContent = '×';
   caja.appendChild(boton);
+  return { caja, boton };
+}
 
-  // Paso 4: cierre único por botón, Escape o tiempo; uno ya reemplazado no toca al vigente
+/**
+ * Muestra un aviso flotante (toast) dentro de `contenedor` (un elemento que el HTML ya trae con role="status"
+ * aria-live="polite"). Uno a la vez: reemplaza el anterior. Estructura: div.aviso > [strong.aviso-titulo,
+ * p.aviso-mensaje, ul.aviso-enlaces > li > a.aviso-enlace (target _blank, rel "noopener noreferrer"),
+ * button.aviso-cerrar (type button, aria-label = textoCerrar, contenido '×')].
+ * Se cierra con el botón, con Escape (keydown en document) y solo a los duracionMs. Al cerrar vacía el contenedor y
+ * quita el listener.
+ * @param {HTMLElement} contenedor región viva donde se pinta el aviso
+ * @param {{ titulo: string, mensaje: string, enlaces?: Array<{ texto: string, href: string }> }} aviso contenido
+ * @param {{ duracionMs?: number, textoCerrar?: string, devolverFoco?: { focus: () => void } }} [opciones] tiempo
+ *   visible, nombre accesible del botón (por defecto el de textos.es.js) y elemento que recupera el foco al cerrar
+ *   con el botón o con Escape
+ * @returns {{ cerrar: () => void }}
+ */
+export function mostrarAviso(contenedor, aviso, { duracionMs = 10000, textoCerrar = TEXTOS.avisoPronto.cerrar, devolverFoco = null } = {}) {
+  // Paso 1: el aviso anterior se cierra del todo, con su temporizador y su oyente
+  vigentes.get(contenedor)?.();
+
+  // Paso 2: la caja con su texto, sus enlaces aceptados y el botón de cerrar
+  const { caja, boton } = armarCaja(prepararAviso(aviso), textoCerrar);
+
+  // Paso 3: cierre único por botón, Escape o tiempo; uno ya reemplazado no toca al vigente
   let abierto = true;
   let temporizador = null;
   const contar = () => {
@@ -113,7 +123,7 @@ export function mostrarAviso(contenedor, aviso, { duracionMs = 10000, textoCerra
   }
   boton.addEventListener('click', cerrarYVolver);
   document.addEventListener('keydown', alTeclear);
-  // Paso 5: mientras alguien lo está usando no se cierra solo (WCAG 2.2.1)
+  // Paso 4: mientras alguien lo está usando no se cierra solo (WCAG 2.2.1)
   caja.addEventListener('mouseenter', pausar);
   caja.addEventListener('focusin', pausar);
   caja.addEventListener('mouseleave', contar);

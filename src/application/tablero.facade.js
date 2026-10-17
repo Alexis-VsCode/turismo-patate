@@ -1,8 +1,9 @@
 /**
  * @file tablero.facade.js
- * @description Aplicación. Fachada del tablero: guarda el estado (datos y filtros), aplica la política
- *   de actualización (reuso de 60 s y automática, según la configuración, solo con la pestaña visible) y entrega
- *   a la interfaz la vista ya calculada. No toca el DOM: se prueba completa en Node.
+ * @description Aplicación. Fachada del dashboard: guarda el estado (datos y filtros), aplica la política
+ *   de actualización (reuso de una descarga reciente al cambiar de establecimiento y consulta automática, según la
+ *   configuración, solo con la pestaña visible) y entrega a la interfaz la vista ya calculada. No toca el DOM: se
+ *   prueba completa en Node.
  * @author Kevin Alexis Barrera Llerena 2026
  */
 import { TEXTOS, MESES_CORTOS } from '../shared/textos.es.js';
@@ -15,7 +16,7 @@ import {
 import { resumenDiscapacidad } from '../domain/discapacidad.js';
 import { filtrosATexto, textoAFiltros } from '../domain/enlace.js';
 import {
-  filtrar, filtrosVacios, CLAVES_MULTIPLES, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros,
+  filtrar, filtrosVacios, CLAVES_MULTIPLES, valoresDeFiltro, alternarValor, quitarValor, copiarFiltros, leerProcedencia,
 } from '../domain/filtros.js';
 import { estadoFrescura } from '../domain/frescura.js';
 
@@ -23,9 +24,7 @@ import { estadoFrescura } from '../domain/frescura.js';
 function textoProcedencia(valor) {
   if (valor === 'NAC') return TEXTOS.nacionales;
   if (valor === 'EXT') return TEXTOS.extranjeros;
-  const separador = valor.indexOf(':');
-  const tipo = valor.slice(0, separador);
-  const nombre = valor.slice(separador + 1);
+  const { tipo, nombre } = leerProcedencia(valor);
   return tipo === 'PR' ? TEXTOS.provinciaPrefijo + nombre : nombre;
 }
 
@@ -35,12 +34,13 @@ const relanzarAparte = (error) => queueMicrotask(() => { throw error; });
 /** Pestañas del mapa de origen. */
 const VISTAS_MAPA = new Set(['provincias', 'ciudades', 'paises']);
 
+/** Pestaña del mapa que muestra cada tipo de procedencia. */
+const VISTA_DE_TIPO = new Map([['P', 'paises'], ['C', 'ciudades'], ['PR', 'provincias']]);
+
 /** Pestaña que corresponde a un filtro de procedencia concreto; null si el filtro no fuerza ninguna. */
 function vistaDeProcedencia(procedencia) {
-  if (procedencia === 'EXT' || procedencia.startsWith('P:')) return 'paises';
-  if (procedencia.startsWith('C:')) return 'ciudades';
-  if (procedencia.startsWith('PR:')) return 'provincias';
-  return null;
+  if (procedencia === 'EXT') return 'paises';
+  return VISTA_DE_TIPO.get(leerProcedencia(procedencia).tipo) ?? null;
 }
 
 /** Filtros que guardan una lista de opciones. */
@@ -50,15 +50,19 @@ const ES_MULTIPLE = new Set(CLAVES_MULTIPLES);
 const ultimaProcedencia = (filtros) => valoresDeFiltro(filtros.procedencia).at(-1) ?? '';
 
 /**
- * Crea la fachada del tablero.
+ * Crea la fachada del dashboard.
  * @param {{
  *   obtener: () => Promise<object>,
- *   config: { REUSO_MINIMO_MS: number, INTERVALO_AUTO_MS: number, UMBRALES_FRESCURA: { alDiaMin: number, retrasadoMin: number } },
+ *   config: { REUSO_MINIMO_MS: number, INTERVALO_AUTO_MS: number, PUBLICACION_MINUTOS: number,
+ *     UMBRALES_FRESCURA: { alDiaMin: number, retrasadoMin: number } },
  *   reloj?: () => number,
  *   esVisible?: () => boolean,
  *   reportarError?: (error: Error) => void,
  * }} dependencias fuente de datos, configuración, reloj, visibilidad de la página y reporte de errores de
  *   suscriptores (todos inyectables en pruebas)
+ * @returns {object} acciones sobre los filtros y la carga (fijarFiltro, alternarFiltro, quitarFiltro, aplicarFiltros,
+ *   aplicarEnlace, elegirMes, limpiarFiltros, fijarVistaMapa, cargar), lecturas para pintar (vista, opciones,
+ *   chipsActivos, carga, frescura, enlace, publicacionMinutos, tocaActualizar, estado) y `suscribir` a sus eventos
  */
 export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisible = () => true, reportarError = relanzarAparte }) {
   const estado = { datos: null, filtros: filtrosVacios(), vistaMapa: 'provincias', ultimaDescarga: 0, cargando: false, error: null };
@@ -72,6 +76,11 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
         reportarError(error);
       }
     }
+  };
+
+  /** Cambiar de establecimiento vuelve a pedir los datos, con el mismo reuso de una descarga reciente que cargar(false). */
+  const recargarSiEstablecimiento = (campo) => {
+    if (campo === 'establecimiento') void cargar(false);
   };
 
   /** Registra una función que recibe 'datos', 'filtros', 'vistaMapa', 'cargando' o 'error'. Devuelve la función para anularla. */
@@ -94,6 +103,8 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     // Paso 1: elegir un origen concreto lleva el mapa a la pestaña que lo muestra; «todos» y «nacionales» no la cambian
     if (campo === 'procedencia') estado.vistaMapa = vistaDeProcedencia(ultimaProcedencia(estado.filtros)) ?? estado.vistaMapa;
     avisar('filtros');
+    // Paso 2: primero se pintan los filtros y después, si cambió el establecimiento, se vuelve a pedir los datos
+    recargarSiEstablecimiento(campo);
   }
 
   /** Cambia la pestaña del mapa (provincias, ciudades o países). Ignora modos desconocidos y repeticiones. */
@@ -143,6 +154,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   function quitarFiltro(campo, valor) {
     estado.filtros[campo] = ES_MULTIPLE.has(campo) ? quitarValor(estado.filtros[campo], valor) : null;
     avisar('filtros');
+    recargarSiEstablecimiento(campo);
   }
 
   /** Clic en una columna de la evolución: fija el año de la serie y alterna el mes. */
@@ -152,6 +164,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     avisar('filtros');
   }
 
+  /** Vuelve a dejar todos los filtros vacíos; la pestaña del mapa no cambia. */
   function limpiarFiltros() {
     estado.filtros = filtrosVacios();
     avisar('filtros');
@@ -159,7 +172,7 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
 
   /**
    * Descarga los datos respetando la política de actualización.
-   * @param {boolean} forzar true ignora el reuso de 60 s (entrada, botón y automático)
+   * @param {boolean} forzar true ignora el reuso de una descarga reciente (entrada, botón y automático)
    * @returns {Promise<'cargado'|'reusado'|'ocupado'|'error'>}
    */
   async function cargar(forzar) {
@@ -221,10 +234,10 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     // Paso 2: las provincias solo cuentan si hay visitantes nacionales, porque el filtro las aplica a ellos
     const provincias = [...new Set(filas.filter((x) => x.nacional && x.provincia).map((x) => x.provincia))]
       .sort((a, b) => a.localeCompare(b, 'es'));
+    // Paso 3: año y mes ofrecen «Todos»; los filtros de varias opciones no, porque una lista vacía ya significa todos
     return {
       anio: [todos, ...op.anios.map((a) => ({ valor: String(a), texto: String(a) }))],
       mes: [todos, ...MESES.map((m, i) => ({ valor: String(i), texto: m }))],
-      // Los filtros de varias opciones no ofrecen «Todos»: una lista vacía ya significa todos
       procedencia: [
         opcion('NAC', TEXTOS.procedenciaNacionales, TEXTOS.grupoAtajos),
         opcion('EXT', TEXTOS.procedenciaExtranjeros, TEXTOS.grupoAtajos),
@@ -250,10 +263,10 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
     const baseEvolucion = filtrar(filas, f, ['anio', 'mes']);
     // Paso 3: la lista de motivos ignora su propio filtro para que el visitante pueda pasar de un motivo a otro
     const baseMotivos = filtrar(filas, f, ['motivo']);
-    // La discapacidad no se cruza con la edad ni con el género: sus filas y el total de visitantes ignoran esos dos filtros
+    // Paso 4: la discapacidad no se cruza con la edad ni con el género: sus filas y el total de visitantes ignoran esos dos filtros
     const sinPerfil = ['rangoEdad', 'genero'];
     const baseDiscapacidad = filtrar(filas, f, sinPerfil);
-    // Paso 4: cada zona de la interfaz recibe su agregación ya calculada por el dominio
+    // Paso 5: cada zona de la interfaz recibe su agregación ya calculada por el dominio
     return {
       kpis: kpis(sel),
       variacion: variacionInteranual(filas, f),

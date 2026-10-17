@@ -9,7 +9,11 @@
 /** Rangos de personas con discapacidad por fila; el último es abierto. */
 export const RANGOS_DISCAPACIDAD = Object.freeze(['1-5', '6-10', '11-15', '16+']);
 
-/** Rango de una fila con `personas` personas con discapacidad (al menos una). */
+/**
+ * Rango de una fila según cuántas personas con discapacidad trae.
+ * @param {number} personas personas con discapacidad de la fila (al menos una)
+ * @returns {string} uno de RANGOS_DISCAPACIDAD
+ */
 export function rangoDeDiscapacidad(personas) {
   if (personas <= 5) return RANGOS_DISCAPACIDAD[0];
   if (personas <= 10) return RANGOS_DISCAPACIDAD[1];

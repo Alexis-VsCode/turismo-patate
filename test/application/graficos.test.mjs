@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from '../../src/application/components/presentational/graficos.presentational.js';
 import { TEXTOS } from '../../src/shared/textos.es.js';
+import { GENERO_MUJERES, GENERO_HOMBRES } from '../../src/domain/catalogo.js';
 
 const colores = {
   verde: '#0a0', lima: '#8c4', amarillo: '#ee3', oliva: '#780', texto: '#111', rejilla: '#ddd', superficie: '#fff',
@@ -86,4 +87,11 @@ test('un género sin visitantes que no es de mujeres ni de hombres no ocupa un l
 test('mujeres y hombres siempre aparecen, aunque no tengan visitantes', () => {
   const vacio = { rangos: ['0-30'], series: [{ genero: 'Masculino', valores: [0] }, { genero: 'Femenino', valores: [0] }] };
   assert.deepEqual(opcionesEdadGenero(vacio, colores, '').series.map((s) => s.name), ['Total mujeres', 'Total hombres']);
+});
+
+test('el orden y los nombres de las series salen de los géneros del catálogo, no de textos escritos aparte', () => {
+  const eg = { rangos: ['0-30'], series: [{ genero: GENERO_HOMBRES, valores: [1] }, { genero: GENERO_MUJERES, valores: [2] }] };
+  const series = opcionesEdadGenero(eg, colores, '').series;
+  assert.deepEqual(series.map((s) => s.name), [TEXTOS.totalMujeres, TEXTOS.totalHombres]);
+  assert.deepEqual(series.map((s) => s.data[0].value), [2, 1]);
 });

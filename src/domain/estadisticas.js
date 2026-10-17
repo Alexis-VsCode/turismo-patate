@@ -10,7 +10,12 @@ import { claveNormalizada } from './catalogo.js';
 import { RANGOS_EDAD } from './visitante.js';
 import { filtrar } from './filtros.js';
 
-/** Suma Cantidad agrupando por la clave que devuelve `claveDe`; descarta claves inseguras o vacías. */
+/**
+ * Suma Cantidad agrupando por la clave que devuelve `claveDe`; descarta claves inseguras o vacías.
+ * @param {Array<{ cantidad: number }>} filas filas normalizadas
+ * @param {(fila: object) => string} claveDe clave de agrupación de cada fila
+ * @returns {Map<string, number>} visitantes por clave, en el orden en que aparece cada una
+ */
 export function sumaPor(filas, claveDe) {
   const acumulado = new Map();
   for (const fila of filas) {
@@ -41,7 +46,12 @@ export function kpis(filas) {
   };
 }
 
-/** Año de referencia: el filtrado o, sin filtro, el más reciente con datos. */
+/**
+ * Año de referencia: el filtrado o, sin filtro, el más reciente con datos.
+ * @param {Array<{ anio: number }>} filas filas filtradas sin restringir el año
+ * @param {number|null} anioFiltrado año elegido en el filtro, o null
+ * @returns {number|null} el año; null si no hay filtro ni filas
+ */
 export function anioDeReferencia(filas, anioFiltrado) {
   if (anioFiltrado) return anioFiltrado;
   return filas.reduce((max, f) => Math.max(max, f.anio), 0) || null;
@@ -104,12 +114,41 @@ function ordenar(mapa) {
   return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));
 }
 
+/**
+ * Visitantes por motivo, de mayor a menor (a igual cifra, por nombre).
+ * @param {Array<object>} filas filas filtradas
+ * @returns {Array<{ nombre: string, valor: number }>}
+ */
 export const porMotivo = (filas) => ordenar(sumaPor(filas, (f) => f.motivo));
+
+/**
+ * Visitantes nacionales por ciudad, de mayor a menor; una fila sin ciudad no cuenta.
+ * @param {Array<object>} filas filas filtradas
+ * @returns {Array<{ nombre: string, valor: number }>}
+ */
 export const porCiudad = (filas) => ordenar(sumaPor(filas.filter((f) => f.nacional), (f) => f.ciudad));
+
+/**
+ * Visitantes nacionales por provincia, de mayor a menor; una fila sin provincia no cuenta.
+ * @param {Array<object>} filas filas filtradas
+ * @returns {Array<{ nombre: string, valor: number }>}
+ */
 export const porProvincia = (filas) => ordenar(sumaPor(filas.filter((f) => f.nacional), (f) => f.provincia));
+
+/**
+ * Visitantes extranjeros por país, de mayor a menor.
+ * @param {Array<object>} filas filas filtradas
+ * @returns {Array<{ nombre: string, valor: number }>}
+ */
 export const porPais = (filas) => ordenar(sumaPor(filas.filter((f) => !f.nacional), (f) => f.pais));
 
-/** Barras agrupadas por rango de edad y género, en el orden de rangos y géneros dados. */
+/**
+ * Barras agrupadas por rango de edad y género, en el orden de rangos y géneros dados.
+ * @param {Array<object>} filas filas filtradas
+ * @param {string[]} generos géneros del catálogo, en el orden en que se leen
+ * @returns {{ rangos: string[], series: Array<{ genero: string, valores: number[] }> }} un valor por rango en cada
+ *   serie; cero donde no hay visitantes
+ */
 export function edadGenero(filas, generos) {
   const suma = sumaPor(filas, (f) => `${f.rangoEdad}|${f.genero}`);
   return {
@@ -123,6 +162,8 @@ export function edadGenero(filas, generos) {
  * se unen los que tienen visitantes con los del catálogo; ciudades y países salen solo de los visitantes.
  * @param {Array<object>} filas visitantes ya normalizados
  * @param {{ anios?: number[], motivos?: string[] }} [catalogo] listas del catálogo de la hoja
+ * @returns {{ anios: number[], ciudades: string[], paises: string[], motivos: string[] }} años de mayor a menor y
+ *   lo demás en orden alfabético, sin repetidos (los motivos se comparan sin tildes ni mayúsculas)
  */
 export function opcionesDeFiltros(filas, catalogo = {}) {
   const unicos = (fn) => [...new Set(filas.map(fn))];

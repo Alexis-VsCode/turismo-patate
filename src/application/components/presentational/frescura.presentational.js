@@ -5,8 +5,7 @@
  *   cambia de categoría, no cada minuto. Sin acceso a datos ni a la fachada.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { tiempoTranscurrido } from '../../../shared/formato.js';
-import { TEXTOS } from '../../../shared/textos.es.js';
+import { TEXTOS, tiempoTranscurrido } from '../../../shared/textos.es.js';
 
 /**
  * Actualiza el chip con la frescura calculada por la fachada.

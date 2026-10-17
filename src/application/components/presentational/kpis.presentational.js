@@ -41,23 +41,24 @@ function animarNumero(elemento, destino, formatear) {
 }
 
 /**
+ * Pinta las tarjetas de cifras y la variación contra el año anterior.
  * @param {{ total: HTMLElement, variacion: HTMLElement, nacionales: HTMLElement, nacionalesPct: HTMLElement,
  *   extranjeros: HTMLElement, extranjerosPct: HTMLElement, resumen: HTMLElement }} elementos
- * @param {{ total: number, nacionales: number, extranjeros: number, pctNacionales: number|null, pctExtranjeros: number|null }} k resultado de kpis()
- * @param {{ anioAnterior: number|null, variacion: number|null }} v resultado de variacionInteranual()
+ * @param {{ total: number, nacionales: number, extranjeros: number, pctNacionales: number|null, pctExtranjeros: number|null }} kpis resultado de kpis()
+ * @param {{ anioAnterior: number|null, variacion: number|null }} interanual resultado de variacionInteranual()
  * @param {string} textoResumen frase de participación ya redactada para los filtros vigentes
  */
-export function pintarKpis(elementos, k, v, textoResumen) {
+export function pintarKpis(elementos, kpis, interanual, textoResumen) {
   // Paso 1: las cifras se animan hacia su valor nuevo; los porcentajes y la frase cambian de una vez
-  animarNumero(elementos.total, k.total, numero);
-  animarNumero(elementos.nacionales, k.nacionales, numero);
-  animarNumero(elementos.extranjeros, k.extranjeros, numero);
-  elementos.nacionalesPct.textContent = porcentaje(k.pctNacionales);
-  elementos.extranjerosPct.textContent = porcentaje(k.pctExtranjeros);
+  animarNumero(elementos.total, kpis.total, numero);
+  animarNumero(elementos.nacionales, kpis.nacionales, numero);
+  animarNumero(elementos.extranjeros, kpis.extranjeros, numero);
+  elementos.nacionalesPct.textContent = porcentaje(kpis.pctNacionales);
+  elementos.extranjerosPct.textContent = porcentaje(kpis.pctExtranjeros);
   elementos.resumen.textContent = textoResumen;
 
   // Paso 2: variación con flecha y color según el sentido
-  const texto = textoVariacion(v.variacion);
+  const texto = textoVariacion(interanual.variacion);
   const caja = elementos.variacion;
   caja.classList.remove('sube', 'baja', 'neutra');
   if (texto === null) {
@@ -65,6 +66,6 @@ export function pintarKpis(elementos, k, v, textoResumen) {
     caja.textContent = TEXTOS.sinComparacion;
     return;
   }
-  caja.classList.add(v.variacion > 0 ? 'sube' : v.variacion < 0 ? 'baja' : 'neutra');
-  caja.textContent = `${v.variacion > 0 ? '▲' : v.variacion < 0 ? '▼' : '■'} ${TEXTOS.variacion(texto, v.anioAnterior)}`;
+  caja.classList.add(interanual.variacion > 0 ? 'sube' : interanual.variacion < 0 ? 'baja' : 'neutra');
+  caja.textContent = `${interanual.variacion > 0 ? '▲' : interanual.variacion < 0 ? '▼' : '■'} ${TEXTOS.variacion(texto, interanual.anioAnterior)}`;
 }

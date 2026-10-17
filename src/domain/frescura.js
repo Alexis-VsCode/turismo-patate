@@ -6,7 +6,7 @@
  */
 
 const MS_MINUTO = 60 * 1000;
-/** Un reloj del visitante adelantado hasta este margen no invalida la lectura. */
+/** Un reloj del visitante atrasado hasta este margen (la publicación le parece del futuro) no invalida la lectura. */
 const TOLERANCIA_RELOJ_MIN = 2;
 
 /**

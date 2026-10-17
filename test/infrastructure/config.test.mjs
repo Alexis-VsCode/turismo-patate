@@ -57,3 +57,12 @@ test('el respaldo de GitHub corre cada media hora desfasado de cron-job.org, que
   const flujo = readFileSync(join(RAIZ, '.github/workflows/publicar.yml'), 'utf8');
   assert.match(flujo, /cron: '15,45 \* \* \* \*'/);
 });
+
+test('el origen de las teselas del mapa está permitido en img-src de la CSP, y solo ese origen externo', () => {
+  const html = readFileSync(join(RAIZ, 'index.html'), 'utf8');
+  const csp = html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+  const imgSrc = csp.split(';').map((d) => d.trim().split(/\s+/)).find((d) => d[0] === 'img-src').slice(1);
+  const origen = new URL(CONFIG.URL_TESELAS.replace(/\{[a-z]\}/g, '0')).origin;
+  assert.ok(imgSrc.includes(origen), `img-src no permite ${origen}`);
+  assert.deepEqual(imgSrc.filter((o) => o.startsWith('https:')), [origen]);
+});

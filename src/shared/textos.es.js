@@ -4,14 +4,10 @@
  *   index.html; todo lo dinámico sale de aquí para mantener un solo lugar de redacción.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { numero, porcentaje } from './formato.js';
+import { numero, porcentaje, SIN_DATO } from './formato.js';
 
 /** «cada minuto» o «cada N minutos», para que ningún texto repita a mano la cifra de config.js. */
 const cadaMinutos = (n) => (n === 1 ? 'cada minuto' : `cada ${n} minutos`);
-
-/** Orden de lectura del gráfico de edad: primero las mujeres, luego los hombres, luego cualquier otro género. */
-export const ORDEN_GENEROS = Object.freeze(['Femenino', 'Masculino']);
-const ETIQUETAS_GENERO = Object.freeze({ Femenino: 'Total mujeres', Masculino: 'Total hombres' });
 
 export const TEXTOS = Object.freeze({
   todos: 'Todos',
@@ -91,8 +87,9 @@ export const TEXTOS = Object.freeze({
   temaAOscuro: 'Cambiar a modo oscuro',
   temaAClaro: 'Cambiar a modo claro',
   chipEdad: (rango) => `Edad ${rango}`,
-  /** Nombre con que el gráfico de edad muestra cada género del catálogo; los demás conservan el suyo. */
-  etiquetaGenero: (genero) => ETIQUETAS_GENERO[genero] || genero,
+  /** Nombre con que el gráfico de edad muestra a las mujeres y a los hombres del catálogo. */
+  totalMujeres: 'Total mujeres',
+  totalHombres: 'Total hombres',
   quitarFiltro: (texto) => `Quitar filtro ${texto}`,
   quitarTodos: 'Quitar todos',
   copiarEnlace: 'Copiar enlace',
@@ -124,7 +121,27 @@ export const TEXTOS = Object.freeze({
   centroDona: (anio) => (anio === null ? 'Visitantes' : `Visitantes ${anio}`),
   notaMapa: (anio) => `Tamaño del círculo proporcional al total de visitantes (${anio === null ? 'todos los años' : anio}).`,
   topVista: { provincias: 'Top provincias', ciudades: 'Top ciudades', paises: 'Top países' },
-  subtituloEvolucion: (anio, anterior) => (anio === null ? 'Sin datos' : `${anio} vs ${anterior} · por mes`),
+  /** Atribución del mapa. Lleva marcado porque Leaflet la inserta como HTML: es texto fijo del código, nunca de la hoja. */
+  mapaAtribucion: {
+    osm: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    limites: 'Límites: geoBoundaries (CC0)',
+    prefijo: '<a href="https://leafletjs.com" title="Librería de mapas interactivos">Leaflet</a>',
+  },
+  subtituloEvolucion: (anio, anterior) => (anio === null ? TEXTOS.sinDatosCorto : `${anio} vs ${anterior} · por mes`),
 });
+
+/**
+ * Tiempo transcurrido en lenguaje natural, p. ej. «hace 2 h 15 min».
+ * @param {number|null|undefined} minutos minutos enteros desde el suceso
+ * @returns {string} el texto, o «s/d» sin dato
+ */
+export function tiempoTranscurrido(minutos) {
+  if (minutos === null || minutos === undefined) return SIN_DATO;
+  const t = TEXTOS.transcurrido;
+  if (minutos < 1) return t.menosDeUnMinuto;
+  if (minutos < 60) return t.minutos(minutos);
+  if (minutos < 60 * 24) return t.horas(Math.floor(minutos / 60), minutos % 60);
+  return t.dias(Math.floor(minutos / (60 * 24)));
+}
 
 export const MESES_CORTOS = Object.freeze(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']);

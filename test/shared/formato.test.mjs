@@ -6,7 +6,8 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { numero, porcentaje, textoVariacion, fechaHora, tiempoTranscurrido, hora, SIN_DATO } from '../../src/shared/formato.js';
+import { numero, porcentaje, textoVariacion, fechaHora, hora, SIN_DATO } from '../../src/shared/formato.js';
+import { tiempoTranscurrido } from '../../src/shared/textos.es.js';
 
 test('numero usa el separador de miles de Ecuador y redondea', () => {
   assert.equal(numero(96452), '96.452');

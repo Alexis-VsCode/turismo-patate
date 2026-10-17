@@ -21,11 +21,12 @@ export function crearSelectorTema(boton, alCambiar) {
       return null;
     }
   };
+  /** Guarda la elección; sin almacenamiento (modo privado, iframe de terceros) vale solo para esta visita. */
   const guardar = (tema) => {
     try {
       window.localStorage.setItem(CLAVE_TEMA, tema);
-    } catch (e) {
-      // sin almacenamiento la elección vale solo para esta visita
+    } catch {
+      return;
     }
   };
   const aplicar = (tema) => {

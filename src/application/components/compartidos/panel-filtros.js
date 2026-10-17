@@ -7,9 +7,10 @@
  */
 
 /**
+ * Conecta el botón «Filtros», el panel y su botón de cerrar.
  * @param {{ boton: HTMLButtonElement, dialogo: HTMLDialogElement, cuerpo: HTMLElement,
  *           bloque: HTMLElement, lugarOriginal: HTMLElement, cerrar: HTMLButtonElement }} elementos
- * @returns {{ fijarConteo: (texto: string) => void, cerrar: () => void }}
+ * @returns {{ fijarConteo: (texto: string) => void }} escribe en el botón cuántos filtros hay puestos
  */
 export function crearPanelFiltros({ boton, dialogo, cuerpo, bloque, lugarOriginal, cerrar }) {
   const volver = () => {
@@ -42,6 +43,5 @@ export function crearPanelFiltros({ boton, dialogo, cuerpo, bloque, lugarOrigina
 
   return {
     fijarConteo(texto) { boton.querySelector('.boton-filtros-texto').textContent = texto; },
-    cerrar: cerrarPanel,
   };
 }

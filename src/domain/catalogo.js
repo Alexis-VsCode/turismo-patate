@@ -6,7 +6,20 @@
  */
 import { limpiarTexto } from './texto.js';
 
-const GENEROS_BASE = ['Masculino', 'Femenino'];
+/** Género de las mujeres en el formato mensual y en el catálogo mínimo. */
+export const GENERO_MUJERES = 'Femenino';
+/** Género de los hombres en el formato mensual y en el catálogo mínimo. */
+export const GENERO_HOMBRES = 'Masculino';
+/** Géneros del catálogo mínimo, cuando la hoja no trae los suyos, en el orden en que los ofrece el combo. */
+const GENEROS_BASE = Object.freeze([GENERO_HOMBRES, GENERO_MUJERES]);
+
+/** Años que se aceptan en la hoja, en el catálogo, en el enlace compartido y en datos.json. */
+export const ANIO_MINIMO = 2000;
+export const ANIO_MAXIMO = 2100;
+/** Edad máxima de un visitante, en la hoja y en datos.json. */
+export const EDAD_MAXIMA = 110;
+/** Visitantes máximos de una fila del formato anterior o de una casilla del formato mensual. */
+export const CANTIDAD_MAXIMA = 100000;
 
 /** Encabezados aceptados por columna, comparados en forma normalizada. */
 const ENCABEZADOS = Object.freeze({
@@ -23,8 +36,6 @@ const ENCABEZADOS = Object.freeze({
   hombres0: ['hombres 0-30'], hombres1: ['hombres 31-45'], hombres2: ['hombres 46-60'], hombres3: ['hombres 61+'],
   discapacidad: ['personas con discapacidad', 'discapacidad'],
 });
-const ANIO_CATALOGO_MINIMO = 2000;
-const ANIO_CATALOGO_MAXIMO = 2100;
 /** Rectángulo que contiene a Ecuador con sus islas: una ciudad fuera de él es un error de captura. */
 const LIMITES_ECUADOR = Object.freeze({ latMin: -5.1, latMax: 1.5, lonMin: -92, lonMax: -75 });
 /** Columnas del formato anterior: una fila por grupo de visitantes con su edad, su género y su cantidad. */
@@ -38,10 +49,18 @@ const ETIQUETAS_MENSUALES = Object.freeze({
   hombres0: 'Hombres 0-30', hombres1: 'Hombres 31-45', hombres2: 'Hombres 46-60', hombres3: 'Hombres 61+',
 });
 
-/** Nombre con que una columna mensual aparece en la hoja; las demás conservan su clave. */
+/**
+ * Nombre con que una columna mensual aparece en la hoja; las demás conservan su clave.
+ * @param {string} clave clave interna de la columna (por ejemplo 'mujeres0')
+ * @returns {string} el encabezado de la hoja (por ejemplo 'Mujeres 0-30') o la misma clave
+ */
 export const etiquetaDeColumna = (clave) => ETIQUETAS_MENSUALES[clave] || clave;
 
-/** Forma comparable de un texto: sin tildes, en minúsculas y con espacios simples. */
+/**
+ * Forma comparable de un texto: sin tildes, en minúsculas y con espacios simples.
+ * @param {*} valor celda o texto cualquiera
+ * @returns {string} texto limpio y normalizado; vacío si no hay valor
+ */
 export function claveNormalizada(valor) {
   return limpiarTexto(valor).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -49,8 +68,10 @@ export function claveNormalizada(valor) {
 /**
  * Ubica cada columna conocida en la fila de encabezados y reconoce el formato de la pestaña.
  * El formato es 'anterior' (Cantidad, Edad y Género), 'mensual' (mujeres y hombres por rango de edad) o 'mixto'
- * si trae columnas de ambos, que no se puede leer. `faltantes` son las columnas obligatorias de ese formato que
- * no están.
+ * si trae columnas de ambos, que no se puede leer.
+ * @param {Array|null|undefined} filaEncabezados primera fila de la pestaña
+ * @returns {{ indices: Object<string, number>, faltantes: string[], formato: 'anterior'|'mensual'|'mixto' }}
+ *   `faltantes` son las columnas obligatorias de ese formato que no están (ninguna en el mixto)
  */
 export function mapearEncabezados(filaEncabezados) {
   const indices = {};
@@ -68,11 +89,43 @@ export function mapearEncabezados(filaEncabezados) {
   return { indices, faltantes, formato };
 }
 
-/** Busca un valor en una lista canónica por clave normalizada y devuelve la forma canónica. */
+/**
+ * Busca un valor en una lista canónica por clave normalizada y devuelve la forma canónica.
+ * @param {string[]} lista valores canónicos del catálogo
+ * @param {*} valor texto escrito en la hoja
+ * @returns {string|null} la forma canónica; '' si el valor está vacío y null si no está en la lista
+ */
 export function canonico(lista, valor) {
   const clave = claveNormalizada(valor);
   if (!clave) return '';
   return lista.find((v) => claveNormalizada(v) === clave) || null;
+}
+
+/**
+ * Acepta cada ciudad si no se repite y cae dentro de Ecuador; una provincia ajena a la lista solo avisa.
+ * @param {Array<{ nombre: string, provincia: string, lat: number, lon: number }>} ciudadesCrudas ciudades de la hoja, en
+ *   su orden
+ * @param {{ provincias: string[], ciudades: Map<string, object>, avisos: string[] }} catalogo catálogo en construcción:
+ *   recibe las ciudades aceptadas y los avisos para quien llena la hoja
+ */
+function aceptarCiudades(ciudadesCrudas, catalogo) {
+  const claveProvincias = new Set(catalogo.provincias.map(claveNormalizada));
+  for (const ciudad of ciudadesCrudas) {
+    const clave = claveNormalizada(ciudad.nombre);
+    if (catalogo.ciudades.has(clave)) {
+      catalogo.avisos.push(`Ciudad repetida en el catálogo: «${ciudad.nombre}» (se conserva la primera)`);
+      continue;
+    }
+    const { latMin, latMax, lonMin, lonMax } = LIMITES_ECUADOR;
+    if (ciudad.lat < latMin || ciudad.lat > latMax || ciudad.lon < lonMin || ciudad.lon > lonMax) {
+      catalogo.avisos.push(`Ciudad fuera de Ecuador por sus coordenadas: «${ciudad.nombre}» (se omite)`);
+      continue;
+    }
+    if (claveProvincias.size && ciudad.provincia && !claveProvincias.has(claveNormalizada(ciudad.provincia))) {
+      catalogo.avisos.push(`La provincia «${ciudad.provincia}» de la ciudad «${ciudad.nombre}» no está en la lista de provincias`);
+    }
+    catalogo.ciudades.set(clave, ciudad);
+  }
 }
 
 /**
@@ -105,7 +158,7 @@ export function construirCatalogo(filasCatalogo) {
   for (const fila of filasCatalogo.slice(1)) {
     // Paso 1: listas simples de cada columna; los años solo cuentan si son enteros razonables
     const anio = Number(limpiarTexto(fila[c.anio]));
-    if (Number.isInteger(anio) && anio >= ANIO_CATALOGO_MINIMO && anio <= ANIO_CATALOGO_MAXIMO && !catalogo.anios.includes(anio)) {
+    if (Number.isInteger(anio) && anio >= ANIO_MINIMO && anio <= ANIO_MAXIMO && !catalogo.anios.includes(anio)) {
       catalogo.anios.push(anio);
     }
     agregarUnico(catalogo.paises, fila[c.pais]);
@@ -127,24 +180,8 @@ export function construirCatalogo(filasCatalogo) {
       catalogo.coordPaises.set(claveNormalizada(pais), { nombre: pais, lat: pLat, lon: pLon });
     }
   }
-  // Paso 4: cada ciudad se acepta si no se repite y cae dentro de Ecuador; la provincia ajena a la lista solo avisa
-  const claveProvincias = new Set(catalogo.provincias.map(claveNormalizada));
-  for (const ciudad of ciudadesCrudas) {
-    const clave = claveNormalizada(ciudad.nombre);
-    if (catalogo.ciudades.has(clave)) {
-      catalogo.avisos.push(`Ciudad repetida en el catálogo: «${ciudad.nombre}» (se conserva la primera)`);
-      continue;
-    }
-    const { latMin, latMax, lonMin, lonMax } = LIMITES_ECUADOR;
-    if (ciudad.lat < latMin || ciudad.lat > latMax || ciudad.lon < lonMin || ciudad.lon > lonMax) {
-      catalogo.avisos.push(`Ciudad fuera de Ecuador por sus coordenadas: «${ciudad.nombre}» (se omite)`);
-      continue;
-    }
-    if (claveProvincias.size && ciudad.provincia && !claveProvincias.has(claveNormalizada(ciudad.provincia))) {
-      catalogo.avisos.push(`La provincia «${ciudad.provincia}» de la ciudad «${ciudad.nombre}» no está en la lista de provincias`);
-    }
-    catalogo.ciudades.set(clave, ciudad);
-  }
+  // Paso 4: cada ciudad se revisa cuando ya se conocen todas las provincias
+  aceptarCiudades(ciudadesCrudas, catalogo);
   // Paso 5: los años se ofrecen del más reciente al más antiguo
   catalogo.anios.sort((a, b) => b - a);
   // Paso 6: el catálogo es «completo» solo con países, motivos y ciudades; si no, el mapa avisa que faltan ubicaciones
