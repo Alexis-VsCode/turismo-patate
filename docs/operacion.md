@@ -83,6 +83,10 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
 - **Estado** dice «OK» o qué corregir («Revisar: discapacidad 19 mayor que el total 16», «Falta año, mes, país o motivo», «Falta la ciudad») y
   la fila se pinta de rojo. Es una ayuda para quien llena la hoja: **el dashboard no lee esa columna**, aplica sus propias reglas. Qué pasa con
   cada caso está en [Ciclo de una fila](#ciclo-de-una-fila).
+- **Visitantes extranjeros: siempre en una fila aparte.** Una fila con País Ecuador cuenta todos sus visitantes como nacionales. Los
+  extranjeros del mismo mes y motivo van en otra fila con **su país** (la ciudad queda vacía). Si no se sabe de qué país eran, se elige
+  **«Extranjeros (sin especificar)»**: cuenta como extranjero en las cifras, aparece en los filtros y en el «Top países», pero no tiene
+  círculo en el mapa, porque no tiene coordenadas.
 - **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises tienen fórmulas y **no se escriben**: las protege
   el script de la hoja (ver [Protección de las columnas grises](#protección-de-las-columnas-grises)). Aunque alguien las escribiera a mano, el
   dashboard sigue usando el país y avisa.
@@ -130,6 +134,15 @@ stateDiagram-v2
 - **Una fila nacional sin ciudad**, que la hoja marca «Falta la ciudad», se acepta: cuenta como nacional, sin ciudad ni provincia, y no aparece en
   el mapa de ciudades ni de provincias.
 
+### La página de revisión
+
+Los avisos y las filas rechazadas **no los ve el público**. Se ven en la misma dirección del dashboard con `?revision` al final:
+
+`https://alexis-vscode.github.io/turismo-patate/?revision`
+
+Ahí aparece el panel de problemas con la pestaña, la fila y el motivo de cada uno. Es para quien corrige la hoja: el municipio y el autor.
+La dirección no es secreta, pero no está enlazada desde ningún lado. Un aviso corregido en la hoja desaparece en la siguiente publicación.
+
 ### Qué hacer con los avisos
 
 | Aviso | Qué significa | Qué hacer |
@@ -138,7 +151,16 @@ stateDiagram-v2
 | «Fila N: ... visitantes en una sola fila, más que el tope de 450000» | El total de la fila pasa de `UMBRAL_FILA_SOSPECHOSA` (450000) | Revise si sobra una cifra, por ejemplo un cero de más. Si la cifra es real, no hay que hacer nada: la fila ya se publica |
 | «Hay N filas más con avisos en esta pestaña: revísela completa» | Una pestaña tiene más de 20 filas con avisos. Solo se guardan los primeros 20 para no inflar los datos del sitio | Corrija la causa común, casi siempre fórmulas grises escritas a mano en toda la pestaña, y espere la siguiente publicación |
 
-Los dos avisos desaparecen solos en la siguiente publicación después de corregir la hoja.
+Los avisos desaparecen solos en la siguiente publicación después de corregir la hoja.
+
+**Corrección del 17/10/2026.** Las columnas grises se bloquearon ese día. Antes, 34 filas con País Ecuador traían escritos a mano los
+nacionales y los extranjeros, y el dashboard contaba a todos como nacionales. Cada una se partió en dos: la fila Ecuador con los nacionales y
+una fila nueva con «Extranjeros (sin especificar)» y los extranjeros, con el mismo año, mes y motivo. Los totales quedaron exactos. La edad
+y el género de los extranjeros no se habían anotado, así que se repartieron en la misma proporción que la fila original: es la única cifra
+estimada. Además, la fila 2 de «Plantillas» tenía escritos 960 y 240 en lugar de sus fórmulas y cada pestaña duplicada los heredaba: se
+repuso la fórmula en la plantilla y en todas las pestañas. Quedan para confirmar con su establecimiento dos filas cuyos números escritos a
+mano no cuadran con su total: Turismo Arribos y La Vaca Tuerta, fila 2. Se ven en la [página de revisión](#la-página-de-revisión).
+Antes de corregir se guardó la versión «Antes de corregir extranjeros 17-10-2026» en el historial de Google.
 
 ## Agregar un establecimiento
 
@@ -163,6 +185,9 @@ captura queda bloqueada salvo las celdas blancas de entrada, y solo el propietar
   `protegerColumnasGrises`. Luego, en *Activadores*, agregar uno para `alAgregarPestana` con la fuente «De una hoja de cálculo» y el evento
   «Al producirse un cambio».
 - **Se puede ejecutar varias veces:** salta las pestañas que ya tienen su protección.
+- **`restaurarFormulasGrises`** vuelve a poner las fórmulas grises de la plantilla en todas las filas con datos. Borra lo escrito a mano en
+  esas columnas: úsela solo después de pasar esos números a filas propias.
+- **`agregarExtranjerosSinEspecificar`** agrega «Extranjeros (sin especificar)» a la lista de países de `_Catalogos` si falta.
 - **Si importa un Excel nuevo** con *Reemplazar hoja de cálculo*, Google no conserva la protección del archivo: vuelva a ejecutar
   `protegerColumnasGrises` y compruebe que el activador siga en la lista.
 - Es una protección contra errores, no contra mala fe. Por eso el lector, además, avisa cuando las columnas grises no cuadran con el país.
@@ -264,7 +289,7 @@ salen todas como «cancelled».
 | Actions falla en «Construir datos desde la hoja» | La hoja dejó de estar publicada o cambió su URL. Ver [configuracion.md](configuracion.md#rotar-la-url) |
 | Actions falla en «Pruebas» | Un cambio de código rompió una regla. No se publica nada hasta corregirlo |
 | Un establecimiento no aparece | Compruebe que su pestaña no empiece con `_`, no contenga «plantilla» y conserve los encabezados. En el dashboard, quite los filtros: el combo solo ofrece lo que tiene visitantes bajo los demás filtros |
-| Aparece «N filas con problemas» | Despliegue el aviso: indica pestaña, fila y motivo (por ejemplo, `Ciudad fuera del catálogo: «Ambatoo»`). Las erratas de mes como «agosoto» se corrigen solas |
+| En `?revision` aparece «N filas con problemas» | Despliegue el aviso: indica pestaña, fila y motivo (por ejemplo, `Ciudad fuera del catálogo: «Ambatoo»`). Las erratas de mes como «agosoto» se corrigen solas |
 | El chip dice «Publicación detenida» | La publicación automática no corre. Revise **Actions** y siga [observabilidad.md](observabilidad.md#qué-hacer-si-el-chip-no-está-en-verde) |
 | cron-job.org marca la tarea con error `401` o `403` | El token venció o perdió el permiso: en **Actions** solo aparecen ejecuciones de `schedule`. Genere un token nuevo como se explica arriba y péguelo en la tarea |
 | El panel de problemas muestra avisos de columnas grises o de fila sospechosa | Ver [Qué hacer con los avisos](#qué-hacer-con-los-avisos). La fila ya se publicó |

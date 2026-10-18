@@ -181,7 +181,8 @@ todas las ejecuciones siguientes, incluida la que debe limpiarlo.
 
 ### Avisos del lector
 
-Un aviso no rechaza la fila: la fila se publica y el aviso aparece en el panel de problemas del dashboard, con su pestaña y su fila.
+Un aviso no rechaza la fila: la fila se publica y el aviso aparece en el panel de problemas del dashboard, con su pestaña y su fila. El
+panel solo se pinta en el modo revisión (`?revision` en la dirección, `esModoRevision` de `problemas.presentational.js`); el público no lo ve.
 
 | Aviso | Cuándo | Qué se publica |
 |---|---|---|

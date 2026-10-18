@@ -92,7 +92,7 @@ La descarga hace hasta 3 intentos en total (2 reintentos), con esperas de 2 s y 
 Si el resumen no se puede escribir, se avisa y la publicación continúa.
 
 `avisos` cuenta también los avisos de fila del lector: columnas grises que contradicen el País y filas mensuales que pasan de
-`UMBRAL_FILA_SOSPECHOSA` (450000). Esas filas se publican; el detalle se ve en el panel de problemas del dashboard, nunca en el log.
+`UMBRAL_FILA_SOSPECHOSA` (450000). Esas filas se publican; el detalle se ve en el panel de problemas del dashboard, en el modo revisión (`?revision`), nunca en el log.
 
 `tools/destrabar-publicacion.mjs` (paso «Cancelar ejecuciones trabadas»):
 

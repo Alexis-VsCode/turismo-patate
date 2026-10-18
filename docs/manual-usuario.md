@@ -83,6 +83,9 @@ Un mapa con círculos: mientras más grande el círculo, más visitantes de ese 
 | **Ciudades** | Las ciudades de Ecuador |
 | **Países** | Los países de los visitantes extranjeros |
 
+Los extranjeros cuyo país no anotó el establecimiento aparecen como **«Extranjeros (sin especificar)»**: cuentan en las cifras y en los
+filtros, pero no tienen círculo en el mapa.
+
 Junto al mapa hay una lista con los primeros lugares (por ejemplo, «Top ciudades»). Solo aparecen los lugares que tienen visitantes en lo
 que usted eligió.
 

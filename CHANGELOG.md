@@ -2,6 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.10.0] - 2026-10-17
+
+### Añadido
+- **Página de revisión oculta:** el panel de problemas (filas rechazadas y avisos) ya no lo ve el público. Se ve abriendo el dashboard con `?revision` al final de la dirección, para quien corrige la hoja (`esModoRevision` en `problemas.presentational.js`).
+- **«Extranjeros (sin especificar)»** en el catálogo de países, para los extranjeros cuyo país no se anotó: cuenta como extranjero en las cifras y los filtros, y no se dibuja en el mapa porque no tiene coordenadas. Lo agrega el generador del Excel y, en la hoja viva, la función `agregarExtranjerosSinEspecificar` del script.
+- **Funciones nuevas en `tools/excel/proteger-hoja.gs`:** `restaurarFormulasGrises`, que repone las fórmulas grises de la plantilla, y `agregarExtranjerosSinEspecificar`.
+- **Guía del Excel:** los extranjeros van en una fila aparte, con su país o con «Extranjeros (sin especificar)», y nunca en la fila de Ecuador.
+
+### Corregido
+- **Extranjeros contados como nacionales en la hoja (corrección del 17/10/2026):** 34 filas con País Ecuador traían escritos a mano los nacionales y los extranjeros en las columnas grises. Cada una se partió en dos, la fila Ecuador con los nacionales y una fila «Extranjeros (sin especificar)» con los extranjeros, con totales exactos; la edad y el género de los extranjeros se repartieron en la misma proporción que la fila original. Antes se guardó la versión «Antes de corregir extranjeros 17-10-2026» en el historial de Google.
+- **Plantilla con números fijos:** la fila 2 de «Plantillas» tenía escritos 960 y 240 en Nacionales y Extranjeros en lugar de sus fórmulas, y cada pestaña nacida de duplicarla los heredaba. Se repuso la fórmula en la plantilla y en todas las pestañas; las filas de MZ Bar Restaurante, Arepas Mama Lucha y Taita Tille que solo tenían ese residuo quedaron como nacionales, como dice su País. Quedan para confirmar con su establecimiento dos filas cuyos números escritos a mano no cuadran con su total: Turismo Arribos y La Vaca Tuerta, fila 2.
+
 ## [2.9.0] - 2026-10-17
 
 ### Añadido
