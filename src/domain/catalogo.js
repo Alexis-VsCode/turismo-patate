@@ -140,15 +140,15 @@ export function construirCatalogo(filasCatalogo) {
     agregarUnico(generos, fila[c.genero]);
     // Paso 2: ciudad con su provincia y coordenadas; se revisa después, cuando ya se conocen todas las provincias
     const ciudad = limpiarTexto(fila[c.ciudad]);
-    const lat = Number(fila[c.lat]);
-    const lon = Number(fila[c.lon]);
+    const lat = coordenada(fila[c.lat]);
+    const lon = coordenada(fila[c.lon]);
     if (ciudad && Number.isFinite(lat) && Number.isFinite(lon)) {
       ciudadesCrudas.push({ nombre: ciudad, provincia: limpiarTexto(fila[c.ciudadProv]), lat, lon });
     }
     // Paso 3: coordenadas del país, alineadas con la columna País
     const pais = limpiarTexto(fila[c.pais]);
-    const pLat = Number(fila[c.paisLat]);
-    const pLon = Number(fila[c.paisLon]);
+    const pLat = coordenada(fila[c.paisLat]);
+    const pLon = coordenada(fila[c.paisLon]);
     if (pais && Number.isFinite(pLat) && Number.isFinite(pLon)) {
       catalogo.coordPaises.set(claveNormalizada(pais), { nombre: pais, lat: pLat, lon: pLon });
     }
@@ -188,4 +188,9 @@ function aceptarCiudades(ciudadesCrudas, catalogo) {
     }
     catalogo.ciudades.set(clave, ciudad);
   }
+}
+
+/** Coordenada de una celda del catálogo; una celda vacía no es el punto 0, sino NaN, para que no se dibuje. */
+function coordenada(valor) {
+  return limpiarTexto(valor) === '' ? NaN : Number(valor);
 }

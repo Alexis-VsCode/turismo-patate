@@ -106,3 +106,14 @@ test('las columnas de prueba sueltas «mujeres» y «personas con discapacidad»
   assert.equal(r.formato, 'anterior');
   assert.deepEqual(r.faltantes, []);
 });
+
+test('un país del catálogo sin coordenadas se acepta en la lista y no entra en las coordenadas del mapa', () => {
+  const enc = ['País', 'Pais_Lat', 'Pais_Lon', 'Ciudad', 'Ciudad_Lat', 'Ciudad_Lon', 'Motivo'];
+  for (const vacia of [null, '', ' ']) {
+    const catalogo = construirCatalogo([enc,
+      ['Colombia', 4.57, -74.29, 'Ambato', -1.2, -78.6, 'Turismo'],
+      ['Extranjeros (sin especificar)', vacia, vacia, null, null, null, null]]);
+    assert.ok(catalogo.paises.includes('Extranjeros (sin especificar)'), `en la lista con celda ${JSON.stringify(vacia)}`);
+    assert.equal(catalogo.coordPaises.size, 1, `sin coordenadas con celda ${JSON.stringify(vacia)}`);
+  }
+});

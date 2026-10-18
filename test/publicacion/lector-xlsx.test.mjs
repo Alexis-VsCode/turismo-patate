@@ -262,3 +262,20 @@ test('una pestaña con muchas filas avisadas guarda solo los primeros avisos de 
   assert.match(deLaPestana.at(-1).mensaje, /15 filas más con avisos/);
   assert.equal(d.filas.reduce((s, f) => s + f.cantidad, 0), 5 * (tope + 15), 'todas las filas se publican igual');
 });
+
+test('una fila con Extranjeros (sin especificar) se acepta como extranjera, sin avisos y sin coordenadas en el mapa', () => {
+  const catalogo = [...CATALOGO, [null, null, 'Extranjeros (sin especificar)', null, null, null, null, null, null, null, null, null]];
+  const buf = libroEnMemoria({
+    _Catalogos: catalogo,
+    'Hostal Mixto': [ENC_MENSUAL,
+      mensualCuadrada(2026, 'Marzo', 'Ecuador', 'Ambato', [3, 0, 0, 0, 2, 0, 0, 0]),
+      mensualCuadrada(2026, 'Marzo', 'Extranjeros (sin especificar)', '', [1, 0, 0, 0, 1, 0, 0, 0])],
+  });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  assert.equal(d.rechazos.length, 0, JSON.stringify(d.rechazos));
+  assert.equal(d.avisos.filter((a) => a.pestana === 'Hostal Mixto').length, 0, JSON.stringify(d.avisos));
+  const extranjeras = d.filas.filter((f) => !f.nacional);
+  assert.equal(extranjeras.reduce((s, f) => s + f.cantidad, 0), 2);
+  assert.ok(extranjeras.every((f) => f.pais === 'Extranjeros (sin especificar)'));
+  assert.equal(d.catalogo.coordPaises.has('extranjeros (sin especificar)'), false);
+});
