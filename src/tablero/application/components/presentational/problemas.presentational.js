@@ -31,11 +31,14 @@ export function pintarProblemas(elementos, { rechazos, avisos }) {
     item.append(donde, document.createTextNode(`: ${mensaje}`));
     lista.appendChild(item);
   };
-  avisos.forEach((a) => agregar(a.pestana || TEXTOS.libroCompleto, a.mensaje));
-  rechazos.slice(0, MAX_PROBLEMAS_VISIBLES).forEach((r) => agregar(TEXTOS.filaDe(r.pestana, r.fila), r.motivo));
-  if (rechazos.length > MAX_PROBLEMAS_VISIBLES) {
+  const recorte = (total) => {
+    if (total <= MAX_PROBLEMAS_VISIBLES) return;
     const item = document.createElement('li');
-    item.textContent = TEXTOS.mostrandoPrimeros(MAX_PROBLEMAS_VISIBLES, rechazos.length);
+    item.textContent = TEXTOS.mostrandoPrimeros(MAX_PROBLEMAS_VISIBLES, total);
     lista.appendChild(item);
-  }
+  };
+  avisos.slice(0, MAX_PROBLEMAS_VISIBLES).forEach((a) => agregar(a.pestana || TEXTOS.libroCompleto, a.mensaje));
+  recorte(avisos.length);
+  rechazos.slice(0, MAX_PROBLEMAS_VISIBLES).forEach((r) => agregar(TEXTOS.filaDe(r.pestana, r.fila), r.motivo));
+  recorte(rechazos.length);
 }

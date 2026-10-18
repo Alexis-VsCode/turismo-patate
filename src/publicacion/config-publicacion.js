@@ -25,4 +25,6 @@ export const CONFIG_PUBLICACION = Object.freeze({
    * publica igual, pero se avisa, porque suele ser una cifra de más.
    */
   UMBRAL_FILA_SOSPECHOSA: 450000,
+  /** Avisos de fila que se guardan por pestaña; los demás se resumen en un solo aviso para no inflar datos.json. */
+  MAX_AVISOS_FILA_POR_PESTANA: 20,
 });

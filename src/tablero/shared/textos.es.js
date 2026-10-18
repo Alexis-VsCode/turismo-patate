@@ -68,7 +68,7 @@ export const TEXTOS = Object.freeze({
     FORMATO: 'Los datos publicados no tienen el formato esperado.',
   },
   problemas: (n) => `${n} ${n === 1 ? 'fila' : 'filas'} con problemas`,
-  avisosPestanas: (n) => `${n} ${n === 1 ? 'aviso' : 'avisos'} de pestañas`,
+  avisosPestanas: (n) => `${n} ${n === 1 ? 'aviso' : 'avisos'}`,
   filaDe: (pestana, fila) => `${pestana} · fila ${fila}`,
   mostrandoPrimeros: (n, total) => `Se muestran los primeros ${n} de ${total}.`,
   sinDatos: 'Sin datos para los filtros elegidos',

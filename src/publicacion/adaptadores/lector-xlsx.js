@@ -135,16 +135,26 @@ function filasDeHoja(XLSX, hoja) {
  * @param {{ indices: object, formato: 'anterior'|'mensual', grises: { nacionales?: number, extranjeros?: number } }}
  *   encabezados resultado de mapearEncabezados() más la posición de las columnas grises
  * @param {object} catalogo catálogo de la hoja (ver construirCatalogo)
- * @param {{ MAX_FILAS_PESTANA: number, PAIS_LOCAL: string, UMBRAL_FILA_SOSPECHOSA: number }} config tope de filas,
- *   país local y tope de sensatez de una fila mensual
+ * @param {{ MAX_FILAS_PESTANA: number, PAIS_LOCAL: string, UMBRAL_FILA_SOSPECHOSA: number, MAX_AVISOS_FILA_POR_PESTANA: number }}
+ *   config tope de filas, país local, tope de sensatez de una fila mensual y avisos de fila que se guardan por pestaña
  * @param {{ filas: object[], discapacidad: object[], rechazos: object[], avisos: object[] }} destino listas del libro
  *   que reciben lo leído
  */
 function leerFilasDePestana(crudas, establecimiento, { indices, formato, grises }, catalogo, config, destino) {
+  let filasAvisadas = 0;
+  const avisadas = new Set();
   crudas.slice(1, config.MAX_FILAS_PESTANA + 1).forEach((cruda, i) => {
     if (!cruda || cruda.every((v) => limpiarTexto(v) === '')) return;
     const fila = i + 2;
-    const avisar = (mensaje) => destino.avisos.push({ pestana: establecimiento, fila, mensaje: `Fila ${fila}: ${mensaje}` });
+    const avisar = (mensaje) => {
+      if (!avisadas.has(fila)) {
+        avisadas.add(fila);
+        filasAvisadas += 1;
+      }
+      if (filasAvisadas <= config.MAX_AVISOS_FILA_POR_PESTANA) {
+        destino.avisos.push({ pestana: establecimiento, fila, mensaje: `Fila ${fila}: ${mensaje}` });
+      }
+    };
     if (formato === 'mensual') {
       const resultado = normalizarFilaMensual(cruda, indices, catalogo, config.PAIS_LOCAL);
       if (!resultado.ok) {
@@ -164,6 +174,10 @@ function leerFilasDePestana(crudas, establecimiento, { indices, formato, grises 
     destino.filas.push({ ...resultado.fila, establecimiento });
     revisarFila(cruda, [resultado.fila], grises, Infinity).forEach(avisar);
   });
+  const restantes = filasAvisadas - config.MAX_AVISOS_FILA_POR_PESTANA;
+  if (restantes > 0) {
+    destino.avisos.push({ pestana: establecimiento, mensaje: `Hay ${restantes} filas más con avisos en esta pestaña: revísela completa` });
+  }
 }
 
 /** Posición de las columnas grises Nacionales y Extranjeros en el encabezado; undefined si la pestaña no las trae. */

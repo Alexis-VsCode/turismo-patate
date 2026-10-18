@@ -33,13 +33,13 @@ test('sin rechazos ni avisos la caja se oculta, el resumen queda vacío y la lis
 test('con rechazos, con avisos o con ambos la caja se muestra y el resumen los cuenta en singular o plural', () => {
   pintarProblemas(elementos, { rechazos: rechazos(2), avisos: [{ pestana: 'Rota', mensaje: 'Faltan columnas' }] });
   assert.equal(elementos.caja.hidden, false);
-  assert.equal(elementos.resumen.textContent, '2 filas con problemas · 1 aviso de pestañas');
+  assert.equal(elementos.resumen.textContent, '2 filas con problemas · 1 aviso');
   pintarProblemas(elementos, { rechazos: rechazos(1), avisos: [] });
   assert.equal(elementos.caja.hidden, false, 'solo con rechazos');
   assert.equal(elementos.resumen.textContent, '1 fila con problemas');
   pintarProblemas(elementos, { rechazos: [], avisos: [{ pestana: 'A', mensaje: 'x' }, { pestana: 'B', mensaje: 'y' }] });
   assert.equal(elementos.caja.hidden, false, 'solo con avisos');
-  assert.equal(elementos.resumen.textContent, '2 avisos de pestañas');
+  assert.equal(elementos.resumen.textContent, '2 avisos');
 });
 
 test('los avisos van antes que los rechazos, cada uno con su ubicación en negrita', () => {
@@ -60,7 +60,7 @@ test('se muestran como máximo 50 rechazos y una línea final dice cuántos hay 
   assert.equal(lineas.length, 1 + 50 + 1);
   assert.equal(lineas[50], 'Hostal · fila 51: Motivo 51');
   assert.equal(lineas.at(-1), 'Se muestran los primeros 50 de 51.');
-  assert.equal(elementos.resumen.textContent, '51 filas con problemas · 1 aviso de pestañas');
+  assert.equal(elementos.resumen.textContent, '51 filas con problemas · 1 aviso');
 });
 
 test('con exactamente 50 rechazos no aparece la línea de los primeros', () => {
@@ -82,4 +82,13 @@ test('repintar vacía la lista anterior y ocultar no deja elementos viejos', () 
   pintarProblemas(elementos, { rechazos: [], avisos: [] });
   assert.equal(elementos.lista.children.length, 0);
   assert.equal(elementos.caja.hidden, true);
+});
+
+test('se muestran como máximo 50 avisos y una línea dice cuántos hay en total', () => {
+  const avisos = Array.from({ length: 60 }, (_, i) => ({ pestana: 'Hostal', mensaje: `Aviso ${i + 1}` }));
+  pintarProblemas(elementos, { rechazos: [], avisos });
+  const lineas = textos();
+  assert.equal(lineas.length, 50 + 1);
+  assert.equal(lineas.at(-1), 'Se muestran los primeros 50 de 60.');
+  assert.equal(elementos.resumen.textContent, '60 avisos');
 });

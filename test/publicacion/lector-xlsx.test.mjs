@@ -248,3 +248,17 @@ test('una fila mensual en el umbral exacto no avisa y una por encima avisa, y la
   assert.match(avisos[0].mensaje, /450001/);
   assert.equal(d.filas.reduce((s, f) => s + f.cantidad, 0), 900001);
 });
+
+test('una pestaña con muchas filas avisadas guarda solo los primeros avisos de fila y uno que resume cuántas más hay', () => {
+  const tope = CONFIG.MAX_AVISOS_FILA_POR_PESTANA;
+  assert.equal(tope, 20);
+  const filasMalas = Array.from({ length: tope + 15 }, () =>
+    mensualCuadrada(2026, 'Marzo', 'Ecuador', 'Ambato', [3, 0, 0, 0, 2, 0, 0, 0], { nacionales: 0, extranjeros: 5 }));
+  const buf = libroEnMemoria({ _Catalogos: CATALOGO, 'Hostal Gris': [ENC_MENSUAL, ...filasMalas] });
+  const d = leerLibro(buf, XLSX, CONFIG);
+  const deLaPestana = d.avisos.filter((a) => a.pestana === 'Hostal Gris');
+  assert.equal(deLaPestana.length, tope + 1);
+  assert.equal(deLaPestana.filter((a) => a.fila).length, tope);
+  assert.match(deLaPestana.at(-1).mensaje, /15 filas más con avisos/);
+  assert.equal(d.filas.reduce((s, f) => s + f.cantidad, 0), 5 * (tope + 15), 'todas las filas se publican igual');
+});
