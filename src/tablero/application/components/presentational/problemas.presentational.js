@@ -19,6 +19,17 @@ export function esModoRevision(busqueda) {
 }
 
 /**
+ * Dirección para compartir: la misma página con sus filtros, pero sin el modo revisión.
+ * @param {string} href dirección completa de la página (`window.location.href`)
+ * @returns {string} la dirección sin el parámetro `revision`
+ */
+export function enlacePublico(href) {
+  const url = new URL(href);
+  url.searchParams.delete('revision');
+  return url.toString();
+}
+
+/**
  * @param {{ caja: HTMLElement, resumen: HTMLElement, lista: HTMLElement }} elementos
  * @param {{ rechazos: Array<{pestana: string, fila: number, motivo: string}>, avisos: Array<{pestana: string, mensaje: string}> }} problemas
  * @param {{ revision?: boolean }} [opciones] revision: true solo en el modo revisión; fuera de él la caja queda oculta

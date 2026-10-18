@@ -16,7 +16,7 @@ import { pintarEstadoDatos } from './presentational/estado.presentational.js';
 import { pintarMotivos } from './presentational/motivos.presentational.js';
 import { pintarDiscapacidad } from './presentational/discapacidad.presentational.js';
 import { pintarFrescura } from './presentational/frescura.presentational.js';
-import { pintarProblemas, esModoRevision } from './presentational/problemas.presentational.js';
+import { pintarProblemas, esModoRevision, enlacePublico } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
 import { pintarContacto, pintarAutoridad, prepararEnlacesContacto } from './presentational/contacto.presentational.js';
 import { mostrarAviso } from './compartidos/aviso.js';
@@ -83,10 +83,10 @@ export function montarTablero(facade, config, { obtenerLimites }) {
     if (p.seriesType === 'bar') facade.elegirMes(Number(p.seriesName), p.dataIndex);
   });
 
-  // Paso 3: el enlace de la página reproduce los filtros; copiarlo no necesita permisos especiales
+  // Paso 3: el enlace de la página reproduce los filtros, sin el modo revisión; copiarlo no necesita permisos especiales
   async function copiarEnlace() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(enlacePublico(window.location.href));
       return true;
     } catch (error) {
       return false;

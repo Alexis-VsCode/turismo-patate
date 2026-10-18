@@ -7,7 +7,7 @@
  */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { pintarProblemas, esModoRevision } from '../../../src/tablero/application/components/presentational/problemas.presentational.js';
+import { pintarProblemas, esModoRevision, enlacePublico } from '../../../src/tablero/application/components/presentational/problemas.presentational.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Nodo, instalarDocumentoFalso } from '../../dom-falso.mjs';
@@ -115,4 +115,16 @@ test('fuera del modo revisión el público no ve el panel aunque haya rechazos y
 test('el container decide el modo revisión con la dirección de la página', () => {
   const fuente = readFileSync(join(RAIZ, 'src/tablero/application/components/tablero.container.js'), 'utf8');
   assert.match(fuente, /esModoRevision\(window\.location\.search\)/);
+});
+
+test('el enlace que se copia desde la página de revisión no lleva el parámetro revision y conserva los filtros', () => {
+  const base = 'https://alexis-vscode.github.io/turismo-patate/';
+  assert.equal(enlacePublico(`${base}?revision#anio=2026`), `${base}#anio=2026`);
+  assert.equal(enlacePublico(`${base}?x=1&revision=1#m=3`), `${base}?x=1#m=3`);
+  assert.equal(enlacePublico(`${base}#anio=2026`), `${base}#anio=2026`);
+});
+
+test('el container copia el enlace público, sin el modo revisión', () => {
+  const fuente = readFileSync(join(RAIZ, 'src/tablero/application/components/tablero.container.js'), 'utf8');
+  assert.ok(fuente.includes('writeText(enlacePublico(window.location.href))'));
 });
