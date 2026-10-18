@@ -18,7 +18,9 @@ mano, así que los totales no pueden poder descuadrarse.
 ## Decisión
 
 El formato mensual usa ocho columnas de números más «Personas con discapacidad». Los totales, nacionales y extranjeros los calcula la hoja con fórmulas,
-y una fila imposible se pinta de rojo. El lector repite las mismas reglas y rechaza lo imposible con pestaña, fila y motivo. El formato anterior sigue
+y una fila imposible se pinta de rojo. El lector no lee la columna Estado: aplica sus propias reglas y rechaza lo imposible (discapacidad mayor que el
+total, año, mes, país o motivo inválidos) con pestaña, fila y motivo. Una fila nacional sin ciudad, que la hoja marca «Falta la ciudad», se publica
+sin ciudad ni provincia. El formato anterior sigue
 vigente y se reconoce por los encabezados.
 
 Cada número mayor que cero se expande en una fila interna con la **edad base de su rango** (0, 31, 46 o 61), que el dominio vuelve a convertir en el

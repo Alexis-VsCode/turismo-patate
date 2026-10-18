@@ -2,7 +2,40 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
-## [Sin publicar]
+## [2.9.0] - 2026-10-17
+
+### Añadido
+- **Filtros facetados:** cada combo ofrece solo las opciones que tienen visitantes bajo los demás filtros activos, sin contar el suyo, así que se puede sumar otra opción del mismo filtro. Una opción ya elegida se conserva aunque deje de tener visitantes. La regla es una sola (`opcionesFacetadas` en `src/domain/estadisticas.js`) y vale por todos los caminos: los combos, la barra de etiquetas, «Quitar todos», el panel del celular, el clic en un motivo o en un gráfico y el enlace compartido.
+- **Franja del GAD en el pie:** escudo, foto y nombre del Ing. Emerson Hernán Medina Castro, Alcalde, Administración 2023 a 2027, con el agradecimiento y el enlace al sitio del GAD. Debajo, las tarjetas de la Lic. Vanessa Lesano Martínez (contacto del municipio) y del autor. Los nombres completos salen de `config.js` (`AUTORIDAD_MUNICIPIO` y `CONTACTO_MUNICIPIO`), nunca del HTML.
+- **Avisos del lector, sin rechazar la fila:** cuando Nacionales o Extranjeros vienen escritos a mano y contradicen el País (el dashboard sigue usando el País), y cuando el total de una fila mensual pasa de `UMBRAL_FILA_SOSPECHOSA` = 450000 (la fila se publica igual). Aparecen en el panel de problemas con su pestaña y su fila.
+- **Excel con columnas grises bloqueadas:** cada pestaña de captura y la plantilla salen protegidas y solo las celdas de entrada quedan libres, así cada copia hereda las reglas.
+- **`tools/excel/proteger-hoja.gs`:** Apps Script que protege cada pestaña de captura en Google Sheets, y activador «Al producirse un cambio» que protege sola cada pestaña nueva (comprobado el 17/10/2026 duplicando la plantilla).
+- **Pruebas:** DOM falso compartido y pruebas de cada presentacional; caso de uso de la publicación en memoria; punto de entrada del constructor; permisos de los flujos; servidor local; que ningún archivo escriba el ID de una hoja; orden de los módulos; CSP; hoja de estilos; accesibilidad; foco al repintar.
+- **Validación en cada pull request (`ci.yml`):** además de `npm test`, corre el constructor con el libro de prueba, las pruebas de Python del Excel (`test/excel/plantilla.test.py`) y del oráculo (`test/tools/oraculo.test.py`) y `npm run oraculo`.
+- ADR 010 (publicación hexagonal y tablero semihexagonal).
+
+### Cambiado
+- **Arquitectura:** `src/` se separa en `domain/` (puro), `contrato/` (contrato de `datos.json` y descarga acotada), `publicacion/` (hexagonal: caso de uso `aplicacion/construir-datos.js`, puertos JSDoc en `puertos.js`, adaptadores `hoja-google.js`, `lector-xlsx.js` y `destino-archivo.js`, y `config-publicacion.js`) y `tablero/` (semihexagonal: fachada, container, presentacionales, compartidos, infraestructura y `shared/` con `textos.es.js`). `tools/construir-datos.mjs` queda como punto de entrada delgado. Lo vigilan `test/arquitectura.test.mjs` y `test/orden-de-modulos.test.mjs`. Las carpetas `application`, `infrastructure` y `shared` de la raíz de `src` y su `main.js` pasan a `src/tablero/`; el antiguo lector del libro pasa a `lector-xlsx.js` y el antiguo módulo de descarga, a `descarga-acotada.js` y `hoja-google.js`.
+- La recarga al cambiar de establecimiento la decide la fachada, y el container ya no descarga los límites del mapa: le llegan por una función inyectada desde `main.js`. El mapa pasa a `compartidos/` y guarda solo el estado que exige Leaflet.
+- Los límites de validación (años, edad y cantidad) se escriben una sola vez, en `src/domain/catalogo.js`.
+- **CSP con las URL exactas** de ECharts y Leaflet en cdnjs, en lugar del CDN entero.
+- **Publicación con permisos mínimos:** el flujo solo da `contents: read` y cada job declara lo que usa. El sitio publica la carpeta `assets/` completa y quita `src/publicacion/`.
+- **Sin el ID de la hoja en el repositorio:** la herramienta de catálogos lo toma de la variable `HOJA_CATALOGOS_URL`.
+- `destrabar` termina con error, visible en Actions, si la API de GitHub falla o si no pudo mantener activo el flujo. Sigue sin bloquear la publicación.
+- `npm run oraculo` regenera el esperado de los dos formatos y corre su conciliación.
+- **Accesibilidad:** el foco vuelve a su lugar al repintar las etiquetas, los motivos y las etiquetas del combo; los gráficos de evolución y de edad y género se leen como imágenes con un resumen; con «reducir movimiento» los gráficos no se animan y el mapa no vuela; los títulos del pie son encabezados de segundo nivel. Al quitar la última etiqueta de un combo, el foco vuelve a su caja de búsqueda sin abrir la lista.
+- **Estilos:** las maquetas por ancho rigen solo en pantalla, la impresión devuelve cada panel a su celda y la barra de estado queda alineada con el contenido en pantallas anchas.
+- La prueba de redacción (sin emojis ni guiones largos) vigila también `test/`, `tools/`, `css/` y `.github/`, además de `index.html`, los `.md` de la raíz, `src/` y `docs/`.
+
+### Corregido
+- **Porcentaje bien redondeado:** el medio redondea hacia arriba sin el error de la coma flotante (28,75 se muestra 28,8 %).
+- **Botón «Pronto»:** se ve como antes, con el color de su red y el borde punteado, y al pasar el mouse se oscurece como las demás redes; antes se volvía casi transparente.
+- **El oráculo salta las filas vacías** que Google deja en el xlsx publicado.
+- El servidor local responde 403 a una ruta fuera del repositorio y 400 a una URL mal codificada, sin caerse.
+
+### Documentación
+- Toda la documentación al día con la versión: rutas nuevas, diagramas Mermaid del subconjunto de GitLab, manual de usuario con los filtros facetados y el pie nuevo, y manual de operación con la protección de la hoja, los avisos y la cadencia.
+- Corregida la frase «las filas en rojo no se publican»: el lector no lee la columna Estado. Rechaza lo que sus reglas no aceptan y publica, sin ciudad ni provincia, una fila nacional sin ciudad.
 
 ## [2.8.0] - 2026-10-12
 
@@ -28,7 +61,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - **Refuerzo de la publicación:** el `schedule` de GitHub pasa a `15,45 * * * *`, cada 30 minutos desfasado de cron-job.org (:00 y :30); si uno falla, el otro publica en 15 minutos o menos.
 
 ### Añadido
-- Redes de la Lic. Vanessa Lesano (Facebook y TikTok) en `CONTACTO_MUNICIPIO`. Una red sin dirección (LinkedIn) se muestra como botón «Pronto» y abre un aviso con los enlaces disponibles (`src/application/components/compartidos/aviso.js`): se cierra con el botón, con Esc o solo, y acepta únicamente enlaces `https://`.
+- Redes de la Lic. Vanessa Lesano (Facebook y TikTok) en `CONTACTO_MUNICIPIO`. Una red sin dirección (LinkedIn) se muestra como botón «Pronto» y abre un aviso con los enlaces disponibles (`aviso.js`): se cierra con el botón, con Esc o solo, y acepta únicamente enlaces `https://`.
 - **Periodo con datos** en la barra de estado («dic 2024 a sep 2026»), y cada dato con su explicación visible debajo.
 - El aviso no se cierra solo mientras el puntero o el foco están sobre él, y al cerrarlo con × o Esc el foco vuelve al botón que lo abrió. El nombre accesible del botón «Pronto» contiene su texto visible.
 - Documentación: casos de uso (`docs/casos-de-uso.md`), decisión 009 (publicación con doble disparador) y README, manual de operación, parámetros y observabilidad al día.
@@ -44,7 +77,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ### Cambiado
 - **Cadencia de publicación cada 30 minutos:** cron-job.org dispara la publicación cada media hora y el `schedule` de GitHub queda como respaldo cada hora (minuto 15). El navegador consulta cada 10 minutos y el chip de frescura pasa a «al día» hasta 45 minutos y «retrasado» hasta 100.
-- Pruebas de coherencia de la configuración (`test/infrastructure/config.test.mjs`): la consulta del navegador, los umbrales y el respaldo de GitHub tienen que encajar con la cadencia.
+- Pruebas de coherencia de la configuración (`config.test.mjs`): la consulta del navegador, los umbrales y el respaldo de GitHub tienen que encajar con la cadencia.
 
 ### Corregido
 - **Publicación detenida desde el 06/10:** un despliegue de Pages quedó en «waiting» y retuvo el grupo de concurrencia `pages`, así que todas las ejecuciones siguientes se cancelaron. Ahora la concurrencia vive solo en el job `desplegar` y un job `destrabar` (`tools/destrabar-publicacion.mjs`) cancela al inicio de cada publicación toda ejecución del flujo con más de 25 minutos en `waiting` o `in_progress`; si la limpieza falla, la publicación sigue igual.
@@ -164,7 +197,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - Gráficos, mapa y tooltips leen los colores del tema; cambiar de tema no reencuadra el mapa.
 - Porcentajes con un solo formato (una decimal y coma) en toda la interfaz.
 - Atribución de OpenStreetMap con enlace a su política de copyright.
-- Pasos numerados y mapa del flujo en `src/main.js`; un solo formato de comentarios en el código.
+- Pasos numerados y mapa del flujo en `main.js`; un solo formato de comentarios en el código.
 - Node 22 como versión mínima.
 
 ### Corregido
@@ -200,9 +233,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ### Cambiado
 - Código organizado en **capas semihexagonales**:
-  - `src/domain`, `src/infrastructure` y `src/application` (fachada, container y presentacionales), más
-    `shared`.
-  - `src/main.js` como raíz de composición.
+  - carpetas `domain`, `infrastructure` y `application` de `src` (fachada, container y presentacionales), más
+    `shared` (la 2.9.0 las reorganiza, ver ADR 010).
+  - `main.js` como raíz de composición.
 - `app.js` dividido en fachada, container y presentacionales. La fachada guarda el estado y la política de
   actualización, sin DOM.
 - SheetJS pasa a `tools/vendor/`, porque solo lo usa el constructor de datos.

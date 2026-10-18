@@ -5,9 +5,10 @@
 | [001](001-html-estatico-en-vez-de-power-bi.md) | HTML estático en vez de Power BI |
 | [002](002-url-de-la-hoja-oculta-con-github-actions.md) | URL de la hoja oculta con GitHub Actions |
 | [003](003-mapa-leaflet-y-openstreetmap.md) | Mapa con Leaflet y OpenStreetMap |
-| [004](004-capas-semihexagonales.md) | Capas semihexagonales en JavaScript sin framework |
+| [004](004-capas-semihexagonales.md) | Capas semihexagonales en JavaScript sin framework (antecedente; la amplía la 010) |
 | [005](005-tema-y-excepciones-de-color.md) | Tema claro y oscuro, y excepciones de color |
 | [006](006-catalogo-en-bloques-en-una-pestana.md) | Catálogo en bloques dentro de una sola pestaña |
 | [007](007-formato-mensual-de-captura.md) | Formato mensual de captura con totales por rango de edad |
 | [008](008-filtros-de-varias-opciones.md) | Filtros de varias opciones |
 | [009](009-publicacion-con-doble-disparador.md) | Publicación con doble disparador y limpieza de ejecuciones trabadas |
+| [010](010-publicacion-hexagonal-y-tablero-semihexagonal.md) | Publicación hexagonal, tablero semihexagonal y contrato compartido |

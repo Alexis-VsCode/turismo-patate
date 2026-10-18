@@ -32,7 +32,18 @@ No hay que subir ni enviar nada: basta con escribir en la hoja de Google. Si la 
 
 **Cuánto tarda un dato nuevo en aparecer:** hasta unos 35 minutos al recargar la página y unos 45 con la página abierta (la publicación corre
 cada 30 minutos y el navegador consulta cada 10). Google republica la hoja cada ~5 minutos, así que ese tiempo ya está incluido. GitHub puede
-retrasar su tarea de respaldo en horas de mucha carga.
+retrasar su `schedule` de refuerzo en horas de mucha carga.
+
+### Cadencia de la publicación
+
+| Quién la arranca | Cuándo | Para qué |
+|---|---|---|
+| cron-job.org, una sola tarea | Cada 30 minutos, en punto y a la media (:00 y :30) | Disparador principal |
+| `schedule` de GitHub (`15,45 * * * *`) | Cada 30 minutos, a los :15 y :45 | Refuerzo: si uno falla, el otro publica en 15 minutos o menos |
+| Un cambio de código en `main` | Al subirlo | Corre las pruebas antes de publicar |
+
+La cifra de 30 minutos vive en `PUBLICACION_MINUTOS` de `src/tablero/infrastructure/config.js`. Cómo se configura cron-job.org está en
+[Cómo se dispara la publicación](#cómo-se-dispara-la-publicación-cron-joborg).
 
 ### Qué quieren decir las cifras de la barra de estado
 
@@ -69,9 +80,12 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
 - **Los ocho números** son enteros de 0 en adelante. Una celda vacía cuenta como cero y una fila sin ningún número se ignora.
 - **Personas con discapacidad** no puede superar el total de visitantes de la fila. La hoja no deja escribir un valor mayor y la fila se pinta de
   rojo; si aun así llegara al dashboard, esa fila se rechaza con su pestaña y su fila.
-- **Estado** dice «OK» o qué corregir («Revisar: discapacidad 19 mayor que el total 16», «Falta la ciudad»). Las filas en rojo no se publican.
-- **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises tienen fórmulas y **no se escriben**; para que nadie
-  las pise, protéjalas en Google Sheets (*Datos → Proteger hojas y rangos*).
+- **Estado** dice «OK» o qué corregir («Revisar: discapacidad 19 mayor que el total 16», «Falta año, mes, país o motivo», «Falta la ciudad») y
+  la fila se pinta de rojo. Es una ayuda para quien llena la hoja: **el dashboard no lee esa columna**, aplica sus propias reglas. Qué pasa con
+  cada caso está en [Ciclo de una fila](#ciclo-de-una-fila).
+- **Nacionales y extranjeros** se calculan por el país: Ecuador es nacional. Las columnas grises tienen fórmulas y **no se escriben**: las protege
+  el script de la hoja (ver [Protección de las columnas grises](#protección-de-las-columnas-grises)). Aunque alguien las escribiera a mano, el
+  dashboard sigue usando el país y avisa.
 - **Por qué ocho columnas y no una por género:** así el dashboard puede filtrar por edad y por género a la vez y mostrar «Total mujeres» y
   «Total hombres» por rango de edad con cifras exactas.
 
@@ -91,15 +105,67 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
   obligatorias.
 - **Las personas con discapacidad solo existen en el formato mensual.** Una columna con ese nombre en una pestaña del formato anterior se ignora.
 
+## Ciclo de una fila
+
+Qué pasa con cada fila desde que se escribe hasta que se ve en el dashboard:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Capturada: se escribe en la pestaña
+    Capturada --> Ignorada: sin ningún número
+    Capturada --> Rechazada: discapacidad mayor que el total, o año, mes, país o motivo inválidos
+    Capturada --> Aceptada: cumple las reglas del lector
+    Aceptada --> ConAviso: columnas grises contra el país, o total mayor que 450000
+    Aceptada --> Publicada: sin observaciones
+    ConAviso --> Publicada: se publica igual
+    Rechazada --> PanelDeProblemas: no suma en las cifras
+    Publicada --> [*]
+    PanelDeProblemas --> [*]
+    Ignorada --> [*]
+```
+
+- **Ignorada:** una fila sin ningún número no cuenta ni se avisa.
+- **Rechazada:** sus cifras no entran en el dashboard. Aparece en el aviso «N filas con problemas», con la pestaña, el número de fila y el motivo.
+- **Con aviso:** sus cifras sí entran. El aviso aparece en el mismo panel, en «N avisos de pestañas», con la pestaña y la fila.
+- **Una fila nacional sin ciudad**, que la hoja marca «Falta la ciudad», se acepta: cuenta como nacional, sin ciudad ni provincia, y no aparece en
+  el mapa de ciudades ni de provincias.
+
+### Qué hacer con los avisos
+
+| Aviso | Qué significa | Qué hacer |
+|---|---|---|
+| «Fila N: Nacionales dice … y Extranjeros dice …, pero con el país … deben ser …» | Alguien escribió a mano en una columna gris y no coincide con el país | El dashboard ya usa el país. Si el país está mal, corríjalo; si no, vuelva a poner la fórmula en la columna gris (cópiela de la fila de arriba) |
+| «Fila N: … visitantes en una sola fila, más que el tope de 450000» | El total de la fila pasa de `UMBRAL_FILA_SOSPECHOSA` (450000) | Revise si sobra una cifra, por ejemplo un cero de más. Si la cifra es real, no hay que hacer nada: la fila ya se publica |
+
+Los dos avisos desaparecen solos en la siguiente publicación después de corregir la hoja.
+
 ## Agregar un establecimiento
 
-1. Haga clic derecho en la pestaña `Plantilla` → **Duplicar**.
-2. Renombre la copia con el nombre del establecimiento.
-3. Llene las filas con los desplegables. Las columnas grises tienen fórmulas: no se escriben.
-4. Comparta la pestaña solo con quien la va a llenar y protéjala (*Datos → Proteger hojas y rangos*), dejando las columnas grises protegidas
-   para todos menos para los administradores.
+1. Haga clic derecho en la pestaña de plantilla y elija **Duplicar**. En el libro que genera el script se llama `Plantilla`; en la hoja del
+   municipio, `Plantillas`. Ninguna pestaña que contenga «plantilla» en el nombre cuenta como establecimiento.
+2. Renombre la copia con el nombre del establecimiento. Ese nombre es el que aparece en el dashboard.
+3. Llene una fila por mes, origen y motivo, con los desplegables.
+
+La copia hereda los desplegables, las fórmulas y el formato de la plantilla. La protección de las columnas grises **no** se copia al duplicar,
+pero la pone sola el activador del script de la hoja en cuanto aparece la pestaña nueva (comprobado el 17/10/2026). Para confirmarlo, abra
+*Datos → Proteger hojas y rangos* en la pestaña nueva: debe figurar «Dashboard: solo se escriben las celdas blancas».
 
 Aparece en el dashboard en la siguiente publicación, hasta unos 35 minutos después: en el combo, en los filtros, en las tarjetas y en el mapa.
+
+## Protección de las columnas grises
+
+La pone [`tools/excel/proteger-hoja.gs`](../tools/excel/proteger-hoja.gs), un Apps Script instalado en la hoja de Google. Cada pestaña de
+captura queda bloqueada salvo las celdas blancas de entrada, y solo el propietario de la hoja edita lo bloqueado. Las pestañas que empiezan con
+`_` no se tocan.
+
+- **Instalación, una sola vez y con la cuenta propietaria:** *Extensiones → Apps Script*, pegar el archivo, guardar y ejecutar
+  `protegerColumnasGrises`. Luego, en *Activadores*, agregar uno para `alAgregarPestana` con la fuente «De una hoja de cálculo» y el evento
+  «Al producirse un cambio».
+- **Se puede ejecutar varias veces:** salta las pestañas que ya tienen su protección.
+- **Si importa un Excel nuevo** con *Reemplazar hoja de cálculo*, Google no conserva la protección del archivo: vuelva a ejecutar
+  `protegerColumnasGrises` y compruebe que el activador siga en la lista.
+- Es una protección contra errores, no contra mala fe. Por eso el lector, además, avisa cuando las columnas grises no cuadran con el país.
+  Detalle en [`tools/excel/README.md`](../tools/excel/README.md).
 
 ## Catálogos (`_Catalogos`)
 
@@ -122,13 +188,15 @@ encabezado distinto, y cada pareja de datos queda pegada:
 - **Coordenadas de provincia:** son el centro aproximado de su contorno en el mapa. Hoy sirven de referencia; el dashboard ubica las burbujas
   con el contorno.
 
-**Qué opciones ofrecen los combos del dashboard.** Una regla simple, para saber dónde tocar:
+**Qué opciones ofrecen los combos del dashboard.** Una regla simple, para saber dónde tocar. La tabla vale **sin otros filtros puestos**; con
+filtros puestos, cada combo se acorta a lo que tiene visitantes bajo los demás filtros (ver [Varias opciones en los filtros](#varias-opciones-en-los-filtros)).
 
 | Combo | De dónde sale | Qué significa |
 |---|---|---|
 | **Año** y **Motivo** | Los visitantes **y** el catálogo | Un año o motivo nuevo aparece al agregarlo en `_Catalogos`, aunque todavía no tenga visitantes. Si se elige uno sin visitantes, el dashboard dice «Sin visitantes para los filtros elegidos» |
 | **Ciudad, país y provincia** | Solo los visitantes | El catálogo trae más de 200 ciudades y 190 países sin visitantes; ofrecerlos todos llenaría el filtro de opciones vacías. Los desplegables de la hoja, en cambio, sí ofrecen todo el catálogo |
-| **Mes** y **rango de edad** | Fijos | Siempre son los 12 meses y los rangos 0-30, 31-45, 46-60 y 61+ |
+| **Mes** y **rango de edad** | Fijos | Los 12 meses y los rangos 0-30, 31-45, 46-60 y 61+ |
+| **Establecimiento** | Las pestañas | Todas las pestañas que cuentan como establecimiento, tengan datos o no |
 
 Para abrir un año nuevo basta escribirlo en la columna Año de `_Catalogos`. Los desplegables de las pestañas leen ese
 mismo rango, así que también aparecerá al capturar.
@@ -141,17 +209,33 @@ con la pestaña y el número de fila.
 
 ## Permisos recomendados en Google
 
-- **Compartir → Acceso general: Restringido.** Agregue solo los correos de los establecimientos.
-- **Datos → Proteger hojas y rangos:** proteja `_Catalogos` y `Plantilla`, dejando como editores solo a los
-  administradores.
-- **Opcional:** proteja cada pestaña para que solo la edite su establecimiento.
+- **Compartir → Acceso general: Restringido**, con los establecimientos y el personal del municipio agregados como **editores**. Nadie más abre
+  la hoja. La publicación en la web es otra cosa: genera un enlace de solo lectura en xlsx, que vive solo en el secreto `SHEET_URL`.
+- **Columnas grises:** las protege el script de la hoja, como se explica arriba.
+- **Opcional:** proteja `_Catalogos`, y cada pestaña para que solo la edite su establecimiento (*Datos → Proteger hojas y rangos*).
+
+## Respaldo de la hoja
+
+El respaldo es el **historial de versiones de Google** (*Archivo → Historial de versiones → Ver historial de versiones*): guarda las versiones
+anteriores y permite restaurar una o copiarla como hoja nueva. Antes de un cambio grande, por ejemplo antes de importar un Excel nuevo, use
+*Asignar un nombre a la versión actual* para ubicarla después.
+
+El dashboard **no** guarda copias de la hoja: en un repositorio público, cualquier archivo que se subiera como artefacto de Actions lo podría
+descargar cualquier cuenta de GitHub.
 
 ## Cómo se dispara la publicación (cron-job.org)
 
 La publicación la arranca principalmente **cron-job.org**, un servicio externo gratuito. Se configura una **sola tarea** que corre **cada 30 minutos,
 en punto y a la media** (:00 y :30), todo el día. La tarea llama a la API de GitHub para ejecutar el flujo «Publicar dashboard»
-(`workflow_dispatch`) y usa un token de GitHub con el permiso mínimo necesario. El token es una credencial: se guarda solo en cron-job.org
-y no se comparte.
+(`workflow_dispatch`) con un token de GitHub. El token es una credencial: se guarda solo en cron-job.org y no se comparte.
+
+Cómo debe ser el token:
+
+- **De grano fino** (*Settings → Developer settings → Fine-grained tokens*), no un token clásico, que da acceso a todos los repositorios de la
+  cuenta.
+- **Solo este repositorio** y un único permiso: **Actions: Read and write**, el que pide `workflow_dispatch`.
+- **Con vencimiento**, y la fecha de renovación anotada. Al vencer, cron-job.org recibe un `401` y deja de disparar sin que el sitio lo diga: la
+  publicación sigue solo con el `schedule` de GitHub, que puede retrasarse. Renuévelo antes y reemplácelo en la tarea de cron-job.org.
 
 Como refuerzo, GitHub tiene su propio horario (`schedule`) en los minutos :15 y :45. Así, si cron-job.org falla, GitHub publica a los 15 minutos
 como máximo, y al revés. Además, en cada publicación el job `destrabar` llama a `PUT /actions/workflows/{id}/enable`, que mantiene activo el flujo
@@ -178,33 +262,35 @@ salen todas como «cancelled».
 | El dashboard muestra «No se pudo actualizar…» | El dashboard conserva los últimos datos buenos. Revise la pestaña **Actions** del repositorio: la última ejecución en rojo dice en qué paso falló |
 | Actions falla en «Construir datos desde la hoja» | La hoja dejó de estar publicada o cambió su URL. Ver [configuracion.md](configuracion.md#rotar-la-url) |
 | Actions falla en «Pruebas» | Un cambio de código rompió una regla. No se publica nada hasta corregirlo |
-| Un establecimiento no aparece | Compruebe que su pestaña no empiece con `_`, no contenga «plantilla» y conserve los encabezados |
+| Un establecimiento no aparece | Compruebe que su pestaña no empiece con `_`, no contenga «plantilla» y conserve los encabezados. En el dashboard, quite los filtros: el combo solo ofrece lo que tiene visitantes bajo los demás filtros |
 | Aparece «N filas con problemas» | Despliegue el aviso: indica pestaña, fila y motivo (por ejemplo, `Ciudad fuera del catálogo: «Ambatoo»`). Las erratas de mes como «agosoto» se corrigen solas |
 | El chip dice «Publicación detenida» | La publicación automática no corre. Revise **Actions** y siga [observabilidad.md](observabilidad.md#qué-hacer-si-el-chip-no-está-en-verde) |
+| cron-job.org marca la tarea con error `401` o `403` | El token venció o perdió el permiso: en **Actions** solo aparecen ejecuciones de `schedule`. Genere un token nuevo como se explica arriba y péguelo en la tarea |
+| El panel de problemas muestra avisos de columnas grises o de fila sospechosa | Ver [Qué hacer con los avisos](#qué-hacer-con-los-avisos). La fila ya se publicó |
 | Ninguna publicación corre, ni la de cron-job.org ni la de GitHub | GitHub desactiva el flujo entero tras 60 días sin actividad, y entonces también falla el disparo de cron-job.org. `destrabar` lo evita reactivando el flujo en cada publicación. Si aun así aparece desactivado, en **Actions → Publicar dashboard → «Enable workflow»** se reactiva a mano y con **Run workflow** se fuerza una publicación |
 
 ## Datos reales y datos de prueba
 
 El dashboard ya publica los datos reales del municipio: `DATOS_DE_PRUEBA` está en `false` en
-[`src/infrastructure/config.js`](../src/infrastructure/config.js) y la franja amarilla «DATOS DE PRUEBA» no aparece. Esa franja solo se
+[`src/tablero/infrastructure/config.js`](../src/tablero/infrastructure/config.js) y la franja amarilla «DATOS DE PRUEBA» no aparece. Esa franja solo se
 usaría de nuevo si se pusiera el valor en `true` para probar con una hoja ficticia.
 
 Para cambiar la foto de la cabecera, reemplace [`assets/fondo-cabecera.jpg`](../assets/fondo-cabecera.jpg) por una propia del GAD, con el mismo
 nombre, y actualice el crédito en `index.html` y en `THIRD_PARTY_NOTICES.md`.
 
-## Publicar el LinkedIn de la Lic. Vanessa Lesano
+## Publicar el LinkedIn de la Lic. Vanessa Lesano Martínez
 
 Este cambio **lo hace el autor del dashboard**, porque es una edición del código (`config.js`). Quien administra la hoja solo le entrega la
 dirección del perfil.
 
-La Lic. Vanessa Lesano es Licenciada en Turismo. El pie del dashboard, en su columna «Acerca del dashboard», muestra el contacto del municipio con tres redes, siempre en este orden: Facebook, TikTok y LinkedIn. Facebook y TikTok ya
+La Lic. Vanessa Lesano Martínez es Licenciada en Turismo. El pie del dashboard, en la tarjeta «Contacto del municipio», muestra sus tres redes, siempre en este orden: Facebook, TikTok y LinkedIn. Facebook y TikTok ya
 tienen su enlace (el de Facebook es https://www.facebook.com/vane.lesano.martinez). LinkedIn está vacío: mientras siga así, su botón dice **«Pronto»** y, al pulsarlo, abre un aviso con los otros enlaces.
 
 Para publicarlo:
 
-1. La Lic. Vanessa Lesano copia la dirección de su perfil de LinkedIn. Debe empezar con `https://` y tener la forma `https://www.linkedin.com/in/su-usuario`, sin
+1. La Lic. Vanessa Lesano Martínez copia la dirección de su perfil de LinkedIn. Debe empezar con `https://` y tener la forma `https://www.linkedin.com/in/su-usuario`, sin
    parámetros de rastreo (nada después de un `?`).
-2. El autor, en [`src/infrastructure/config.js`](../src/infrastructure/config.js), la pega entre las comillas de `CONTACTO_MUNICIPIO.enlaces.linkedin`.
+2. El autor, en [`src/tablero/infrastructure/config.js`](../src/tablero/infrastructure/config.js), la pega entre las comillas de `CONTACTO_MUNICIPIO.enlaces.linkedin`.
 3. El autor sube el cambio al repositorio. Al llegar a `main`, el dashboard se publica de nuevo con el botón ya convertido en enlace.
 
 Una dirección que no cumpla la forma esperada no se muestra: el botón desaparece en lugar de quedar roto. Si no aparece, revise que la dirección esté bien escrita.
@@ -215,6 +301,10 @@ Los filtros de establecimiento, país / ciudad / provincia, motivo, edad y géne
 queda como una etiqueta sobre los gráficos y se quita con su «×» o todas juntas con «Quitar todos». Dentro de un filtro las opciones se
 suman (Colombia y Perú) y entre filtros se cruzan (Colombia o Perú, y además turismo). Año y mes son de una sola opción. Lo elegido también se ve como etiquetas debajo de cada filtro, a la izquierda, y el panel de filtros
 se mantiene a la izquierda hasta los 860 px de ancho; por debajo pasa a ser un botón «Filtros».
+
+**Los filtros son facetados:** cada combo ofrece solo las opciones que tienen visitantes bajo los demás filtros puestos, sin contar el suyo, y lo
+ya elegido se conserva aunque se quede sin visitantes. Por eso, si un establecimiento no aparece en el combo, puede ser que otro filtro lo deje
+sin datos: quite los filtros y vuelva a mirar. La explicación para el público está en el [manual del usuario](manual-usuario.md#los-filtros-solo-ofrecen-lo-que-tiene-datos).
 
 ## Catálogos completos
 

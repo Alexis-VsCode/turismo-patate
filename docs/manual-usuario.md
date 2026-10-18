@@ -56,8 +56,8 @@ Dos tarjetas con la cantidad y el porcentaje de visitantes nacionales (de Ecuado
 
 ### Evolución de visitantes por mes
 
-Un gráfico de líneas que compara mes a mes el año elegido con el anterior. Sirve para ver en qué meses llegan más visitantes y si el año
-va mejor o peor que el pasado.
+Barras que comparan mes a mes el año elegido con el anterior, con una línea de tendencia del año elegido. Sirve para ver en qué meses llegan
+más visitantes y si el año va mejor o peor que el pasado. **Si toca una barra, el dashboard se filtra por ese mes**; vuelva a tocarla para quitarlo.
 
 ### Nacionales vs extranjeros
 
@@ -99,13 +99,35 @@ Los filtros están a la izquierda. En celular o en una ventana angosta se reúne
 
 | Filtro | Cómo funciona |
 |---|---|
-| **Establecimiento** | Escriba o elija un establecimiento. Con «Todos los establecimientos» se ven todos |
+| **Establecimiento** | Admite **varias opciones**. Escriba para buscar; si no elige ninguno, se ven todos los establecimientos |
 | **Año** y **Mes** | Se elige **una sola opción** en cada uno |
 | **Procedencia** (país, ciudad o provincia) | Admite **varias opciones** |
 | **Motivo de visita**, **Edad** y **Género** | Admiten **varias opciones** |
 
 Cómo se combinan: dentro de un mismo filtro las opciones se **suman** (Colombia y Perú). Entre filtros distintos se **cruzan** (visitantes de
 Colombia o Perú, y además por turismo).
+
+### Los filtros solo ofrecen lo que tiene datos
+
+Cuando usted elige algo en un filtro, los **demás** filtros se acortan y solo muestran las opciones que tienen visitantes con lo que ya eligió.
+Por ejemplo, si elige un establecimiento, el filtro de procedencia muestra solo los lugares de donde llegaron visitantes a ese establecimiento,
+y el de año, solo los años en que reportó. Así no hace falta probar opciones que darían cero.
+
+- **El filtro que usted está usando no se acorta a sí mismo.** Si eligió Colombia, en Procedencia siguen apareciendo los demás países, para que
+  pueda sumar otro.
+- **Lo que ya eligió no desaparece.** Si una opción elegida se queda sin visitantes por otro filtro, sigue en su lista, marcada, para que pueda
+  quitarla.
+- **Al quitar un filtro, las opciones vuelven.** Da igual cómo lo quite: con la **×** de una etiqueta, con **Quitar todos**, desde el panel del
+  celular o volviendo a tocar un motivo o un gráfico. Lo mismo pasa al abrir un enlace compartido: los filtros se acortan igual que si los hubiera
+  elegido a mano.
+
+```mermaid
+flowchart TD
+    A[Usted elige o quita una opción en un filtro] --> B[El dashboard mira los visitantes que cumplen los demás filtros]
+    B --> C[Cada filtro muestra solo las opciones con visitantes]
+    C --> D[Lo que usted ya eligió se queda en su lista]
+    D --> E[Las cifras, los gráficos y el mapa se recalculan]
+```
 
 ### Etiquetas
 
@@ -133,16 +155,25 @@ Use la función de imprimir de su navegador (Ctrl + P). La página se ajusta par
 Pulse el botón de la **luna** en la barra de estado para pasar a modo oscuro, más cómodo de noche. Pulse el sol para volver. El dashboard
 abre en modo claro por defecto; si usted elige el modo oscuro, se recuerda en ese dispositivo.
 
-## Contacto
+## El pie de la página
 
-Al final de la página, en el pie, están los datos de las personas a cargo:
+Al final de la página, el pie tiene tres partes:
 
-| Quién | Rol |
-|---|---|
-| **Lic. Vanessa Lesano** | Licenciada en Turismo. Contacto y apoyo del GAD Municipal de Patate |
-| **Ing. Kevin Alexis Barrera Llerena** | Ingeniero de Software. Diseño, desarrollo, publicación y monitoreo del dashboard |
+1. **Tres columnas** con lo básico: «Acerca del dashboard», «Privacidad y seguridad» y «Fuentes y licencias».
+2. **La franja del GAD Municipal de San Cristóbal de Patate**, con su escudo y la foto y el nombre del **Ing. Emerson Hernán Medina Castro,
+   Alcalde, Administración 2023 a 2027**, los agradecimientos y el botón **Sitio del GAD**, que abre la página oficial del municipio.
+3. **Dos tarjetas** con las personas a cargo:
 
-Cada uno tiene sus enlaces a redes sociales. Si una red dice «Pronto», todavía no tiene enlace publicado.
+| Tarjeta | Quién | Rol |
+|---|---|---|
+| **Contacto del municipio** | **Lic. Vanessa Lesano Martínez** | Licenciada en Turismo. Contacto y apoyo del GAD Municipal de Patate |
+| **Diseño y desarrollo** | **Ing. Kevin Alexis Barrera Llerena** | Ingeniero de Software. Diseño, desarrollo, publicación y monitoreo del dashboard |
+
+Cada tarjeta tiene sus enlaces a redes sociales, que se abren en una pestaña nueva. Si una red dice **«Pronto»**, todavía no tiene enlace publicado:
+al pulsarla aparece un aviso con los enlaces que sí están disponibles. Si una foto no carga, se ven las iniciales de la persona.
+
+La última línea dice quién hizo el dashboard, de quién son los datos y de dónde salen las fotos: la del alcalde, del sitio oficial del GAD; las
+demás, publicadas con autorización de cada persona.
 
 ## Qué hacer si el chip dice «Publicación detenida»
 

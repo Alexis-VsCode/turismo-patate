@@ -55,6 +55,9 @@ come from, why they come, and their age and gender. The requirements were:
 - **Filters:**
   - **several options at once** for business, country / city / province, reason, age and gender, with type-ahead search;
     year and month stay single-choice;
+  - **faceted:** each combo offers only the options that have visitors under the other active filters, not counting its own, and keeps
+    the option already chosen. It holds on every path: combos, tags, "Quitar todos", the phone panel, a click on a reason or a chart, and
+    a shared link;
   - **origin:** the combos list only the origins that have visitors in the data. The full catalog (about 450
     entries) is used to validate records and place them on the map;
   - options inside one filter are added together and different filters are intersected;
@@ -62,8 +65,10 @@ come from, why they come, and their age and gender. The requirements were:
   - **active-filter tags** above the charts, removed one by one or all at once, which filter the whole dashboard.
 - **Shareable link:** the page address reproduces the filters in use (several countries, a year, a reason...); the "Copiar enlace" button copies it and
   whoever opens it sees the same thing. A hand-edited link is validated and anything invalid is dropped.
-- **Printing and accessibility:** controls are hidden when printing so the dashboard fits one sheet; there is a skip-to-content link, the participation sentence is
-  announced when it changes, and a preview image is provided when the address is shared.
+- **Printing and accessibility:** controls are hidden when printing and each panel goes back to its own cell; there is a skip-to-content link, the
+  participation sentence is announced when it changes, and a preview image is provided when the address is shared. Focus returns to its place when
+  the tags, the reasons and the combo are repainted; the evolution and age charts are read as images with a summary; with "reduce motion" the
+  charts do not animate and the map does not fly.
 - **Refresh and freshness:** the site is published every 30 minutes (`PUBLICACION_MINUTOS`). The browser fetches
   on load, with the "Actualizar" button and automatically every 10 minutes (`INTERVALO_AUTO_MS`) while the tab is
   visible. The status bar shows four figures, each with a short explanation beneath it: **Última publicación** ("Datos nuevos cada 30
@@ -71,12 +76,15 @@ come from, why they come, and their age and gender. The requirements were:
   datos** (businesses with at least one month recorded) and **Registros mensuales** (each one: a month, an origin and a reason). The browser's
   fetch time is no longer shown. A chip tells whether publishing is up to date, delayed or stopped. On medium screens (860 to 1279 px, including a
   phone's desktop mode, around 980 px) the bar is arranged in two rows: chip and buttons on top, the four figures below.
-- **Data quality:** invalid rows are never dropped silently; they are listed with their tab and row.
-- **Header and footer:** the header carries the institutional identity and the place. The footer, with an "Acerca del dashboard" column, explains what
-  the dashboard is, its privacy and security, and its sources and licenses; it thanks the municipality and
-  introduces, with their role written out, the municipality's contact and the author, with their photos (initials as a fallback if a photo does not load). If a social link of the
-  contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the other links. The footer ends with the rights line:
-  the author and year, that the data belongs to the GAD Municipal de San Cristóbal de Patate and the canton's establishments, and that the photos are published with each person's permission.
+- **Data quality:** invalid rows are never dropped silently; they are listed with their tab and row. An accepted row worth checking
+  (hand-written gray columns that contradict the Country, or more than 450000 visitors in one monthly row) is published and leaves a notice.
+- **Header and footer:** the header carries the institutional identity and the place. The footer has three columns ("Acerca del dashboard",
+  "Privacidad y seguridad" and "Fuentes y licencias"); the GAD band, with its coat of arms, the photo of **Ing. Emerson Hernán Medina Castro,
+  Mayor, Administration 2023 to 2027**, the acknowledgment and the link to the GAD website; and the cards "Contacto del municipio" (Lic. Vanessa
+  Lesano Martínez) and "Diseño y desarrollo" (the author), with their photos and their initials as a fallback if a photo does not load. The names
+  come from `config.js`. If a social link of the contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the
+  other links. The footer ends with the rights line: the author and year, that the data belongs to the GAD Municipal de San Cristóbal de Patate and
+  the canton's establishments, and where the photos come from.
 - **Responsive design:** on phones it is a single column, with a floating "Filtros" button that opens a bottom
   sheet; no horizontal scrolling.
 - **Light and dark mode:** the site opens in light mode by default, without following the system theme. The moon button switches to dark and that choice is remembered on the device.
@@ -84,20 +92,22 @@ come from, why they come, and their age and gender. The requirements were:
 ## How it works
 
 ```mermaid
-flowchart LR
-    A[Businesses<br/>one tab each] -->|fill in| B[(Google Sheet<br/>published as xlsx)]
-    CJ[cron-job.org<br/>:00 and :30<br/>workflow_dispatch] --> F
-    GS[GitHub schedule<br/>:15 and :45] --> F
-    subgraph F[Publicar dashboard workflow]
-        direction LR
-        X[destrabar<br/>cancels runs stuck<br/>for over 25 min]
-        C[construir<br/>downloads the xlsx with SHEET_URL,<br/>validates and builds datos.json]
-        D[desplegar<br/>GitHub Pages]
-        X --> D
-        C --> D
-    end
-    B -.->|download| C
-    D --> E[Visitor's browser<br/>reads only datos.json]
+sequenceDiagram
+    participant E as Businesses
+    participant H as Google Sheet
+    participant D as cron-job.org and schedule
+    participant A as GitHub Actions
+    participant P as GitHub Pages
+    participant N as Browser
+    E->>H: fill in their tab
+    D->>A: trigger publicar.yml every 30 minutes
+    A->>A: destrabar cancels stuck runs
+    A->>H: bounded download with the SHEET_URL secret
+    H-->>A: published xlsx workbook
+    A->>A: construir-datos validates and builds datos.json
+    A->>P: deploys the site without src/publicacion
+    N->>P: requests datos/datos.json
+    N->>N: validates the contract and paints the dashboard
 ```
 
 Publishing has two independent triggers, offset by 15 minutes, and both run the same workflow
@@ -171,26 +181,57 @@ Details, thresholds and what to do when the chip is not green: [docs/observabili
 
 ## Architecture
 
-The code follows a **semi-hexagonal architecture**. A test enforces that no layer depends on one it should not.
+The code has two sides that never import each other: **publishing**, hexagonal, which runs in GitHub Actions, and the **dashboard**
+(`tablero`), semi-hexagonal, which runs in the browser. Both use the same domain and the same data contract.
+
+```mermaid
+flowchart LR
+    subgraph Shared
+        D[src/domain pure rules]
+        C[src/contrato datos.json and bounded download]
+    end
+    subgraph Publishing[src/publicacion, in Actions]
+        UC[construir-datos use case]
+        AD[adapters sheet, xlsx reader and file]
+    end
+    subgraph Dashboard[src/tablero, in the browser]
+        F[facade]
+        K[container and presentational]
+        I[infrastructure]
+    end
+    UC --> C
+    AD --> C
+    C --> D
+    UC --> D
+    K --> F
+    F --> D
+    I --> C
+```
 
 | Layer | Folder | Responsibility |
 |---|---|---|
-| Domain | [`src/domain/`](src/domain) | Pure rules: visitor normalization, catalog, statistics and freshness |
-| Infrastructure | [`src/infrastructure/`](src/infrastructure) | Configuration, bounded download, `datos.json` contract and Excel reading |
-| Facade | [`src/application/tablero.facade.js`](src/application/tablero.facade.js) | State, filters, refresh policy and computed view, no DOM |
-| Container | [`src/application/components/tablero.container.js`](src/application/components/tablero.container.js) | Connects the page to the facade |
-| Presentational | [`src/application/components/presentational/`](src/application/components/presentational) | Charts, map, reasons, cards and notices, stateless |
-| Shared | [`src/shared/`](src/shared) | Texts, formatting and theme logic |
-| Composition root | [`src/main.js`](src/main.js) | Wires infrastructure, facade and container, and traces the whole flow |
+| Domain | [`src/domain/`](src/domain) | Pure rules: visitor normalization, catalog, filters, faceted options, statistics and freshness |
+| Contract | [`src/contrato/`](src/contrato) | Versioned `datos.json` format and bounded download, shared by both sides |
+| Publishing | [`src/publicacion/`](src/publicacion) | `construir-datos` use case, ports as JSDoc typedefs, adapters (Google sheet, xlsx reader, file) and its configuration |
+| Facade | [`src/tablero/application/tablero.facade.js`](src/tablero/application/tablero.facade.js) | State, filters, refresh policy and computed view, no DOM |
+| Container | [`src/tablero/application/components/tablero.container.js`](src/tablero/application/components/tablero.container.js) | Connects the page to the facade |
+| Presentational and shared components | [`src/tablero/application/components/`](src/tablero/application/components) | Charts, reasons, cards and notices, stateless; combo, filter panel, floating notice and map |
+| Dashboard infrastructure | [`src/tablero/infrastructure/`](src/tablero/infrastructure) | Browser configuration and `datos.json` download |
+| Shared | [`src/tablero/shared/`](src/tablero/shared) | Texts, formatting and theme logic |
+| Composition root | [`src/tablero/main.js`](src/tablero/main.js) | Wires infrastructure, facade and container, and traces the whole flow |
+| Publishing entry point | [`tools/construir-datos.mjs`](tools/construir-datos.mjs) | Reads arguments and environment, builds the adapters and calls the use case |
 
-More in [docs/arquitectura.md](docs/arquitectura.md) and in the [design decisions](docs/decisiones/) (Spanish).
+`test/arquitectura.test.mjs` enforces the dependency rule and `test/orden-de-modulos.test.mjs`, the internal order of each module. More in
+[docs/arquitectura.md](docs/arquitectura.md) and in [decision 010](docs/decisiones/010-publicacion-hexagonal-y-tablero-semihexagonal.md) (Spanish).
 
 ## Security
 
 - **Libraries:** pinned versions with no known CVEs at review time. ECharts 6.1.0 fixes CVE-2026-45249 and
   SheetJS 0.20.3 fixes CVE-2023-30533 and CVE-2024-22363.
-- **Integrity (SRI):** every external script carries its `integrity` hash.
-- **CSP:** a strict policy with `connect-src 'self'`, no inline scripts and no `eval`.
+- **Integrity (SRI):** every external script and stylesheet carries its `integrity` hash.
+- **CSP:** a strict policy that allows each external resource by its exact URL, with `connect-src 'self'`, no inline scripts and no `eval`.
+- **Publishing with least privilege:** the workflow grants only `contents: read` and each job declares what it uses. The spreadsheet ID does not
+  appear in any file of the repository, and a test enforces it.
 - **Spreadsheet content:** treated as untrusted input. It is written with `textContent` or the DOM API,
   protected against prototype pollution, and the download is bounded in size and time.
 - **Privacy:** no cookies and no tracking. The only thing stored on the device is the theme choice, and it is
@@ -202,18 +243,20 @@ Details in [docs/seguridad.md](docs/seguridad.md) (Spanish). To report a vulnera
 ## Tests
 
 They run on every `push` to `main` (a step with `if: github.event_name == 'push'`), and a push with a red test is not published. They do not run on
-every scheduled publication:
+every scheduled publication. On every pull request, [`ci.yml`](.github/workflows/ci.yml) also runs the builder with the test workbook, the Python
+tests of the Excel generator and the oracle, and `npm run oraculo`.
 
 | Folder | What it tests |
 |---|---|
-| [`test/domain/`](test/domain) | The filter scenarios (totals, series and year-over-year change) reconcile **exactly** with an independent Python oracle ([`tools/oraculo.py`](tools/oraculo.py)) over the real workbook. Also data freshness |
-| [`test/infrastructure/`](test/infrastructure) | Normalization of real-world typos (`agosoto`, spaces, accents), rejected rows with their location, the `datos.json` contract, hostile HTML, `__proto__` and bounded download |
-| [`test/application/`](test/application) | Facade with a simulated clock (reuse, automatic refresh, data kept on errors, map tabs, period texts) and the chart options |
-| [`test/shared/`](test/shared) | Number and date formatting, filter-dependent texts and the theme, including the script that prevents flicker |
-| [`test/tools/`](test/tools) | The `destrabar` job: which runs count as stuck and which get cancelled |
+| [`test/domain/`](test/domain) | The filter scenarios (totals, series and year-over-year change) reconcile **exactly** with an independent Python oracle ([`tools/oraculo.py`](tools/oraculo.py)) over the test workbooks in `test/fixtures/` (previous and monthly format). Also normalization, filters, faceted options, the shared link, limits and freshness |
+| [`test/contrato/`](test/contrato) | The `datos.json` contract: round trip, tampered or older packages, and that the spreadsheet URL never travels |
+| [`test/publicacion/`](test/publicacion) | Use case in memory, workbook reader (real-world typos such as `agosoto`, rejected rows with their location, gray-column and suspicious-row notices), hostile HTML, `__proto__`, bounded download and retries |
+| [`test/tablero/`](test/tablero) | Facade with a simulated clock, presentational and shared components over a fake DOM, focus on repaint, configuration, formatting, texts, theme, CSP, stylesheet and accessibility |
+| [`test/tools/`](test/tools) | Builder entry point, `destrabar`, workflow permissions, oracle, local server and that no file writes a spreadsheet ID |
+| [`test/excel/`](test/excel) and [`test/tools/oraculo.test.py`](test/tools/oraculo.test.py) | Excel generator and oracle, in Python |
+| [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) and [`test/orden-de-modulos.test.mjs`](test/orden-de-modulos.test.mjs) | Dependency rule between layers and order of each module |
+| [`test/redaccion.test.mjs`](test/redaccion.test.mjs) | No emojis or long dashes in code, tests, tools, styles, workflows and documentation |
 | [`test/sin-azul.test.mjs`](test/sin-azul.test.mjs) | No blue color in styles, HTML or code, except the Ecuador flag and the official LinkedIn and Facebook colors |
-| [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) | Dependency rule between layers |
-| [`test/tema-tokens.test.mjs`](test/tema-tokens.test.mjs) | Every color token in use exists, so no chart falls back to a default palette |
 
 ## Run locally
 
@@ -230,7 +273,7 @@ pip install openpyxl xlsxwriter
 |---|---|
 | `npm test` | Runs all tests (`node --test "test/**/*.test.mjs"`) |
 | `npm run datos` | Generates `datos/datos.json` from the test workbook `test/fixtures/piloto-publicado.xlsx` |
-| `npm run oraculo` | Runs the independent Python oracle (`tools/oraculo.py`, needs `openpyxl`) and computes the expected figures |
+| `npm run oraculo` | Runs the independent Python oracle (`tools/oraculo.py`, needs `openpyxl`) on both test workbooks, rewrites `test/fixtures/esperado.json` and `test/fixtures/esperado-mensual.json`, and runs the reconciliation for both formats |
 | `npm run servir` | Starts the cache-free local server |
 
 Python generators, run directly:
@@ -240,6 +283,8 @@ Python generators, run directly:
 | `python tools/generar-piloto.py` | `openpyxl` | Fictitious test workbooks |
 | `python tools/excel/generar-excel.py --salida <file.xlsx>` | `xlsxwriter` | Capture workbook (`--modo completo` or `fixture`) |
 | `python tools/catalogos/generar-catalogos.py` | standard library only | Canton and country catalogs (see `tools/catalogos/LEEME.md`) |
+| `python test/excel/plantilla.test.py` | `openpyxl` and `xlsxwriter` | Test of the Excel generator |
+| `python test/tools/oraculo.test.py` | `openpyxl` | Test of the oracle |
 
 Common commands:
 
@@ -265,17 +310,21 @@ with new styles. Since automatic publishing does not run locally, the freshness 
 
 ```
 ├── index.html · css/tema.css
-├── src/                      domain · infrastructure · application · shared · main.js
+├── src/
+│   ├── domain/               pure rules, shared
+│   ├── contrato/             datos.json contract and bounded download, shared
+│   ├── publicacion/          use case, ports, adapters and configuration (runs in Actions)
+│   └── tablero/              application · infrastructure · shared · main.js (runs in the browser)
 ├── assets/                   logo, header photo, share image (og.jpg) and province limits
 │   └── personas/             photos of the people behind the project (footer)
 ├── tools/
-│   ├── construir-datos.mjs   datos.json builder (runs in Actions)
+│   ├── construir-datos.mjs   publishing entry point (runs in Actions)
 │   ├── destrabar-publicacion.mjs  cancels stuck runs
 │   ├── oraculo.py · generar-piloto.py · servir.mjs
-│   ├── excel/                capture workbook generator (generar-excel.py)
+│   ├── excel/                capture workbook generator and Google protection script (proteger-hoja.gs)
 │   ├── catalogos/            generator and sources of the canton and country catalogs
 │   └── vendor/               SheetJS, only for the builder
-├── test/                     tests per layer and fixtures
+├── test/                     tests per layer (domain, contrato, publicacion, tablero, tools, excel) and fixtures
 ├── docs/                     architecture, use cases, configuration, operations, observability, security,
 │                             user manual (manual-usuario.md), decisions and screenshots
 ├── .github/
@@ -295,7 +344,7 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 - [Operations manual](docs/operacion.md)
 - [Observability](docs/observabilidad.md)
 - [Security](docs/seguridad.md) and [security policy](SECURITY.md)
-- [Design decisions (ADR)](docs/decisiones/), in particular [009, publishing with a double trigger](docs/decisiones/009-publicacion-con-doble-disparador.md)
+- [Design decisions (ADR)](docs/decisiones/), in particular [009, publishing with a double trigger](docs/decisiones/009-publicacion-con-doble-disparador.md) and [010, hexagonal publishing and semi-hexagonal dashboard](docs/decisiones/010-publicacion-hexagonal-y-tablero-semihexagonal.md)
 - [Contributing guide](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 
@@ -304,7 +353,8 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 | Person | Role |
 |---|---|
 | **Ing. Kevin Alexis Barrera Llerena** | Author. Design, development, publishing and monitoring (observability) of the dashboard. |
-| **Lic. Vanessa Lesano** | Bachelor in Tourism. Contact and support at the Municipal Government of San Cristóbal de Patate. |
+| **Lic. Vanessa Lesano Martínez** | Bachelor in Tourism. Contact and support at the Municipal Government of San Cristóbal de Patate. |
+| **Ing. Emerson Hernán Medina Castro** | Mayor of San Cristóbal de Patate, Administration 2023 to 2027. His administration supports the dashboard. |
 
 **Ing. Kevin Alexis Barrera Llerena**, Software Engineer.
 
@@ -312,7 +362,7 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 [![Facebook](https://img.shields.io/badge/Facebook-alexis.barrerallerena1804-1877F2?logo=facebook)](https://www.facebook.com/alexis.barrerallerena1804)
 [![TikTok](https://img.shields.io/badge/TikTok-%40mancogamesam-000000?logo=tiktok)](https://www.tiktok.com/@mancogamesam)
 
-**Lic. Vanessa Lesano**, municipality contact.
+**Lic. Vanessa Lesano Martínez**, municipality contact.
 
 [![Facebook](https://img.shields.io/badge/Facebook-Vanessa%20Lesano-1877F2?logo=facebook)](https://www.facebook.com/vane.lesano.martinez)
 [![TikTok](https://img.shields.io/badge/TikTok-%40vanelesano-000000?logo=tiktok)](https://www.tiktok.com/@vanelesano)
@@ -320,8 +370,9 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 
 ## Acknowledgments
 
-To the **Municipal Government of San Cristóbal de Patate** and **Lic. Vanessa Lesano**, for providing the
-information from the tourism establishments and supporting the development of this dashboard.
+To the **Municipal Government of San Cristóbal de Patate**, under the administration of **Ing. Emerson Hernán Medina Castro** (2023 to 2027),
+and to **Lic. Vanessa Lesano Martínez**, for providing the information from the tourism establishments and supporting the development of this
+dashboard.
 
 ## License
 

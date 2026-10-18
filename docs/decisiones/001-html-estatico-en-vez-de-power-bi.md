@@ -17,4 +17,4 @@ válida, pero exigiría rehacer el dashboard y sus filtros en esa herramienta.
 ## Consecuencias
 
 - Costo de licencias cero y diseño exactamente igual al que pidió el cliente.
-- Los filtros cruzados que Power BI trae hechos se programan. Se prueban en `test/application/`.
+- Los filtros cruzados que Power BI trae hechos se programan. Se prueban en `test/tablero/application/` y en `test/domain/`.

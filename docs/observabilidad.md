@@ -8,7 +8,7 @@ una publicación falló. No sustituye un monitoreo externo (ver [Límites](#lím
 | Elemento | Definición |
 |---|---|
 | **SLI** | Edad de la publicación: minutos desde `generadoEn` en `datos/datos.json`, la hora en que Actions construyó el archivo |
-| **SLO** | Publicación cada `PUBLICACION_MINUTOS` (30) minutos. Al día mientras la edad no supere `UMBRALES_FRESCURA.alDiaMin` (45) de [`src/infrastructure/config.js`](../src/infrastructure/config.js). Los umbrales viven solo allí |
+| **SLO** | Publicación cada `PUBLICACION_MINUTOS` (30) minutos. Al día mientras la edad no supere `UMBRALES_FRESCURA.alDiaMin` (45) de [`src/tablero/infrastructure/config.js`](../src/tablero/infrastructure/config.js). Los umbrales viven solo allí |
 | **Cálculo** | Función pura [`estadoFrescura`](../src/domain/frescura.js), expuesta por la fachada como `frescura()` y probada con límites exactos |
 
 Los límites exactos pertenecen a la categoría más sana: con 45 minutos todavía es «al día» y con 100 todavía es «con retraso».
@@ -78,7 +78,8 @@ siguientes se cancelaron una tras otra (1.844 en total) durante seis días.
 
 Los logs de Actions son públicos: solo llevan cuentas y duraciones, nunca nombres de pestañas ni la URL de la hoja. Cada línea es JSON.
 
-`tools/construir-datos.mjs` (paso «Construir datos desde la hoja») y una tabla en el resumen de la ejecución:
+`tools/construir-datos.mjs` (paso «Construir datos desde la hoja»), con las cuentas que devuelve el caso de uso, y una tabla en el resumen de
+la ejecución:
 
 | Evento | Cuándo | Campos |
 |---|---|---|
@@ -86,8 +87,12 @@ Los logs de Actions son públicos: solo llevan cuentas y duraciones, nunca nombr
 | `descarga_reintento` | La descarga de la hoja falló por algo pasajero (corte de red, 429 o 5xx de Google) | `intento`, `codigo`, `detalle` |
 | `error_construccion` | La construcción falló y sale con error, sin tocar el `datos.json` anterior | `mensaje` |
 
-La descarga reintenta hasta 3 veces, con espera inicial de 2 s que se duplica en cada intento. Un error de cliente (403, 404) o una hoja demasiado grande no se reintentan.
+La descarga hace hasta 3 intentos en total (2 reintentos), con esperas de 2 s y 4 s (`descargarConReintentos` en
+`src/publicacion/adaptadores/hoja-google.js`). Un error de cliente (403, 404) o una hoja demasiado grande no se reintentan.
 Si el resumen no se puede escribir, se avisa y la publicación continúa.
+
+`avisos` cuenta también los avisos de fila del lector: columnas grises que contradicen el País y filas mensuales que pasan de
+`UMBRAL_FILA_SOSPECHOSA` (450000). Esas filas se publican; el detalle se ve en el panel de problemas del dashboard, nunca en el log.
 
 `tools/destrabar-publicacion.mjs` (paso «Cancelar ejecuciones trabadas»):
 
@@ -96,12 +101,13 @@ Si el resumen no se puede escribir, se avisa y la publicación continúa.
 | `ejecucion_destrabada` | Por cada ejecución trabada que intentó cancelar | `id`, `http` (código de la respuesta de la API) |
 | `destrabar_fin` | Siempre al terminar bien | `revisadas`, `canceladas` |
 | `flujo_mantenido` | Tras llamar a `enable` sobre el flujo | `http` (código de la respuesta de la API) |
-| `destrabar_error` | La limpieza falló; el job termina con error pero no impide publicar | `mensaje` |
+| `destrabar_error` | La API de GitHub respondió con error o no se pudo mantener activo el flujo; el job termina en rojo, visible en Actions, pero no impide publicar | `mensaje` |
 
-Ejemplos:
+Ejemplos. El primero sale del libro ficticio de prueba
+(`node tools/construir-datos.mjs --desde-archivo test/fixtures/piloto-publicado.xlsx <salida>`); la duración cambia en cada máquina:
 
 ```json
-{"evento":"datos_construidos","establecimientos":106,"filas":92702,"discapacidad":1808,"rechazos":0,"avisos":0,"bytes":2593317,"duracionMs":9287}
+{"evento":"datos_construidos","establecimientos":100,"filas":29628,"discapacidad":0,"rechazos":0,"avisos":0,"bytes":819281,"duracionMs":5376}
 {"evento":"error_construccion","mensaje":"SHEET_URL ausente o con formato inesperado (debe ser .../pub?output=xlsx)"}
 {"evento":"destrabar_fin","revisadas":1,"canceladas":0}
 ```

@@ -11,7 +11,7 @@ equivocado al cargar.
 ## Decisión
 
 - **Un botón de dos estados** (claro y oscuro). Sin elección guardada, la decisión original era seguir al dispositivo (reemplazada, ver «Actualización 02/10/2026»).
-- **Script clásico externo** (`src/shared/tema-inicial.js`) en el `<head>`, antes de las hojas de estilo: aplica
+- **Script clásico externo** (`src/tablero/shared/tema-inicial.js`) en el `<head>`, antes de las hojas de estilo: aplica
   `data-theme` antes del primer pintado y cumple la CSP (`script-src 'self'`). Repite la regla de `tema.js` porque un
   script clásico no puede importar; una prueba lo ejecuta en un contexto aislado y comprueba que ambos coinciden.
 - **`localStorage`** con la clave `tema-patate`, siempre dentro de `try/catch`, porque puede lanzar en modo privado.
@@ -34,5 +34,5 @@ equivocado al cargar.
 - **El sitio abre siempre en modo claro y no sigue al sistema.** Sin elección guardada, o con un valor que no sea `dark`, el tema es el claro,
   aunque el dispositivo esté en modo oscuro.
 - **El botón de la luna cambia el tema y lo recuerda.** La elección se guarda en `localStorage` con la clave `tema-patate` y se respeta en las
-  visitas siguientes. La regla vive en `src/shared/tema.js` (`resolverTema`) y la repite `src/shared/tema-inicial.js`; la prueba que
+  visitas siguientes. La regla vive en `src/tablero/shared/tema.js` (`resolverTema`) y la repite `src/tablero/shared/tema-inicial.js`; la prueba que
   compara ambos sigue vigente.

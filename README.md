@@ -55,6 +55,9 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 - **Filtros:**
   - **varias opciones a la vez** en establecimiento, país / ciudad / provincia, motivo, edad y género, con búsqueda al escribir;
     año y mes son de una sola opción;
+  - **facetados:** cada combo ofrece solo las opciones que tienen visitantes bajo los demás filtros activos, sin contar el suyo, y conserva
+    la opción ya elegida. Vale por todos los caminos: combos, etiquetas, «Quitar todos», panel del celular, clic en un motivo o un gráfico y
+    enlace compartido;
   - **procedencia:** los combos muestran solo los orígenes que tienen visitantes en los datos. El catálogo completo
     (unas 450 entradas) se usa para validar los registros y ubicarlos en el mapa;
   - dentro de un filtro las opciones se suman y entre filtros se cruzan;
@@ -62,8 +65,9 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   - **etiquetas de filtros activos** sobre los gráficos, que se quitan una por una o todas a la vez, y que filtran todo el dashboard.
 - **Enlace compartible:** la dirección de la página reproduce los filtros puestos (varios países, un año, un motivo...); el botón «Copiar enlace» la copia
   y quien la abre ve lo mismo. Un enlace editado a mano se valida y lo que no sirve se descarta.
-- **Impresión y accesibilidad:** al imprimir se ocultan los controles y el dashboard cabe en una hoja; hay un enlace para saltar al contenido, anuncio de los
-  cambios de la frase de participación y vista previa al compartir la dirección en redes.
+- **Impresión y accesibilidad:** al imprimir se ocultan los controles y cada panel vuelve a su celda; hay un enlace para saltar al contenido, anuncio de los
+  cambios de la frase de participación y vista previa al compartir la dirección en redes. El foco vuelve a su lugar al repintar las etiquetas, los motivos y
+  el combo; los gráficos de evolución y de edad se leen como imágenes con un resumen; con «reducir movimiento» los gráficos no se animan y el mapa no vuela.
 - **Actualización y frescura:** el sitio se publica cada 30 minutos (`PUBLICACION_MINUTOS`). El navegador consulta
   al entrar, con el botón «Actualizar» y de forma automática cada 10 minutos (`INTERVALO_AUTO_MS`) mientras la
   pestaña está visible. La barra de estado muestra cuatro datos, cada uno con su explicación debajo: **Última publicación** («Datos nuevos cada 30
@@ -71,12 +75,15 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   menos un mes registrado») y **Registros mensuales** («Cada uno: un mes, un origen y un motivo»). La hora de consulta del navegador no se
   muestra. Un chip indica si la publicación está al día, retrasada o detenida. En pantallas medianas (de 860 a 1279 px, incluido el modo
   escritorio del celular, de unos 980 px) la barra se ordena en dos filas: chip y botones arriba, los cuatro datos debajo.
-- **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila.
-- **Encabezado y pie:** el encabezado lleva la identidad institucional y el lugar. El pie, con la columna «Acerca del dashboard», explica qué es el
-  dashboard, su privacidad y seguridad y sus fuentes y licencias; agradece al municipio y presenta, con su rol
-  escrito, al contacto del GAD y al autor, con sus fotos (y sus iniciales como respaldo si la foto no carga). Si el enlace de una red del
-  contacto aún no está publicado, su botón dice «Pronto» y abre un aviso con los demás enlaces. Al final lleva la línea de derechos:
-  el autor y el año, que los datos son del GAD Municipal de San Cristóbal de Patate y de los establecimientos del cantón, y que las fotos se publican con autorización de cada persona.
+- **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila. Una fila aceptada que conviene revisar
+  (columnas grises escritas a mano que contradicen el País, o más de 450000 visitantes en una fila mensual) se publica y deja un aviso.
+- **Encabezado y pie:** el encabezado lleva la identidad institucional y el lugar. El pie tiene tres columnas («Acerca del dashboard»,
+  «Privacidad y seguridad» y «Fuentes y licencias»); la franja del GAD, con su escudo, la foto del **Ing. Emerson Hernán Medina Castro, Alcalde,
+  Administración 2023 a 2027**, el agradecimiento y el enlace al sitio del GAD; y las tarjetas «Contacto del municipio» (Lic. Vanessa Lesano
+  Martínez) y «Diseño y desarrollo» (el autor), con sus fotos y sus iniciales como respaldo si la foto no carga. Los nombres salen de `config.js`.
+  Si el enlace de una red del contacto aún no está publicado, su botón dice «Pronto» y abre un aviso con los demás enlaces. Al final lleva la
+  línea de derechos: el autor y el año, que los datos son del GAD Municipal de San Cristóbal de Patate y de los establecimientos del cantón, y de
+  dónde salen las fotos.
 - **Diseño adaptable:** en el celular se ve en una columna, con un botón flotante «Filtros» que abre un panel
   desde abajo; sin scroll horizontal.
 - **Modo claro y oscuro:** el sitio abre en modo claro por defecto, sin seguir el tema del sistema. El botón de la luna cambia a oscuro y esa elección se recuerda en el dispositivo.
@@ -84,20 +91,22 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 ## Cómo funciona
 
 ```mermaid
-flowchart LR
-    A[Establecimientos<br/>una pestaña cada uno] -->|llenan| B[(Google Sheet<br/>publicada en xlsx)]
-    CJ[cron-job.org<br/>:00 y :30<br/>workflow_dispatch] --> F
-    GS[schedule de GitHub<br/>:15 y :45] --> F
-    subgraph F[Flujo Publicar dashboard]
-        direction LR
-        X[destrabar<br/>cancela ejecuciones<br/>atascadas más de 25 min]
-        C[construir<br/>descarga el xlsx con SHEET_URL,<br/>valida y arma datos.json]
-        D[desplegar<br/>GitHub Pages]
-        X --> D
-        C --> D
-    end
-    B -.->|descarga| C
-    D --> E[Navegador del visitante<br/>solo lee datos.json]
+sequenceDiagram
+    participant E as Establecimientos
+    participant H as Hoja de Google
+    participant D as cron-job.org y schedule
+    participant A as GitHub Actions
+    participant P as GitHub Pages
+    participant N as Navegador
+    E->>H: llenan su pestaña
+    D->>A: disparan publicar.yml cada 30 minutos
+    A->>A: destrabar cancela lo trabado
+    A->>H: descarga acotada con el secreto SHEET_URL
+    H-->>A: libro xlsx publicado
+    A->>A: construir-datos valida y arma datos.json
+    A->>P: despliega el sitio sin src/publicacion
+    N->>P: pide datos/datos.json
+    N->>N: valida el contrato y pinta el dashboard
 ```
 
 La publicación tiene dos disparadores independientes, desfasados 15 minutos, y ambos ejecutan el mismo flujo
@@ -170,27 +179,57 @@ Detalle, umbrales y qué hacer cuando el chip no está en verde: [docs/observabi
 
 ## Arquitectura
 
-El código sigue una **arquitectura semihexagonal**. Una prueba vigila que ninguna capa dependa de otra que no le
-corresponde.
+El código tiene dos lados que nunca se importan entre sí: la **publicación**, hexagonal, que corre en GitHub Actions, y el **tablero**,
+semihexagonal, que corre en el navegador. Los dos usan el mismo dominio y el mismo contrato de datos.
+
+```mermaid
+flowchart LR
+    subgraph Compartido
+        D[src/domain reglas puras]
+        C[src/contrato datos.json y descarga acotada]
+    end
+    subgraph Publicacion[src/publicacion, en Actions]
+        UC[caso de uso construir-datos]
+        AD[adaptadores hoja, lector xlsx y archivo]
+    end
+    subgraph Tablero[src/tablero, en el navegador]
+        F[fachada]
+        K[container y presentacionales]
+        I[infraestructura]
+    end
+    UC --> C
+    AD --> C
+    C --> D
+    UC --> D
+    K --> F
+    F --> D
+    I --> C
+```
 
 | Capa | Carpeta | Responsabilidad |
 |---|---|---|
-| Dominio | [`src/domain/`](src/domain) | Reglas puras: normalización de visitantes, catálogo, estadísticas y frescura |
-| Infraestructura | [`src/infrastructure/`](src/infrastructure) | Configuración, descarga acotada, contrato de `datos.json` y lectura del Excel |
-| Fachada | [`src/application/tablero.facade.js`](src/application/tablero.facade.js) | Estado, filtros, política de actualización y vista calculada, sin DOM |
-| Container | [`src/application/components/tablero.container.js`](src/application/components/tablero.container.js) | Conecta la página con la fachada |
-| Presentacionales | [`src/application/components/presentational/`](src/application/components/presentational) | Gráficos, mapa, motivos, tarjetas y avisos, sin estado |
-| Shared | [`src/shared/`](src/shared) | Textos, formato y lógica del tema |
-| Raíz de composición | [`src/main.js`](src/main.js) | Une infraestructura, fachada y container, y traza el flujo completo |
+| Dominio | [`src/domain/`](src/domain) | Reglas puras: normalización de visitantes, catálogo, filtros, opciones facetadas, estadísticas y frescura |
+| Contrato | [`src/contrato/`](src/contrato) | Formato versionado de `datos.json` y descarga acotada, compartidos por los dos lados |
+| Publicación | [`src/publicacion/`](src/publicacion) | Caso de uso `construir-datos`, puertos como typedef de JSDoc, adaptadores (hoja de Google, lector xlsx, archivo) y su configuración |
+| Fachada | [`src/tablero/application/tablero.facade.js`](src/tablero/application/tablero.facade.js) | Estado, filtros, política de actualización y vista calculada, sin DOM |
+| Container | [`src/tablero/application/components/tablero.container.js`](src/tablero/application/components/tablero.container.js) | Conecta la página con la fachada |
+| Presentacionales y compartidos | [`src/tablero/application/components/`](src/tablero/application/components) | Gráficos, motivos, tarjetas y avisos, sin estado; combo, panel de filtros, aviso flotante y mapa |
+| Infraestructura del tablero | [`src/tablero/infrastructure/`](src/tablero/infrastructure) | Configuración del navegador y descarga de `datos.json` |
+| Shared | [`src/tablero/shared/`](src/tablero/shared) | Textos, formato y lógica del tema |
+| Raíz de composición | [`src/tablero/main.js`](src/tablero/main.js) | Une infraestructura, fachada y container, y traza el flujo completo |
+| Punto de entrada de la publicación | [`tools/construir-datos.mjs`](tools/construir-datos.mjs) | Lee argumentos y entorno, arma los adaptadores y llama al caso de uso |
 
-Más en [docs/arquitectura.md](docs/arquitectura.md) y en las [decisiones de diseño](docs/decisiones/).
+`test/arquitectura.test.mjs` vigila la regla de dependencias y `test/orden-de-modulos.test.mjs`, el orden interno de cada módulo. Más en
+[docs/arquitectura.md](docs/arquitectura.md) y en la [decisión 010](docs/decisiones/010-publicacion-hexagonal-y-tablero-semihexagonal.md).
 
 ## Seguridad
 
 - **Librerías:** versiones fijas y sin CVE conocidos a la fecha de revisión. ECharts 6.1.0 corrige
   CVE-2026-45249 y SheetJS 0.20.3 corrige CVE-2023-30533 y CVE-2024-22363.
-- **Integridad (SRI):** cada script externo lleva su hash `integrity`.
-- **CSP:** una política estricta con `connect-src 'self'`, sin scripts en línea ni `eval`.
+- **Integridad (SRI):** cada script y hoja de estilos externos llevan su hash `integrity`.
+- **CSP:** una política estricta que permite cada recurso externo por su URL exacta, con `connect-src 'self'`, sin scripts en línea ni `eval`.
+- **Publicación con permisos mínimos:** el flujo solo da `contents: read` y cada job declara lo que usa. El ID de la hoja no aparece en ningún
+  archivo del repositorio, y una prueba lo vigila.
 - **Contenido de la hoja:** se trata como entrada no confiable. Se escribe con `textContent` o con la API del
   DOM, se protege contra la contaminación de prototipos y la descarga tiene límites de tamaño y tiempo.
 - **Privacidad:** sin cookies ni rastreo. Solo se guarda en el dispositivo la elección de tema, y no se envía a
@@ -201,18 +240,20 @@ Detalle en [docs/seguridad.md](docs/seguridad.md). Para reportar una vulnerabili
 ## Pruebas
 
 Corren en cada `push` a `main` (paso con `if: github.event_name == 'push'`), y un `push` con una prueba en rojo no se publica. No corren en cada
-publicación programada:
+publicación programada. En cada pull request, [`ci.yml`](.github/workflows/ci.yml) corre además el constructor con el libro de prueba, las pruebas
+de Python del Excel y del oráculo, y `npm run oraculo`.
 
 | Carpeta | Qué prueba |
 |---|---|
-| [`test/domain/`](test/domain) | Los escenarios de filtros (totales, series y variación interanual) concilian **exactamente** con un oráculo independiente en Python ([`tools/oraculo.py`](tools/oraculo.py)) sobre el libro real. También la frescura de los datos |
-| [`test/infrastructure/`](test/infrastructure) | Normalización de errores reales (`agosoto`, espacios, tildes), filas rechazadas con ubicación, contrato de `datos.json`, HTML hostil, `__proto__` y descarga acotada |
-| [`test/application/`](test/application) | Fachada con reloj simulado (reuso, actualización automática, datos conservados ante errores, pestañas del mapa, textos del periodo) y las opciones de los gráficos |
-| [`test/shared/`](test/shared) | Formato de números y fechas, textos que dependen de los filtros y el tema, incluido el script que evita el parpadeo |
-| [`test/tools/`](test/tools) | El job `destrabar`: qué ejecuciones se consideran trabadas y cuáles se cancelan |
+| [`test/domain/`](test/domain) | Los escenarios de filtros (totales, series y variación interanual) concilian **exactamente** con un oráculo independiente en Python ([`tools/oraculo.py`](tools/oraculo.py)) sobre los libros de prueba de `test/fixtures/` (formato anterior y mensual). También normalización, filtros, opciones facetadas, enlace, límites y frescura |
+| [`test/contrato/`](test/contrato) | Contrato de `datos.json`: ida y vuelta, paquetes alterados o anteriores, y que la URL de la hoja no viaje |
+| [`test/publicacion/`](test/publicacion) | Caso de uso en memoria, lector del libro (errores reales como `agosoto`, rechazos con ubicación, avisos de columnas grises y de fila sospechosa), HTML hostil, `__proto__`, descarga acotada y reintentos |
+| [`test/tablero/`](test/tablero) | Fachada con reloj simulado, presentacionales y compartidos sobre un DOM falso, foco al repintar, configuración, formato, textos, tema, CSP, hoja de estilos y accesibilidad |
+| [`test/tools/`](test/tools) | Punto de entrada del constructor, `destrabar`, permisos de los flujos, oráculo, servidor local y que nadie escriba el ID de una hoja |
+| [`test/excel/`](test/excel) y [`test/tools/oraculo.test.py`](test/tools/oraculo.test.py) | Generador del Excel y oráculo, en Python |
+| [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) y [`test/orden-de-modulos.test.mjs`](test/orden-de-modulos.test.mjs) | Regla de dependencias entre capas y orden de cada módulo |
+| [`test/redaccion.test.mjs`](test/redaccion.test.mjs) | Sin emojis ni guiones largos en código, pruebas, herramientas, estilos, flujos y documentación |
 | [`test/sin-azul.test.mjs`](test/sin-azul.test.mjs) | Ningún color azul en estilos, HTML ni código, salvo la bandera de Ecuador y los colores oficiales de LinkedIn y Facebook |
-| [`test/arquitectura.test.mjs`](test/arquitectura.test.mjs) | Regla de dependencias entre capas |
-| [`test/tema-tokens.test.mjs`](test/tema-tokens.test.mjs) | Todo token de color usado existe, para que ningún gráfico caiga en una paleta por defecto |
 
 ## Ejecutar en local
 
@@ -229,7 +270,7 @@ Scripts de `package.json`:
 |---|---|
 | `npm test` | Corre todas las pruebas (`node --test "test/**/*.test.mjs"`) |
 | `npm run datos` | Genera `datos/datos.json` desde el libro de prueba `test/fixtures/piloto-publicado.xlsx` |
-| `npm run oraculo` | Corre el oráculo independiente en Python (`tools/oraculo.py`, requiere `openpyxl`) y calcula las cifras esperadas |
+| `npm run oraculo` | Corre el oráculo independiente en Python (`tools/oraculo.py`, requiere `openpyxl`) con los dos libros de prueba, reescribe `test/fixtures/esperado.json` y `test/fixtures/esperado-mensual.json` y corre la conciliación de los dos formatos |
 | `npm run servir` | Levanta el servidor local sin caché |
 
 Generadores en Python, que se ejecutan directamente:
@@ -239,6 +280,8 @@ Generadores en Python, que se ejecutan directamente:
 | `python tools/generar-piloto.py` | `openpyxl` | Libros ficticios de prueba |
 | `python tools/excel/generar-excel.py --salida <archivo.xlsx>` | `xlsxwriter` | Libro de captura (`--modo completo` o `fixture`) |
 | `python tools/catalogos/generar-catalogos.py` | solo biblioteca estándar | Catálogos de cantones y países (ver `tools/catalogos/LEEME.md`) |
+| `python test/excel/plantilla.test.py` | `openpyxl` y `xlsxwriter` | Prueba del generador del Excel |
+| `python test/tools/oraculo.test.py` | `openpyxl` | Prueba del oráculo |
 
 Comandos habituales:
 
@@ -263,17 +306,21 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 
 ```
 ├── index.html · css/tema.css
-├── src/                      domain · infrastructure · application · shared · main.js
+├── src/
+│   ├── domain/               reglas puras, compartidas
+│   ├── contrato/             contrato de datos.json y descarga acotada, compartidos
+│   ├── publicacion/          caso de uso, puertos, adaptadores y configuración (corre en Actions)
+│   └── tablero/              application · infrastructure · shared · main.js (corre en el navegador)
 ├── assets/                   logo, foto de cabecera, imagen para compartir (og.jpg) y límites provinciales
 │   └── personas/             fotos de las personas del proyecto (pie de página)
 ├── tools/
-│   ├── construir-datos.mjs   constructor de datos.json (corre en Actions)
+│   ├── construir-datos.mjs   punto de entrada de la publicación (corre en Actions)
 │   ├── destrabar-publicacion.mjs  cancela ejecuciones atascadas
 │   ├── oraculo.py · generar-piloto.py · servir.mjs
-│   ├── excel/                generador del libro de captura (generar-excel.py)
+│   ├── excel/                generador del libro de captura y script de protección de Google (proteger-hoja.gs)
 │   ├── catalogos/            generador y fuentes de los catálogos de cantones y países
 │   └── vendor/               SheetJS, solo para el constructor
-├── test/                     pruebas por capa y fixtures
+├── test/                     pruebas por capa (domain, contrato, publicacion, tablero, tools, excel) y fixtures
 ├── docs/                     arquitectura, casos de uso, configuración, operación, observabilidad, seguridad,
 │                             manual de usuario (manual-usuario.md), decisiones y capturas
 ├── .github/
@@ -291,7 +338,7 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 - [Manual de operación](docs/operacion.md)
 - [Observabilidad](docs/observabilidad.md)
 - [Seguridad](docs/seguridad.md) y [política de seguridad](SECURITY.md)
-- [Decisiones de diseño (ADR)](docs/decisiones/), en particular la [009, publicación con doble disparador](docs/decisiones/009-publicacion-con-doble-disparador.md)
+- [Decisiones de diseño (ADR)](docs/decisiones/), en particular la [009, publicación con doble disparador](docs/decisiones/009-publicacion-con-doble-disparador.md) y la [010, publicación hexagonal y tablero semihexagonal](docs/decisiones/010-publicacion-hexagonal-y-tablero-semihexagonal.md)
 - [Guía de contribución](CONTRIBUTING.md)
 - [Registro de cambios](CHANGELOG.md)
 
@@ -300,7 +347,8 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 | Persona | Rol |
 |---|---|
 | **Ing. Kevin Alexis Barrera Llerena** | Autor. Diseño, desarrollo, publicación y monitoreo (observabilidad) del dashboard. |
-| **Lic. Vanessa Lesano** | Licenciada en Turismo. Contacto y apoyo del GAD Municipal de San Cristóbal de Patate. |
+| **Lic. Vanessa Lesano Martínez** | Licenciada en Turismo. Contacto y apoyo del GAD Municipal de San Cristóbal de Patate. |
+| **Ing. Emerson Hernán Medina Castro** | Alcalde de San Cristóbal de Patate, Administración 2023 a 2027. Su administración respalda el dashboard. |
 
 **Ing. Kevin Alexis Barrera Llerena**, Ingeniero de Software.
 
@@ -308,7 +356,7 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 [![Facebook](https://img.shields.io/badge/Facebook-alexis.barrerallerena1804-1877F2?logo=facebook)](https://www.facebook.com/alexis.barrerallerena1804)
 [![TikTok](https://img.shields.io/badge/TikTok-%40mancogamesam-000000?logo=tiktok)](https://www.tiktok.com/@mancogamesam)
 
-**Lic. Vanessa Lesano**, contacto del municipio.
+**Lic. Vanessa Lesano Martínez**, contacto del municipio.
 
 [![Facebook](https://img.shields.io/badge/Facebook-Vanessa%20Lesano-1877F2?logo=facebook)](https://www.facebook.com/vane.lesano.martinez)
 [![TikTok](https://img.shields.io/badge/TikTok-%40vanelesano-000000?logo=tiktok)](https://www.tiktok.com/@vanelesano)
@@ -316,8 +364,8 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 
 ## Agradecimientos
 
-Al **GAD Municipal de San Cristóbal de Patate** y a la **Lic. Vanessa Lesano**, por facilitar la
-información de los establecimientos turísticos y acompañar el desarrollo de este dashboard.
+Al **GAD Municipal de San Cristóbal de Patate**, administración del **Ing. Emerson Hernán Medina Castro** (2023 a 2027), y a la
+**Lic. Vanessa Lesano Martínez**, por facilitar la información de los establecimientos turísticos y respaldar el desarrollo de este dashboard.
 
 ## Licencia
 
