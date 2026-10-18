@@ -76,3 +76,11 @@ test('la validación de cambios ejecuta el constructor con el libro de prueba de
   const { scripts } = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf8'));
   assert.match(scripts.datos, /^node tools\/construir-datos\.mjs --desde-archivo test\/fixtures\/piloto-publicado\.xlsx$/);
 });
+
+test('la validación de cambios corre también las pruebas de Python y el oráculo con los dos formatos', () => {
+  assert.match(CI, /uses: actions\/setup-python@v\d+/, 'prepara Python');
+  assert.match(CI, /pip install[^\n]*openpyxl[^\n]*xlsxwriter|pip install[^\n]*xlsxwriter[^\n]*openpyxl/, 'instala las librerías de las pruebas');
+  assert.match(CI, /run: python test\/excel\/plantilla\.test\.py/, 'prueba el generador del Excel');
+  assert.match(CI, /run: python test\/tools\/oraculo\.test\.py/, 'prueba el oráculo');
+  assert.match(CI, /run: npm run oraculo/, 'concilia el oráculo con el dominio');
+});

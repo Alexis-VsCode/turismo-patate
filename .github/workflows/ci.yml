@@ -27,3 +27,19 @@ jobs:
 
       - name: Construir datos con el libro de prueba (humo del constructor)
         run: npm run datos
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Librerías de las pruebas de Python
+        run: pip install openpyxl xlsxwriter
+
+      - name: Prueba del generador del Excel
+        run: python test/excel/plantilla.test.py
+
+      - name: Prueba del oráculo
+        run: python test/tools/oraculo.test.py
+
+      - name: Oráculo independiente con los dos formatos
+        run: npm run oraculo
