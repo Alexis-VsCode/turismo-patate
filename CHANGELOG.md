@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.10.3] - 2026-10-17
+
+### Cambiado
+- **Franja del alcalde sin repeticiones:** la etiqueta dice «Con el respaldo del GAD Municipal», el cargo «Alcalde de San Cristóbal de Patate · 2023-2027» y el agradecimiento «Gracias a su administración y a la Lic. Vanessa Lesano Martínez por facilitar la información de los establecimientos turísticos del cantón». El nombre, el período y el cantón aparecen una sola vez; una prueba lo vigila.
+
 ## [2.10.2] - 2026-10-17
 
 ### Cambiado

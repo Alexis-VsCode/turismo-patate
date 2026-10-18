@@ -78,8 +78,8 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 - **Calidad de datos:** las filas inválidas no se descartan en silencio; se listan con su pestaña y su fila. Una fila aceptada que conviene revisar
   (columnas grises escritas a mano que contradicen el País, o más de 450000 visitantes en una fila mensual) se publica y deja un aviso.
 - **Encabezado y pie:** el encabezado lleva la identidad institucional y el lugar. El pie tiene tres columnas («Acerca del dashboard»,
-  «Privacidad y seguridad» y «Fuentes y licencias»); la franja del GAD, con su escudo, la foto del **Ing. Emerson Hernán Medina Castro, Alcalde,
-  Administración 2023-2027**, el agradecimiento y el enlace al sitio del GAD; y las tarjetas «Contacto del municipio» (Lic. Vanessa Lesano
+  «Privacidad y seguridad» y «Fuentes y licencias»); la franja del GAD, con su escudo, la foto del **Ing. Emerson Hernán Medina Castro, Alcalde de
+  San Cristóbal de Patate, 2023-2027**, un agradecimiento breve que no repite nombres y el enlace al sitio del GAD; y las tarjetas «Contacto del municipio» (Lic. Vanessa Lesano
   Martínez) y «Diseño y desarrollo» (el autor), con sus fotos y sus iniciales como respaldo si la foto no carga. Los nombres salen de `config.js`.
   Si el enlace de una red del contacto aún no está publicado, su botón dice «Pronto» y abre un aviso con los demás enlaces. Al final lleva la
   línea de derechos: el autor y el año, que los datos son del GAD Municipal de San Cristóbal de Patate y de los establecimientos del cantón, y de
