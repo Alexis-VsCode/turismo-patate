@@ -113,14 +113,14 @@ class PlantillaEstandarizada(unittest.TestCase):
         self.assertNotIn("no se publica en el tablero", textos)
         self.assertIn("panel de problemas", textos)
 
-    def test_catalogo_ofrece_otros_paises_sin_coordenadas(self):
+    def test_catalogo_ofrece_extranjeros_sin_especificar_sin_coordenadas(self):
         hoja = self.libro["_Catalogos"]
         filas = [[c.value for c in fila] for fila in hoja.iter_rows()]
         col = filas[0].index("País")
-        otros = [f for f in filas[1:] if f[col] == "Extranjeros (sin especificar)"]
-        self.assertEqual(len(otros), 1)
-        self.assertIsNone(otros[0][col + 1])
-        self.assertIsNone(otros[0][col + 2])
+        sin_pais = [f for f in filas[1:] if f[col] == "Extranjeros (sin especificar)"]
+        self.assertEqual(len(sin_pais), 1)
+        self.assertIsNone(sin_pais[0][col + 1])
+        self.assertIsNone(sin_pais[0][col + 2])
 
     def test_la_guia_explica_que_los_extranjeros_van_en_fila_aparte(self):
         textos = " ".join(str(c.value) for fila in self.libro["_Inicio"].iter_rows() for c in fila if c.value)

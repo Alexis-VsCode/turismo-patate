@@ -52,7 +52,8 @@ function alAgregarPestana(e) { if (e && e.changeType === 'INSERT_GRID') proteger
 
 /**
  * Vuelve a poner en cada fila con datos de cada pestaña de captura las fórmulas grises de la fila 2 de Plantillas.
- * Copia la celda como lo hace copiar y pegar, así las fórmulas con texto o búsquedas en el catálogo se ajustan bien.
+ * Copia la celda como lo hace copiar y pegar, así las fórmulas con texto o búsquedas en el catálogo se ajustan bien. Solo toca
+ * las pestañas cuyos encabezados son idénticos a los de Plantillas: en otra disposición de columnas las fórmulas apuntarían mal.
  * Borra lo que se haya escrito a mano en esas columnas: ejecútela solo después de pasar esos números a filas propias.
  */
 function restaurarFormulasGrises() {
@@ -60,12 +61,16 @@ function restaurarFormulasGrises() {
   var norma = function (t) { return String(t).replace(/\s+/g, ' ').trim().toLowerCase(); };
   var libro = SpreadsheetApp.getActive();
   var plantilla = libro.getSheetByName('Plantillas');
+  if (!plantilla) throw new Error('No existe la pestaña Plantillas');
   var titulosPlantilla = plantilla.getRange(1, 1, 1, plantilla.getLastColumn()).getValues()[0].map(norma);
   var informe = [];
+  var inicio = Date.now();
   libro.getSheets().forEach(function (hoja) {
+    if (Date.now() - inicio > 300000) return;
     var nombre = hoja.getName();
     if (nombre.charAt(0) === '_' || norma(nombre).indexOf('plantilla') >= 0 || hoja.getLastRow() < 2) return;
     var titulos = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(norma);
+    if (titulos.join('|') !== titulosPlantilla.join('|')) { informe.push(nombre + ': columnas distintas a Plantillas, no se toca'); return; }
     var filas = hoja.getLastRow() - 1;
     titulos.forEach(function (t, i) {
       var c = titulosPlantilla.indexOf(t);
@@ -79,14 +84,15 @@ function restaurarFormulasGrises() {
 
 /** Agrega «Extranjeros (sin especificar)» a la lista de países de _Catalogos si todavía no está. */
 function agregarExtranjerosSinEspecificar() {
-  var OTROS = 'Extranjeros (sin especificar)';
+  var EXTRANJEROS = 'Extranjeros (sin especificar)';
   var hoja = SpreadsheetApp.getActive().getSheetByName('_Catalogos');
   var titulos = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(function (t) { return String(t).trim(); });
   var c = titulos.indexOf('País') + 1;
   if (c < 1) throw new Error('No se encontró la columna País en _Catalogos');
   var valores = hoja.getRange(2, c, hoja.getMaxRows() - 1, 1).getValues().map(function (f) { return String(f[0]).trim(); });
-  if (valores.indexOf(OTROS) >= 0) { Logger.log('Ya estaba'); return; }
+  if (valores.indexOf(EXTRANJEROS) >= 0) { Logger.log('Ya estaba'); return; }
   var vacia = valores.indexOf('');
-  hoja.getRange(vacia + 2, c).setValue(OTROS);
+  if (vacia < 0) throw new Error('La columna País de _Catalogos no tiene filas libres');
+  hoja.getRange(vacia + 2, c).setValue(EXTRANJEROS);
   Logger.log('Agregado en la fila ' + (vacia + 2));
 }
