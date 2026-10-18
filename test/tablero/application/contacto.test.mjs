@@ -69,7 +69,7 @@ test('la autoridad del cantón viene de la configuración con su nombre, cargo, 
   const { nombre, cargo, periodo, enlace } = CONFIG.AUTORIDAD_MUNICIPIO;
   assert.equal(nombre, 'Ing. Emerson Hernán Medina Castro');
   assert.equal(cargo, 'Alcalde');
-  assert.equal(periodo, '2023 a 2027');
+  assert.equal(periodo, '2023-2027');
   assert.equal(enlaceSeguro(enlace), 'https://patate.gob.ec/');
   assert.ok(Object.isFrozen(CONFIG.AUTORIDAD_MUNICIPIO));
 });
@@ -77,7 +77,7 @@ test('la autoridad del cantón viene de la configuración con su nombre, cargo, 
 test('el agradecimiento nombra al GAD, a su alcalde con el periodo y al contacto del municipio', () => {
   assert.equal(
     TEXTOS.agradecimiento(CONFIG.AUTORIDAD_MUNICIPIO, CONFIG.CONTACTO_MUNICIPIO),
-    'Al GAD Municipal de San Cristóbal de Patate, administración del Ing. Emerson Hernán Medina Castro (2023 a 2027), '
+    'Al GAD Municipal de San Cristóbal de Patate, administración del Ing. Emerson Hernán Medina Castro (2023-2027), '
       + 'y a la Lic. Vanessa Lesano Martínez, por facilitar la información de los establecimientos turísticos del cantón '
       + 'y respaldar el desarrollo de este dashboard.',
   );

@@ -48,7 +48,7 @@ export const CONFIG = Object.freeze({
   AUTORIDAD_MUNICIPIO: Object.freeze({
     nombre: 'Ing. Emerson Hernán Medina Castro',
     cargo: 'Alcalde',
-    periodo: '2023 a 2027',
+    periodo: '2023-2027',
     enlace: 'https://patate.gob.ec/',
   }),
   /** Provincia que el mapa resalta siempre. */
