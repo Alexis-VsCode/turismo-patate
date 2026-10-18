@@ -113,3 +113,15 @@ test('la barra de estado y los avisos se alinean con el contenido en todo ancho'
   const ancho = bloque('@media (min-width: 1800px)').map((r) => r.cuerpo).join(' ');
   assert.ok(ancho.includes('max(var(--esp-4), calc((100% - 1648px) / 2))'), 'desde 1800 px siguen al contenido de 1648 px');
 });
+
+test('el botón Pronto declara lo que se ve: el fondo de su red y el borde punteado, sin pisar el color ni el fondo', () => {
+  const lista = reglas().filter((r) => r.bloque === '');
+  const posicion = (selector) => lista.findIndex((r) => r.selector === selector);
+  const pronto = lista.filter((r) => r.selector.split(',').some((s) => s.trim().startsWith('.red-pronto')));
+  assert.ok(pronto.length > 0, 'existe la regla del botón Pronto');
+  for (const { selector, cuerpo } of pronto) {
+    assert.doesNotMatch(cuerpo, /(^|;)\s*(background|color)\s*:/, `${selector} no declara fondo ni color`);
+  }
+  assert.match(pronto.map((r) => r.cuerpo).join(';'), /border:\s*1px dashed/, 'conserva el borde punteado');
+  assert.ok(posicion('.red-pronto') > posicion('.red'), '.red-pronto va después de .red, sin depender de la especificidad');
+});
