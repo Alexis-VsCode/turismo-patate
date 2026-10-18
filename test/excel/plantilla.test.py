@@ -117,7 +117,7 @@ class PlantillaEstandarizada(unittest.TestCase):
         hoja = self.libro["_Catalogos"]
         filas = [[c.value for c in fila] for fila in hoja.iter_rows()]
         col = filas[0].index("País")
-        otros = [f for f in filas[1:] if f[col] == "Otros países (sin especificar)"]
+        otros = [f for f in filas[1:] if f[col] == "Extranjeros (sin especificar)"]
         self.assertEqual(len(otros), 1)
         self.assertIsNone(otros[0][col + 1])
         self.assertIsNone(otros[0][col + 2])
@@ -125,7 +125,7 @@ class PlantillaEstandarizada(unittest.TestCase):
     def test_la_guia_explica_que_los_extranjeros_van_en_fila_aparte(self):
         textos = " ".join(str(c.value) for fila in self.libro["_Inicio"].iter_rows() for c in fila if c.value)
         self.assertIn("fila aparte", textos)
-        self.assertIn("Otros países (sin especificar)", textos)
+        self.assertIn("Extranjeros (sin especificar)", textos)
 
 
 class SinDatosReales(unittest.TestCase):

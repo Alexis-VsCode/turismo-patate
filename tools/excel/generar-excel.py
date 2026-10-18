@@ -49,7 +49,7 @@ CRECIMIENTO = {2025: 1.0, 2026: 1.08, 2027: 1.15}
 PERMISOS_HOJA = {"select_locked_cells": True, "select_unlocked_cells": True, "sort": True, "autofilter": True, "format_columns": True}
 MES_FINAL = (2026, 9)        # los datos de ejemplo van de enero de 2025 a este mes, en los dos modos
 # País del catálogo para los extranjeros cuyo país no se conoce: cuenta como extranjero y no tiene coordenadas.
-OTROS_PAISES = "Otros países (sin especificar)"
+EXTRANJEROS_SIN_PAIS = "Extranjeros (sin especificar)"
 
 
 def sin_tildes(texto):
@@ -64,7 +64,7 @@ def leer_csv(nombre):
 def cargar_catalogos():
     ciudades = leer_csv("ciudades-ecuador.csv")
     # Paso 1: al final, la opción para extranjeros de país desconocido; sin coordenadas, no se dibuja en el mapa
-    paises = leer_csv("paises.csv") + [{"País": OTROS_PAISES, "Pais_Lat": "", "Pais_Lon": ""}]
+    paises = leer_csv("paises.csv") + [{"País": EXTRANJEROS_SIN_PAIS, "Pais_Lat": "", "Pais_Lon": ""}]
     provincias = leer_csv("provincias.csv")
     return ciudades, paises, provincias
 
@@ -315,7 +315,7 @@ def escribir_inicio(hoja, fmt, resumen):
     hoja.merge_range(fila, 1, fila, 3, "Qué escribe usted y qué calcula la hoja", fmt.seccion)
     cols = [
         ("Año, Mes, País, Ciudad, Motivo", "Con la lista desplegable. Para extranjeros deje la ciudad vacía."),
-        ("Extranjeros", f"Van en una fila aparte, con su país. Si no se sabe de qué país eran, elija «{OTROS_PAISES}». Nunca se anotan en la fila de Ecuador."),
+        ("Extranjeros", f"Van en una fila aparte, con su país. Si no se sabe de qué país eran, elija «{EXTRANJEROS_SIN_PAIS}». Nunca se anotan en la fila de Ecuador."),
         ("Mujeres y Hombres por rango de edad", "Ocho números enteros: 0-30, 31-45, 46-60 y 61 o más años. Si no hubo, déjelo vacío o escriba 0."),
         ("Personas con discapacidad", "Cuántas de esas personas tenían alguna discapacidad. No puede superar el total de visitantes de la fila."),
         ("Columnas grises", "Provincia, Total mujeres, Total hombres, Total visitantes, Nacionales, Extranjeros y Estado las calcula la hoja: no se escriben."),
@@ -347,7 +347,7 @@ def escribir_inicio(hoja, fmt, resumen):
     hoja.merge_range(fila, 1, fila, 3, "Reglas", fmt.seccion)
     reglas = [
         "No cambie ni mueva los encabezados de las columnas.",
-        "Use siempre los desplegables. Extranjeros: una fila aparte con su país (o «Otros países (sin especificar)») y la ciudad vacía.",
+        "Use siempre los desplegables. Extranjeros: una fila aparte con su país (o «Extranjeros (sin especificar)») y la ciudad vacía.",
         "No escriba datos personales: ni nombres, ni cédulas, ni teléfonos. La discapacidad se publica solo como cifra agregada.",
         "Las columnas grises y los encabezados vienen bloqueados (hoja protegida sin contraseña, contra errores). Si al importar a Google Sheets la protección no se conserva, vuelva a aplicarla: Datos > Proteger hojas y rangos.",
         "Las pestañas que todavía usan el formato anterior (Cantidad, Edad y Género) siguen funcionando. No mezcle los dos formatos en una misma pestaña.",

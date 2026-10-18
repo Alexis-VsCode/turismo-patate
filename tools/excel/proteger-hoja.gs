@@ -52,6 +52,7 @@ function alAgregarPestana(e) { if (e && e.changeType === 'INSERT_GRID') proteger
 
 /**
  * Vuelve a poner en cada fila con datos de cada pestaña de captura las fórmulas grises de la fila 2 de Plantillas.
+ * Copia la celda como lo hace copiar y pegar, así las fórmulas con texto o búsquedas en el catálogo se ajustan bien.
  * Borra lo que se haya escrito a mano en esas columnas: ejecútela solo después de pasar esos números a filas propias.
  */
 function restaurarFormulasGrises() {
@@ -60,9 +61,6 @@ function restaurarFormulasGrises() {
   var libro = SpreadsheetApp.getActive();
   var plantilla = libro.getSheetByName('Plantillas');
   var titulosPlantilla = plantilla.getRange(1, 1, 1, plantilla.getLastColumn()).getValues()[0].map(norma);
-  var formulas = plantilla.getRange(2, 1, 1, titulosPlantilla.length).getFormulasR1C1()[0];
-  var formulaDe = {};
-  titulosPlantilla.forEach(function (t, i) { if (GRISES.indexOf(t) >= 0 && formulas[i]) formulaDe[t] = formulas[i]; });
   var informe = [];
   libro.getSheets().forEach(function (hoja) {
     var nombre = hoja.getName();
@@ -70,17 +68,18 @@ function restaurarFormulasGrises() {
     var titulos = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(norma);
     var filas = hoja.getLastRow() - 1;
     titulos.forEach(function (t, i) {
-      if (formulaDe[t] === undefined) return;
-      hoja.getRange(2, i + 1, filas, 1).setFormulasR1C1(Array.from({ length: filas }, function () { return [formulaDe[t]]; }));
+      var c = titulosPlantilla.indexOf(t);
+      if (GRISES.indexOf(t) < 0 || c < 0) return;
+      plantilla.getRange(2, c + 1).copyTo(hoja.getRange(2, i + 1, filas, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMULA, false);
     });
     informe.push(nombre + ': ' + filas + ' filas');
   });
   Logger.log(informe.join('\n'));
 }
 
-/** Agrega «Otros países (sin especificar)» a la lista de países de _Catalogos si todavía no está. */
-function agregarOtrosPaises() {
-  var OTROS = 'Otros países (sin especificar)';
+/** Agrega «Extranjeros (sin especificar)» a la lista de países de _Catalogos si todavía no está. */
+function agregarExtranjerosSinEspecificar() {
+  var OTROS = 'Extranjeros (sin especificar)';
   var hoja = SpreadsheetApp.getActive().getSheetByName('_Catalogos');
   var titulos = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(function (t) { return String(t).trim(); });
   var c = titulos.indexOf('País') + 1;
