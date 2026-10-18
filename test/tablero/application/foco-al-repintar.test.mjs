@@ -121,3 +121,12 @@ test('cuando la fachada repinta el combo, la etiqueta enfocada conserva el foco'
   combo.fijarValores(['a', 'b', 'c']);
   assert.equal(foco.enfocado(), etiquetas()[2]);
 });
+
+test('quitar la última etiqueta del combo devuelve el foco a la entrada sin abrir la lista', () => {
+  const { combo, entrada, etiquetas } = comboConTres();
+  combo.fijarValores(['a']);
+  etiquetas()[0].focus();
+  etiquetas()[0].emitir('click');
+  assert.equal(foco.enfocado(), entrada);
+  assert.notEqual(entrada.getAttribute('aria-expanded'), 'true', 'la lista sigue cerrada hasta que la persona la abra');
+});

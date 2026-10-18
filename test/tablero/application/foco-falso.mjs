@@ -2,7 +2,7 @@
  * @file foco-falso.mjs
  * @description Utilidad de pruebas. Completa el documento falso de test/dom-falso.mjs con lo que necesitan las pruebas
  *   de foco del teclado: `document.activeElement`, `focus()`, `contains()`, `createElementNS`, `classList.toggle` y
- *   `style.setProperty`. El foco sale del documento cuando el nodo enfocado deja de estar colgado de él, igual que en
+ *   `style.setProperty`. `focus()` emite el evento focus, como en el navegador. El foco sale del documento cuando el nodo enfocado deja de estar colgado de él, igual que en
  *   el navegador, donde un botón destruido al repintar deja el foco en <body>.
  * @author Kevin Alexis Barrera Llerena 2026
  */
@@ -22,7 +22,11 @@ export function instalarFocoFalso() {
   Nodo.prototype.contains = function contains(otro) {
     return otro === this || this.children.some((h) => h.contains(otro));
   };
-  Nodo.prototype.focus = function focus() { activo = this; };
+  Nodo.prototype.focus = function focus() {
+    activo = this;
+    this.emitir('focus');
+  };
+  Nodo.prototype.select = function select() {};
   Object.defineProperty(Nodo.prototype, 'style', {
     configurable: true,
     get() { return { setProperty: () => {} }; },
@@ -46,6 +50,7 @@ export function instalarFocoFalso() {
     restaurar() {
       delete Nodo.prototype.contains;
       delete Nodo.prototype.focus;
+      delete Nodo.prototype.select;
       delete Nodo.prototype.style;
       Object.defineProperty(Nodo.prototype, 'classList', originales.classList);
       restaurarDocumento();

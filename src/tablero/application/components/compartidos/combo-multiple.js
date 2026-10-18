@@ -81,6 +81,7 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
   let seleccion = [];
   let visibles = [];
   let activo = -1;
+  let enfocarSinAbrir = false;
 
   const etiquetas = document.createElement('div');
   etiquetas.className = 'combo-elegidas';
@@ -172,7 +173,9 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
     if (anterior) {
       const botones = [...etiquetas.children].filter((h) => h.className === 'etiqueta-mini');
       const destino = botones.find((b) => b.dataset.valor === anterior.valor) || botones[Math.min(anterior.indice, botones.length - 1)] || entrada;
+      enfocarSinAbrir = destino === entrada;
       destino.focus();
+      enfocarSinAbrir = false;
     }
   }
 
@@ -203,7 +206,7 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
   // ===== EVENTOS Y SUSCRIPCIONES =====
   entrada.addEventListener('focus', () => {
     entrada.select();
-    abrir();
+    if (!enfocarSinAbrir) abrir();
   });
   entrada.addEventListener('input', () => {
     activo = 0;
