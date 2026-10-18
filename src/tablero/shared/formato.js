@@ -26,12 +26,17 @@ const formatoHora = new Intl.DateTimeFormat('es-EC', { timeZone: 'America/Guayaq
 export const numero = (n) => formato.format(Math.round(n || 0));
 
 /**
- * Porcentaje con una decimal y coma decimal.
+ * Porcentaje con una decimal y coma decimal. El medio se redondea alejándose del cero (28,75 da 28,8 y -28,75 da
+ * -28,8), sin el error de la coma flotante que hace que 0.2875 * 100 valga 28,7499...
  * @param {number|null} valor fracción de 0 a 1
- * @returns {string} p. ej. «82,1%»; «s/d» cuando no hay base (null)
+ * @returns {string} p. ej. «82,1%»; «s/d» cuando no hay base (null); nunca «-0,0%»
  */
 export function porcentaje(valor) {
-  return valor === null ? SIN_DATO : `${(valor * 100).toFixed(1).replace('.', ',')}%`;
+  if (valor === null) return SIN_DATO;
+  // Paso 1: décimas de punto porcentual, con la coma flotante recortada a 12 cifras antes de redondear
+  const decimas = Math.round(Number(Math.abs(valor * 1000).toPrecision(12)));
+  const signo = valor < 0 && decimas > 0 ? '-' : '';
+  return `${signo}${(decimas / 10).toFixed(1).replace('.', ',')}%`;
 }
 
 /**

@@ -23,6 +23,25 @@ test('porcentaje usa una decimal con coma y «s/d» sin base', () => {
   assert.equal(porcentaje(null), SIN_DATO);
 });
 
+test('porcentaje redondea el medio hacia arriba a una decimal, sin el error de la coma flotante', () => {
+  assert.equal(porcentaje(0.2875), '28,8%');
+  assert.equal(porcentaje(0.0005), '0,1%');
+  assert.equal(porcentaje(0.1235), '12,4%');
+  assert.equal(porcentaje(0.9995), '100,0%');
+  assert.equal(porcentaje(1), '100,0%');
+  assert.equal(porcentaje(0.2874), '28,7%');
+});
+
+test('porcentaje redondea bien una fracción que arrastra el error de una resta, como 81/80 - 1', () => {
+  assert.equal(porcentaje(81 / 80 - 1), '1,3%');
+  assert.equal(textoVariacion(81 / 80 - 1), '+1,3%');
+});
+
+test('porcentaje de un negativo redondea el medio alejándose del cero, simétrico al positivo', () => {
+  assert.equal(porcentaje(-0.2875), '-28,8%');
+  assert.equal(porcentaje(-0.0004), '0,0%');
+});
+
 test('textoVariacion lleva signo y es null sin año anterior', () => {
   assert.equal(textoVariacion(0.119), '+11,9%');
   assert.equal(textoVariacion(-0.05), '−5,0%');
