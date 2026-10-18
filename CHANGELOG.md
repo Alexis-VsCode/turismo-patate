@@ -7,11 +7,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Añadido
 - **Filtros facetados:** cada combo ofrece solo las opciones que tienen visitantes bajo los demás filtros activos, sin contar el suyo, así que se puede sumar otra opción del mismo filtro. Una opción ya elegida se conserva aunque deje de tener visitantes. La regla es una sola (`opcionesFacetadas` en `src/domain/estadisticas.js`) y vale por todos los caminos: los combos, la barra de etiquetas, «Quitar todos», el panel del celular, el clic en un motivo o en un gráfico y el enlace compartido.
 - **Franja del GAD en el pie:** escudo, foto y nombre del Ing. Emerson Hernán Medina Castro, Alcalde, Administración 2023 a 2027, con el agradecimiento y el enlace al sitio del GAD. Debajo, las tarjetas de la Lic. Vanessa Lesano Martínez (contacto del municipio) y del autor. Los nombres completos salen de `config.js` (`AUTORIDAD_MUNICIPIO` y `CONTACTO_MUNICIPIO`), nunca del HTML.
-- **Avisos del lector, sin rechazar la fila:** cuando Nacionales o Extranjeros vienen escritos a mano y contradicen el País (el dashboard sigue usando el País), y cuando el total de una fila mensual pasa de `UMBRAL_FILA_SOSPECHOSA` = 450000 (la fila se publica igual). Aparecen en el panel de problemas con su pestaña y su fila.
+- **Avisos del lector, sin rechazar la fila:** cuando Nacionales o Extranjeros vienen escritos a mano y contradicen el País (el dashboard sigue usando el País), y cuando el total de una fila mensual pasa de `UMBRAL_FILA_SOSPECHOSA` = 450000 (la fila se publica igual). Aparecen en el panel de problemas con su pestaña y su fila. Se guardan como máximo 20 avisos de fila por pestaña, más uno que resume cuántas filas más tienen avisos, y el panel muestra como máximo 50 avisos.
 - **Excel con columnas grises bloqueadas:** cada pestaña de captura y la plantilla salen protegidas y solo las celdas de entrada quedan libres, así cada copia hereda las reglas.
 - **`tools/excel/proteger-hoja.gs`:** Apps Script que protege cada pestaña de captura en Google Sheets, y activador «Al producirse un cambio» que protege sola cada pestaña nueva (comprobado el 17/10/2026 duplicando la plantilla).
 - **Pruebas:** DOM falso compartido y pruebas de cada presentacional; caso de uso de la publicación en memoria; punto de entrada del constructor; permisos de los flujos; servidor local; que ningún archivo escriba el ID de una hoja; orden de los módulos; CSP; hoja de estilos; accesibilidad; foco al repintar.
-- **Validación en cada pull request (`ci.yml`):** además de `npm test`, corre el constructor con el libro de prueba, las pruebas de Python del Excel (`test/excel/plantilla.test.py`) y del oráculo (`test/tools/oraculo.test.py`) y `npm run oraculo`.
+- **Validación en cada push a `main` y en cada pull request (`ci.yml`):** además de `npm test`, corre el constructor con el libro de prueba, las pruebas de Python del Excel (`test/excel/plantilla.test.py`) y del oráculo (`test/tools/oraculo.test.py`) y `npm run oraculo`, con las versiones de `openpyxl` y `xlsxwriter` fijadas.
 - ADR 010 (publicación hexagonal y tablero semihexagonal).
 
 ### Cambiado
@@ -28,7 +28,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - La prueba de redacción (sin emojis ni guiones largos) vigila también `test/`, `tools/`, `css/` y `.github/`, además de `index.html`, los `.md` de la raíz, `src/` y `docs/`.
 
 ### Corregido
-- **Porcentaje bien redondeado:** el medio redondea hacia arriba sin el error de la coma flotante (28,75 se muestra 28,8 %).
+- **Porcentaje bien redondeado:** el medio se aleja del cero, sin el error de la coma flotante (28,75 se muestra 28,8 %).
 - **Botón «Pronto»:** se ve como antes, con el color de su red y el borde punteado, y al pasar el mouse se oscurece como las demás redes; antes se volvía casi transparente.
 - **El oráculo salta las filas vacías** que Google deja en el xlsx publicado.
 - El servidor local responde 403 a una ruta fuera del repositorio y 400 a una URL mal codificada, sin caerse.

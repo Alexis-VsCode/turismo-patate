@@ -27,9 +27,10 @@ test('el pie muestra la foto del alcalde, del contacto del municipio y del autor
   }
 });
 
-test('el flujo de publicación copia la carpeta de fotos al sitio', () => {
+test('el flujo de publicación lleva las fotos al sitio dentro de la carpeta de recursos completa', () => {
   const flujo = readFileSync(join(RAIZ, '.github/workflows/publicar.yml'), 'utf8');
-  assert.match(flujo, /cp -r assets\/personas sitio\/assets\//);
+  assert.match(flujo, /cp -r [^\n]*\bassets\b[^\n]* sitio\//);
+  assert.ok(existsSync(join(RAIZ, 'assets/personas')), 'las fotos viven en assets/personas');
 });
 
 test('el HTML no escribe a mano los nombres de la autoridad ni del contacto: salen de config.js', () => {

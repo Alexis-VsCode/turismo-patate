@@ -136,6 +136,7 @@ stateDiagram-v2
 |---|---|---|
 | «Fila N: Nacionales dice ... y Extranjeros dice ..., pero con el país ... deben ser ...» | Alguien escribió a mano en una columna gris y no coincide con el país | El dashboard ya usa el país. Si el país está mal, corríjalo; si no, vuelva a poner la fórmula en la columna gris (cópiela de la fila de arriba) |
 | «Fila N: ... visitantes en una sola fila, más que el tope de 450000» | El total de la fila pasa de `UMBRAL_FILA_SOSPECHOSA` (450000) | Revise si sobra una cifra, por ejemplo un cero de más. Si la cifra es real, no hay que hacer nada: la fila ya se publica |
+| «Hay N filas más con avisos en esta pestaña: revísela completa» | Una pestaña tiene más de 20 filas con avisos. Solo se guardan los primeros 20 para no inflar los datos del sitio | Corrija la causa común, casi siempre fórmulas grises escritas a mano en toda la pestaña, y espere la siguiente publicación |
 
 Los dos avisos desaparecen solos en la siguiente publicación después de corregir la hoja.
 

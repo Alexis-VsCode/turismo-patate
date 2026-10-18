@@ -1,10 +1,13 @@
 # Valida un cambio antes de publicarlo: corre todas las pruebas y el constructor con el libro de prueba, sin leer la
 # hoja ni desplegar.
-# Se ejecuta en pull requests y a mano; en main las pruebas ya corren dentro de la publicación.
+# Se ejecuta con cada push a main, en pull requests y a mano. La publicación corre las pruebas de Node; esta validación
+# suma las de Python y el oráculo.
 # Autor: Kevin Alexis Barrera Llerena 2026
 name: Validar cambios
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -33,7 +36,7 @@ jobs:
           python-version: '3.12'
 
       - name: Librerías de las pruebas de Python
-        run: pip install openpyxl xlsxwriter
+        run: pip install openpyxl==3.1.5 xlsxwriter==3.2.9
 
       - name: Prueba del generador del Excel
         run: python test/excel/plantilla.test.py

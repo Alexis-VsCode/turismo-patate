@@ -68,7 +68,6 @@ jobs:
           cp index.html sitio/
           cp -r css src assets sitio/
           rm -rf sitio/src/publicacion
-          cp -r assets/personas sitio/assets/
           touch sitio/.nojekyll
 
       - uses: actions/configure-pages@v6

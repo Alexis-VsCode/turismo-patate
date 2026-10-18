@@ -84,3 +84,13 @@ test('la validación de cambios corre también las pruebas de Python y el orácu
   assert.match(CI, /run: python test\/tools\/oraculo\.test\.py/, 'prueba el oráculo');
   assert.match(CI, /run: npm run oraculo/, 'concilia el oráculo con el dominio');
 });
+
+test('la validación corre también con cada push a main y fija las versiones de las librerías de Python', () => {
+  assert.match(CI, /on:\n  push:\n    branches: \[main\]\n/, 'corre con un push directo a main');
+  assert.match(CI, /pip install openpyxl==\d+\.\d+\.\d+ xlsxwriter==\d+\.\d+\.\d+/, 'versiones fijas');
+});
+
+test('la publicación copia la carpeta de recursos una sola vez', () => {
+  const PUB = readFileSync(join(RAIZ, '.github/workflows/publicar.yml'), 'utf8');
+  assert.doesNotMatch(PUB, /cp -r assets\/personas/, 'assets/ ya trae las fotos de las personas');
+});
