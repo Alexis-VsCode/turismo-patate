@@ -43,4 +43,8 @@ La copia hereda desplegables, validaciones, fórmulas, formato condicional y pro
 
 ## Google Sheets
 
-Al importar o abrir el .xlsx en Google Sheets, verifique la protección: Datos > Proteger hojas y rangos. Google convierte la protección de hoja a su propio modelo y puede no conservarla, o conservarla sin excepciones para las celdas de entrada. Si falta, proteja cada hoja y marque como excepción las columnas de entrada (A, B, C, E, F, G a N y O), o proteja solo las columnas grises (D y P a U) y el encabezado. Repita la revisión en la `Plantilla` antes de duplicarla.
+En Google Sheets la protección se maneja con `proteger-hoja.gs` (Apps Script, en esta misma carpeta), porque Google no conserva la protección del .xlsx y, al duplicar una pestaña, la copia hereda desplegables, fórmulas y formato, pero **no** la protección (comprobado en la hoja viva el 17/10/2026).
+
+- `protegerColumnasGrises` deja cada pestaña de captura bloqueada salvo las celdas blancas de entrada. Las pestañas que empiezan con `_` no se tocan. Se puede ejecutar varias veces: salta las ya protegidas.
+- `alAgregarPestana`, con un activador «Al producirse un cambio», protege sola cada pestaña nueva en cuanto se agrega (comprobado duplicando `Plantillas`).
+- Solo el propietario de la hoja edita lo bloqueado. Las instrucciones de instalación están en la cabecera del script.
