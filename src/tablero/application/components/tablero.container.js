@@ -9,7 +9,7 @@ import { TEXTOS } from '../../shared/textos.es.js';
 import { numero, fechaHora, hora } from '../../shared/formato.js';
 import { llenarSelect } from './compartidos/select-seguro.js';
 import { crearComboMultiple } from './compartidos/combo-multiple.js';
-import { opcionesEvolucion, opcionesDona, opcionesEdadGenero } from './presentational/graficos.presentational.js';
+import { opcionesEvolucion, opcionesDona, opcionesEdadGenero, conMovimiento } from './presentational/graficos.presentational.js';
 import { crearMapa } from './compartidos/mapa.js';
 import { pintarKpis } from './presentational/kpis.presentational.js';
 import { pintarEstadoDatos } from './presentational/estado.presentational.js';
@@ -112,14 +112,18 @@ export function montarTablero(facade, config, { obtenerLimites }) {
       combo.fijarValores(f[campo]);
     }
     const chips = facade.chipsActivos();
-    pintarChips($('chips'), chips, (campo, valorQuitado) => facade.quitarFiltro(campo, valorQuitado), () => facade.limpiarFiltros(), copiarEnlace);
+    pintarChips($('chips'), chips, (campo, valorQuitado) => facade.quitarFiltro(campo, valorQuitado), () => facade.limpiarFiltros(), copiarEnlace, $('tablero'));
     panelFiltros.fijarConteo(TEXTOS.filtrosConteo(chips.length));
   }
 
+  /** Dibuja los tres gráficos, sin animación si se pidió reducir el movimiento, y escribe el resumen de los dos de lienzo. */
   function pintarGraficos(v) {
-    graficos.evolucion.setOption(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), true);
-    graficos.dona.setOption(opcionesDona(v.kpis, colores, v.textos.centro), true);
-    graficos.edad.setOption(opcionesEdadGenero(v.edadGenero, colores, v.filtros.rangoEdad), true);
+    const animar = !prefiereMenosMovimiento();
+    graficos.evolucion.setOption(conMovimiento(opcionesEvolucion(v.evolucion, colores, v.filtros.mes), animar), true);
+    graficos.dona.setOption(conMovimiento(opcionesDona(v.kpis, colores, v.textos.centro), animar), true);
+    graficos.edad.setOption(conMovimiento(opcionesEdadGenero(v.edadGenero, colores, v.filtros.rangoEdad), animar), true);
+    $('g-evolucion').setAttribute('aria-label', TEXTOS.resumenEvolucion(v.evolucion));
+    $('g-edad').setAttribute('aria-label', TEXTOS.resumenEdadGenero(v.edadGenero));
   }
 
   function pintarPaneles() {
@@ -275,3 +279,6 @@ function coloresDelTema() {
     textoSobreColor: v('--texto-sobre-color'),
   };
 }
+
+/** Indica si el sistema pide reducir el movimiento; los gráficos se animan en el lienzo y el CSS no los frena. */
+const prefiereMenosMovimiento = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;

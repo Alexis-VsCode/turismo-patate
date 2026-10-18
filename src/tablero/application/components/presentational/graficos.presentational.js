@@ -15,6 +15,16 @@ const ORDEN_GENEROS = Object.freeze([GENERO_MUJERES, GENERO_HOMBRES]);
 const ETIQUETAS_GENERO = Object.freeze({ [GENERO_MUJERES]: TEXTOS.totalMujeres, [GENERO_HOMBRES]: TEXTOS.totalHombres });
 
 /**
+ * Apaga la animación de un gráfico cuando se pidió reducir el movimiento; si no, devuelve las mismas opciones.
+ * @param {object} opciones opciones de ECharts ya armadas
+ * @param {boolean} animar false si el sistema pide reducir el movimiento
+ * @returns {object} las mismas opciones, o una copia con `animation: false`
+ */
+export function conMovimiento(opciones, animar) {
+  return animar ? opciones : { ...opciones, animation: false };
+}
+
+/**
  * Columnas del año de referencia y del anterior, con la línea de tendencia del año actual.
  * @param {{ anio: number|null, anioAnterior: number|null, actual: Array<number|null>, anterior: Array<number|null> }} evolucion
  *   doce meses de cada año, calculados por el dominio

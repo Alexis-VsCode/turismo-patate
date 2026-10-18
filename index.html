@@ -55,7 +55,7 @@
       <svg class="icono icono-sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <svg class="icono icono-luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
     </button>
-    <button id="btn-actualizar" class="boton boton-actualizar" type="button" aria-label="Actualizar datos">
+    <button id="btn-actualizar" class="boton boton-actualizar" type="button">
       <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span id="btn-actualizar-texto">Actualizar</span>
     </button>
@@ -66,7 +66,7 @@
     <ul id="problemas-lista"></ul>
   </details>
 
-  <div id="chips" class="chips barra-chips" aria-label="Filtros aplicados" hidden></div>
+  <div id="chips" class="chips barra-chips" role="group" aria-label="Filtros aplicados" hidden></div>
 
   <main id="tablero" class="tablero" tabindex="-1">
     <aside class="columna-izquierda">
@@ -152,7 +152,7 @@
         <article class="panel panel-evolucion">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h2>Evolución de visitantes por mes</h2></header>
           <p id="sub-evolucion" class="panel-sub">Comparación con el año anterior</p>
-          <div id="g-evolucion" class="grafico"></div>
+          <div id="g-evolucion" class="grafico" role="img" aria-label="Evolución de visitantes por mes"></div>
         </article>
         <article class="panel panel-dona">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4v8l6 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><h2>Nacionales vs extranjeros</h2></header>
@@ -165,7 +165,7 @@
         <article class="panel panel-edad">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M14 20c0-3 2-5 4-5s4 2 4 5" fill="none" stroke="currentColor" stroke-width="2"/></svg><h2>Distribución por edad y género</h2></header>
           <p class="panel-sub">Rangos de edad</p>
-          <div id="g-edad" class="grafico grafico-alto"></div>
+          <div id="g-edad" class="grafico grafico-alto" role="img" aria-label="Distribución por edad y género"></div>
         </article>
         <article class="panel panel-motivo">
           <header class="panel-cabecera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><h2>Motivo de visita</h2></header>
@@ -212,11 +212,11 @@
     <div class="pie-bloque">
       <div class="pie-columnas">
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Acerca del dashboard</h3>
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Acerca del dashboard</h2>
           <p>Consolida los visitantes que reportan mensualmente los establecimientos turísticos del cantón San Cristóbal de Patate (Tungurahua). La información se publica de forma automática desde la hoja de registro del GAD Municipal.</p>
         </section>
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Privacidad y seguridad</h3>
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Privacidad y seguridad</h2>
           <ul>
             <li>Sitio de solo lectura, sin cookies ni rastreo.</li>
             <li>Solo cifras agregadas, sin datos personales.</li>
@@ -225,7 +225,7 @@
           </ul>
         </section>
         <section>
-          <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Fuentes y licencias</h3>
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Fuentes y licencias</h2>
           <ul>
             <li>Mapa © OpenStreetMap.</li>
             <li>Límites y cantones: geoBoundaries (CC0 y CC BY 3.0 IGO).</li>

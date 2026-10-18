@@ -67,13 +67,17 @@ export function prepararFilasMotivo(lista) {
  */
 export function pintarMotivos(lista, motivos, seleccionados, alElegir) {
   const elegidos = valoresDeFiltro(seleccionados);
-  // Paso 1: se rehace la lista completa; son pocas filas y así nunca queda una fila de un filtro anterior
+  // Paso 1: se recuerda qué motivo tenía el foco, porque al rehacer la lista su botón se destruye
+  const activo = document.activeElement;
+  const enfocado = activo && lista.contains(activo) ? activo.dataset.motivo : undefined;
+  // Paso 2: se rehace la lista completa; son pocas filas y así nunca queda una fila de un filtro anterior
   lista.replaceChildren();
   for (const fila of prepararFilasMotivo(motivos)) {
     const item = document.createElement('li');
     const boton = document.createElement('button');
     boton.type = 'button';
     boton.className = 'motivo';
+    boton.dataset.motivo = fila.nombre;
     boton.setAttribute('aria-pressed', String(elegidos.includes(fila.nombre)));
     boton.classList.toggle('atenuado', elegidos.length > 0 && !elegidos.includes(fila.nombre));
     boton.style.setProperty('--ancho', `${(fila.ancho * 100).toFixed(1)}%`);
@@ -101,6 +105,8 @@ export function pintarMotivos(lista, motivos, seleccionados, alElegir) {
     boton.addEventListener('click', () => alElegir(fila.nombre));
     item.appendChild(boton);
     lista.appendChild(item);
+    // Paso 3: el teclado sigue en el motivo que eligió, ahora con su nuevo estado
+    if (fila.nombre === enfocado) boton.focus();
   }
 }
 

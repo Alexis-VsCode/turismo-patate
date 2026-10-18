@@ -159,12 +159,11 @@ svg { flex-shrink: 0; }
 
 /* ============ Barra de estado ============ */
 .barra-estado {
-  max-width: calc(1440px - 2 * var(--esp-4)); margin: var(--esp-3) var(--esp-4) 0; padding: 8px 10px 8px 12px;
+  margin: var(--esp-3) max(var(--esp-4), calc((100% - 1408px) / 2)) 0; padding: 8px 10px 8px 12px;
   display: flex; align-items: center; gap: var(--esp-3);
   font-size: 13px; color: var(--texto-suave);
   background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra);
 }
-@media (min-width: 1472px) { .barra-estado { margin-inline: auto; } }
 .chip-frescura {
   display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
   padding: 6px 12px; border: 1px solid var(--borde); border-radius: 999px; background: var(--superficie-2);
@@ -204,7 +203,8 @@ svg { flex-shrink: 0; }
 :root[data-theme="dark"] .icono-sol { display: inline-block; }
 :root[data-theme="dark"] .icono-luna { display: none; }
 
-.aviso-error, .problemas { max-width: 1408px; margin: var(--esp-2) auto 0; font-size: 13px; }
+/* La barra de estado y los avisos dejan el mismo margen que el relleno de la cabecera y del tablero */
+.aviso-error, .problemas { margin: var(--esp-2) max(var(--esp-4), calc((100% - 1408px) / 2)) 0; font-size: 13px; }
 .aviso-error { background: var(--error-fondo); color: var(--error-texto); border: 1px solid var(--error-borde); border-radius: var(--radio-sm); padding: 8px 12px; }
 .problemas { background: var(--aviso-fondo); border: 1px solid var(--aviso-borde); border-radius: var(--radio-sm); padding: 6px 12px; color: var(--aviso-texto); }
 .problemas summary { cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
@@ -218,8 +218,6 @@ svg { flex-shrink: 0; }
 .tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); }
 .columna-izquierda { display: flex; flex-direction: column; gap: var(--esp-3); min-width: 0; }
 .contenido { min-width: 0; display: flex; flex-direction: column; gap: var(--esp-3); }
-/* En escritorio las dos columnas miden lo mismo: las filas de paneles se reparten el alto sobrante */
-.paneles { flex: 1; }
 
 /* Combo con búsqueda y de varias opciones */
 .combo-tarjeta { padding: 12px var(--esp-3) var(--esp-3); }
@@ -228,9 +226,9 @@ svg { flex-shrink: 0; }
 .combo input {
   width: 100%; height: 38px; padding: 0 34px 0 12px; font: 500 14px var(--fuente);
   border: 1px solid var(--select-borde); border-radius: var(--radio-sm); background: var(--select-fondo); color: var(--select-texto);
+  text-overflow: ellipsis;
 }
 .combo input:focus { border-color: var(--verde-texto); }
-.combo input { text-overflow: ellipsis; }
 .combo-flecha { position: absolute; right: 10px; top: 10px; width: 18px; height: 18px; color: var(--texto-suave); pointer-events: none; }
 .combo ul {
   display: none; position: absolute; z-index: 1000; left: 0; right: 0; top: 42px; margin: 0; padding: 4px;
@@ -305,8 +303,8 @@ svg { flex-shrink: 0; }
 .chips-enlace { min-height: 34px; margin-left: auto; padding: 4px 14px; font: 600 13px var(--fuente); color: var(--verde-texto); background: var(--superficie); border: 1px solid var(--borde); border-radius: 999px; cursor: pointer; }
 .chips-enlace:hover { border-color: var(--verde-texto); }
 
-/* Paneles: barra verde con título en mayúsculas */
-.paneles { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--esp-4); }
+/* Paneles: barra verde con título en mayúsculas. En escritorio las dos columnas miden lo mismo: las filas de paneles se reparten el alto sobrante */
+.paneles { flex: 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--esp-4); }
 .panel {
   grid-column: span 4; min-width: 0; overflow: hidden; display: flex; flex-direction: column;
   background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra);
@@ -425,14 +423,15 @@ svg { flex-shrink: 0; }
 .pie-columnas > section { padding: 0 var(--esp-5); border-left: 1px solid rgba(255, 255, 255, .14); }
 .pie-columnas > section:first-child { padding-left: 0; border-left: 0; }
 .pie-columnas > section:last-child { padding-right: 0; }
-.pie-columnas h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 14px; color: #fff; }
-.pie-columnas h3 svg { width: 18px; height: 18px; color: var(--amarillo); }
+.pie-columnas h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 14px; color: #fff; }
+.pie-columnas h2 svg { width: 18px; height: 18px; color: var(--amarillo); }
 .pie-columnas p { margin: 0; line-height: 1.55; }
 .pie-columnas ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .pie-columnas li { position: relative; padding-left: 14px; line-height: 1.45; }
 .pie-columnas li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--lima); }
 /* Agradecimientos y tarjetas de las dos personas del proyecto: cada una con su rol escrito arriba */
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.autor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--boton); color: #fff; font-weight: 700; letter-spacing: .03em; }
 .gad-franja { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: center; margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: rgba(228, 228, 48, .08); border: 1px solid rgba(228, 228, 48, .35); }
 .gad-sellos { display: flex; align-items: center; }
 .gad-logo { width: 64px; height: 64px; border-radius: 50%; object-fit: contain; padding: 4px; background: #fff; box-shadow: 0 0 0 2px rgba(255, 255, 255, .25); }
@@ -461,7 +460,19 @@ svg { flex-shrink: 0; }
 .red-pronto:hover { filter: none; background: rgba(255, 255, 255, .08); }
 .red-marca { position: absolute; top: -8px; right: -4px; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; background: var(--amarillo); color: #3d3500; }
 
-/* Aviso flotante («próximamente»): abajo al centro, sin tapar la página fuera del propio aviso */
+.pie-legal { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .14); text-align: center; font-size: 12px; color: #b4cdb8; }
+.autor-texto { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
+.autor-texto strong { color: #fff; font-size: 15px; }
+.autor-redes { display: flex; flex-wrap: wrap; gap: 8px; }
+.red { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 128px; padding: 8px 14px; min-height: 40px; border-radius: 8px; color: #fff; font-weight: 600; text-decoration: none; }
+.red svg { width: 18px; height: 18px; fill: currentColor; }
+.red:hover { filter: brightness(.9); }
+.red-linkedin { background: var(--linkedin); }
+.red-facebook { background: var(--facebook); }
+.red-tiktok { background: var(--tiktok); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28); }
+
+/* ============ Aviso flotante ============ */
+/* Aviso «próximamente»: abajo al centro, sin tapar la página fuera del propio aviso */
 .aviso-region { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1000; width: calc(100% - 32px); max-width: 420px; pointer-events: none; }
 .aviso {
   position: relative; pointer-events: auto; padding: 14px 44px 14px 16px; font-family: var(--fuente);
@@ -474,27 +485,15 @@ svg { flex-shrink: 0; }
 .aviso-enlace { color: var(--verde-texto); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 .aviso-cerrar { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: var(--radio); background: transparent; color: var(--texto-suave); font: inherit; font-size: 1.25rem; line-height: 1; cursor: pointer; }
 .aviso-cerrar:hover { color: var(--texto); background: var(--borde); }
-.aviso-cerrar:focus-visible, .aviso-enlace:focus-visible { outline: 2px solid var(--lima); outline-offset: 2px; }
 @keyframes aviso-entrada { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@media (prefers-reduced-motion: reduce) { .aviso { animation: none; } }
-.pie-legal { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .14); text-align: center; font-size: 12px; color: #b4cdb8; }
-.autor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--boton); color: #fff; font-weight: 700; letter-spacing: .03em; }
-.autor-texto { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
-.autor-texto strong { color: #fff; font-size: 15px; }
-.autor-redes { display: flex; flex-wrap: wrap; gap: 8px; }
-.red { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 128px; padding: 8px 14px; min-height: 40px; border-radius: 8px; color: #fff; font-weight: 600; text-decoration: none; }
-.red svg { width: 18px; height: 18px; fill: currentColor; }
-.red:hover { filter: brightness(.9); }
-.red-linkedin { background: var(--linkedin); }
-.red-facebook { background: var(--facebook); }
-.red-tiktok { background: var(--tiktok); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28); }
 
 /* Si la columna de filtros es más baja que los paneles, el sobrante queda en un solo hueco sobre «Limpiar filtros» y los dos pies quedan a la misma altura */
 .filtros > .boton { margin-top: auto; }
 
 /* ============ Pantallas muy anchas ============ */
 @media (min-width: 1800px) {
-  .cabecera, .barra-estado, .barra-chips, .tablero, .pie { max-width: 1680px; }
+  .cabecera, .barra-chips, .tablero, .pie { max-width: 1680px; }
+  .barra-estado, .aviso-error, .problemas { margin-inline: max(var(--esp-4), calc((100% - 1648px) / 2)); }
   .tablero { grid-template-columns: 280px minmax(0, 1fr); }
 }
 
@@ -504,7 +503,7 @@ svg { flex-shrink: 0; }
 /* ============ Pantallas medianas (860 a 1279 px): filtros a la izquierda y los paneles en dos columnas ============
    Los paneles pasan a ser celdas de una sola cuadrícula de tres columnas: los filtros ocupan las dos primeras filas y el panel de
    discapacidad queda debajo de ellos, así no queda un hueco bajo los filtros y todos los pies terminan a la misma altura. */
-@media (min-width: 860px) and (max-width: 1279px) {
+@media screen and (min-width: 860px) and (max-width: 1279px) {
   .tablero { grid-template-columns: 230px minmax(0, 1fr) minmax(0, 1fr); }
   .contenido, .paneles { display: contents; }
   .columna-izquierda { grid-column: 1; grid-row: 1 / span 2; }
@@ -529,31 +528,30 @@ svg { flex-shrink: 0; }
 }
 
 /* ============ Tableta angosta (< 860 px): filtros en panel deslizable ============ */
-@media (max-width: 859px) {
+@media screen and (max-width: 859px) {
   .tablero { grid-template-columns: minmax(0, 1fr); }
   .columna-izquierda { display: grid; grid-template-columns: minmax(0, 1fr); }
   .boton-filtros { display: inline-flex; }
   #lugar-filtros { display: none; }
-  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Sin dos columnas lado a lado no hay nada que igualar: los paneles y los gráficos vuelven a su altura propia */
+  .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); flex: none; }
   .panel, .panel-dona, .panel-edad { grid-column: span 1; }
   .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
-  /* Sin dos columnas lado a lado no hay nada que igualar: los gráficos vuelven a su altura propia */
-  .paneles { flex: none; }
   .grafico { flex: none; height: 260px; min-height: 0; }
   .grafico-alto { height: 280px; min-height: 0; }
   .mapa { flex: none; height: calc(280px - var(--esp-3)); min-height: 0; }
 }
 
 /* ============ Celular (< 760 px) ============ */
-@media (max-width: 759px) {
+@media screen and (max-width: 759px) {
   body { font-size: 14.5px; }
   .cabecera { gap: var(--esp-3); padding: var(--esp-3) var(--esp-3) 0; }
   .cabecera-logo { width: 60px; height: 60px; border-radius: 12px; }
   .cabecera-banner { min-height: 60px; padding: var(--esp-2) var(--esp-3); }
   .cabecera-frase { display: none; }
-  .barra-estado { margin-inline: var(--esp-3); }
   /* En celular el texto ocupa su propia fila y los botones quedan a la derecha del chip de frescura */
-  .barra-estado { flex-wrap: wrap; row-gap: var(--esp-2); }
+  .barra-estado { margin-inline: var(--esp-3); flex-wrap: wrap; row-gap: var(--esp-2); }
+  .aviso-error, .problemas { margin-inline: var(--esp-3); }
   .estado-texto { order: 3; flex: 1 1 100%; gap: 6px var(--esp-3); padding-top: var(--esp-2); border-top: 1px solid var(--borde); }
   .estado-dato { flex: 1 1 40%; }
   .chip-frescura { margin-right: auto; }
@@ -584,10 +582,11 @@ svg { flex-shrink: 0; }
 /* ============ Impresión: el tablero filtrado cabe en una hoja, sin controles ============ */
 @media print {
   body { background: #fff; }
-  .saltar, .aviso-region, .boton, .boton-filtros, .boton-actualizar, #btn-tema, #lugar-filtros, .segmentos, .chips-enlace, .chips-limpiar, .combo-tarjeta, .mapa .leaflet-control-zoom { display: none !important; }
+  .saltar, .aviso-region, .boton, #lugar-filtros, .segmentos, .chips-enlace, .chips-limpiar, .combo-tarjeta, .mapa .leaflet-control-zoom { display: none !important; }
   .tablero { grid-template-columns: minmax(0, 1fr); }
   .paneles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .panel, .kpis { break-inside: avoid; box-shadow: none; }
+  .panel { grid-column: span 1; grid-row: auto; }
   .panel-evolucion, .panel-discapacidad { grid-column: 1 / -1; }
   .grafico, .grafico-alto { min-height: 220px; }
 }

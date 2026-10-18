@@ -14,7 +14,7 @@ const css = readFileSync(join(RAIZ, 'css/tema.css'), 'utf8');
 const panel = readFileSync(join(RAIZ, 'src/tablero/application/components/compartidos/panel-filtros.js'), 'utf8');
 
 test('el panel de filtros pasa a ser deslizable por debajo del mismo ancho en el CSS y en el componente', () => {
-  const desdeCss = /@media \(max-width: (\d+)px\) \{\s*\.tablero \{ grid-template-columns: minmax\(0, 1fr\); \}/.exec(css);
+  const desdeCss = /@media screen and \(max-width: (\d+)px\) \{\s*\.tablero \{ grid-template-columns: minmax\(0, 1fr\); \}/.exec(css);
   const desdeJs = /matchMedia\('\(min-width: (\d+)px\)'\)/.exec(panel);
   assert.ok(desdeCss, 'bloque de pantallas angostas del CSS');
   assert.ok(desdeJs, 'consulta de ancho del componente');
@@ -22,16 +22,16 @@ test('el panel de filtros pasa a ser deslizable por debajo del mismo ancho en el
 });
 
 test('el panel de filtros sigue a la izquierda hasta los 860 px', () => {
-  assert.match(css, /@media \(max-width: 859px\) \{\s*\.tablero \{ grid-template-columns: minmax\(0, 1fr\); \}/);
+  assert.match(css, /@media screen and \(max-width: 859px\) \{\s*\.tablero \{ grid-template-columns: minmax\(0, 1fr\); \}/);
   assert.match(panel, /min-width: 860px/);
 });
 
 test('entre 860 y 1279 px la columna de filtros se conserva y es más angosta', () => {
-  assert.match(css, /@media \(min-width: 860px\) and \(max-width: 1279px\) \{[^}]*\.tablero \{ grid-template-columns: 230px minmax\(0, 1fr\) minmax\(0, 1fr\); \}/);
+  assert.match(css, /@media screen and \(min-width: 860px\) and \(max-width: 1279px\) \{[^}]*\.tablero \{ grid-template-columns: 230px minmax\(0, 1fr\) minmax\(0, 1fr\); \}/);
 });
 
 test('en pantallas medianas (incluido el modo escritorio del celular) la barra de estado pasa a dos filas con los datos en cuatro columnas', () => {
-  const medio = css.slice(css.indexOf('@media (min-width: 860px) and (max-width: 1279px)'));
+  const medio = css.slice(css.indexOf('@media screen and (min-width: 860px) and (max-width: 1279px)'));
   assert.match(medio, /\.barra-estado \{ display: grid;/);
   assert.match(medio, /\.estado-texto \{[^}]*grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
 });

@@ -133,14 +133,22 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
     entrada.setAttribute('aria-activedescendant', activo >= 0 && visibles[activo] ? `${lista.id}-op-${activo}` : '');
   }
 
-  /** Etiquetas de lo elegido debajo del combo; cada una se quita con un clic. */
+  /**
+   * Etiquetas de lo elegido debajo del combo; cada una se quita con un clic. Si una tenía el foco, al repintar lo
+   * recibe la misma etiqueta, la que quedó en su lugar o, sin etiquetas, la entrada del combo.
+   */
   function pintarEtiquetas() {
+    // Paso 1: se recuerda qué etiqueta tenía el foco antes de destruirla
+    const activo = document.activeElement;
+    const anterior = activo && etiquetas.contains(activo)
+      ? { valor: activo.dataset.valor, indice: [...etiquetas.children].indexOf(activo) } : null;
     etiquetas.replaceChildren();
     const { visibles: etiquetasVisibles, ocultas } = etiquetasDeSeleccion(opciones, seleccion);
     for (const { valor, texto } of etiquetasVisibles) {
       const boton = document.createElement('button');
       boton.type = 'button';
       boton.className = 'etiqueta-mini';
+      boton.dataset.valor = valor;
       boton.setAttribute('aria-label', textos.quitar(texto));
       const nombre = document.createElement('span');
       nombre.textContent = texto;
@@ -159,6 +167,12 @@ export function crearComboMultiple(raiz, { textos, alCambiar }) {
       mas.className = 'etiqueta-mas';
       mas.textContent = textos.masElegidas(ocultas);
       etiquetas.appendChild(mas);
+    }
+    // Paso 2: el foco vuelve a la misma etiqueta, a la de su posición o a la entrada
+    if (anterior) {
+      const botones = [...etiquetas.children].filter((h) => h.className === 'etiqueta-mini');
+      const destino = botones.find((b) => b.dataset.valor === anterior.valor) || botones[Math.min(anterior.indice, botones.length - 1)] || entrada;
+      destino.focus();
     }
   }
 

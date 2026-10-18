@@ -128,6 +128,17 @@ export const TEXTOS = Object.freeze({
     prefijo: '<a href="https://leafletjs.com" title="Librería de mapas interactivos">Leaflet</a>',
   },
   subtituloEvolucion: (anio, anterior) => (anio === null ? TEXTOS.sinDatosCorto : `${anio} vs ${anterior} · por mes`),
+  /** Resumen del gráfico de evolución para el lector de pantalla, que no ve el lienzo. */
+  resumenEvolucion: ({ anio, anioAnterior, actual, anterior }) => {
+    const total = (valores) => valores.reduce((suma, v) => suma + (v || 0), 0);
+    if (anio === null || !total(actual)) return TEXTOS.resumenParticipacion({ total: 0 });
+    const pico = actual.reduce((mejor, v, i) => ((v || 0) > (actual[mejor] || 0) ? i : mejor), 0);
+    return `Visitantes por mes de ${anio} comparados con ${anioAnterior}. En ${anio} hubo ${numero(total(actual))} visitantes`
+      + ` y el mes con más fue ${MESES_CORTOS[pico].toLowerCase()}, con ${numero(actual[pico])}. En ${anioAnterior} hubo ${numero(total(anterior))}.`;
+  },
+  /** Resumen del gráfico de edad y género para el lector de pantalla: cada rango con la cifra de cada género. */
+  resumenEdadGenero: ({ rangos, series }) => `Visitantes por rango de edad y género. ${rangos
+    .map((r, i) => `${r} años: ${series.map((s) => `${s.genero} ${numero(s.valores[i])}`).join(', ')}.`).join(' ')}`,
 });
 
 export const MESES_CORTOS = Object.freeze(['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']);

@@ -103,6 +103,17 @@ export function elegirEncuadre({ vista, procedencia, catalogo }, tieneProvincia,
 }
 
 /**
+ * Cómo se mueve el mapa a un encuadre nuevo: el primero es instantáneo, igual que cuando se pidió reducir el movimiento.
+ * @param {boolean} primeraVez true en el primer encuadre
+ * @param {boolean} reducir true si el sistema pide reducir el movimiento
+ * @returns {{ duration: number, animate: boolean }} opciones de flyTo y flyToBounds
+ */
+export function opcionesDeVuelo(primeraVez, reducir) {
+  const animar = !primeraVez && !reducir;
+  return { duration: animar ? 0.6 : 0, animate: animar };
+}
+
+/**
  * Crea el mapa. `alElegir(procedencia)` se llama al pulsar una burbuja, una provincia o una fila de la lista «Top».
  * @param {HTMLElement} contenedor elemento donde se dibuja el mapa
  * @param {object} geojsonProvincias límites provinciales, con el nombre en `properties.nombre`
@@ -246,7 +257,7 @@ export function crearMapa(contenedor, geojsonProvincias, colores, provinciaResal
 
     // Paso 2: el encuadre depende de la pestaña; el primero es instantáneo y los siguientes, animados
     mapa.invalidateSize();
-    const opciones = { duration: primeraVez ? 0 : 0.6, animate: !primeraVez };
+    const opciones = opcionesDeVuelo(primeraVez, prefiereMenosMovimiento());
     primeraVez = false;
     const encuadre = elegirEncuadre(datosMapa, (clave) => capasProvincia.has(clave), puntos.length > 0);
     if (encuadre.destino === 'ciudad') return mapa.flyTo([encuadre.lat, encuadre.lon], ZOOM_CIUDAD, opciones);
@@ -280,3 +291,6 @@ function nodoTooltip(titulo, valor) {
   caja.appendChild(document.createTextNode(`${numero(valor)} ${TEXTOS.visitantes}`));
   return caja;
 }
+
+/** Indica si el sistema pide reducir el movimiento: los vuelos del mapa se animan con JavaScript y el CSS no los frena. */
+const prefiereMenosMovimiento = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
