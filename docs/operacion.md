@@ -159,7 +159,7 @@ una fila nueva con «Extranjeros (sin especificar)» y los extranjeros, con el m
 y el género de los extranjeros no se habían anotado, así que se repartieron en la misma proporción que la fila original: es la única cifra
 estimada. Además, la fila 2 de «Plantillas» tenía escritos 960 y 240 en lugar de sus fórmulas y cada pestaña duplicada los heredaba: se
 repuso la fórmula en la plantilla y en todas las pestañas. Quedan para confirmar con su establecimiento dos filas cuyos números escritos a
-mano no cuadran con su total: Turismo Arribos y La Vaca Tuerta, fila 2. Se ven en la [página de revisión](#la-página-de-revisión).
+mano no cuadran con su total. Se ven en la [página de revisión](#la-página-de-revisión).
 Antes de corregir se guardó la versión «Antes de corregir extranjeros 17-10-2026» en el historial de Google.
 
 ## Agregar un establecimiento
