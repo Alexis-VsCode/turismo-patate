@@ -1,6 +1,6 @@
 # ADR 008: Filtros de varias opciones
 
-**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-10-01, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 
@@ -16,7 +16,7 @@ una y otra vez.
 ## Decisión
 
 Cada filtro de varias opciones guarda una lista; una lista vacía significa «sin restricción». Dentro de un filtro las opciones se suman y entre filtros se
-cruzan. Las opciones elegidas se muestran como etiquetas sobre los gráficos, cada una con su «×», y «Quitar todos» las limpia. Un clic en una barra, en un
+cruzan. Las opciones elegidas se muestran como etiquetas sobre los gráficos, cada una con su cruz para quitarla, y «Quitar todos» las limpia. Un clic en una barra, en un
 motivo o en el mapa agrega o quita la opción. La pestaña del mapa sigue a la última opción de procedencia agregada.
 
 Año y mes quedan de una sola opción porque la variación interanual y la evolución comparan dos años y no tienen sentido con varios.

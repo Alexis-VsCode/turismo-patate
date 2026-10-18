@@ -3,7 +3,7 @@
 ## Reportar una vulnerabilidad
 
 Si encuentras un problema de seguridad, **no abras un issue público**. Escribe al autor por LinkedIn
-(https://www.linkedin.com/in/alexisbarreradesarrolador/) o usa **Security → Report a vulnerability** en este
+(https://www.linkedin.com/in/alexisbarreradesarrolador/) o usa **Security > Report a vulnerability** en este
 repositorio.
 
 Incluye:

@@ -4,8 +4,8 @@ Vistas del dashboard que usa el `README`. Se regeneran cuando cambia el diseño.
 
 | Archivo | Contenido |
 |---|---|
-| `escritorio.jpg` · `escritorio-oscuro.jpg` | Página completa a 1440 px de ancho, en modo claro y oscuro |
-| `celular.jpg` · `celular-oscuro.jpg` | Primera pantalla a 390 px de ancho |
+| `escritorio.jpg`, `escritorio-oscuro.jpg` | Página completa a 1440 px de ancho, en modo claro y oscuro |
+| `celular.jpg`, `celular-oscuro.jpg` | Primera pantalla a 390 px de ancho |
 | `celular-mapa.jpg` | Panel «Origen de visitantes» en celular |
 
 ## Receta

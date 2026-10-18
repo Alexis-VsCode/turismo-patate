@@ -1,6 +1,6 @@
 # ADR 006: Catálogo en bloques dentro de una sola pestaña
 
-**Estado:** Aceptada · **Fecha:** 2026-09-30 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-09-30, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

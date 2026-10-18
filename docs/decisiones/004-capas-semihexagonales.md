@@ -1,6 +1,6 @@
 # ADR 004: Capas semihexagonales en JavaScript sin framework
 
-**Estado:** Aceptada, ampliada por la [ADR 010](010-publicacion-hexagonal-y-tablero-semihexagonal.md) · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, ampliada por la [ADR 010](010-publicacion-hexagonal-y-tablero-semihexagonal.md), **Fecha:** 2026-09-29, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 > Antecedente. Las carpetas que nombra esta decisión viven hoy bajo `src/tablero/`, y la lectura del Excel pasó a `src/publicacion/`.
 > La estructura vigente está en la ADR 010.

@@ -59,9 +59,9 @@ Las líneas punteadas indican dependencia: lo que se registra en la hoja llega a
 |---|---|
 | Actor | Visitante |
 | Objetivo | Enviar a otra persona la misma vista que está viendo |
-| Pasos | 1. Aplica los filtros. 2. Pulsa «Copiar enlace» (o copia la dirección del navegador), que lleva los filtros en el fragmento (`#…`). 3. La otra persona la abre. |
+| Pasos | 1. Aplica los filtros. 2. Pulsa «Copiar enlace» (o copia la dirección del navegador), que lleva los filtros en el fragmento (`#...`). 3. La otra persona la abre. |
 | Resultado | Al cargar los datos, el dashboard aplica los filtros del enlace una sola vez |
-| Excepciones | Lo mal formado se descarta: año fuera de 2000 a 2100, mes fuera de 0 a 11, rango de edad desconocido, procedencia que no empieza por `NAC`, `EXT`, `C:`, `P:` o `PR:`, valores de más de 80 caracteres y lo que pase de 20 opciones por filtro. Un valor bien formado que no está en los datos sí se aplica: la vista queda en «Sin visitantes para los filtros elegidos», su etiqueta aparece y se quita con «×» |
+| Excepciones | Lo mal formado se descarta: año fuera de 2000 a 2100, mes fuera de 0 a 11, rango de edad desconocido, procedencia que no empieza por `NAC`, `EXT`, `C:`, `P:` o `PR:`, valores de más de 80 caracteres y lo que pase de 20 opciones por filtro. Un valor bien formado que no está en los datos sí se aplica: la vista queda en «Sin visitantes para los filtros elegidos», su etiqueta aparece y se quita con su cruz |
 
 ### CU-3 Ver el contacto
 
@@ -79,7 +79,7 @@ Las líneas punteadas indican dependencia: lo que se registra en la hoja llega a
 |---|---|
 | Actor | Visitante |
 | Objetivo | Intentar abrir el LinkedIn de la Lic. Vanessa Lesano Martínez, que todavía no tiene dirección publicada |
-| Pasos | 1. Pulsa el botón LinkedIn marcado «Pronto». 2. El dashboard muestra un aviso flotante que explica que esa red llegará más adelante y ofrece los enlaces disponibles: Facebook y TikTok de la Lic. Vanessa Lesano Martínez, más el Facebook del autor. 3. Cierra el aviso con «×», con la tecla Escape o espera a que se cierre solo (10 segundos). |
+| Pasos | 1. Pulsa el botón LinkedIn marcado «Pronto». 2. El dashboard muestra un aviso flotante que explica que esa red llegará más adelante y ofrece los enlaces disponibles: Facebook y TikTok de la Lic. Vanessa Lesano Martínez, más el Facebook del autor. 3. Cierra el aviso con la cruz, con la tecla Escape o espera a que se cierre solo (10 segundos). |
 | Resultado | El visitante llega a un canal de contacto que sí existe |
 | Excepciones | El aviso solo acepta enlaces `https://`; los demás se descartan. Un aviso nuevo reemplaza al anterior. Para publicar la red, se escribe su dirección en `CONTACTO_MUNICIPIO.enlaces.linkedin`. |
 
@@ -117,7 +117,7 @@ Las líneas punteadas indican dependencia: lo que se registra en la hoja llega a
 | Objetivo | Que el dashboard siga publicando datos al día y que cualquier falla se detecte y se corrija |
 | Pasos | 1. Diseña y desarrolla los cambios con pruebas por capa. 2. Mantiene la cadencia: la tarea de cron-job.org (`workflow_dispatch` en :00 y :30) y el `schedule` de GitHub (`15,45 * * * *`). 3. Revisa el chip de frescura y el registro de cada publicación. 4. Si hay ejecuciones atascadas, comprueba que `destrabar` las canceló (evento `destrabar_fin` en el registro) o las cancela a mano. Comprueba también el evento `flujo_mantenido`, que prueba que el flujo sigue activo. 5. Controla los despliegues y las versiones. |
 | Resultado | Publicación continua; cualquier detención se ve en el chip y se resuelve con el procedimiento de [observabilidad.md](observabilidad.md) |
-| Excepciones | GitHub puede retrasar el `schedule` bajo carga. Tras 60 días sin actividad desactiva el flujo entero, y entonces también falla el `workflow_dispatch` de cron-job.org; `destrabar` lo evita llamando a `PUT /actions/workflows/{id}/enable` en cada publicación (evento `flujo_mantenido`). Si el flujo aparece desactivado, se reactiva a mano en Actions → Publicar dashboard → «Enable workflow». Si falla cron-job.org, publica el `schedule` en 15 minutos o menos. |
+| Excepciones | GitHub puede retrasar el `schedule` bajo carga. Tras 60 días sin actividad desactiva el flujo entero, y entonces también falla el `workflow_dispatch` de cron-job.org; `destrabar` lo evita llamando a `PUT /actions/workflows/{id}/enable` en cada publicación (evento `flujo_mantenido`). Si el flujo aparece desactivado, se reactiva a mano en Actions > Publicar dashboard > «Enable workflow». Si falla cron-job.org, publica el `schedule` en 15 minutos o menos. |
 
 ## Sistema
 

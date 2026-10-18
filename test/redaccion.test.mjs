@@ -46,3 +46,20 @@ test('la regla de redacción cubre también las pruebas, las herramientas, la ho
   }
   assert.ok(!lista.some((a) => a.startsWith('tools/vendor/')), 'no revisa código de terceros');
 });
+
+test('la documentación se lee como un manual: sin flechas, dibujos de árbol, triángulos, cruces ni puntos suspensivos tipográficos', () => {
+  const SIGNOS = /[\u2192\u25B2\u25BC\u2026\u00D7\u2500-\u257F]/;
+  const hallazgos = [];
+  for (const archivo of archivos().filter((a) => a.endsWith('.md'))) {
+    readFileSync(join(RAIZ, archivo), 'utf8').split('\n').forEach((linea, i) => {
+      if (SIGNOS.test(linea)) hallazgos.push(`${archivo}:${i + 1}: ${linea.trim().slice(0, 70)}`);
+    });
+  }
+  assert.deepEqual(hallazgos, []);
+});
+
+test('ningún archivo del proyecto nombra herramientas de generación automática ni lleva coautorías de ellas', () => {
+  const MARCAS = new RegExp(['cla' + 'ude', 'anthr' + 'opic', 'chat' + 'gpt', 'open' + 'ai', 'cop' + 'ilot', 'co-auth' + 'ored-by'].join('|'), 'i');
+  const hallazgos = archivos().filter((archivo) => MARCAS.test(readFileSync(join(RAIZ, archivo), 'utf8')));
+  assert.deepEqual(hallazgos, []);
+});

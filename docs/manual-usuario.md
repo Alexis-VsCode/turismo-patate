@@ -46,8 +46,8 @@ A la derecha de la barra hay dos botones: la **luna** cambia entre modo claro y 
 La cifra grande es el total de visitantes según los filtros que usted tenga puestos. Debajo aparece su variación frente al mismo periodo
 del año anterior:
 
-- **▲** con un porcentaje: hubo más visitantes que el año anterior.
-- **▼** con un porcentaje: hubo menos.
+- **Flecha hacia arriba** con un porcentaje: hubo más visitantes que el año anterior.
+- **Flecha hacia abajo** con un porcentaje: hubo menos.
 - **«Sin datos del año anterior»**: no hay con qué comparar, por ejemplo en el primer año de registros.
 
 ### Nacionales y extranjeros
@@ -117,7 +117,7 @@ y el de año, solo los años en que reportó. Así no hace falta probar opciones
   pueda sumar otro.
 - **Lo que ya eligió no desaparece.** Si una opción elegida se queda sin visitantes por otro filtro, sigue en su lista, marcada, para que pueda
   quitarla.
-- **Al quitar un filtro, las opciones vuelven.** Da igual cómo lo quite: con la **×** de una etiqueta, con **Quitar todos**, desde el panel del
+- **Al quitar un filtro, las opciones vuelven.** Da igual cómo lo quite: con la cruz de una etiqueta, con **Quitar todos**, desde el panel del
   celular o volviendo a tocar un motivo o un gráfico. Lo mismo pasa al abrir un enlace compartido: los filtros se acortan igual que si los hubiera
   elegido a mano.
 
@@ -131,7 +131,7 @@ flowchart TD
 
 ### Etiquetas
 
-Cada opción que usted elige aparece como una etiqueta sobre los gráficos. Para quitar una, pulse la **×** de esa etiqueta. Cuando hay dos o
+Cada opción que usted elige aparece como una etiqueta sobre los gráficos. Para quitar una, pulse la cruz de esa etiqueta. Cuando hay dos o
 más etiquetas aparece **Quitar todos**, que las borra de una vez.
 
 El botón **Limpiar filtros**, dentro del panel de filtros, regresa todo al estado inicial.

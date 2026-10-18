@@ -1,4 +1,4 @@
-# Visitor Statistics · Patate Canton
+# Visitor Statistics of Patate Canton
 
 [![Publish dashboard](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml/badge.svg)](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml)
 [![Live site](https://img.shields.io/badge/demo-live-30A848)](https://alexis-vscode.github.io/turismo-patate/)
@@ -14,8 +14,8 @@ refreshes itself, with no servers of its own and no paid licenses.
 own tab of the spreadsheet; and the municipality's tourism team, which links it from its website and uses it to
 report. Each one's walkthrough is in the [use cases](docs/casos-de-uso.md) (Spanish).
 
-**[Live demo](https://alexis-vscode.github.io/turismo-patate/)** (the interface is in Spanish) ·
-[Documentation](docs/README.md) · [Operations manual](docs/operacion.md) (Spanish)
+**[Live demo](https://alexis-vscode.github.io/turismo-patate/)** (the interface is in Spanish),
+[Documentation](docs/README.md), [Operations manual](docs/operacion.md) (Spanish)
 
 ## Preview
 
@@ -40,10 +40,10 @@ come from, why they come, and their age and gender. The requirements were:
 
 ## Features
 
-- **Indicators:** total visitors with the **change against the same period of the previous year** (▲ or ▼).
+- **Indicators:** total visitors with the **change against the same period of the previous year** (up or down arrow).
   Figures animate when filtering.
 - **Nationals vs foreigners:** a donut chart with the total in the center, the figures and percentages of each
-  group, and a sentence that is worded according to the filters ("… during 2025", "… in March 2025").
+  group, and a sentence that is worded according to the filters ("... during 2025", "... in March 2025").
 - **Charts:**
   - monthly evolution comparing two years, with a trend line;
   - visit reasons with an icon, a bar, a figure and a percentage;
@@ -160,8 +160,8 @@ The alternatives I discarded, and why, are in the [design decisions](docs/decisi
 - **Unsticking and keep-alive:** the `destrabar` job cancels stuck runs (`destrabar_fin`) and keeps the workflow active (`flujo_mantenido`).
 - **If the chip is not green:** first check the repository's **Actions** tab and that the cron-job.org task is
   still active. After 60 days without activity GitHub disables the whole workflow, so cron-job.org's trigger fails too;
-  `destrabar` prevents this by re-enabling the workflow on every publication. If it still shows as disabled, re-enable it by hand under **Actions →
-  Publicar dashboard → "Enable workflow"**. The step-by-step is in the runbook.
+  `destrabar` prevents this by re-enabling the workflow on every publication. If it still shows as disabled, re-enable it by hand under **Actions >
+  Publicar dashboard > "Enable workflow"**. The step-by-step is in the runbook.
 - **Stated limit:** the chip is seen by visitors; alerting whoever operates the site depends on GitHub's
   notifications for a failed workflow.
 
@@ -309,28 +309,28 @@ with new styles. Since automatic publishing does not run locally, the freshness 
 ## Structure
 
 ```
-├── index.html · css/tema.css
-├── src/
-│   ├── domain/               pure rules, shared
-│   ├── contrato/             datos.json contract and bounded download, shared
-│   ├── publicacion/          use case, ports, adapters and configuration (runs in Actions)
-│   └── tablero/              application · infrastructure · shared · main.js (runs in the browser)
-├── assets/                   logo, header photo, share image (og.jpg) and province limits
-│   └── personas/             photos of the people behind the project (footer)
-├── tools/
-│   ├── construir-datos.mjs   publishing entry point (runs in Actions)
-│   ├── destrabar-publicacion.mjs  cancels stuck runs
-│   ├── oraculo.py · generar-piloto.py · servir.mjs
-│   ├── excel/                capture workbook generator and Google protection script (proteger-hoja.gs)
-│   ├── catalogos/            generator and sources of the canton and country catalogs
-│   └── vendor/               SheetJS, only for the builder
-├── test/                     tests per layer (domain, contrato, publicacion, tablero, tools, excel) and fixtures
-├── docs/                     architecture, use cases, configuration, operations, observability, security,
-│                             user manual (manual-usuario.md), decisions and screenshots
-├── .github/
-│   ├── workflows/            ci.yml and publicar.yml
-│   └── dependabot.yml
-└── LICENSE · CHANGELOG.md · CONTRIBUTING.md · SECURITY.md · THIRD_PARTY_NOTICES.md
+    index.html, css/tema.css
+    src/
+        domain/               pure rules, shared
+        contrato/             datos.json contract and bounded download, shared
+        publicacion/          use case, ports, adapters and configuration (runs in Actions)
+        tablero/              application, infrastructure, shared, main.js (runs in the browser)
+    assets/                   logo, header photo, share image (og.jpg) and province limits
+        personas/             photos of the people behind the project (footer)
+    tools/
+        construir-datos.mjs   publishing entry point (runs in Actions)
+        destrabar-publicacion.mjs  cancels stuck runs
+        oraculo.py, generar-piloto.py, servir.mjs
+        excel/                capture workbook generator and Google protection script (proteger-hoja.gs)
+        catalogos/            generator and sources of the canton and country catalogs
+        vendor/               SheetJS, only for the builder
+    test/                     tests per layer (domain, contrato, publicacion, tablero, tools, excel) and fixtures
+    docs/                     architecture, use cases, configuration, operations, observability, security,
+                              user manual (manual-usuario.md), decisions and screenshots
+    .github/
+        workflows/            ci.yml and publicar.yml
+        dependabot.yml
+    LICENSE, CHANGELOG.md, CONTRIBUTING.md, SECURITY.md, THIRD_PARTY_NOTICES.md
 ```
 
 ## Documentation

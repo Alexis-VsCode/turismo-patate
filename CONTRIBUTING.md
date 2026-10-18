@@ -24,18 +24,18 @@ número de pruebas, CVE) se escribe sin medirla en el momento, y junto a ella va
 
 ```
 src/
-├── domain/          reglas puras, compartidas por los dos lados
-├── contrato/        contrato de datos.json y descarga acotada, compartidos
-├── publicacion/     lado de GitHub Actions, hexagonal
-│   ├── aplicacion/      caso de uso construir-datos.js
-│   ├── adaptadores/     hoja-google.js, lector-xlsx.js, destino-archivo.js
-│   ├── puertos.js       puertos como typedef de JSDoc
-│   └── config-publicacion.js
-└── tablero/         lado del navegador, semihexagonal
-    ├── application/     tablero.facade.js y components/ (container, presentational/, compartidos/)
-    ├── infrastructure/  config.js y repositorio-datos.js
-    ├── shared/          textos.es.js, formato.js, tema.js y tema-inicial.js
-    └── main.js          raíz de composición
+    domain/          reglas puras, compartidas por los dos lados
+    contrato/        contrato de datos.json y descarga acotada, compartidos
+    publicacion/     lado de GitHub Actions, hexagonal
+        aplicacion/      caso de uso construir-datos.js
+        adaptadores/     hoja-google.js, lector-xlsx.js, destino-archivo.js
+        puertos.js       puertos como typedef de JSDoc
+        config-publicacion.js
+    tablero/         lado del navegador, semihexagonal
+        application/     tablero.facade.js y components/ (container, presentational/, compartidos/)
+        infrastructure/  config.js y repositorio-datos.js
+        shared/          textos.es.js, formato.js, tema.js y tema-inicial.js
+        main.js          raíz de composición
 tools/construir-datos.mjs   punto de entrada delgado de la publicación
 ```
 

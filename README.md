@@ -1,4 +1,4 @@
-# Estadísticas de Visitantes · Cantón Patate
+# Estadísticas de Visitantes del Cantón Patate
 
 [![Publicar dashboard](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml/badge.svg)](https://github.com/Alexis-VsCode/turismo-patate/actions/workflows/publicar.yml)
 [![Sitio en línea](https://img.shields.io/badge/demo-en%20l%C3%ADnea-30A848)](https://alexis-vscode.github.io/turismo-patate/)
@@ -14,7 +14,7 @@ dashboard se actualiza solo, sin servidores propios ni licencias.
 establecimientos, que solo llenan su pestaña de la hoja; y para el equipo de turismo del municipio, que lo enlaza
 desde su web y lo usa para informar. Los recorridos de cada uno están en [casos de uso](docs/casos-de-uso.md).
 
-**[Ver demo en vivo](https://alexis-vscode.github.io/turismo-patate/)** · [Documentación](docs/README.md) ·
+**[Ver demo en vivo](https://alexis-vscode.github.io/turismo-patate/)**, [Documentación](docs/README.md),
 [Manual de operación](docs/operacion.md)
 
 ## Vista previa
@@ -41,9 +41,9 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
 ## Funcionalidades
 
 - **Indicadores:** total de visitantes con su **variación contra el mismo período del año anterior**
-  (▲ o ▼). Las cifras se animan al filtrar.
+  (flecha hacia arriba o hacia abajo). Las cifras se animan al filtrar.
 - **Participación de nacionales y extranjeros:** una dona con el total al centro, las cifras y porcentajes de
-  cada grupo, y una frase que se redacta según los filtros («… durante el 2025», «… en marzo de 2025»).
+  cada grupo, y una frase que se redacta según los filtros («... durante el 2025», «... en marzo de 2025»).
 - **Gráficos:**
   - evolución mensual comparando dos años, con línea de tendencia;
   - motivos de visita con ícono, barra, cifra y porcentaje;
@@ -159,8 +159,8 @@ Observabilidad **básica**, pensada para un sitio estático:
 - **Destrabar y mantener:** el job `destrabar` cancela las ejecuciones atascadas (`destrabar_fin`) y mantiene activo el flujo (`flujo_mantenido`).
 - **Si el chip no está en verde:** primero se revisa la pestaña **Actions** del repositorio y que la tarea de
   cron-job.org siga activa. Tras 60 días sin actividad GitHub desactiva el flujo entero, y entonces también falla el disparo de cron-job.org;
-  `destrabar` lo evita reactivando el flujo en cada publicación. Si aun así aparece desactivado, se reactiva a mano en **Actions → Publicar
-  dashboard → «Enable workflow»**. El paso a paso está en el runbook.
+  `destrabar` lo evita reactivando el flujo en cada publicación. Si aun así aparece desactivado, se reactiva a mano en **Actions > Publicar
+  dashboard > «Enable workflow»**. El paso a paso está en el runbook.
 - **Límite declarado:** el chip lo ven los visitantes; avisar a quien opera depende de las notificaciones de
   GitHub por un workflow fallido.
 
@@ -305,28 +305,28 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 ## Estructura
 
 ```
-├── index.html · css/tema.css
-├── src/
-│   ├── domain/               reglas puras, compartidas
-│   ├── contrato/             contrato de datos.json y descarga acotada, compartidos
-│   ├── publicacion/          caso de uso, puertos, adaptadores y configuración (corre en Actions)
-│   └── tablero/              application · infrastructure · shared · main.js (corre en el navegador)
-├── assets/                   logo, foto de cabecera, imagen para compartir (og.jpg) y límites provinciales
-│   └── personas/             fotos de las personas del proyecto (pie de página)
-├── tools/
-│   ├── construir-datos.mjs   punto de entrada de la publicación (corre en Actions)
-│   ├── destrabar-publicacion.mjs  cancela ejecuciones atascadas
-│   ├── oraculo.py · generar-piloto.py · servir.mjs
-│   ├── excel/                generador del libro de captura y script de protección de Google (proteger-hoja.gs)
-│   ├── catalogos/            generador y fuentes de los catálogos de cantones y países
-│   └── vendor/               SheetJS, solo para el constructor
-├── test/                     pruebas por capa (domain, contrato, publicacion, tablero, tools, excel) y fixtures
-├── docs/                     arquitectura, casos de uso, configuración, operación, observabilidad, seguridad,
-│                             manual de usuario (manual-usuario.md), decisiones y capturas
-├── .github/
-│   ├── workflows/            ci.yml y publicar.yml
-│   └── dependabot.yml
-└── LICENSE · CHANGELOG.md · CONTRIBUTING.md · SECURITY.md · THIRD_PARTY_NOTICES.md
+    index.html, css/tema.css
+    src/
+        domain/               reglas puras, compartidas
+        contrato/             contrato de datos.json y descarga acotada, compartidos
+        publicacion/          caso de uso, puertos, adaptadores y configuración (corre en Actions)
+        tablero/              application, infrastructure, shared, main.js (corre en el navegador)
+    assets/                   logo, foto de cabecera, imagen para compartir (og.jpg) y límites provinciales
+        personas/             fotos de las personas del proyecto (pie de página)
+    tools/
+        construir-datos.mjs   punto de entrada de la publicación (corre en Actions)
+        destrabar-publicacion.mjs  cancela ejecuciones atascadas
+        oraculo.py, generar-piloto.py, servir.mjs
+        excel/                generador del libro de captura y script de protección de Google (proteger-hoja.gs)
+        catalogos/            generador y fuentes de los catálogos de cantones y países
+        vendor/               SheetJS, solo para el constructor
+    test/                     pruebas por capa (domain, contrato, publicacion, tablero, tools, excel) y fixtures
+    docs/                     arquitectura, casos de uso, configuración, operación, observabilidad, seguridad,
+                              manual de usuario (manual-usuario.md), decisiones y capturas
+    .github/
+        workflows/            ci.yml y publicar.yml
+        dependabot.yml
+    LICENSE, CHANGELOG.md, CONTRIBUTING.md, SECURITY.md, THIRD_PARTY_NOTICES.md
 ```
 
 ## Documentación

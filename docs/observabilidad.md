@@ -24,7 +24,7 @@ Un chip junto a la barra de estado, con texto y color (nunca solo color):
 | **Publicación detenida** | Desde el minuto 101 | La publicación automática probablemente se detuvo |
 | **Sin verificar** | Fecha ausente, inválida o más de 2 minutos en el futuro | Reloj del visitante desajustado o dato sin fecha |
 
-Junto a la etiqueta el chip dice «publicados hace …». Al pasar el cursor por encima explica qué hace *Actualizar*.
+Junto a la etiqueta el chip dice «publicados hace ...». Al pasar el cursor por encima explica qué hace *Actualizar*.
 
 La barra de estado muestra cuatro datos, cada uno con una explicación visible debajo:
 
@@ -63,7 +63,7 @@ Ejecuta [`tools/destrabar-publicacion.mjs`](../tools/destrabar-publicacion.mjs):
 
 1. Lista las ejecuciones del mismo flujo en estado `waiting` o `in_progress`. Las que están en `queued` o `pending` esperan turno y se respetan.
 2. Cancela las que llevan más de `MINUTOS_TRABADA` (25) minutos, contados desde `run_started_at` y no desde `created_at`. Una publicación normal tarda unos 2. Nunca se cancela a sí misma.
-3. Si una ejecución sigue activa pasado el doble (2×`MINUTOS_TRABADA`, 50 minutos), fuerza la cancelación con la API `force-cancel`.
+3. Si una ejecución sigue activa pasado el doble (dos veces `MINUTOS_TRABADA`, 50 minutos), fuerza la cancelación con la API `force-cancel`.
 4. Llama a `PUT /actions/workflows/{id}/enable`: mantiene el flujo activo y reinicia el plazo de 60 días de GitHub (ver [Límites](#límites)). Deja el evento `flujo_mantenido`.
 
 La concurrencia de Pages (`group: pages`, `cancel-in-progress: false`) vive **solo** en el job `desplegar`, para que la limpieza corra siempre aunque otra ejecución esté
@@ -139,11 +139,11 @@ Si solo ves `workflow_dispatch` o solo `schedule`, el otro disparador no está f
 
 ## Qué hacer si el chip no está en verde
 
-1. Abre **Actions → Publicar dashboard** y mira la última ejecución.
+1. Abre **Actions > Publicar dashboard** y mira la última ejecución.
 2. Si está en rojo, el evento `error_construccion` y el resumen dicen el motivo.
 3. Si todas salen `cancelled` o hay una en `waiting` desde hace más de 25 minutos, es una publicación trabada: sigue el
    [runbook de operación](operacion.md#si-algo-falla).
-4. Si no hay ejecuciones recientes de ningún tipo, revisa cron-job.org y que el flujo no esté desactivado: en **Actions → Publicar dashboard** pulsa «Enable workflow» si aparece.
+4. Si no hay ejecuciones recientes de ningún tipo, revisa cron-job.org y que el flujo no esté desactivado: en **Actions > Publicar dashboard** pulsa «Enable workflow» si aparece.
 
 ## Límites
 
@@ -151,6 +151,6 @@ Si solo ves `workflow_dispatch` o solo `schedule`, el otro disparador no está f
 - GitHub **desactiva el flujo entero tras 60 días sin actividad** en el repositorio, no solo el `schedule`; entonces también falla el `workflow_dispatch` de cron-job.org. La mitigación es el `PUT /actions/workflows/{id}/enable` que hace `destrabar` en cada publicación: mantiene el flujo activo y reinicia el plazo (evento `flujo_mantenido`). Si el flujo aparece desactivado, se reactiva a mano con «Enable workflow». Mientras esté desactivado, el chip pasa a «Publicación detenida».
 - Los umbrales (45 y 100 minutos) se calcularon de la cadencia teórica; conviene revisarlos con el historial real de ejecuciones.
 - El chip lo ven los visitantes; **no avisa a quien opera**. La alerta para el operador es la notificación de GitHub
-  por un workflow fallido, que hay que verificar en *Settings → Notifications*.
+  por un workflow fallido, que hay que verificar en *Settings > Notifications*.
 - Si el workflow no se ejecuta, tampoco hay error que notificar: por eso existe el chip.
 - No hay `estado.json` ni monitoreo externo. Son el siguiente paso si el sitio crece.

@@ -1,6 +1,6 @@
 # ADR 001: HTML estático en vez de Power BI
 
-**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-09-29, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

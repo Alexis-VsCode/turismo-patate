@@ -1,6 +1,6 @@
 # ADR 005: Tema claro y oscuro, y excepciones de color
 
-**Estado:** Aceptada · **Fecha:** 2026-09-29 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-09-29, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

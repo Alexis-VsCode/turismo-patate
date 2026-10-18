@@ -63,7 +63,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Añadido
 - Redes de la Lic. Vanessa Lesano (Facebook y TikTok) en `CONTACTO_MUNICIPIO`. Una red sin dirección (LinkedIn) se muestra como botón «Pronto» y abre un aviso con los enlaces disponibles (`aviso.js`): se cierra con el botón, con Esc o solo, y acepta únicamente enlaces `https://`.
 - **Periodo con datos** en la barra de estado («dic 2024 a sep 2026»), y cada dato con su explicación visible debajo.
-- El aviso no se cierra solo mientras el puntero o el foco están sobre él, y al cerrarlo con × o Esc el foco vuelve al botón que lo abrió. El nombre accesible del botón «Pronto» contiene su texto visible.
+- El aviso no se cierra solo mientras el puntero o el foco están sobre él, y al cerrarlo con la cruz o con Esc el foco vuelve al botón que lo abrió. El nombre accesible del botón «Pronto» contiene su texto visible.
 - Documentación: casos de uso (`docs/casos-de-uso.md`), decisión 009 (publicación con doble disparador) y README, manual de operación, parámetros y observabilidad al día.
 
 ## [2.6.0] - 2026-10-12
@@ -178,7 +178,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - **Botón de modo claro y oscuro** de dos estados. El tema se aplica antes del primer pintado y se recuerda en el
   dispositivo (`localStorage`).
 - **Chip de frescura** de la publicación («al día», «retrasada» o «detenida») y texto de estado con dos horas
-  distintas: «Actualizado el…» (este navegador) y «Datos publicados el…» (la publicación de Actions).
+  distintas: «Actualizado el...» (este navegador) y «Datos publicados el...» (la publicación de Actions).
 - **Observabilidad básica** en la construcción de datos: una línea de log JSON por ejecución y un resumen en Actions.
   Ver [docs/observabilidad.md](docs/observabilidad.md).
 - **Pestañas del mapa** (Provincias, Ciudades y Países) que cambian burbujas, «Top» y encuadre, y siguen al filtro

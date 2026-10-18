@@ -1,6 +1,6 @@
 # ADR 009: Publicación con doble disparador y limpieza de ejecuciones trabadas
 
-**Estado:** Aceptada · **Fecha:** 2026-10-12 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-10-12, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 
@@ -28,7 +28,7 @@ Además, la publicación dependía de un solo disparador externo (cron-job.org).
 2. **Job `destrabar`.** Corre en cada ejecución, en paralelo con `construir`, con `continue-on-error: true` para que su falla no bloquee la
    publicación. Ejecuta [`tools/destrabar-publicacion.mjs`](../../tools/destrabar-publicacion.mjs), que consulta la API de Actions y cancela
    las ejecuciones del mismo flujo en `waiting` o `in_progress` cuya antigüedad, medida desde `run_started_at` (no desde `created_at`), supera
-   `MINUTOS_TRABADA` (25) minutos. Si una ejecución sigue activa pasado el doble (2×`MINUTOS_TRABADA`, 50 minutos), fuerza la cancelación con
+   `MINUTOS_TRABADA` (25) minutos. Si una ejecución sigue activa pasado el doble (dos veces `MINUTOS_TRABADA`, 50 minutos), fuerza la cancelación con
    `force-cancel`. Nunca cancela la ejecución en curso ni las que esperan turno (`queued`, `pending`). Una publicación normal tarda unos 2
    minutos.
 3. **Mantenimiento del flujo activo.** En cada publicación, `destrabar` llama a `PUT /actions/workflows/{id}/enable`. Esa llamada mantiene el flujo
@@ -58,7 +58,7 @@ La cadencia que se comunica al público es una sola: publicación cada 30 minuto
 - GitHub desactiva el flujo entero, no solo el `schedule`, tras 60 días sin actividad en el repositorio. Entonces también falla el
   `workflow_dispatch` de cron-job.org, así que cron-job.org no cubre ese caso. La mitigación es el `PUT /actions/workflows/{id}/enable` de
   `destrabar`, que corre en cada publicación y reinicia el plazo. Si alguna vez el flujo aparece desactivado, se reactiva a mano en
-  **Actions → Publicar dashboard → «Enable workflow»**. Mientras tanto el chip del sitio pasa a «Publicación detenida» cuando la edad supera
+  **Actions > Publicar dashboard > «Enable workflow»**. Mientras tanto el chip del sitio pasa a «Publicación detenida» cuando la edad supera
   los 100 minutos (desde el minuto 101).
 - `destrabar` depende de la API de GitHub y del `GITHUB_TOKEN` del flujo (permiso `actions: write`). Si la API falla, el job termina con error
   pero no bloquea la publicación.

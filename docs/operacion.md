@@ -8,11 +8,11 @@ Cuando se genera un libro nuevo con [`tools/excel/generar-excel.py`](../tools/ex
 pestaña, `_Inicio`, trae las instrucciones de uso.
 
 1. Abra la hoja de cálculo de Google que ya usa el municipio.
-2. Menú **Archivo → Importar**.
+2. Menú **Archivo > Importar**.
 3. Pestaña **Subir** y elija el archivo `.xlsx` (o arrástrelo).
 4. En «Ubicación de importación» marque **Reemplazar hoja de cálculo** y pulse **Importar datos**. Con esa opción la hoja conserva su
    dirección y sus permisos.
-5. Menú **Archivo → Compartir → Publicar en la web**.
+5. Menú **Archivo > Compartir > Publicar en la web**.
 6. En «Vínculo», elija **Documento completo** y, en el segundo desplegable, el formato **Microsoft Excel (.xlsx)**.
 7. Deje marcada la casilla **Volver a publicar automáticamente cuando se hagan cambios** y pulse **Publicar**.
 8. Copie el enlace que aparece. **Ese enlace publicado es el que va en el secreto `SHEET_URL`** del repositorio. Lo configura el autor del dashboard;
@@ -75,7 +75,7 @@ Cada fila es **un mes de un origen y un motivo**. Usted escribe los números; la
 
 | Escribe usted | Calcula la hoja (columnas grises) |
 |---|---|
-| Año · Mes · País · Ciudad · Motivo de visita · Mujeres 0-30 · 31-45 · 46-60 · 61+ · Hombres 0-30 · 31-45 · 46-60 · 61+ · Personas con discapacidad | Provincia · Total mujeres · Total hombres · Total visitantes · Nacionales · Extranjeros · Estado |
+| Año, Mes, País, Ciudad, Motivo de visita, Mujeres 0-30, 31-45, 46-60, 61+, Hombres 0-30, 31-45, 46-60, 61+, Personas con discapacidad | Provincia, Total mujeres, Total hombres, Total visitantes, Nacionales, Extranjeros, Estado |
 
 - **Los ocho números** son enteros de 0 en adelante. Una celda vacía cuenta como cero y una fila sin ningún número se ignora.
 - **Personas con discapacidad** no puede superar el total de visitantes de la fila. La hoja no deja escribir un valor mayor y la fila se pinta de
@@ -134,8 +134,8 @@ stateDiagram-v2
 
 | Aviso | Qué significa | Qué hacer |
 |---|---|---|
-| «Fila N: Nacionales dice … y Extranjeros dice …, pero con el país … deben ser …» | Alguien escribió a mano en una columna gris y no coincide con el país | El dashboard ya usa el país. Si el país está mal, corríjalo; si no, vuelva a poner la fórmula en la columna gris (cópiela de la fila de arriba) |
-| «Fila N: … visitantes en una sola fila, más que el tope de 450000» | El total de la fila pasa de `UMBRAL_FILA_SOSPECHOSA` (450000) | Revise si sobra una cifra, por ejemplo un cero de más. Si la cifra es real, no hay que hacer nada: la fila ya se publica |
+| «Fila N: Nacionales dice ... y Extranjeros dice ..., pero con el país ... deben ser ...» | Alguien escribió a mano en una columna gris y no coincide con el país | El dashboard ya usa el país. Si el país está mal, corríjalo; si no, vuelva a poner la fórmula en la columna gris (cópiela de la fila de arriba) |
+| «Fila N: ... visitantes en una sola fila, más que el tope de 450000» | El total de la fila pasa de `UMBRAL_FILA_SOSPECHOSA` (450000) | Revise si sobra una cifra, por ejemplo un cero de más. Si la cifra es real, no hay que hacer nada: la fila ya se publica |
 
 Los dos avisos desaparecen solos en la siguiente publicación después de corregir la hoja.
 
@@ -148,7 +148,7 @@ Los dos avisos desaparecen solos en la siguiente publicación después de correg
 
 La copia hereda los desplegables, las fórmulas y el formato de la plantilla. La protección de las columnas grises **no** se copia al duplicar,
 pero la pone sola el activador del script de la hoja en cuanto aparece la pestaña nueva (comprobado el 17/10/2026). Para confirmarlo, abra
-*Datos → Proteger hojas y rangos* en la pestaña nueva: debe figurar «Dashboard: solo se escriben las celdas blancas».
+*Datos > Proteger hojas y rangos* en la pestaña nueva: debe figurar «Dashboard: solo se escriben las celdas blancas».
 
 Aparece en el dashboard en la siguiente publicación, hasta unos 35 minutos después: en el combo, en los filtros, en las tarjetas y en el mapa.
 
@@ -158,7 +158,7 @@ La pone [`tools/excel/proteger-hoja.gs`](../tools/excel/proteger-hoja.gs), un Ap
 captura queda bloqueada salvo las celdas blancas de entrada, y solo el propietario de la hoja edita lo bloqueado. Las pestañas que empiezan con
 `_` no se tocan.
 
-- **Instalación, una sola vez y con la cuenta propietaria:** *Extensiones → Apps Script*, pegar el archivo, guardar y ejecutar
+- **Instalación, una sola vez y con la cuenta propietaria:** *Extensiones > Apps Script*, pegar el archivo, guardar y ejecutar
   `protegerColumnasGrises`. Luego, en *Activadores*, agregar uno para `alAgregarPestana` con la fuente «De una hoja de cálculo» y el evento
   «Al producirse un cambio».
 - **Se puede ejecutar varias veces:** salta las pestañas que ya tienen su protección.
@@ -174,14 +174,14 @@ encabezado distinto, y cada pareja de datos queda pegada:
 
 | Bloque | Columnas |
 |---|---|
-| Listas | Año · Mes · Motivo · Género |
-| Países | País · Pais_Lat · Pais_Lon |
-| Ciudades de Ecuador | Ciudad · Ciudad_Provincia · Ciudad_Lat · Ciudad_Lon |
-| Provincias | Provincia · Provincia_Lat · Provincia_Lon |
+| Listas | Año, Mes, Motivo, Género |
+| Países | País, Pais_Lat, Pais_Lon |
+| Ciudades de Ecuador | Ciudad, Ciudad_Provincia, Ciudad_Lat, Ciudad_Lon |
+| Provincias | Provincia, Provincia_Lat, Provincia_Lon |
 
 - **Cómo agregar algo:** escríbalo en la primera fila vacía del bloque. Los desplegables de todas las pestañas llegan hasta la fila 1000,
   así que lo nuevo aparece solo.
-- **Cómo ordenar:** seleccione el bloque completo y use *Datos → Ordenar rango*. Nunca ordene una columna suelta: separaría la ciudad de
+- **Cómo ordenar:** seleccione el bloque completo y use *Datos > Ordenar rango*. Nunca ordene una columna suelta: separaría la ciudad de
   su provincia y de sus coordenadas.
 - **Repetidos:** la hoja rechaza un nombre que ya existe y pinta de rojo los repetidos. Si aun así llegara uno al dashboard, el aviso de
   «filas con problemas» lo indica y se conserva el primero.
@@ -209,14 +209,14 @@ con la pestaña y el número de fila.
 
 ## Permisos recomendados en Google
 
-- **Compartir → Acceso general: Restringido**, con los establecimientos y el personal del municipio agregados como **editores**. Nadie más abre
+- **Compartir > Acceso general: Restringido**, con los establecimientos y el personal del municipio agregados como **editores**. Nadie más abre
   la hoja. La publicación en la web es otra cosa: genera un enlace de solo lectura en xlsx, que vive solo en el secreto `SHEET_URL`.
 - **Columnas grises:** las protege el script de la hoja, como se explica arriba.
-- **Opcional:** proteja `_Catalogos`, y cada pestaña para que solo la edite su establecimiento (*Datos → Proteger hojas y rangos*).
+- **Opcional:** proteja `_Catalogos`, y cada pestaña para que solo la edite su establecimiento (*Datos > Proteger hojas y rangos*).
 
 ## Respaldo de la hoja
 
-El respaldo es el **historial de versiones de Google** (*Archivo → Historial de versiones → Ver historial de versiones*): guarda las versiones
+El respaldo es el **historial de versiones de Google** (*Archivo > Historial de versiones > Ver historial de versiones*): guarda las versiones
 anteriores y permite restaurar una o copiarla como hoja nueva. Antes de un cambio grande, por ejemplo antes de importar un Excel nuevo, use
 *Asignar un nombre a la versión actual* para ubicarla después.
 
@@ -231,7 +231,7 @@ en punto y a la media** (:00 y :30), todo el día. La tarea llama a la API de Gi
 
 Cómo debe ser el token:
 
-- **De grano fino** (*Settings → Developer settings → Fine-grained tokens*), no un token clásico, que da acceso a todos los repositorios de la
+- **De grano fino** (*Settings > Developer settings > Fine-grained tokens*), no un token clásico, que da acceso a todos los repositorios de la
   cuenta.
 - **Solo este repositorio** y un único permiso: **Actions: Read and write**, el que pide `workflow_dispatch`.
 - **Con vencimiento**, y la fecha de renovación anotada. Al vencer, cron-job.org recibe un `401` y deja de disparar sin que el sitio lo diga: la
@@ -243,7 +243,7 @@ y reinicia el plazo de 60 días de GitHub (evento `flujo_mantenido`). Detalle en
 
 ## Si algo falla
 
-**Publicación trabada (runbook).** Síntoma: el chip dice «Publicación detenida» (desde el minuto 101) desde hace horas y en **Actions → Publicar dashboard** las ejecuciones
+**Publicación trabada (runbook).** Síntoma: el chip dice «Publicación detenida» (desde el minuto 101) desde hace horas y en **Actions > Publicar dashboard** las ejecuciones
 salen todas como «cancelled».
 
 - **Qué pasó en el incidente real (6 al 12 de octubre de 2026):** un despliegue de Pages quedó en estado `waiting` y retuvo el grupo de
@@ -252,14 +252,14 @@ salen todas como «cancelled».
   ejecución del flujo que lleve más de 25 minutos en `waiting` o `in_progress`, contados desde que arrancó (`run_started_at`). Si una ejecución sigue activa pasado el doble (50 minutos), la cancela a la fuerza con la API `force-cancel`. La concurrencia quedó solo en el despliegue, de modo que la
   limpieza corre aunque otra ejecución esté trabada. Si la limpieza fallara, la publicación sigue igual.
 - **Si no quiere esperar a la siguiente publicación (cancelar a mano):**
-  1. Abra **Actions → Publicar dashboard**.
+  1. Abra **Actions > Publicar dashboard**.
   2. Entre en la ejecución que esté en `waiting` o `in_progress` desde hace mucho.
   3. Pulse **Cancel workflow**. Si no basta, no hace falta nada más: `destrabar` la fuerza sola en la siguiente publicación, con la API `force-cancel`, cuando la ejecución sigue activa pasado el doble de 25 minutos.
   4. Lance una publicación nueva con **Run workflow** y compruebe que termine en verde.
 
 | Síntoma | Qué revisar |
 |---|---|
-| El dashboard muestra «No se pudo actualizar…» | El dashboard conserva los últimos datos buenos. Revise la pestaña **Actions** del repositorio: la última ejecución en rojo dice en qué paso falló |
+| El dashboard muestra «No se pudo actualizar...» | El dashboard conserva los últimos datos buenos. Revise la pestaña **Actions** del repositorio: la última ejecución en rojo dice en qué paso falló |
 | Actions falla en «Construir datos desde la hoja» | La hoja dejó de estar publicada o cambió su URL. Ver [configuracion.md](configuracion.md#rotar-la-url) |
 | Actions falla en «Pruebas» | Un cambio de código rompió una regla. No se publica nada hasta corregirlo |
 | Un establecimiento no aparece | Compruebe que su pestaña no empiece con `_`, no contenga «plantilla» y conserve los encabezados. En el dashboard, quite los filtros: el combo solo ofrece lo que tiene visitantes bajo los demás filtros |
@@ -267,7 +267,7 @@ salen todas como «cancelled».
 | El chip dice «Publicación detenida» | La publicación automática no corre. Revise **Actions** y siga [observabilidad.md](observabilidad.md#qué-hacer-si-el-chip-no-está-en-verde) |
 | cron-job.org marca la tarea con error `401` o `403` | El token venció o perdió el permiso: en **Actions** solo aparecen ejecuciones de `schedule`. Genere un token nuevo como se explica arriba y péguelo en la tarea |
 | El panel de problemas muestra avisos de columnas grises o de fila sospechosa | Ver [Qué hacer con los avisos](#qué-hacer-con-los-avisos). La fila ya se publicó |
-| Ninguna publicación corre, ni la de cron-job.org ni la de GitHub | GitHub desactiva el flujo entero tras 60 días sin actividad, y entonces también falla el disparo de cron-job.org. `destrabar` lo evita reactivando el flujo en cada publicación. Si aun así aparece desactivado, en **Actions → Publicar dashboard → «Enable workflow»** se reactiva a mano y con **Run workflow** se fuerza una publicación |
+| Ninguna publicación corre, ni la de cron-job.org ni la de GitHub | GitHub desactiva el flujo entero tras 60 días sin actividad, y entonces también falla el disparo de cron-job.org. `destrabar` lo evita reactivando el flujo en cada publicación. Si aun así aparece desactivado, en **Actions > Publicar dashboard > «Enable workflow»** se reactiva a mano y con **Run workflow** se fuerza una publicación |
 
 ## Datos reales y datos de prueba
 
@@ -298,7 +298,7 @@ Una dirección que no cumpla la forma esperada no se muestra: el botón desapare
 ## Varias opciones en los filtros
 
 Los filtros de establecimiento, país / ciudad / provincia, motivo, edad y género aceptan **varias opciones a la vez**: cada opción elegida
-queda como una etiqueta sobre los gráficos y se quita con su «×» o todas juntas con «Quitar todos». Dentro de un filtro las opciones se
+queda como una etiqueta sobre los gráficos y se quita con su cruz o todas juntas con «Quitar todos». Dentro de un filtro las opciones se
 suman (Colombia y Perú) y entre filtros se cruzan (Colombia o Perú, y además turismo). Año y mes son de una sola opción. Lo elegido también se ve como etiquetas debajo de cada filtro, a la izquierda, y el panel de filtros
 se mantiene a la izquierda hasta los 860 px de ancho; por debajo pasa a ser un botón «Filtros».
 

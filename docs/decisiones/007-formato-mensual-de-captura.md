@@ -1,6 +1,6 @@
 # ADR 007: Formato mensual de captura con totales por rango de edad
 
-**Estado:** Aceptada · **Fecha:** 2026-10-01 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-10-01, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 ## Contexto
 

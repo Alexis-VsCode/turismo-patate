@@ -4,21 +4,21 @@
 
 | Qué | Dónde | Quién lo cambia |
 |---|---|---|
-| URL de la hoja (secreta) | GitHub → **Settings → Secrets and variables → Actions → `SHEET_URL`** | Administrador del repositorio |
-| Publicación del sitio | GitHub → **Settings → Pages → Source: GitHub Actions** | Administrador del repositorio |
+| URL de la hoja (secreta) | GitHub > **Settings > Secrets and variables > Actions > `SHEET_URL`** | Administrador del repositorio |
+| Publicación del sitio | GitHub > **Settings > Pages > Source: GitHub Actions** | Administrador del repositorio |
 | Frecuencia de publicación | Tarea de cron-job.org (cada 30 min) y [`.github/workflows/publicar.yml`](../.github/workflows/publicar.yml) (`schedule: '15,45 * * * *'`) | Desarrollo y operación |
 | Intervalos, umbrales, límites de descarga del navegador, franja de prueba y personas del pie | [`src/tablero/infrastructure/config.js`](../src/tablero/infrastructure/config.js) | Desarrollo |
 | Topes de la descarga y de la lectura de la hoja, país local y tope de sensatez de una fila | [`src/publicacion/config-publicacion.js`](../src/publicacion/config-publicacion.js) | Desarrollo |
 | Límites de validación (años, edad y cantidad) | [`src/domain/catalogo.js`](../src/domain/catalogo.js) | Desarrollo |
 | Textos visibles | [`src/tablero/shared/textos.es.js`](../src/tablero/shared/textos.es.js) | Desarrollo |
-| Colores del tema | [`css/tema.css`](../css/tema.css), variables `--verde`, `--lima`, `--amarillo`… | Desarrollo |
+| Colores del tema | [`css/tema.css`](../css/tema.css), variables `--verde`, `--lima`, `--amarillo`... | Desarrollo |
 | Política de seguridad (CSP) | `<meta http-equiv="Content-Security-Policy">` en [`index.html`](../index.html) | Desarrollo |
-| Permisos de la hoja | Google Sheets → **Compartir** y el script [`tools/excel/proteger-hoja.gs`](../tools/excel/proteger-hoja.gs) | Administrador de la hoja |
+| Permisos de la hoja | Google Sheets > **Compartir** y el script [`tools/excel/proteger-hoja.gs`](../tools/excel/proteger-hoja.gs) | Administrador de la hoja |
 | Catálogos y coordenadas | Pestaña `_Catalogos` de la hoja | Administrador de la hoja |
 
 ## Cómo se oculta la URL de la hoja
 
-La URL publicada de la hoja (`…/pub?output=xlsx`) funciona como una contraseña de lectura: quien la tenga puede
+La URL publicada de la hoja (`.../pub?output=xlsx`) funciona como una contraseña de lectura: quien la tenga puede
 descargar el libro completo. Por eso **no aparece en ningún archivo del repositorio ni del sitio**.
 
 ```mermaid
@@ -36,7 +36,7 @@ flowchart LR
 2. **Uso exclusivo del flujo.** Solo lo recibe el paso «Construir datos desde la hoja» del job `construir`, como
    variable de entorno. Si llegara a imprimirse en los registros, GitHub lo reemplaza por asteriscos.
 3. **Validación del formato.** [`tools/construir-datos.mjs`](../tools/construir-datos.mjs) comprueba que tenga
-   el formato esperado (`https://docs.google.com/spreadsheets/d/e/…/pub?output=xlsx`) antes de descargar nada. El caso de uso
+   el formato esperado (`https://docs.google.com/spreadsheets/d/e/.../pub?output=xlsx`) antes de descargar nada. El caso de uso
    descarga el libro con límites de tiempo y tamaño y escribe **solo** `datos/datos.json`, con filas ya validadas y sin la URL.
 4. **Se publica solo lo público.** El sitio se arma copiando `index.html`, `css/`, `src/` sin `src/publicacion/` y la carpeta
    `assets/` completa (logo, foto de cabecera, imagen para compartir, límites provinciales y las fotos del pie en `assets/personas/`).
@@ -48,15 +48,15 @@ flowchart LR
 
 ### Reemplazar el secreto
 
-1. **Settings → Secrets and variables → Actions**.
+1. **Settings > Secrets and variables > Actions**.
 2. En `SHEET_URL`, pulsa el lápiz (**Update**), pega la URL nueva y guarda.
-3. **Actions → Publicar dashboard → Run workflow** para publicar de inmediato.
+3. **Actions > Publicar dashboard > Run workflow** para publicar de inmediato.
 
 ### Rotar la URL
 
 Hay que hacerlo si la URL se filtró o si cambió la hoja:
 
-1. En Google Sheets: **Archivo → Compartir → Publicar en la web → Detener publicación**.
+1. En Google Sheets: **Archivo > Compartir > Publicar en la web > Detener publicación**.
 2. Vuelve a publicar: **Todo el documento**, formato **Microsoft Excel (.xlsx)** y **Volver a publicar
    automáticamente** activado. Google genera una URL nueva y la anterior deja de funcionar.
 3. Reemplaza el secreto `SHEET_URL` con la URL nueva, como se explica arriba.
@@ -125,7 +125,7 @@ Los valida `prepararEnlacesContacto` en
 
 | Red | Forma aceptada |
 |---|---|
-| Facebook | `https://facebook.com/…`, `https://www.facebook.com/…` o `https://m.facebook.com/…` |
+| Facebook | `https://facebook.com/...`, `https://www.facebook.com/...` o `https://m.facebook.com/...` |
 | TikTok | `https://tiktok.com/@usuario` o `https://www.tiktok.com/@usuario` |
 | LinkedIn | `https://linkedin.com/in/usuario` o `https://www.linkedin.com/in/usuario` |
 
@@ -150,4 +150,4 @@ Además, el job `destrabar` corre al inicio de cada ejecución, sin importar qui
 La cifra de 30 minutos vive en `PUBLICACION_MINUTOS`. El `schedule` del YAML y la tarea de cron-job.org no pueden leer esa constante y se cambian a mano.
 
 - **Para cambiar la frecuencia:** edita la tarea en cron-job.org, el `schedule` de `publicar.yml` y `PUBLICACION_MINUTOS`; ajusta también `UMBRALES_FRESCURA` si cambia el ciclo.
-- **Para pausarlo:** **Actions → Publicar dashboard → … → Disable workflow** y pausa la tarea en cron-job.org. Pausar el flujo a mano detiene también el mantenimiento que hace `destrabar`; si queda pausado más de 60 días, GitHub lo desactiva y hay que reactivarlo con «Enable workflow».
+- **Para pausarlo:** **Actions > Publicar dashboard > ... > Disable workflow** y pausa la tarea en cron-job.org. Pausar el flujo a mano detiene también el mantenimiento que hace `destrabar`; si queda pausado más de 60 días, GitHub lo desactiva y hay que reactivarlo con «Enable workflow».

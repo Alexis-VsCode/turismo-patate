@@ -1,6 +1,6 @@
 # ADR 010: Publicación hexagonal y tablero semihexagonal
 
-**Estado:** Aceptada · **Fecha:** 2026-10-17 · **Autor:** Ing. Kevin Alexis Barrera Llerena
+**Estado:** Aceptada, **Fecha:** 2026-10-17, **Autor:** Ing. Kevin Alexis Barrera Llerena
 
 Amplía la [ADR 004](004-capas-semihexagonales.md), que queda como antecedente.
 
