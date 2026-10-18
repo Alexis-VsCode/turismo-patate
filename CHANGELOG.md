@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.10.1] - 2026-10-17
+
+### Corregido
+- **Un país del catálogo sin coordenadas ya no se dibuja en el punto (0, 0) del mapa:** una celda vacía de latitud o longitud contaba como cero. Ahora «Extranjeros (sin especificar)» cuenta en las cifras y los filtros sin círculo en el mapa, como dice la documentación.
+- **Copiar enlace desde la página de revisión** quita el parámetro `revision`: quien recibe el enlace ve la página pública con los mismos filtros.
+- **Script de la hoja:** `agregarExtranjerosSinEspecificar` no escribe sobre el encabezado si la lista de países está llena, y `restaurarFormulasGrises` solo toca las pestañas con las mismas columnas que «Plantillas», se detiene si falta esa pestaña y respeta el tope de tiempo.
+- **Guía `_Inicio` de la hoja:** nombra la pestaña «Plantillas», explica que la copia queda protegida sola, agrega la regla de extranjeros y corrige la frase de las filas en rojo.
+
+### Pruebas
+- Un país del catálogo sin coordenadas entra en la lista y no en el mapa; una fila con «Extranjeros (sin especificar)» se lee como extranjera y sin avisos; el enlace que se copia no lleva el modo revisión.
+
 ## [2.10.0] - 2026-10-17
 
 ### Añadido
@@ -12,7 +23,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ### Corregido
 - **Extranjeros contados como nacionales en la hoja (corrección del 17/10/2026):** 34 filas con País Ecuador traían escritos a mano los nacionales y los extranjeros en las columnas grises. Cada una se partió en dos, la fila Ecuador con los nacionales y una fila «Extranjeros (sin especificar)» con los extranjeros, con totales exactos; la edad y el género de los extranjeros se repartieron en la misma proporción que la fila original. Antes se guardó la versión «Antes de corregir extranjeros 17-10-2026» en el historial de Google.
-- **Plantilla con números fijos:** la fila 2 de «Plantillas» tenía escritos 960 y 240 en Nacionales y Extranjeros en lugar de sus fórmulas, y cada pestaña nacida de duplicarla los heredaba. Se repuso la fórmula en la plantilla y en todas las pestañas; las tres filas que solo tenían ese residuo quedaron como nacionales, como dice su País. Quedan para confirmar con su establecimiento dos filas cuyos números escritos a mano no cuadran con su total; se ven en la página de revisión.
+- **Plantilla con números fijos:** la fila 2 de «Plantillas» tenía escritos 960 y 240 en Nacionales y Extranjeros en lugar de sus fórmulas, y cada pestaña nacida de duplicarla los heredaba. Se repuso la fórmula en la plantilla y en todas las pestañas; las tres filas que solo tenían ese residuo quedaron como nacionales, como dice su País. Las dos filas cuyos números escritos a mano no cuadraban con su total recibieron también su fórmula y cuentan según su País; los números originales quedan en la versión de respaldo. Después de la corrección, el lector no deja ningún aviso ni rechazo.
 
 ## [2.9.0] - 2026-10-17
 

@@ -129,14 +129,14 @@ stateDiagram-v2
 ```
 
 - **Ignorada:** una fila sin ningún número no cuenta ni se avisa.
-- **Rechazada:** sus cifras no entran en el dashboard. Aparece en el aviso «N filas con problemas», con la pestaña, el número de fila y el motivo.
+- **Rechazada:** sus cifras no entran en el dashboard. Aparece en el aviso «N filas con problemas» de la [página de revisión](#la-página-de-revisión), con la pestaña, el número de fila y el motivo.
 - **Con aviso:** sus cifras sí entran. El aviso aparece en el mismo panel, en «N avisos», con la pestaña y la fila.
 - **Una fila nacional sin ciudad**, que la hoja marca «Falta la ciudad», se acepta: cuenta como nacional, sin ciudad ni provincia, y no aparece en
   el mapa de ciudades ni de provincias.
 
 ### La página de revisión
 
-Los avisos y las filas rechazadas **no los ve el público**. Se ven en la misma dirección del dashboard con `?revision` al final:
+Los avisos y las filas rechazadas **no se muestran en la página pública** (el detalle sigue dentro de `datos.json`, que es público). Se ven en la misma dirección del dashboard con `?revision` al final:
 
 `https://alexis-vscode.github.io/turismo-patate/?revision`
 
@@ -158,8 +158,9 @@ nacionales y los extranjeros, y el dashboard contaba a todos como nacionales. Ca
 una fila nueva con «Extranjeros (sin especificar)» y los extranjeros, con el mismo año, mes y motivo. Los totales quedaron exactos. La edad
 y el género de los extranjeros no se habían anotado, así que se repartieron en la misma proporción que la fila original: es la única cifra
 estimada. Además, la fila 2 de «Plantillas» tenía escritos 960 y 240 en lugar de sus fórmulas y cada pestaña duplicada los heredaba: se
-repuso la fórmula en la plantilla y en todas las pestañas. Quedan para confirmar con su establecimiento dos filas cuyos números escritos a
-mano no cuadran con su total. Se ven en la [página de revisión](#la-página-de-revisión).
+repuso la fórmula en la plantilla y en todas las pestañas. Las dos filas cuyos números escritos a
+mano no cuadraban con su total recibieron también su fórmula y cuentan según su País; sus números originales quedan en la versión de
+respaldo. Después de la corrección, la [página de revisión](#la-página-de-revisión) no muestra ningún aviso.
 Antes de corregir se guardó la versión «Antes de corregir extranjeros 17-10-2026» en el historial de Google.
 
 ## Agregar un establecimiento
@@ -230,7 +231,7 @@ mismo rango, así que también aparecerá al capturar.
   cada país.
 
 Para sumar una ciudad o un país, agréguelo en su columna con las coordenadas. Si una fila trae un valor que no
-está en el catálogo, el dashboard **no la descarta en silencio**: la muestra en el aviso «N filas con problemas»,
+está en el catálogo, el dashboard **no la descarta en silencio**: la muestra en el aviso «N filas con problemas» de la [página de revisión](#la-página-de-revisión),
 con la pestaña y el número de fila.
 
 ## Permisos recomendados en Google
