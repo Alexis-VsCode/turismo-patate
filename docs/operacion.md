@@ -126,7 +126,7 @@ stateDiagram-v2
 
 - **Ignorada:** una fila sin ningún número no cuenta ni se avisa.
 - **Rechazada:** sus cifras no entran en el dashboard. Aparece en el aviso «N filas con problemas», con la pestaña, el número de fila y el motivo.
-- **Con aviso:** sus cifras sí entran. El aviso aparece en el mismo panel, en «N avisos de pestañas», con la pestaña y la fila.
+- **Con aviso:** sus cifras sí entran. El aviso aparece en el mismo panel, en «N avisos», con la pestaña y la fila.
 - **Una fila nacional sin ciudad**, que la hoja marca «Falta la ciudad», se acepta: cuenta como nacional, sin ciudad ni provincia, y no aparece en
   el mapa de ciudades ni de provincias.
 

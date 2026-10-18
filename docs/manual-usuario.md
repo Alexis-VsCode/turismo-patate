@@ -26,7 +26,7 @@ Dice si la información que está viendo es reciente. Se calcula con el tiempo q
 | **Datos con retraso** | Amarillo | Pasaron entre 46 y 100 minutos. Los datos siguen siendo válidos, pero la actualización se demora |
 | **Publicación detenida** | Marrón | Pasaron más de 100 minutos. La actualización automática no está funcionando |
 
-Junto al chip aparece cuánto hace que se publicaron los datos. Si el chip dice «Sin verificar», el dashboard todavía está comprobando.
+Junto al chip aparece cuánto hace que se publicaron los datos. Si el chip dice «Sin verificar», la fecha de los datos falta o no cuadra con el reloj de su equipo; revise que la hora de su equipo sea la correcta.
 
 ### Los cuatro datos
 
