@@ -88,7 +88,7 @@ cadencia, y que el origen de las teselas esté permitido en la CSP.
 | `CONTACTO_MUNICIPIO.enlaces.linkedin` | `''` (vacío) | Enlace de LinkedIn. Vacío: el botón muestra «Pronto» y abre un aviso con los demás enlaces |
 | `AUTORIDAD_MUNICIPIO.nombre` | `'Ing. Emerson Hernán Medina Castro'` | Autoridad del cantón en la franja del GAD |
 | `AUTORIDAD_MUNICIPIO.cargo` | `'Alcalde'` | Cargo que se muestra junto al periodo |
-| `AUTORIDAD_MUNICIPIO.periodo` | `'2023 a 2027'` | Periodo de la administración («Alcalde · Administración 2023 a 2027») |
+| `AUTORIDAD_MUNICIPIO.periodo` | `'2023-2027'` | Periodo de la administración («Alcalde · Administración 2023-2027») |
 | `AUTORIDAD_MUNICIPIO.enlace` | `'https://patate.gob.ec/'` | Botón «Sitio del GAD». Se usa solo si es `https://`; si no, el botón se oculta |
 | `PROVINCIA_RESALTADA` | `'Tungurahua'` | Provincia que el mapa resalta siempre |
 

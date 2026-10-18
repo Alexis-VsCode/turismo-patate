@@ -80,7 +80,7 @@ come from, why they come, and their age and gender. The requirements were:
   (hand-written gray columns that contradict the Country, or more than 450000 visitors in one monthly row) is published and leaves a notice.
 - **Header and footer:** the header carries the institutional identity and the place. The footer has three columns ("Acerca del dashboard",
   "Privacidad y seguridad" and "Fuentes y licencias"); the GAD band, with its coat of arms, the photo of **Ing. Emerson Hernán Medina Castro,
-  Mayor, Administration 2023 to 2027**, the acknowledgment and the link to the GAD website; and the cards "Contacto del municipio" (Lic. Vanessa
+  Mayor, Administration 2023-2027**, the acknowledgment and the link to the GAD website; and the cards "Contacto del municipio" (Lic. Vanessa
   Lesano Martínez) and "Diseño y desarrollo" (the author), with their photos and their initials as a fallback if a photo does not load. The names
   come from `config.js`. If a social link of the contact is not published yet, its button reads "Pronto" ("soon") and opens a notice with the
   other links. The footer ends with the rights line: the author and year, that the data belongs to the GAD Municipal de San Cristóbal de Patate and
@@ -354,7 +354,7 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 |---|---|
 | **Ing. Kevin Alexis Barrera Llerena** | Author. Design, development, publishing and monitoring (observability) of the dashboard. |
 | **Lic. Vanessa Lesano Martínez** | Bachelor in Tourism. Contact and support at the Municipal Government of San Cristóbal de Patate. |
-| **Ing. Emerson Hernán Medina Castro** | Mayor of San Cristóbal de Patate, Administration 2023 to 2027. His administration supports the dashboard. |
+| **Ing. Emerson Hernán Medina Castro** | Mayor of San Cristóbal de Patate, Administration 2023-2027. His administration supports the dashboard. |
 
 **Ing. Kevin Alexis Barrera Llerena**, Software Engineer.
 
@@ -370,7 +370,7 @@ The documents in `docs/` are written in Spanish, the language of the project's u
 
 ## Acknowledgments
 
-To the **Municipal Government of San Cristóbal de Patate**, under the administration of **Ing. Emerson Hernán Medina Castro** (2023 to 2027),
+To the **Municipal Government of San Cristóbal de Patate**, under the administration of **Ing. Emerson Hernán Medina Castro** (2023-2027),
 and to **Lic. Vanessa Lesano Martínez**, for providing the information from the tourism establishments and supporting the development of this
 dashboard.
 

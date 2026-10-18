@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Versionado semántico.
 
+## [2.10.2] - 2026-10-17
+
+### Cambiado
+- **Período del alcalde en el pie:** se escribe «2023-2027», con guion, en el cargo y en el agradecimiento. El valor vive en `AUTORIDAD_MUNICIPIO.periodo` de `config.js`.
+
 ## [2.10.1] - 2026-10-17
 
 ### Corregido

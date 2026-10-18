@@ -79,7 +79,7 @@ vienen, por qué motivo, y con qué edad y género. Las condiciones eran:
   (columnas grises escritas a mano que contradicen el País, o más de 450000 visitantes en una fila mensual) se publica y deja un aviso.
 - **Encabezado y pie:** el encabezado lleva la identidad institucional y el lugar. El pie tiene tres columnas («Acerca del dashboard»,
   «Privacidad y seguridad» y «Fuentes y licencias»); la franja del GAD, con su escudo, la foto del **Ing. Emerson Hernán Medina Castro, Alcalde,
-  Administración 2023 a 2027**, el agradecimiento y el enlace al sitio del GAD; y las tarjetas «Contacto del municipio» (Lic. Vanessa Lesano
+  Administración 2023-2027**, el agradecimiento y el enlace al sitio del GAD; y las tarjetas «Contacto del municipio» (Lic. Vanessa Lesano
   Martínez) y «Diseño y desarrollo» (el autor), con sus fotos y sus iniciales como respaldo si la foto no carga. Los nombres salen de `config.js`.
   Si el enlace de una red del contacto aún no está publicado, su botón dice «Pronto» y abre un aviso con los demás enlaces. Al final lleva la
   línea de derechos: el autor y el año, que los datos son del GAD Municipal de San Cristóbal de Patate y de los establecimientos del cantón, y de
@@ -348,7 +348,7 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 |---|---|
 | **Ing. Kevin Alexis Barrera Llerena** | Autor. Diseño, desarrollo, publicación y monitoreo (observabilidad) del dashboard. |
 | **Lic. Vanessa Lesano Martínez** | Licenciada en Turismo. Contacto y apoyo del GAD Municipal de San Cristóbal de Patate. |
-| **Ing. Emerson Hernán Medina Castro** | Alcalde de San Cristóbal de Patate, Administración 2023 a 2027. Su administración respalda el dashboard. |
+| **Ing. Emerson Hernán Medina Castro** | Alcalde de San Cristóbal de Patate, Administración 2023-2027. Su administración respalda el dashboard. |
 
 **Ing. Kevin Alexis Barrera Llerena**, Ingeniero de Software.
 
@@ -364,7 +364,7 @@ viejos con estilos nuevos. Como en local no corre la publicación automática, e
 
 ## Agradecimientos
 
-Al **GAD Municipal de San Cristóbal de Patate**, administración del **Ing. Emerson Hernán Medina Castro** (2023 a 2027), y a la
+Al **GAD Municipal de San Cristóbal de Patate**, administración del **Ing. Emerson Hernán Medina Castro** (2023-2027), y a la
 **Lic. Vanessa Lesano Martínez**, por facilitar la información de los establecimientos turísticos y respaldar el desarrollo de este dashboard.
 
 ## Licencia

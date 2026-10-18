@@ -164,7 +164,7 @@ Al final de la página, el pie tiene tres partes:
 
 1. **Tres columnas** con lo básico: «Acerca del dashboard», «Privacidad y seguridad» y «Fuentes y licencias».
 2. **La franja del GAD Municipal de San Cristóbal de Patate**, con su escudo y la foto y el nombre del **Ing. Emerson Hernán Medina Castro,
-   Alcalde, Administración 2023 a 2027**, los agradecimientos y el botón **Sitio del GAD**, que abre la página oficial del municipio.
+   Alcalde, Administración 2023-2027**, los agradecimientos y el botón **Sitio del GAD**, que abre la página oficial del municipio.
 3. **Dos tarjetas** con las personas a cargo:
 
 | Tarjeta | Quién | Rol |
