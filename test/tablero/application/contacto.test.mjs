@@ -74,13 +74,25 @@ test('la autoridad del cantón viene de la configuración con su nombre, cargo, 
   assert.ok(Object.isFrozen(CONFIG.AUTORIDAD_MUNICIPIO));
 });
 
-test('el agradecimiento nombra al GAD, a su alcalde con el periodo y al contacto del municipio', () => {
+test('el agradecimiento agradece a la administración y al contacto sin repetir el nombre ni el periodo del alcalde', () => {
   assert.equal(
     TEXTOS.agradecimiento(CONFIG.AUTORIDAD_MUNICIPIO, CONFIG.CONTACTO_MUNICIPIO),
-    'Al GAD Municipal de San Cristóbal de Patate, administración del Ing. Emerson Hernán Medina Castro (2023-2027), '
-      + 'y a la Lic. Vanessa Lesano Martínez, por facilitar la información de los establecimientos turísticos del cantón '
-      + 'y respaldar el desarrollo de este dashboard.',
+    'Gracias a su administración y a la Lic. Vanessa Lesano Martínez por facilitar la información de los '
+      + 'establecimientos turísticos del cantón.',
   );
+});
+
+test('el cargo del alcalde nombra el cantón y el periodo con guion', () => {
+  assert.equal(TEXTOS.autoridadCargo(CONFIG.AUTORIDAD_MUNICIPIO), 'Alcalde de San Cristóbal de Patate · 2023-2027');
+});
+
+test('en la franja del GAD el nombre y el periodo del alcalde aparecen una sola vez', () => {
+  const { nombre, periodo } = CONFIG.AUTORIDAD_MUNICIPIO;
+  const franja = [nombre, TEXTOS.autoridadCargo(CONFIG.AUTORIDAD_MUNICIPIO),
+    TEXTOS.agradecimiento(CONFIG.AUTORIDAD_MUNICIPIO, CONFIG.CONTACTO_MUNICIPIO)].join(' ');
+  assert.equal(franja.split(nombre).length - 1, 1);
+  assert.equal(franja.split(periodo).length - 1, 1);
+  assert.equal(franja.split('San Cristóbal de Patate').length - 1, 1);
 });
 
 test('un enlace de la autoridad que no es https no se usa', () => {

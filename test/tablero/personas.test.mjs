@@ -36,3 +36,7 @@ test('el flujo de publicación lleva las fotos al sitio dentro de la carpeta de 
 test('el HTML no escribe a mano los nombres de la autoridad ni del contacto: salen de config.js', () => {
   assert.doesNotMatch(HTML, /Medina|Lesano/);
 });
+
+test('la etiqueta de la franja nombra al GAD Municipal sin repetir el cantón, que ya dice el cargo', () => {
+  assert.match(HTML, /<p id="gad-rol" class="persona-rol">Con el respaldo del GAD Municipal<\/p>/);
+});
