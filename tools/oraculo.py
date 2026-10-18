@@ -48,11 +48,24 @@ def numero(valor):
     return 0 if valor is None or str(valor).strip() == "" else int(valor)
 
 
+def es_vacia(r):
+    """Fila sin ningún valor: Google publica el xlsx sin dimensión y openpyxl entrega esas filas vacías o recortadas."""
+    return r is None or all(v is None or str(v).strip() == "" for v in r)
+
+
+def completar(r, ancho):
+    """Fila con tantas celdas como el encabezado: las filas cortas de la hoja vienen recortadas."""
+    return tuple(r) + (None,) * (ancho - len(r))
+
+
 def leer_mensual(nombre, encabezado, iterador, filas, discapacidad):
     """Pestaña del formato mensual: cada número de las ocho columnas es un grupo de visitantes de ese género y rango."""
     idx = {c: encabezado.index(c) for c in ["ano", "mes", "pais", "ciudad", "motivo de visita", "personas con discapacidad"]}
     idx_sexo = {col: encabezado.index(col) for col, _, _ in COLUMNAS_MENSUALES}
     for r in iterador:
+        if es_vacia(r):
+            continue
+        r = completar(r, len(encabezado))
         conteos = [(genero, i, numero(r[idx_sexo[col]])) for col, genero, i in COLUMNAS_MENSUALES]
         total = sum(n for _, _, n in conteos)
         personas = numero(r[idx["personas con discapacidad"]])
@@ -104,8 +117,9 @@ def leer(ruta):
             continue
         idx = {c: encabezado.index(c) for c in ["ano", "mes", "pais", "provincia", "ciudad", "cantidad", "motivo de visita", "edad", "genero"]}
         for r in iterador:
-            if r is None or all(v is None or str(v).strip() == "" for v in r):
+            if es_vacia(r):
                 continue
+            r = completar(r, len(encabezado))
             nacional = sin_tildes(r[idx["pais"]]) == "ecuador"
             filas.append({
                 "establecimiento": " ".join(nombre.split()),
@@ -116,6 +130,7 @@ def leer(ruta):
                 "cantidad": int(r[idx["cantidad"]]), "motivo": str(r[idx["motivo de visita"]]).strip(),
                 "rango": rango(int(r[idx["edad"]])), "genero": str(r[idx["genero"]]).strip(),
             })
+    libro.close()
     return filas, discapacidad
 
 

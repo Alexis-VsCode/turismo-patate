@@ -1,7 +1,7 @@
 /**
  * @file config-publicacion.js
  * @description Publicación. Configuración única de la cadena que corre en GitHub Actions: límites de la descarga y de
- *   la lectura de la hoja, nombre de la pestaña de catálogos, país local y mínimo de establecimientos para publicar.
+ *   la lectura de la hoja, nombre de la pestaña de catálogos, país local, mínimo de establecimientos para publicar y tope de sensatez de una fila.
  *   Cambiar un valor aquí basta; ningún otro módulo repite estos números. Lo del navegador vive en
  *   tablero/infrastructure/config.js.
  * @author Kevin Alexis Barrera Llerena 2026
@@ -20,4 +20,9 @@ export const CONFIG_PUBLICACION = Object.freeze({
   PAIS_LOCAL: 'Ecuador',
   /** Con menos establecimientos válidos que estos no se publica: el sitio sigue con los últimos datos buenos. */
   MINIMO_ESTABLECIMIENTOS: 1,
+  /**
+   * Tope de sensatez de una fila mensual: si su total pasa de este número (450001 en adelante; 450000 no) la fila se
+   * publica igual, pero se avisa, porque suele ser una cifra de más.
+   */
+  UMBRAL_FILA_SOSPECHOSA: 450000,
 });
