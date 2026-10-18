@@ -345,7 +345,7 @@ def escribir_inicio(hoja, fmt, resumen):
         ("Mujeres y Hombres por rango de edad", "Ocho números enteros: 0-30, 31-45, 46-60 y 61 o más años. Si no hubo, déjelo vacío o escriba 0."),
         ("Personas con discapacidad", "Cuántas de esas personas tenían alguna discapacidad. No puede superar el total de visitantes de la fila."),
         ("Columnas grises", "Provincia, Total mujeres, Total hombres, Total visitantes, Nacionales, Extranjeros y Estado las calcula la hoja: no se escriben."),
-        ("Estado", "Dice OK cuando la fila está bien. Si no, la fila se pinta de rojo y explica qué corregir. Una fila en rojo no se publica en el tablero."),
+        ("Estado", "Dice OK cuando la fila está bien. Si no, la fila se pinta de rojo y explica qué corregir. El tablero deja fuera la fila a la que le falta año, mes, país o motivo, o cuya discapacidad supera el total, y la muestra en su panel de problemas."),
     ]
     for t, d in cols:
         fila += 1

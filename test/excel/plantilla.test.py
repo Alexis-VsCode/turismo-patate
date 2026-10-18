@@ -108,6 +108,11 @@ class PlantillaEstandarizada(unittest.TestCase):
         formulas = [r.formula[0] for rangos in hoja.conditional_formatting for r in rangos.rules if r.formula]
         self.assertTrue(any("$U2" in f and "OK" in f for f in formulas), formulas)
 
+    def test_la_guia_no_promete_que_una_fila_en_rojo_no_se_publica(self):
+        textos = " ".join(str(c.value) for fila in self.libro["_Inicio"].iter_rows() for c in fila if c.value)
+        self.assertNotIn("no se publica en el tablero", textos)
+        self.assertIn("panel de problemas", textos)
+
 
 if __name__ == "__main__":
     unittest.main()
