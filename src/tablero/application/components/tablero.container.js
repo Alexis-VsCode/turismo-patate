@@ -16,7 +16,7 @@ import { pintarEstadoDatos } from './presentational/estado.presentational.js';
 import { pintarMotivos } from './presentational/motivos.presentational.js';
 import { pintarDiscapacidad } from './presentational/discapacidad.presentational.js';
 import { pintarFrescura } from './presentational/frescura.presentational.js';
-import { pintarProblemas } from './presentational/problemas.presentational.js';
+import { pintarProblemas, esModoRevision } from './presentational/problemas.presentational.js';
 import { pintarChips } from './presentational/chips.presentational.js';
 import { pintarContacto, pintarAutoridad, prepararEnlacesContacto } from './presentational/contacto.presentational.js';
 import { mostrarAviso } from './compartidos/aviso.js';
@@ -195,7 +195,8 @@ export function montarTablero(facade, config, { obtenerLimites }) {
     pintarEstado();
     pintarSalud();
     pintarFiltros();
-    pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos);
+    pintarProblemas({ caja: $('problemas'), resumen: $('problemas-resumen'), lista: $('problemas-lista') }, facade.estado.datos,
+      { revision: esModoRevision(window.location.search) });
     pintarPaneles();
   }
   function alCambiarFiltros() {
