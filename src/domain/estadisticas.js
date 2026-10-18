@@ -7,8 +7,8 @@
  */
 import { esClaveSegura } from './texto.js';
 import { claveNormalizada } from './catalogo.js';
-import { RANGOS_EDAD } from './visitante.js';
-import { filtrar } from './filtros.js';
+import { RANGOS_EDAD, MESES } from './visitante.js';
+import { filtrar, valoresDeFiltro, leerProcedencia } from './filtros.js';
 
 /**
  * Suma Cantidad agrupando por la clave que devuelve `claveDe`; descarta claves inseguras o vacías.
@@ -178,6 +178,48 @@ export function opcionesDeFiltros(filas, catalogo = {}) {
 }
 
 /**
+ * Opciones facetadas de cada combo: salen de las filas que cumplen todos los demás filtros activos, menos el propio, así
+ * un filtro nunca reduce sus propias opciones y se le puede sumar una segunda. Sin otro filtro activo son las de
+ * siempre: todo el libro, los años y motivos del catálogo, los doce meses, los cuatro rangos de edad, los géneros del
+ * catálogo y todos los establecimientos. Una opción ya elegida se conserva aunque quede sin datos, para poder quitarla.
+ * @param {Array<object>} filas visitantes ya normalizados
+ * @param {object} filtros estado de filtros (ver filtrosVacios)
+ * @param {{ catalogo?: { anios?: number[], motivos?: string[], generos?: string[] }, establecimientos?: string[] }} contexto
+ *   listas del catálogo y todas las pestañas de establecimiento, en su orden
+ * @returns {{ establecimiento: string[], anio: number[], mes: number[], rangoEdad: string[], genero: string[], motivo: string[],
+ *   procedencia: { atajos: string[], provincias: string[], ciudades: string[], paises: string[] } }} valores de cada
+ *   combo: años de mayor a menor, meses por número, lugares y motivos en orden alfabético y lo demás en su orden fijo
+ */
+export function opcionesFacetadas(filas, filtros, { catalogo = {}, establecimientos = [] } = {}) {
+  // Paso 1: la base de cada combo ignora su propio filtro; si ningún otro está activo, el combo ofrece lo de siempre
+  const faceta = (clave) => ({ base: filtrar(filas, filtros, [clave]), libre: !hayOtroFiltro(filtros, clave) });
+  const elegidas = (clave) => valoresDeFiltro(filtros[clave]);
+  const alfabetico = (lista) => lista.sort((a, b) => a.localeCompare(b, 'es'));
+  // Paso 2: las listas de orden fijo se recortan a lo que tiene la base, más lo elegido
+  const enOrden = (clave, fijas, deFila) => {
+    const { base, libre } = faceta(clave);
+    const presentes = new Set(base.map(deFila));
+    const conservar = elegidas(clave);
+    const ofrecidas = libre ? [...fijas] : fijas.filter((v) => presentes.has(v) || conservar.includes(v));
+    return [...ofrecidas, ...conservar.filter((v) => !ofrecidas.includes(v))];
+  };
+  // Paso 3: años y motivos suman el catálogo solo sin otros filtros, porque un año sin visitantes vaciaría la vista
+  const anio = faceta('anio');
+  const motivo = faceta('motivo');
+  const deAnios = opcionesDeFiltros(anio.base, anio.libre ? catalogo : {}).anios;
+  const deMotivos = opcionesDeFiltros(motivo.base, motivo.libre ? catalogo : {}).motivos;
+  return {
+    establecimiento: enOrden('establecimiento', establecimientos, (f) => f.establecimiento),
+    anio: [...new Set([...deAnios, ...elegidas('anio')])].sort((a, b) => b - a),
+    mes: enOrden('mes', MESES.map((_, i) => i), (f) => f.mes).sort((a, b) => a - b),
+    procedencia: opcionesDeProcedencia(faceta('procedencia'), elegidas('procedencia'), alfabetico),
+    motivo: alfabetico([...new Set([...deMotivos, ...elegidas('motivo')])]),
+    rangoEdad: enOrden('rangoEdad', RANGOS_EDAD, (f) => f.rangoEdad),
+    genero: enOrden('genero', catalogo.generos || [], (f) => f.genero),
+  };
+}
+
+/**
  * Resumen de lo cargado, en las unidades de la hoja y no en filas internas: una fila de la hoja (mes, origen y motivo
  * de un establecimiento) se reparte en varias filas internas, una por casilla de edad y género con visitantes.
  * @param {Array<object>} filas filas internas ya validadas
@@ -204,4 +246,23 @@ const total = (filas) => filas.reduce((suma, f) => suma + f.cantidad, 0);
 /** Lista ordenada de mayor a menor a partir de un Map de sumas. */
 function ordenar(mapa) {
   return [...mapa.entries()].map(([nombre, valor]) => ({ nombre, valor })).sort((a, b) => b.valor - a.valor || a.nombre.localeCompare(b.nombre, 'es'));
+}
+
+/** Indica si hay algún filtro activo además de `clave`: una lista con opciones, o un año o mes elegidos (enero es 0). */
+function hayOtroFiltro(filtros, clave) {
+  return Object.entries(filtros).some(([campo, valor]) => campo !== clave && valoresDeFiltro(valor).length > 0);
+}
+
+/** Atajos, provincias, ciudades y países que ofrece el combo de procedencia, con las opciones elegidas conservadas. */
+function opcionesDeProcedencia({ base, libre }, elegidas, alfabetico) {
+  const nacionales = base.filter((f) => f.nacional);
+  const nombres = (tipo) => elegidas.map(leerProcedencia).filter((p) => p.tipo === tipo).map((p) => p.nombre);
+  const unir = (deFilas, tipo) => alfabetico([...new Set([...deFilas.filter(Boolean), ...nombres(tipo)])]);
+  const hay = { NAC: libre || nacionales.length > 0, EXT: libre || nacionales.length < base.length };
+  return {
+    atajos: ['NAC', 'EXT'].filter((a) => hay[a] || elegidas.includes(a)),
+    provincias: unir(nacionales.map((f) => f.provincia), 'PR'),
+    ciudades: unir(nacionales.map((f) => f.ciudad), 'C'),
+    paises: unir(base.filter((f) => !f.nacional).map((f) => f.pais), 'P'),
+  };
 }

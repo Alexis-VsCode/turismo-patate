@@ -6,10 +6,10 @@
  *   prueba completa en Node.
  * @author Kevin Alexis Barrera Llerena 2026
  */
-import { MESES, RANGOS_EDAD } from '../../domain/visitante.js';
+import { MESES } from '../../domain/visitante.js';
 import {
   kpis, anioDeReferencia, evolucionMensual, porMotivo,
-  porCiudad, porProvincia, porPais, edadGenero, opcionesDeFiltros, variacionInteranual, resumenCarga,
+  porCiudad, porProvincia, porPais, edadGenero, opcionesFacetadas, variacionInteranual, resumenCarga,
 } from '../../domain/estadisticas.js';
 import { resumenDiscapacidad } from '../../domain/discapacidad.js';
 import { filtrosATexto, textoAFiltros } from '../../domain/enlace.js';
@@ -211,32 +211,33 @@ export function crearTableroFacade({ obtener, config, reloj = Date.now, esVisibl
   }
 
   // ===== API PUBLICA =====
-  /** Opciones de todos los combos, con el valor actual de cada filtro. */
+  /**
+   * Opciones de todos los combos, facetadas: cada combo ofrece lo que tienen las filas que cumplen los demás filtros
+   * activos, menos el suyo, y conserva lo ya elegido. Sin otros filtros, todo el libro y el catálogo.
+   */
   function opciones() {
     if (!estado.datos) return null;
     const { filas, establecimientos, catalogo } = estado.datos;
-    // Paso 1: las opciones salen de la hoja: de los visitantes y, en años y motivos, también del catálogo
-    const op = opcionesDeFiltros(filas, catalogo);
+    // Paso 1: el cálculo facetado es del dominio; aquí solo se le pone texto y grupo a cada valor
+    const op = opcionesFacetadas(filas, estado.filtros, { catalogo, establecimientos });
     const todos = { valor: '', texto: TEXTOS.todos };
     const opcion = (valor, texto, grupo) => (grupo ? { valor, texto, grupo } : { valor, texto });
-    // Paso 2: las provincias solo cuentan si hay visitantes nacionales, porque el filtro las aplica a ellos
-    const provincias = [...new Set(filas.filter((x) => x.nacional && x.provincia).map((x) => x.provincia))]
-      .sort((a, b) => a.localeCompare(b, 'es'));
-    // Paso 3: año y mes ofrecen «Todos»; los filtros de varias opciones no, porque una lista vacía ya significa todos
+    const atajos = { NAC: TEXTOS.procedenciaNacionales, EXT: TEXTOS.procedenciaExtranjeros };
+    const { procedencia } = op;
+    // Paso 2: año y mes ofrecen «Todos»; los filtros de varias opciones no, porque una lista vacía ya significa todos
     return {
-      anio: [todos, ...op.anios.map((a) => ({ valor: String(a), texto: String(a) }))],
-      mes: [todos, ...MESES.map((m, i) => ({ valor: String(i), texto: m }))],
+      anio: [todos, ...op.anio.map((a) => ({ valor: String(a), texto: String(a) }))],
+      mes: [todos, ...op.mes.map((i) => ({ valor: String(i), texto: MESES[i] }))],
       procedencia: [
-        opcion('NAC', TEXTOS.procedenciaNacionales, TEXTOS.grupoAtajos),
-        opcion('EXT', TEXTOS.procedenciaExtranjeros, TEXTOS.grupoAtajos),
-        ...provincias.map((p) => opcion(`PR:${p}`, p, TEXTOS.grupoProvincias)),
-        ...op.ciudades.map((c) => opcion(`C:${c}`, c, TEXTOS.grupoCiudades)),
-        ...op.paises.map((p) => opcion(`P:${p}`, p, TEXTOS.grupoPaises)),
+        ...procedencia.atajos.map((a) => opcion(a, atajos[a], TEXTOS.grupoAtajos)),
+        ...procedencia.provincias.map((p) => opcion(`PR:${p}`, p, TEXTOS.grupoProvincias)),
+        ...procedencia.ciudades.map((c) => opcion(`C:${c}`, c, TEXTOS.grupoCiudades)),
+        ...procedencia.paises.map((p) => opcion(`P:${p}`, p, TEXTOS.grupoPaises)),
       ],
-      motivo: op.motivos.map((m) => opcion(m, m)),
-      rangoEdad: RANGOS_EDAD.map((r) => opcion(r, r)),
-      genero: catalogo.generos.map((g) => opcion(g, g)),
-      establecimiento: establecimientos.map((e) => opcion(e, e)),
+      motivo: op.motivo.map((m) => opcion(m, m)),
+      rangoEdad: op.rangoEdad.map((r) => opcion(r, r)),
+      genero: op.genero.map((g) => opcion(g, g)),
+      establecimiento: op.establecimiento.map((e) => opcion(e, e)),
     };
   }
 

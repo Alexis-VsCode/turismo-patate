@@ -506,8 +506,14 @@ for (const [libro, datos] of [['piloto-publicado', DATOS], ['piloto-mensual', DA
         `mapa de ${elegidos}`,
       );
       assert.deepEqual(v.filtros.establecimiento, elegidos);
-      // Paso 2: las opciones de los combos no se reducen al establecimiento: siguen saliendo de todo el libro y del catálogo
-      assert.deepEqual(facade.opciones(), opcionesSinFiltro, `opciones con ${elegidos}`);
+      // Paso 2: los demás combos se recortan a las filas elegidas; el de establecimientos no se reduce a sí mismo
+      const op = facade.opciones();
+      const valores = (campo) => op[campo].map((o) => o.valor).filter((v) => v !== '');
+      const unicos = (fn) => [...new Set(filas.map(fn))];
+      assert.deepEqual(valores('anio'), unicos((r) => String(r.anio)).sort().reverse(), `años de ${elegidos}`);
+      assert.deepEqual(valores('motivo'), unicos((r) => r.motivo).sort((x, y) => x.localeCompare(y, 'es')), `motivos de ${elegidos}`);
+      assert.deepEqual(new Set(valores('mes')), new Set(unicos((r) => String(r.mes))), `meses de ${elegidos}`);
+      assert.deepEqual(op.establecimiento, opcionesSinFiltro.establecimiento);
       assert.deepEqual(facade.opciones().establecimiento.map((o) => o.valor), datos.establecimientos);
     }
     const unoYOtro = [[a], [b]].map((e) => { facade.fijarFiltro('establecimiento', e); return facade.vista().kpis.total; });
@@ -523,3 +529,116 @@ test('cada chip de procedencia se lee en lenguaje natural según su tipo', async
   facade.fijarFiltro('procedencia', ['NAC', 'EXT', 'PR:Tungurahua', 'C:Ambato', 'P:Colombia']);
   assert.deepEqual(facade.chipsActivos().map((c) => c.texto), ['Nacionales', 'Extranjeros', 'Provincia: Tungurahua', 'Ambato', 'Colombia']);
 });
+
+/** Opciones de los combos tras dejar estos filtros con fijarFiltro, en una fachada nueva. */
+async function opcionesCon(filtros, datos = DATOS) {
+  const { facade } = montar({ datos });
+  await facade.cargar(true);
+  for (const [campo, valor] of Object.entries(filtros)) facade.fijarFiltro(campo, valor);
+  return facade.opciones();
+}
+
+/** El motivo de un establecimiento que menos establecimientos tienen, para que recortar se note. */
+function motivoDe(datos, establecimiento) {
+  const cuantos = (motivo) => new Set(datos.filas.filter((r) => r.motivo === motivo).map((r) => r.establecimiento)).size;
+  const propios = [...new Set(datos.filas.filter((r) => r.establecimiento === establecimiento).map((r) => r.motivo))];
+  return propios.sort((x, y) => cuantos(x) - cuantos(y))[0];
+}
+
+test('quitar una etiqueta de la barra de arriba devuelve las opciones que ese filtro ocultaba', async () => {
+  const [a] = dosEstablecimientos(DATOS);
+  const motivo = motivoDe(DATOS, a);
+  const soloEstablecimiento = await opcionesCon({ establecimiento: [a] });
+  const inicial = await opcionesCon({});
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('establecimiento', [a]);
+  facade.fijarFiltro('motivo', [motivo]);
+  const conAmbos = facade.opciones();
+  assert.ok(conAmbos.establecimiento.length < inicial.establecimiento.length, 'el motivo oculta establecimientos sin él');
+  // Paso 1: se quita cada filtro con el × de su chip, como en la barra de arriba
+  const chip = (campo) => facade.chipsActivos().find((c) => c.campo === campo);
+  facade.quitarFiltro('motivo', chip('motivo').valor);
+  assert.deepEqual(facade.opciones(), soloEstablecimiento);
+  facade.quitarFiltro('establecimiento', chip('establecimiento').valor);
+  assert.deepEqual(facade.opciones(), inicial);
+});
+
+test('Quitar todos deja las opciones de hoy', async () => {
+  const [a] = dosEstablecimientos(DATOS);
+  const inicial = await opcionesCon({});
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('establecimiento', [a]);
+  facade.fijarFiltro('anio', DATOS.filas.find((r) => r.establecimiento === a).anio);
+  assert.notDeepEqual(facade.opciones(), inicial);
+  facade.limpiarFiltros();
+  assert.deepEqual(facade.opciones(), inicial);
+});
+
+test('un enlace compartido aplica los filtros y recorta las opciones igual que elegirlos a mano', async () => {
+  const [a, b] = dosEstablecimientos(DATOS);
+  const { facade: aMano } = montar();
+  await aMano.cargar(true);
+  aMano.fijarFiltro('establecimiento', [a, b]);
+  aMano.fijarFiltro('motivo', [motivoDe(DATOS, a)]);
+  aMano.fijarFiltro('procedencia', ['NAC']);
+  const { facade: conEnlace } = montar();
+  await conEnlace.cargar(true);
+  conEnlace.aplicarEnlace(`#${aMano.enlace()}`);
+  assert.deepEqual(conEnlace.estado.filtros, aMano.estado.filtros);
+  assert.deepEqual(conEnlace.opciones(), aMano.opciones());
+  assert.notDeepEqual(conEnlace.opciones(), await opcionesCon({}), 'el enlace recorta las opciones');
+});
+
+test('el clic en un motivo, en la dona, en la edad o en un mes recorta las opciones igual que el combo', async () => {
+  const [a] = dosEstablecimientos(DATOS);
+  const filaA = DATOS.filas.find((r) => r.establecimiento === a);
+  const { facade } = montar();
+  await facade.cargar(true);
+  facade.fijarFiltro('establecimiento', [a]);
+  // Paso 1: cada clic de un gráfico o de la lista de motivos usa alternarFiltro o elegirMes
+  facade.alternarFiltro('motivo', filaA.motivo);
+  facade.alternarFiltro('procedencia', filaA.nacional ? 'NAC' : 'EXT');
+  facade.alternarFiltro('rangoEdad', filaA.rangoEdad);
+  facade.elegirMes(filaA.anio, filaA.mes);
+  const esperadas = await opcionesCon({
+    establecimiento: [a], motivo: [filaA.motivo], procedencia: [filaA.nacional ? 'NAC' : 'EXT'],
+    rangoEdad: [filaA.rangoEdad], anio: filaA.anio, mes: filaA.mes,
+  });
+  assert.deepEqual(facade.opciones(), esperadas);
+  assert.notDeepEqual(facade.opciones().establecimiento, (await opcionesCon({})).establecimiento, 'los clics recortan los establecimientos');
+});
+
+for (const [libro, datos] of [['piloto-publicado', DATOS], ['piloto-mensual', DATOS_MENSUAL]]) {
+  test(`ninguna opción ofrecida con otros filtros puestos deja la vista vacía (${libro})`, async () => {
+    const [a, b] = dosEstablecimientos(datos);
+    const filaA = datos.filas.find((r) => r.establecimiento === a);
+    const { facade } = montar({ datos });
+    await facade.cargar(true);
+    const estados = [
+      { establecimiento: [a] },
+      { establecimiento: [a, b] },
+      { motivo: [filaA.motivo] },
+      { anio: filaA.anio, establecimiento: [a] },
+      { procedencia: [filaA.nacional ? 'NAC' : 'EXT'], motivo: [filaA.motivo] },
+    ];
+    let probadas = 0;
+    for (const filtros of estados) {
+      facade.aplicarFiltros(filtros);
+      const base = facade.estado.filtros;
+      const op = facade.opciones();
+      for (const [campo, lista] of Object.entries(op)) {
+        for (const { valor } of lista) {
+          // Paso 1: se elige cada opción que todavía no está puesta, sumándola a las elegidas o reemplazando año y mes
+          const multiple = Array.isArray(base[campo]);
+          if (valor === '' || (multiple ? base[campo].includes(valor) : String(base[campo]) === valor)) continue;
+          facade.aplicarFiltros({ ...base, [campo]: multiple ? [...base[campo], valor] : Number(valor) });
+          assert.ok(facade.vista().kpis.total > 0, `${campo} = ${valor} con ${JSON.stringify(filtros)}`);
+          probadas += 1;
+        }
+      }
+    }
+    assert.ok(probadas > 50, `se probaron ${probadas} opciones`);
+  });
+}
