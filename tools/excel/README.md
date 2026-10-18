@@ -7,7 +7,7 @@
 - `_Inicio`: guía de uso. El dashboard no la lee.
 - `_Catalogos`: listas de los desplegables (años, meses, motivos, países, ciudades, provincias). No está protegida: se agrega al final de cada lista.
 - `Plantilla`: modelo vacío. Se duplica, no se llena.
-- Una pestaña por establecimiento, con datos de ejemplo.
+- Una pestaña por establecimiento, con datos ficticios. Los datos reales viven solo en la hoja de Google; el repositorio no guarda ninguno.
 
 Cada pestaña de captura tiene 600 filas con las mismas reglas:
 
@@ -23,7 +23,6 @@ Cada pestaña de captura tiene 600 filas con las mismas reglas:
 ```
 python tools/excel/generar-excel.py --salida RUTA.xlsx                       # completo, 100 establecimientos
 python tools/excel/generar-excel.py --modo fixture --salida RUTA.xlsx        # libro pequeño para pruebas
-python tools/excel/generar-excel.py --salida RUTA.xlsx --sin-hojas-peggy     # sin las cinco hojas de Peggy
 ```
 
 Requiere `xlsxwriter`. La prueba (requiere además `openpyxl`): `python test/excel/plantilla.test.py`.

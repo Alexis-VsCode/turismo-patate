@@ -67,10 +67,6 @@ def cargar_catalogos():
 
 
 # ---------------------------------------------------------------- datos de ejemplo
-def rango_de_edad(edad):
-    return 0 if edad <= 30 else 1 if edad <= 45 else 2 if edad <= 60 else 3
-
-
 def elegir_ponderado(rng, pesos):
     nombres = list(pesos)
     return rng.choices(nombres, weights=[pesos[n] for n in nombres])[0]
@@ -104,33 +100,6 @@ def generar_filas(rng, escala, meses, ciudades, paises, filas_por_mes):
                 discapacidad = min(total, rng.choice([1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 11]))
             filas.append((anio, mes, pais, ciudad, motivo, conteos, discapacidad))
     return filas
-
-
-def filas_de_peggy():
-    """Las cinco hojas de Peggy convertidas: solo los nacionales, porque los extranjeros no traen país."""
-    hojas = {
-        "El Valle": [("junio", "quito", 2500, 35, "mujeres", "gastronomia"), ("julio", "ambato", 1400, 49, "hombres", "gastronomia"),
-                     ("agosto", "riobamba", 1240, 30, "mujeres", "gastronomia"), ("septiembre", "quito", 805, 45, "mujeres", "gastronomia")],
-        "Tu Heladería": [("junio", "ambato", 2100, 25, "mujeres", "gastronomia"), ("julio", "ambato", 1500, 22, "mujeres", "gastronomia"),
-                         ("agosto", "pelileo", 800, 38, "hombres", "gastronomia"), ("septiembre", "quito", 750, 40, "hombres", "gastronomia")],
-        "La Casta": [("junio", "quito", 1560, 45, "mujeres", "ocio"), ("julio", "riobamba", 1800, 56, "hombres", "descanso"),
-                     ("agosto", "guayaquil", 1430, 42, "mujeres", "gastronomia"), ("septiembre", "quito", 2500, 29, "hombres", "ocio")],
-        "Patate Gardens": [("junio", "quito", 6900, 34, "mujeres", "ocio"), ("julio", "quito", 5004, 29, "mujeres", "gastronomia"),
-                           ("agosto", "riobamba", 6500, 35, "hombres", "ocio"), ("septiembre", "quito", 9100, 29, "mujeres", "ocio")],
-        "Quinlata": [("junio", "riobamba", 4300, 35, "hombres", "ocio"), ("julio", "ambato", 3200, 46, "mujeres", "descanso"),
-                     ("agosto", "quito", 1700, 52, "mujeres", "gastronomia"), ("septiembre", "quito", 6300, 30, "hombres", "ocio")],
-    }
-    capital = lambda t: t.strip().capitalize()
-    motivos = {"gastronomia": "Gastronomía", "ocio": "Ocio", "descanso": "Descanso"}
-    resultado = {}
-    for nombre, filas in hojas.items():
-        salida = []
-        for mes, ciudad, nacionales, edad, genero, motivo in filas:
-            conteos = [0] * 8
-            conteos[(0 if genero == "mujeres" else 4) + rango_de_edad(edad)] = nacionales
-            salida.append((2026, mes.capitalize(), "Ecuador", capital(ciudad), motivos[motivo], conteos, None))
-        resultado[nombre] = salida
-    return resultado
 
 
 # ---------------------------------------------------------------- libro
@@ -392,7 +361,7 @@ def escribir_inicio(hoja, fmt, resumen):
     return hoja
 
 
-def construir(salida, modo, semilla, con_peggy=True):
+def construir(salida, modo, semilla):
     rng = random.Random(semilla)
     ciudades, paises, provincias = cargar_catalogos()
     provincia_de = {c["Ciudad"]: c["Ciudad_Provincia"] for c in ciudades}
@@ -422,18 +391,9 @@ def construir(salida, modo, semilla, con_peggy=True):
         total_filas += len(filas)
         hoja_establecimiento(libro, fmt, nombre, filas, provincia_de)
     if modo != "fixture":
-        for nombre, filas in (filas_de_peggy().items() if con_peggy else []):
-            if sin_tildes(nombre) in usados:
-                resumen.append(f"La hoja «{nombre}» de Peggy ya existía como establecimiento: no se duplicó.")
-                continue
-            hoja_establecimiento(libro, fmt, nombre, filas, provincia_de)
-            usados.add(sin_tildes(nombre))
-            total_filas += len(filas)
         hoja_anterior(libro, fmt, "Ejemplo (formato anterior)", rng, provincia_de)
-        if con_peggy:
-            resumen.insert(0, "Las hojas El Valle, Tu Heladería, La Casta, Patate Gardens y Quinlata vienen del archivo de Peggy: se cargó la columna de nacionales con año 2026; los extranjeros no se cargaron porque ese archivo no dice de qué país son.")
-        resumen.insert(1, "«Ejemplo (formato anterior)» muestra una pestaña con Cantidad, Edad y Género, que sigue funcionando.")
-        resumen.insert(2, "Los demás establecimientos tienen datos ficticios de enero de 2025 a septiembre de 2026.")
+        resumen.insert(0, "«Ejemplo (formato anterior)» muestra una pestaña con Cantidad, Edad y Género, que sigue funcionando.")
+        resumen.insert(1, "Los establecimientos tienen datos ficticios de enero de 2025 a septiembre de 2026.")
     escribir_inicio(inicio, fmt, resumen)
     libro.close()
     return {"establecimientos": len(usados), "filas": total_filas, "resumen": resumen}
@@ -444,9 +404,8 @@ def main():
     ap.add_argument("--salida", required=True)
     ap.add_argument("--modo", choices=["completo", "fixture"], default="completo")
     ap.add_argument("--semilla", type=int, default=20261001)
-    ap.add_argument("--sin-hojas-peggy", action="store_true", help="no incluye las cinco hojas de Peggy (para capturas con datos homogéneos)")
     a = ap.parse_args()
-    informe = construir(Path(a.salida), a.modo, a.semilla, not a.sin_hojas_peggy)
+    informe = construir(Path(a.salida), a.modo, a.semilla)
     print(json.dumps(informe, ensure_ascii=False))
 
 

@@ -114,5 +114,13 @@ class PlantillaEstandarizada(unittest.TestCase):
         self.assertIn("panel de problemas", textos)
 
 
+class SinDatosReales(unittest.TestCase):
+    def test_el_generador_no_guarda_establecimientos_ni_cifras_reales(self):
+        """Los datos reales viven solo en la hoja de Google; el generador arma la plantilla y datos ficticios."""
+        fuente = GENERADOR.read_text(encoding="utf-8")
+        for real in ("El Valle", "Tu Heladería", "La Casta", "Patate Gardens", "Quinlata"):
+            self.assertNotIn(real, fuente)
+
+
 if __name__ == "__main__":
     unittest.main()

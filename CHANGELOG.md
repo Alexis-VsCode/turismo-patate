@@ -15,6 +15,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - ADR 010 (publicación hexagonal y tablero semihexagonal).
 
 ### Cambiado
+- **El repositorio no guarda cifras reales:** el generador del Excel dejó de traer las cinco hojas con cifras de establecimientos reales; arma solo la plantilla y datos ficticios. Los datos reales viven únicamente en la hoja de Google.
 - **Arquitectura:** `src/` se separa en `domain/` (puro), `contrato/` (contrato de `datos.json` y descarga acotada), `publicacion/` (hexagonal: caso de uso `aplicacion/construir-datos.js`, puertos JSDoc en `puertos.js`, adaptadores `hoja-google.js`, `lector-xlsx.js` y `destino-archivo.js`, y `config-publicacion.js`) y `tablero/` (semihexagonal: fachada, container, presentacionales, compartidos, infraestructura y `shared/` con `textos.es.js`). `tools/construir-datos.mjs` queda como punto de entrada delgado. Lo vigilan `test/arquitectura.test.mjs` y `test/orden-de-modulos.test.mjs`. Las carpetas `application`, `infrastructure` y `shared` de la raíz de `src` y su `main.js` pasan a `src/tablero/`; el antiguo lector del libro pasa a `lector-xlsx.js` y el antiguo módulo de descarga, a `descarga-acotada.js` y `hoja-google.js`.
 - La recarga al cambiar de establecimiento la decide la fachada, y el container ya no descarga los límites del mapa: le llegan por una función inyectada desde `main.js`. El mapa pasa a `compartidos/` y guarda solo el estado que exige Leaflet.
 - Los límites de validación (años, edad y cantidad) se escriben una sola vez, en `src/domain/catalogo.js`.

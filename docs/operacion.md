@@ -276,6 +276,11 @@ El dashboard ya publica los datos reales del municipio: `DATOS_DE_PRUEBA` está 
 [`src/tablero/infrastructure/config.js`](../src/tablero/infrastructure/config.js) y la franja amarilla «DATOS DE PRUEBA» no aparece. Esa franja solo se
 usaría de nuevo si se pusiera el valor en `true` para probar con una hoja ficticia.
 
+**Dónde vive cada dato.** Los datos reales viven solo en la hoja de Google, a la que entran únicamente sus editores. El
+repositorio es público y no guarda ninguna cifra real: los libros de [`test/fixtures/`](../test/fixtures) y los que arman
+[`tools/generar-piloto.py`](../tools/generar-piloto.py) y [`tools/excel/generar-excel.py`](../tools/excel/generar-excel.py) son
+ficticios. Si alguien entrega un archivo con cifras de un establecimiento, se copian en su pestaña de la hoja, nunca en el código.
+
 Para cambiar la foto de la cabecera, reemplace [`assets/fondo-cabecera.jpg`](../assets/fondo-cabecera.jpg) por una propia del GAD, con el mismo
 nombre, y actualice el crédito en `index.html` y en `THIRD_PARTY_NOTICES.md`.
 
